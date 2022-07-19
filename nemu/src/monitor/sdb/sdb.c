@@ -55,10 +55,18 @@ static int cmd_q(char *args) {
 static int cmd_help(char *args);
 
 static int cmd_si(char *args) {
-  int step;
-  if(args == NULL){ step = 1; }
-  else sscanf(args,"%d",&step);
-  cpu_exec(step);
+  int steps;
+  if(args == NULL){ steps = 1; }
+  else sscanf(args,"%d",&steps);
+  cpu_exec(steps);
+  return 0;
+}
+
+static int cmd_info(char *args){
+  char* SUBCMD[] = { "r", "w"};
+  if(strcmp(SUBCMD[0],args) == 0){
+    isa_reg_display();
+  }
   return 0;
 }
 
@@ -71,6 +79,7 @@ static struct {
   { "c", "Continue the execution of the program", cmd_c },
   { "q", "Exit NEMU", cmd_q },
   { "si", "Single step execution", cmd_si },
+  { "info", "Print program status", cmd_info},
 
   /* TODO: Add more commands */
 
