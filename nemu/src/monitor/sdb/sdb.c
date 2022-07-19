@@ -67,6 +67,10 @@ static int cmd_info(char *args){
   if(strcmp(SUBCMD[0],args) == 0){
     isa_reg_display();
   }
+  else if(strcmp(SUBCMD[1],args) == 0){
+
+  }
+  else printf("Unknown command");
   return 0;
 }
 
