@@ -63,7 +63,7 @@ static int cmd_si(char *args) {
 }
 
 static int cmd_info(char *args){
-  char* SUBCMD[] = { "r", "w"};
+  char *SUBCMD[] = { "r", "w" };
   if(strcmp(SUBCMD[0],args) == 0){
     isa_reg_display();
   }
