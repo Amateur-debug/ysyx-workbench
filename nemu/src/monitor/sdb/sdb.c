@@ -70,7 +70,7 @@ static int cmd_info(char *args){
   else if(strcmp(SUBCMD[1],args) == 0){
 
   }
-  else printf("Unknown command");
+  else printf("Unknown option%s\n",args);
   return 0;
 }
 
