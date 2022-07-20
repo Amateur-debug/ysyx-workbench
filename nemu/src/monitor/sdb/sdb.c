@@ -88,7 +88,7 @@ static int cmd_x(char *args){
     word_t data ;
     data = pmem_read(address, len);
     printf("0x%016ld\n", data);  
-    address = address + 32;
+    address = address + 4;
   }
   return 0;  
 }
