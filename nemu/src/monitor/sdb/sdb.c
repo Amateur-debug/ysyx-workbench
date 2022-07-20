@@ -18,6 +18,7 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include "sdb.h"
+#include <memory/paddr.h>
 
 static int is_batch_mode = false;
 
@@ -74,6 +75,24 @@ static int cmd_info(char *args){
   return 0;
 }
 
+static int cmd_x(char *args){
+  char *N = strtok(NULL," ");  
+  char *EXPR = strtok(NULL," "); 
+  int n;
+  paddr_t address;
+  sscanf(N,"%d",&n);
+  sscanf(EXPR, "%x", &address);  
+  int len = 4;
+  int i;
+  for(i = 0;i < n;i++){
+    word_t data ;
+    data = pmem_read(address, len);
+    printf("0x%016ld\n", data);  
+    address = address + 32;
+  }
+  return 0;  
+}
+
 static struct {
   const char *name;
   const char *description;
@@ -82,8 +101,9 @@ static struct {
   { "help", "Display informations about all supported commands", cmd_help },
   { "c", "Continue the execution of the program", cmd_c },
   { "q", "Exit NEMU", cmd_q },
-  { "si", "Single step execution", cmd_si },
-  { "info", "Print program status", cmd_info},
+  { "si", "Single step execution 单步执行", cmd_si },
+  { "info", "Print program status 打印程序状态", cmd_info},
+  { "x","Scan memory 扫描内存", cmd_x},
 
   /* TODO: Add more commands */
 
