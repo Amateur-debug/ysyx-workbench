@@ -21,7 +21,7 @@
 #include <regex.h>
 
 enum {
-  TK_NOTYPE = 256, TK_EQ,
+  TK_NOTYPE = 256, TK_EQ, TK_NUMBER,
 
   /* TODO: Add more token types */
 
@@ -36,9 +36,15 @@ static struct rule {
    * Pay attention to the precedence level of different rules.
    */
 
-  {" +", TK_NOTYPE},    // spaces
-  {"\\+", '+'},         // plus
-  {"==", TK_EQ},        // equal
+  {" +", TK_NOTYPE},          // spaces
+  {"\\+", '+'},               // plus
+  {"==", TK_EQ},              // equal
+  {"-", '-'},                 // minus 
+  {"\\*", '*'},                // times
+  {"\\/", '/'},                // divided
+  {"\\(", '('},                // (
+  {"\\)", ')'},                // )
+  {"\b[0-9]+\b", TK_NUMBER},  // decimal integer
 };
 
 #define NR_REGEX ARRLEN(rules)
@@ -73,6 +79,7 @@ static int nr_token __attribute__((used))  = 0;
 static bool make_token(char *e) {
   int position = 0;
   int i;
+  int j = 0;
   regmatch_t pmatch;
 
   nr_token = 0;
@@ -95,9 +102,18 @@ static bool make_token(char *e) {
          */
 
         switch (rules[i].token_type) {
+          case TK_NOTYPE: break;
+          case '+': tokens[j].type = '+'; break;
+          case TK_EQ: tokens[j].type = TK_EQ; break;
+          case '-': tokens[j].type = '-'; break;
+          case '*': tokens[j].type = '*'; break;
+          case '/': tokens[j].type = '/'; break;
+          case '(': tokens[j].type = '('; break;
+          case ')': tokens[j].type = ')'; break;
+          case TK_NUMBER: tokens[j].type = TK_NUMBER; strncpy(tokens[j].str, substr_start, substr_len + 1);
           default: TODO();
         }
-
+        j++;
         break;
       }
     }
