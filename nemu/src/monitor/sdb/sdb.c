@@ -97,9 +97,8 @@ static int cmd_p(char *args){
     extern int nr_token;
     int num = eval(0, nr_token);
     printf("%s = %d", args, num);
-    return 0;
   }
-  else return 0;
+  return 0;
 }
 
 static struct {
