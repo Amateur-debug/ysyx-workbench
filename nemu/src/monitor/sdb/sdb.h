@@ -18,6 +18,8 @@
 
 #include <common.h>
 
-word_t expr(char *e, bool *success);
+word_t expr(char *e, bool *success); 
+bool make_token(char *e);
+uint32_t eval(int p, int q);
 
 #endif

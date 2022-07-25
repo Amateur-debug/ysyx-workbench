@@ -48,7 +48,6 @@ static int cmd_c(char *args) {
   return 0;
 }
 
-
 static int cmd_q(char *args) {
   return -1;
 }
@@ -93,6 +92,16 @@ static int cmd_x(char *args){
   return 0;  
 }
 
+static int cmd_p(char *args){
+  if(make_token(args) == true){
+    extern int nr_token;
+    int num = eval(0, nr_token);
+    printf("%s = %d", args, num);
+    return 0;
+  }
+  else return 0;
+}
+
 static struct {
   const char *name;
   const char *description;
@@ -102,8 +111,9 @@ static struct {
   { "c", "Continue the execution of the program", cmd_c },
   { "q", "Exit NEMU", cmd_q },
   { "si", "Single step execution 单步执行", cmd_si },
-  { "info", "Print program status 打印程序状态", cmd_info},
-  { "x","Scan memory 扫描内存", cmd_x},
+  { "info", "Print program status 打印程序状态", cmd_info },
+  { "x", "Scan memory 扫描内存", cmd_x},
+  { "p", "表达式求值", cmd_p },
 
   /* TODO: Add more commands */
 
