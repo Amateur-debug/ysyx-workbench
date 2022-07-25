@@ -111,8 +111,7 @@ bool make_token(char *e) {
           case '/': tokens[nr_token].type = '/'; nr_token++; break;
           case '(': tokens[nr_token].type = '('; nr_token++; break;
           case ')': tokens[nr_token].type = ')'; nr_token++; break;
-          case TK_NUMBER: tokens[nr_token].type = TK_NUMBER; strncpy(tokens[nr_token].str, substr_start, substr_len); 
-          tokens[nr_token].str[substr_len] = '\0'; nr_token++; break;
+          case TK_NUMBER: tokens[nr_token].type = TK_NUMBER; strncpy(tokens[nr_token].str, substr_start, substr_len); tokens[nr_token].str[substr_len] = '\0'; nr_token++; break;
           default: printf("position = %d", position); assert(0);
         }
 
