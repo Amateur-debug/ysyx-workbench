@@ -19,6 +19,8 @@
  * Type 'man regex' for more information about POSIX regex functions.
  */
 #include <regex.h>
+#include <string.h>
+#include <stdbool.h>
 
 enum {
   TK_NOTYPE = 256, TK_EQ, TK_NUMBER,
@@ -40,10 +42,10 @@ static struct rule {
   {"\\+", '+'},               // plus
   {"==", TK_EQ},              // equal
   {"-", '-'},                 // minus 
-  {"\\*", '*'},                // times
-  {"\\/", '/'},                // divided
-  {"\\(", '('},                // (
-  {"\\)", ')'},                // )
+  {"\\*", '*'},               // times
+  {"\\/", '/'},               // divided
+  {"\\(", '('},               // (
+  {"\\)", ')'},               // )
   {"\b[0-9]+\b", TK_NUMBER},  // decimal integer
 };
 
@@ -79,7 +81,6 @@ static int nr_token __attribute__((used))  = 0;
 static bool make_token(char *e) {
   int position = 0;
   int i;
-  int j = 0;
   regmatch_t pmatch;
 
   nr_token = 0;
@@ -103,17 +104,18 @@ static bool make_token(char *e) {
 
         switch (rules[i].token_type) {
           case TK_NOTYPE: break;
-          case '+': tokens[j].type = '+'; break;
-          case TK_EQ: tokens[j].type = TK_EQ; break;
-          case '-': tokens[j].type = '-'; break;
-          case '*': tokens[j].type = '*'; break;
-          case '/': tokens[j].type = '/'; break;
-          case '(': tokens[j].type = '('; break;
-          case ')': tokens[j].type = ')'; break;
-          case TK_NUMBER: tokens[j].type = TK_NUMBER; strncpy(tokens[j].str, substr_start, substr_len + 1);
-          default: TODO();
+          case '+': tokens[nr_token].type = '+'; nr_token++; break;
+          case TK_EQ: tokens[nr_token].type = TK_EQ; nr_token++; break;
+          case '-': tokens[nr_token].type = '-'; nr_token++; break;
+          case '*': tokens[nr_token].type = '*'; nr_token++; break;
+          case '/': tokens[nr_token].type = '/'; nr_token++; break;
+          case '(': tokens[nr_token].type = '('; nr_token++; break;
+          case ')': tokens[nr_token].type = ')'; nr_token++; break;
+          case TK_NUMBER: tokens[nr_token].type = TK_NUMBER; strncpy(tokens[nr_token].str, substr_start, substr_len); 
+          tokens[nr_token].str[substr_len] = '\0'; nr_token++; break;
+          default: printf("position = %d", position); assert(0);
         }
-        j++;
+
         break;
       }
     }
@@ -123,7 +125,6 @@ static bool make_token(char *e) {
       return false;
     }
   }
-
   return true;
 }
 
@@ -135,7 +136,117 @@ word_t expr(char *e, bool *success) {
   }
 
   /* TODO: Insert codes to evaluate the expression. */
-  TODO();
+  ;
 
   return 0;
 }
+
+struct OP{
+  int po;
+  int type;
+}; //主运算符possision and type
+
+int check_parentheses(int p, int q);
+struct OP search_main_operator(int p, int q);
+
+uint32_t eval(int p, int q) {
+  if (p > q) {
+    assert(0);
+  }
+  else if (p == q) {
+    /* Single token.
+     * For now this token should be a number.
+     * Return the value of the number.
+     */
+    int len = strlen(tokens[p].str);
+    uint32_t num = 0;
+    int i;
+    for(i = 0 ;i <len; i++){
+      num *= 10;
+      num += tokens[p].str[i] - '0';
+    }
+    return num; 
+  }
+  else if (check_parentheses(p, q) == true) {
+    /* The expression is surrounded by a matched pair of parentheses.
+     * If that is the case, just throw away the parentheses.
+     */
+    return eval(p + 1, q - 1);
+  }
+  else {
+    struct OP op = search_main_operator(p, q);
+    uint32_t val1 = eval(p, op.po - 1);
+    uint32_t val2 = eval(op.po + 1, q);
+
+    switch (op.type) {
+      case '+': return val1 + val2;
+      case '-': return val1 - val2;
+      case '*': return val1 * val2;
+      case '/': return val1 / val2;
+      default: assert(0);
+    }
+  }
+}
+
+int check_parentheses(int p, int q){
+  int i;
+  int j = 0;
+  int k = 0;
+  if(tokens[p].type == '(' && tokens[q].type == ')'){
+    for (i = p; i <= q ; i++){
+      if(tokens[i].type == '(')
+        j++;
+      if(tokens[i].type == ')')
+        k++;
+      if(j < k){
+        printf("表达式不符合语法");
+        assert(0);
+      }
+      if(j == k && i!= q )
+        return false;
+      if(j == k && i == q)
+        return true;
+      else{
+        printf("表达式不符合语法");
+        assert(0);
+      }
+    }
+    return false;
+  }
+  else return false;
+}
+
+struct OP search_main_operator(int p, int q){
+  struct OP op;
+  int i;
+  int j = 0;   //标志括号出现的次数，'('加一，')'减一
+
+  for(i = p; i <= q; i++){
+    if(tokens[i].type == '(')
+      j++;
+    if(tokens[i].type == '(')
+      j--;
+    if(tokens[i].type == '+' && j == 0){
+      op.po = i; 
+      op.type = '+';
+      return op;
+    }
+    if(tokens[i].type == '-' && j == 0){
+      op.po = i; 
+      op.type = '-';
+      return op;
+    }
+    if(tokens[i].type == '*' && j == 0){
+      op.po = i; 
+      op.type = '*';
+    }
+    if(tokens[i].type == '/' && j == 0){
+      op.po = i; 
+      op.type = '/';
+    }
+  }
+  return op;
+}
+
+
+
