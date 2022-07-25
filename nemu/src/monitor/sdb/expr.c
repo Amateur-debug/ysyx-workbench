@@ -111,7 +111,7 @@ bool make_token(char *e) {
           case '/': tokens[nr_token].type = '/'; nr_token++; break;
           case '(': tokens[nr_token].type = '('; nr_token++; break;
           case ')': tokens[nr_token].type = ')'; nr_token++; break;
-          case TK_NUMBER: tokens[nr_token].type = TK_NUMBER; strncpy(tokens[nr_token].str, substr_start, substr_len); nr_token++; break;
+          case TK_NUMBER: tokens[nr_token].type = TK_NUMBER; strncpy(tokens[nr_token].str, substr_start, substr_len); tokens[nr_token].str[substr_len] = '\0'; nr_token++; break;
           default: printf("position = %d", position); assert(0);
         }
 
@@ -198,17 +198,12 @@ int check_parentheses(int p, int q){
       if(tokens[i].type == ')')
         k++;
       if(j < k){
-        printf("表达式不符合语法");
         assert(0);
       }
-      if(j == k && i!= q )
+      if(j == k && i != q )
         return false;
       if(j == k && i == q)
         return true;
-      else{
-        printf("表达式不符合语法");
-        assert(0);
-      }
     }
     return false;
   }
