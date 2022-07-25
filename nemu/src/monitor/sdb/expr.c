@@ -151,7 +151,7 @@ struct OP search_main_operator(int p, int q);
 
 uint32_t eval(int p, int q) {
   if (p > q) {
-    return false;
+    assert(0);
   }
   else if (p == q) {
     /* Single token.
@@ -224,7 +224,7 @@ struct OP search_main_operator(int p, int q){
   for(i = p; i <= q; i++){
     if(tokens[i].type == '(')
       j++;
-    if(tokens[i].type == '(')
+    if(tokens[i].type == ')')
       j--;
     if(tokens[i].type == '+' && j == 0){
       op.po = i; 
