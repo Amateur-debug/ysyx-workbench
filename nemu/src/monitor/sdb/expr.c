@@ -179,10 +179,10 @@ uint32_t eval(int p, int q) {
     uint32_t val2 = eval(op.po + 1, q);
 
     switch (op.type) {
-      case '+': return val1 + val2;
-      case '-': return val1 - val2;
-      case '*': return val1 * val2;
-      case '/': return val1 / val2;
+      case '+': return (val1 + val2);
+      case '-': return (val1 - val2);
+      case '*': return (val1 * val2);
+      case '/': return (val1 / val2);
       default: assert(0);
     }
   }
