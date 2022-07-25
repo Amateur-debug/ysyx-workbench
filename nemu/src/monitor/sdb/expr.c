@@ -151,7 +151,7 @@ struct OP search_main_operator(int p, int q);
 
 uint32_t eval(int p, int q) {
   if (p > q) {
-    assert(0);
+    return false;
   }
   else if (p == q) {
     /* Single token.
