@@ -95,7 +95,7 @@ static int cmd_x(char *args){
 static int cmd_p(char *args){
   if(make_token(args) == true){
     extern int nr_token;
-    int num = eval(1, nr_token);
+    int num = eval(0, nr_token);
     printf("%s = %d", args, num);
   }
   return 0;
