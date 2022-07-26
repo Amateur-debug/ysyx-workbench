@@ -46,8 +46,8 @@ static struct rule {
   {"\\/", '/'},                 // divided
   {"\\(", '('},                 // (
   {"\\)", ')'},                 // )
-  {"\\b[0-9]+\\b", TK_NUMBER},  // decimal integer
-  {"\\b0x[0-9A-Z]+\\b", TK_HEX},   // hexadecimal-number
+  {"\\b[0-9]+\\b", TK_NUMBER},  // decimal-number
+  {"\\b0x[0-9A-Z]+\\b", TK_HEX},// hexadecimal-number
   {"\\$[a-z0-9]+\\b", TK_REG},  // reg
   {"!=", TK_NEQ},               // not equal
   {"&{2}", TK_AND},             // and
@@ -308,7 +308,7 @@ struct OP search_main_operator(int p, int q){
       op.type = '/';
       n++;
     }
-    if(tokens[i].type == '/' && j == 0 && k == 0 && s == 0 && m == 0 && m == 0){
+    if(tokens[i].type == '/' && j == 0 && k == 0 && s == 0 && m == 0 && n == 0){
       op.po = i; 
       op.type = TK_POINT;
     }
