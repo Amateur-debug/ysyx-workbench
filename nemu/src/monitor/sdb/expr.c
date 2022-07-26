@@ -153,6 +153,7 @@ word_t expr(char *e, bool *success) {
       if (tokens[i].type == '*' && (i == 0 || tokens[i - 1].type != ')' || tokens[i - 1].type != TK_NUMBER || tokens[i - 1].type != TK_HEX || tokens[i - 1].type != TK_REG ) ) {
         tokens[i].type = TK_POINT;
       }
+      else *success = false;
     }
     *success = true;
     return 0;
