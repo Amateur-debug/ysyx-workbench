@@ -165,7 +165,7 @@ struct OP{
 int check_parentheses(int p, int q);
 struct OP search_main_operator(int p, int q);
 
-uint32_t eval(int p, int q) {
+uint64_t eval(int p, int q) {
   if (p > q) {
     assert(0);
   }
@@ -175,7 +175,7 @@ uint32_t eval(int p, int q) {
      * Return the value of the number.
      */
     int len = strlen(tokens[p].str);
-    uint32_t num = 0;
+    uint64_t num = 0;
     int i;
 
     if(tokens[p].type == TK_NUMBER){
@@ -214,13 +214,13 @@ uint32_t eval(int p, int q) {
     struct OP op = search_main_operator(p, q);
     if(op.type == TK_POINT){
       uint64_t a = eval(op.po + 1, q);
-      uint32_t *b = NULL;
-      b = (uint32_t *) a;
+      uint64_t *b = NULL;
+      b = (uint64_t *) a;
       return *b;
     }
     else{
-      uint32_t val1 = eval(p, op.po - 1);
-      uint32_t val2 = eval(op.po + 1, q);
+      uint64_t val1 = eval(p, op.po - 1);
+      uint64_t val2 = eval(op.po + 1, q);
 
       switch (op.type) {
         case '+': return (val1 + val2);
