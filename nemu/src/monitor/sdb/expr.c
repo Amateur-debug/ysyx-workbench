@@ -308,7 +308,7 @@ struct OP search_main_operator(int p, int q){
       op.type = '/';
       n++;
     }
-    if(tokens[i].type == '/' && j == 0 && k == 0 && s == 0 && m == 0 && n == 0){
+    if(tokens[i].type == TK_POINT && j == 0 && k == 0 && s == 0 && m == 0 && n == 0){
       op.po = i; 
       op.type = TK_POINT;
     }
