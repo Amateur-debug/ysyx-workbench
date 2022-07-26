@@ -149,7 +149,7 @@ word_t expr(char *e) {
   else{
     int i;
     for (i = 0; i < nr_token; i ++) {
-      if (tokens[i].type == '*' && (i == 0 || tokens[i - 1].type != ')' || tokens[i - 1].type != TK_NUMBER || tokens[i - 1].type != TK_HEX || tokens[i - 1].type != TK_REG ) ) {
+      if (tokens[i].type == '*' && (i == 0 || tokens[i - 1].type == '(' || tokens[i - 1].type == '+' || tokens[i - 1].type == '-' || tokens[i - 1].type == '*' || tokens[i - 1].type == '/' || tokens[i - 1].type == TK_AND || tokens[i - 1].type == TK_EQ || tokens[i - 1].type == TK_NEQ ) ) {
         tokens[i].type = TK_POINT;
       }
     }
