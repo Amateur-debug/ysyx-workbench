@@ -23,7 +23,7 @@
 #include <stdbool.h>
 
 enum {
-  TK_NOTYPE = 256, TK_EQ, TK_NUMBER,
+  TK_NOTYPE = 256, TK_EQ, TK_NUMBER, TK_HEX, TK_REG ,TK_NEQ,TK_AND, TK_POINT
 
   /* TODO: Add more token types */
 
@@ -38,15 +38,20 @@ static struct rule {
    * Pay attention to the precedence level of different rules.
    */
 
-  {" +", TK_NOTYPE},          // spaces
-  {"\\+", '+'},               // plus
-  {"==", TK_EQ},              // equal
-  {"-", '-'},                 // minus 
-  {"\\*", '*'},               // times
-  {"\\/", '/'},               // divided
-  {"\\(", '('},               // (
-  {"\\)", ')'},               // )
+  {" +", TK_NOTYPE},            // spaces
+  {"\\+", '+'},                 // plus
+  {"==", TK_EQ},                // equal
+  {"-", '-'},                   // minus 
+  {"\\*", '*'},                 // times or point
+  {"\\/", '/'},                 // divided
+  {"\\(", '('},                 // (
+  {"\\)", ')'},                 // )
   {"\\b[0-9]+\\b", TK_NUMBER},  // decimal integer
+  {"\\b0x[0-9]+\\b", TK_HEX},   // hexadecimal-number
+  {"\\$[a-z0-9]+\\b", TK_REG},  // reg
+  {"!=", TK_NEQ},               // not equal
+  {"&{2}", TK_AND},             // and
+
 };
 
 #define NR_REGEX ARRLEN(rules)
@@ -111,7 +116,14 @@ bool make_token(char *e) {
           case '/': tokens[nr_token].type = '/'; nr_token++; break;
           case '(': tokens[nr_token].type = '('; nr_token++; break;
           case ')': tokens[nr_token].type = ')'; nr_token++; break;
-          case TK_NUMBER: tokens[nr_token].type = TK_NUMBER; strncpy(tokens[nr_token].str, substr_start, substr_len); tokens[nr_token].str[substr_len] = '\0'; nr_token++; break;
+          case TK_NUMBER: tokens[nr_token].type = TK_NUMBER; strncpy(tokens[nr_token].str, substr_start, substr_len);
+                          tokens[nr_token].str[substr_len] = '\0'; nr_token++; break;   
+          case TK_HEX: tokens[nr_token].type = TK_HEX; strncpy(tokens[nr_token].str, substr_start, substr_len);
+                       tokens[nr_token].str[substr_len] = '\0'; nr_token++; break;
+          case TK_REG: tokens[nr_token].type = TK_REG; strncpy(tokens[nr_token].str, substr_start, substr_len);
+                       tokens[nr_token].str[substr_len] = '\0'; nr_token++; break;
+          case TK_NEQ: tokens[nr_token].type = TK_NEQ; nr_token++; break;
+          case TK_AND: tokens[nr_token].type = TK_AND; nr_token++; break;     
           default: printf("position = %d", position); assert(0);
         }
 
@@ -135,9 +147,16 @@ word_t expr(char *e, bool *success) {
   }
 
   /* TODO: Insert codes to evaluate the expression. */
-  ;
-
-  return 0;
+  else{
+    int i;
+    for (i = 0; i < nr_token; i ++) {
+      if (tokens[i].type == '*' && (i == 0 || tokens[i - 1].type != ')' || tokens[i - 1].type != TK_NUMBER || tokens[i - 1].type != TK_HEX || tokens[i - 1].type != TK_REG ) ) {
+        tokens[i].type = TK_POINT;
+      }
+    }
+    *success = true;
+    return 0;
+  }
 }
 
 struct OP{
@@ -160,11 +179,32 @@ uint32_t eval(int p, int q) {
     int len = strlen(tokens[p].str);
     uint32_t num = 0;
     int i;
-    for(i = 0 ;i <len; i++){
+
+    if(tokens[p].type == TK_NUMBER){
+      for(i = 0 ;i < len; i++){
       num *= 10;
       num += tokens[p].str[i] - '0';
+      }
+      return num; 
     }
-    return num; 
+    else if(tokens[p].type == TK_HEX){
+      for(i = 2 ;i < len; i++){
+          num *= 16;
+        if(tokens[p].str[i] >= 'A')
+          num += tokens[p].str[i] - 'A' + 10;
+        else 
+          num += tokens[p].str[i] - '0';
+      }
+      return num;
+    }
+    else if(tokens[p].type == TK_REG){
+      bool *success = NULL;
+      num = isa_reg_str2val(tokens[p].str + 1, success);
+      return num;
+    }
+    else{
+      assert(0);
+    } 
   }
   else if (check_parentheses(p, q) == true) {
     /* The expression is surrounded by a matched pair of parentheses.
@@ -174,15 +214,26 @@ uint32_t eval(int p, int q) {
   }
   else {
     struct OP op = search_main_operator(p, q);
-    uint32_t val1 = eval(p, op.po - 1);
-    uint32_t val2 = eval(op.po + 1, q);
+    if(op.type == TK_POINT){
+      uint64_t a = eval(op.po + 1, q);
+      uint32_t *b = NULL;
+      b = (uint32_t *) a;
+      return *b;
+    }
+    else{
+      uint32_t val1 = eval(p, op.po - 1);
+      uint32_t val2 = eval(op.po + 1, q);
 
-    switch (op.type) {
-      case '+': return (val1 + val2);
-      case '-': return (val1 - val2);
-      case '*': return (val1 * val2);
-      case '/': return (val1 / val2);
-      default: assert(0);
+      switch (op.type) {
+        case '+': return (val1 + val2);
+        case '-': return (val1 - val2);
+        case '*': return (val1 * val2);
+        case '/': return (val1 / val2);
+        case TK_AND: return (val1 && val2);
+        case TK_EQ: return (val1 == val2);
+        case TK_NEQ: return (val1 != val2);
+        default: assert(0);
+      }
     }
   }
 }
@@ -214,29 +265,54 @@ struct OP search_main_operator(int p, int q){
   struct OP op;
   int i;
   int j = 0;   //标志括号出现的次数，'('加一，')'减一
+  int k = 0;   //标志括 && 出现的次数
+  int s = 0;   //标志 == 和 != 出现的次数
+  int m = 0;   //标志 + 和 - 出现的次数
+  int n = 0;   //标志 * 和 / 出现的次数
 
   for(i = p; i <= q; i++){
     if(tokens[i].type == '(')
       j++;
     if(tokens[i].type == ')')
       j--;
-    if(tokens[i].type == '+' && j == 0){
+    if(tokens[i].type == TK_AND && j == 0){
+      op.po = i; 
+      op.type = TK_AND;
+      k++;
+    }
+    if(tokens[i].type == TK_EQ  && j == 0 && k == 0){
+      op.po = i; 
+      op.type = TK_EQ;
+      s++;
+    }
+    if(tokens[i].type == TK_NEQ && j == 0 && k == 0){
+      op.po = i; 
+      op.type = TK_NEQ;
+      s++;
+    }
+    if(tokens[i].type == '+' && j == 0 && k == 0 && s == 0){
       op.po = i; 
       op.type = '+';
-      return op;
+      m++;
     }
-    if(tokens[i].type == '-' && j == 0){
+    if(tokens[i].type == '-' && j == 0 && k == 0 && s == 0){
       op.po = i; 
       op.type = '-';
-      return op;
+      m++;
     }
-    if(tokens[i].type == '*' && j == 0){
+    if(tokens[i].type == '*' && j == 0 && k == 0 && s == 0 && m == 0){
       op.po = i; 
       op.type = '*';
+      n++;
     }
-    if(tokens[i].type == '/' && j == 0){
+    if(tokens[i].type == '/' && j == 0 && k == 0 && s == 0 && m == 0){
       op.po = i; 
       op.type = '/';
+      n++;
+    }
+    if(tokens[i].type == '/' && j == 0 && k == 0 && s == 0 && m == 0 && m == 0){
+      op.po = i; 
+      op.type = TK_POINT;
     }
   }
   return op;
