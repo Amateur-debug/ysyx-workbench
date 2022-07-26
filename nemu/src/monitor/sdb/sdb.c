@@ -93,8 +93,7 @@ static int cmd_x(char *args){
 }
 
 static int cmd_p(char *args){
-  bool *success = NULL;
-  if(expr(args, success) == 0 ){
+  if(expr(args) == 0 ){
     extern int nr_token;
     int num = eval(0, nr_token - 1);
     printf("%s = %d\n", args, num);
