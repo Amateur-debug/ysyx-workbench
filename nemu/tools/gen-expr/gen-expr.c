@@ -33,11 +33,16 @@ static char *code_format =
 
 static int position = 0;
 
+uint32_t choose(uint32_t n){
+  uint32_t num = rand()%n;
+  return num;
+}
+
 static void gen_num(){
   int i;
-  int j = rand();
+  int j = choose(8);
   for(i = 0; i <= j; i++){
-    buf[position] = (char)(rand()%10 + '0');
+    buf[position] = (char)(choose(10) + '0');
     position++;
   }
 }
@@ -61,11 +66,14 @@ static void gen_rand_op(){
 }
 
 static void gen_rand_expr() {
-  switch (choose(3)) {
-    case 0: gen_num(); break;
-    case 1: gen('('); gen_rand_expr(); gen(')'); break;
-    default: gen_rand_expr(); gen_rand_op(); gen_rand_expr(); break;
+  if(position <=65533){
+    switch (choose(3)) {
+      case 0: gen_num(); break;
+      case 1: gen('('); gen_rand_expr(); gen(')'); break;
+      default: gen_rand_expr(); gen_rand_op(); gen_rand_expr(); break;
+    }
   }
+  else 
 }
 
 int main(int argc, char *argv[]) {
@@ -93,7 +101,8 @@ int main(int argc, char *argv[]) {
     assert(fp != NULL);
 
     int result;
-    fscanf(fp, "%d", &result);
+    if(fscanf(fp, "%d", &result) == EOF)
+      assert(0);
     pclose(fp);
 
     printf("%u %s\n", result, buf);
