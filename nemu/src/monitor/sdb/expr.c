@@ -214,7 +214,7 @@ uint64_t eval(int p, int q) {
   else {
     struct OP op = search_main_operator(p, q);
     if(op.type == TK_POINT){
-      return pmem_read(eval(op.po + 1, q), 4);
+      return pmem_read(eval(op.po + 1, q), 1);
     }
     else{
       uint64_t val1 = eval(p, op.po - 1);
