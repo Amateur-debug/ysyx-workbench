@@ -21,6 +21,7 @@
 #include <regex.h>
 #include <string.h>
 #include <stdbool.h>
+#include <memory/paddr.h>
 
 enum {
   TK_NOTYPE = 256, TK_EQ, TK_NUMBER, TK_HEX, TK_REG ,TK_NEQ,TK_AND, TK_POINT
@@ -213,10 +214,7 @@ uint64_t eval(int p, int q) {
   else {
     struct OP op = search_main_operator(p, q);
     if(op.type == TK_POINT){
-      uint64_t a = eval(op.po + 1, q);
-      uint64_t *b = NULL;
-      b = (uint64_t *) a;
-      return *b;
+      return pmem_read(eval(op.po + 1, q), 4);
     }
     else{
       uint64_t val1 = eval(p, op.po - 1);
