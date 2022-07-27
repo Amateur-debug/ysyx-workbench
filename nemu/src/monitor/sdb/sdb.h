@@ -18,8 +18,22 @@
 
 #include <common.h>
 
+#define NR_WP 32
+
+typedef struct watchpoint {
+  int NO;
+  char *experence;
+  uint64_t num;
+  struct watchpoint *next;
+
+  /* TODO: Add more members if necessary */
+
+} WP;
+
 word_t expr(char *e); 
 bool make_token(char *e);
 uint32_t eval(int p, int q);
+WP* new_wp(char *EXPR);
+
 
 #endif

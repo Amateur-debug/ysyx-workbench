@@ -21,6 +21,8 @@
 #include <memory/paddr.h>
 
 static int is_batch_mode = false;
+WP *pool[NR_WP] = {};
+int wp_number = 0;
 
 void init_regex();
 void init_wp_pool();
@@ -101,6 +103,12 @@ static int cmd_p(char *args){
   return 0;
 }
 
+static int cmd_w(char *args){
+  pool[wp_number] = new_wp(args);
+  wp_number++;
+  return 0;
+}
+
 static struct {
   const char *name;
   const char *description;
@@ -113,6 +121,7 @@ static struct {
   { "info", "Print program status 打印程序状态", cmd_info },
   { "x", "Scan memory 扫描内存", cmd_x},
   { "p", "表达式求值", cmd_p },
+  { "w", "set watchpoint", cmd_w},
 
   /* TODO: Add more commands */
 
