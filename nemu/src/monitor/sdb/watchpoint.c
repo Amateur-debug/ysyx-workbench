@@ -35,12 +35,12 @@ WP* new_wp(char *EXPR){
     assert(0);
   }
   else{
-    WP *a = head;
+    WP *A = head;
     head = free_;
     free_ = free_->next;
-    head->next = a;
+    head->next = A;
   }
-  head->experence = EXPR;
+  strcpy(head->experence, EXPR);
   if(expr(EXPR) == 0 ){
     extern int nr_token;
     head->num = eval(0, nr_token - 1);
