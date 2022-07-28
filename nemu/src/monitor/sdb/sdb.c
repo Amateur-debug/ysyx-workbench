@@ -22,7 +22,7 @@
 
 static int is_batch_mode = false;
 static int wp_number = 0;
-static WP *a = NULL;
+static WP *HEAD = NULL;
 
 void init_regex();
 void init_wp_pool();
@@ -71,7 +71,7 @@ static int cmd_info(char *args){
   }
   else if(strcmp(SUBCMD[1], args) == 0){
     int i;
-    WP *b = a;
+    WP *b = HEAD;
     for(i = 0; i < NR_WP; i++){
       if(b == NULL){
         break;
@@ -114,8 +114,8 @@ static int cmd_p(char *args){
 }
 
 static int cmd_w(char *args){
-  a = new_wp(args);
-  a->NO = wp_number + 1;
+  HEAD = new_wp(args);
+  HEAD->NO = wp_number + 1;
   wp_number++;
   return 0;
 }
@@ -125,17 +125,17 @@ static int cmd_d(char *args){
   int i;
   sscanf(args,"%d",&N);
   for(i = 0; i < NR_WP; i++){
-    if(a == NULL){
+    if(HEAD == NULL){
       assert(0);
     }
-    else if(a->NO == N){
+    else if(HEAD->NO == N){
       break;
     }
     else{
-      a = a->next;
+      HEAD = HEAD->next;
     }
   }
-  a = free_wp(a);
+  HEAD = free_wp(HEAD);
   return 0;
 }
 
