@@ -71,8 +71,15 @@ static int cmd_info(char *args){
   }
   else if(strcmp(SUBCMD[1], args) == 0){
     int i;
+    WP *b = a;
     for(i = 0; i < NR_WP; i++){
-      printf("监视点%d    %s", a->NO, a->experence);
+      if(b == NULL){
+        break;
+      }
+      else{
+        printf("监视点%d    %s\n", a->NO, a->experence);
+        b = b->next;
+      }
     }
   }
   else printf("Unknown option \"%s\"\n",args);
