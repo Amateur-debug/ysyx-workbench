@@ -40,7 +40,7 @@ WP* new_wp(char *EXPR){
     free_ = free_->next;
     head->next = A;
   }
-  strcpy(head->experence, EXPR);
+  head->experence = EXPR;
   if(expr(EXPR) == 0 ){
     extern int nr_token;
     head->num = eval(0, nr_token - 1);
