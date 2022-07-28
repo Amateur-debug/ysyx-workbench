@@ -37,6 +37,5 @@ word_t isa_reg_str2val(const char *s, bool *success) {
       break;
     }
   }
-  *success = true;
   return cpu.gpr[i];
 }
