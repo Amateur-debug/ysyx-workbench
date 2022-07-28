@@ -52,8 +52,8 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
           HEAD = HEAD->next;
         }
       }
-    else break;
     }
+    else break;
   }
 #endif
 }
