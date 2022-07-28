@@ -22,7 +22,7 @@
 
 typedef struct watchpoint {
   int NO;
-  char *experence;
+  char experence[40];
   uint64_t num;
   struct watchpoint *next;
 } WP;
