@@ -22,7 +22,7 @@
 
 static int is_batch_mode = false;
 static int wp_number = 0;
-static WP *HEAD = NULL;
+WP *HEAD = NULL;
 
 void init_regex();
 void init_wp_pool();
