@@ -48,11 +48,12 @@ WP* new_wp(char *EXPR){
   return head;
 }
 
-void free_wp(WP *wp){
+WP* free_wp(WP *wp){
   if(wp == head){
     head = head->next;
     wp->next = free_;
     free_ = wp;
+    return head;
   }
   else{
     int i;
@@ -66,6 +67,7 @@ void free_wp(WP *wp){
       }
       else b = b->next;
     }
+    return head;
   }
 }
 
