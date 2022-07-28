@@ -77,7 +77,7 @@ static int cmd_info(char *args){
         break;
       }
       else{
-        printf("监视点%d\t%s\n", b->NO, args);
+        printf("监视点%d\t%s\n", b->NO, b->experence);
         b = b->next;
       }
     }

@@ -41,7 +41,7 @@ WP* new_wp(char *EXPR){
     head = free_;
     free_ = free_->next;
     head->next = A;
-    head->experence = EXPR;
+    strcpy(head->experence, EXPR);
   }
   if(expr(EXPR) == 0 ){
     extern int nr_token;
