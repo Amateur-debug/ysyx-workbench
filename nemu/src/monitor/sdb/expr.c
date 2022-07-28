@@ -197,7 +197,8 @@ uint64_t eval(int p, int q) {
       return num;
     }
     else if(tokens[p].type == TK_REG){
-      bool *success = NULL;
+      bool a = false;
+      bool *success = &a;
       num = isa_reg_str2val(tokens[p].str + 1, success);
       return num;
     }
