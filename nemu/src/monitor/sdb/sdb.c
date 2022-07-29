@@ -97,7 +97,7 @@ static int cmd_x(char *args){
   int i;
   for(i = 0;i < n;i++){
     word_t data ;
-    data = pmem_read(address, len);
+    data = paddr_read(address, len);
     printf("0x%016lx\n", data);  
     address = address + 4;
   }
