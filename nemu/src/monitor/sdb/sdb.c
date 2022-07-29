@@ -18,8 +18,11 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include "sdb.h"
+#include <memory/paddr.h>
 
 static int is_batch_mode = false;
+static int wp_number = 0;
+WP *HEAD = NULL;
 
 void init_regex();
 void init_wp_pool();
@@ -47,12 +50,94 @@ static int cmd_c(char *args) {
   return 0;
 }
 
-
 static int cmd_q(char *args) {
   return -1;
 }
 
 static int cmd_help(char *args);
+
+static int cmd_si(char *args) {
+  int steps;
+  if(args == NULL){ steps = 1; }
+  else sscanf(args,"%d",&steps);
+  cpu_exec(steps);
+  return 0;
+}
+
+static int cmd_info(char *args){
+  char *SUBCMD[] = { "r", "w" };
+  if(strcmp(SUBCMD[0], args) == 0){
+    isa_reg_display();
+  }
+  else if(strcmp(SUBCMD[1], args) == 0){
+    int i;
+    WP *b = HEAD;
+    for(i = 0; i < NR_WP; i++){
+      if(b == NULL){
+        break;
+      }
+      else{
+        printf("监视点%d\t%s\n", b->NO, b->experence);
+        b = b->next;
+      }
+    }
+  }
+  else printf("Unknown option \"%s\"\n",args);
+  return 0;
+}
+
+static int cmd_x(char *args){
+  char *N = strtok(NULL," ");  
+  char *EXPR = strtok(NULL," "); 
+  int n;
+  paddr_t address;
+  sscanf(N,"%d",&n);
+  sscanf(EXPR, "%x", &address);  
+  int len = 4;
+  int i;
+  for(i = 0;i < n;i++){
+    word_t data ;
+    data = pmem_read(address, len);
+    printf("0x%016lx\n", data);  
+    address = address + 4;
+  }
+  return 0;  
+}
+
+static int cmd_p(char *args){
+  if(expr(args) == 0 ){
+    extern int nr_token;
+    int num = eval(0, nr_token - 1);
+    printf("%s = %d\n", args, num);
+  }
+  return 0;
+}
+
+static int cmd_w(char *args){
+  HEAD = new_wp(args);
+  HEAD->NO = wp_number + 1;
+  wp_number++;
+  return 0;
+}
+
+static int cmd_d(char *args){
+  int N;
+  int i;
+  sscanf(args,"%d",&N);
+  for(i = 0; i < NR_WP; i++){
+    if(HEAD == NULL){
+      assert(0);
+    }
+    else if(HEAD->NO == N){
+      break;
+    }
+    else{
+      HEAD = HEAD->next;
+    }
+  }
+  HEAD = free_wp(HEAD);
+  return 0;
+}
 
 static struct {
   const char *name;
@@ -62,6 +147,12 @@ static struct {
   { "help", "Display informations about all supported commands", cmd_help },
   { "c", "Continue the execution of the program", cmd_c },
   { "q", "Exit NEMU", cmd_q },
+  { "si", "Single step execution 单步执行", cmd_si },
+  { "info", "Print program status 打印程序状态", cmd_info },
+  { "x", "Scan memory 扫描内存", cmd_x},
+  { "p", "表达式求值", cmd_p },
+  { "w", "set watchpoint", cmd_w},
+  { "d", "delte watchpoint", cmd_d},
 
   /* TODO: Add more commands */
 
