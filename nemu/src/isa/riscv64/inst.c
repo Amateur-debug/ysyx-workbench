@@ -41,7 +41,12 @@ static word_t immJ(uint32_t i) { return (SEXT(BITS(i, 31, 31), 1) << 20) | (BITS
 
 static void jal(Decode *s, word_t d, word_t s1){
   R(d) = s->pc + 4;
-   s->dnpc = s->pc + s1;
+  s->dnpc = s->pc + s1;
+}
+
+static void jalr(Decode *s, word_t d, word_t s1, word_t s2){
+  s->dnpc = (s1 + s2) & 0xfffffffe;
+  R(d) = s->pc;
 }
 
 static void decode_operand(Decode *s, word_t *dest, word_t *src1, word_t *src2, int type) {
@@ -81,7 +86,7 @@ static int decode_exec(Decode *s) {
   INSTPAT("000000? ????? ????? 001 ????? 00100 11", slli   , I, R(dest) = src1 << src2);
   INSTPAT("??????? ????? ????? ??? ????? 11011 11", jal    , J, jal(s, dest, src1));
 
-  INSTPAT("??????? ????? ????? 000 ????? 11001 11", jalr   , I,  s->dnpc = ((src1 + src2) >> 1) << 1, R(dest) = s->pc);
+  INSTPAT("??????? ????? ????? 000 ????? 11001 11", jalr   , I, jalr(s, dest, src1, src2));
 
   INSTPAT_END();             
 
