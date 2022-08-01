@@ -1,9 +1,10 @@
 
-#include "verilated_vcd_c.h" //可选，如果要导出vcd则需要加上
-
-#include "Vtop.h"
-#include "stdio.h"
+#include <stdio.h>
 #include <stdlib.h>
+#include <assert.h>
+
+#include "verilated_vcd_c.h" //可选，如果要导出vcd则需要加上
+#include "Vtop.h"
 
 vluint64_t main_time = 0;  //initial 仿真时间
  
