@@ -48,7 +48,7 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
         extern int nr_token;
         if(HEAD->num != eval(0, nr_token - 1)){
           nemu_state.state = NEMU_STOP;
-          printf("%s发生了变化\n", HEAD->experence);
+          printf("%s发生了变化\npc = 0x%016lx\n", HEAD->experence, _this->pc);
           HEAD = HEAD->next;
         }
       }
