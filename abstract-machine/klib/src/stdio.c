@@ -32,7 +32,7 @@ int sprintf(char *out, const char *fmt, ...) {
         case 'd':
           int d = va_arg(ap, int);
           int j = 0;
-          char *dd = NULL;
+          char dd[] = {};
           while(d / 10){
             dd[j] = d % 10 + '0';
             j++;
