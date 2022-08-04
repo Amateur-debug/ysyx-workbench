@@ -14,7 +14,47 @@ int vsprintf(char *out, const char *fmt, va_list ap) {
 }
 
 int sprintf(char *out, const char *fmt, ...) {
-  panic("Not implemented");
+  va_list ap;
+  va_start(ap, fmt);
+  int i = 0;
+  while(*fmt != '\0'){
+    if(*fmt == '%'){
+      fmt++;
+      switch(*fmt){
+        case 's': 
+          char *string = va_arg(ap, char *);
+          while(*string != '\0'){
+            out[i] = *string;
+            i++;
+            string++;
+          }
+          break;
+        case 'd':
+          int d = va_arg(ap, int);
+          int j = 0;
+          char *dd = NULL;
+          while(d / 10){
+            dd[j] = d % 10 + '0';
+            j++;
+            d = d / 10;
+          }
+          dd[j] = d + '0';
+          for(; j < 0; j--){
+            out[i] = dd[j];
+            i++;
+          }
+          break;
+        default: return -1;
+      }
+    }
+    else{
+      out[i] = *fmt;
+      i++;
+    }
+    fmt++;
+  }
+  out[i] = '\0';
+  return i;
 }
 
 int snprintf(char *out, size_t n, const char *fmt, ...) {
