@@ -53,6 +53,7 @@ int sprintf(char *out, const char *fmt, ...) {
     }
     fmt++;
   }
+  va_end(ap);
   out[i] = '\0';
   return i;
 }
