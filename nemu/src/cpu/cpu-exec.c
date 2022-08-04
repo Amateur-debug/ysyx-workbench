@@ -41,10 +41,6 @@ void iringbuf_w(char *str){  //指令环形缓冲区写函数
   else wp++;
 }
 
-void iringbuf_r(){    //环形缓冲区读函数
-  
-}
-
 void device_update();
 
 static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
@@ -70,6 +66,7 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
     else break;
   }
 #endif
+
 }
 
 static void exec_once(Decode *s, vaddr_t pc) {
