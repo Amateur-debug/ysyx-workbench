@@ -83,6 +83,7 @@ void *memset(void *s, int c, size_t n) {
   while(n){
     *m = (char)c;
     n--;
+    m++;
   }
   return s;
 }
@@ -125,7 +126,7 @@ int memcmp(const void *s1, const void *s2, size_t n) {
     s2++;
     n--;
   }
-  a = n == 0 ? 0 : (*(char *)s1 - *(char *)s2);
+  a = n == 0 ? 0 : (int)*(char *)s1 - (int)*(char *)s2;
   return a;
 }
 

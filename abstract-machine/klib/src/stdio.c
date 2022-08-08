@@ -21,7 +21,7 @@ int sprintf(char *out, const char *fmt, ...) {
     if(*fmt == '%'){
       fmt++;
       switch(*fmt){
-        case 's': 
+        case 's': {
           char *string = va_arg(ap, char *);
           while(*string != '\0'){
             out[i] = *string;
@@ -29,21 +29,23 @@ int sprintf(char *out, const char *fmt, ...) {
             string++;
           }
           break;
-        case 'd':
+        }
+        case 'd': {
           int d = va_arg(ap, int);
           int j = 0;
           char dd[30];
           while(d / 10){
-            dd[j] = d % 10 + '0';
+            dd[j] = (char)(d % 10 + '0');
             j++;
             d = d / 10;
           }
           dd[j] = d + '0';
-          for(; j < 0; j--){
+          for(; j >= 0; j--){
             out[i] = dd[j];
             i++;
           }
           break;
+        }
         default: return -1;
       }
     }
