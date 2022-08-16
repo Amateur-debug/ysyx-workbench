@@ -1,17 +1,32 @@
+V_PATH := ./vsrc
+C_PATH := ./csrc
+IMG_PATH := /home/cxy/ysyx-workbench/am-kernels/tests/cpu-tests/build/
+IMG =
 module := CPU
-V_TOP	 := $(shell find ./vsrc -name "*$(module).v")
-V_SOURCE := $(shell find ./vsrc -name "*.v")
-C_SOURCE := $(shell find ./csrc -name "sim_$(module).cpp")
-BUILD := build_$(module)
+module_name := $(addprefix ysyx_22041461_,$(module))
+Vmodule_name := $(addprefix Vysyx_22041461_,$(module))
 
-sim:$(V_TOP) $(V_SOURCE) $(C_SOURCE)
+V_TOP := $(V_PATH)/$(module_name).v
+V_SOURCE := $(shell find $(V_PATH) -name "*.v")
+CC_SOURCE := $(shell find $(C_PATH) -name "*.cpp")
+C_SOURCE := $(shell find $(C_PATH) -name "*.c")
+
+BUILD := build
+
+VFLAGS +=  --cc --exe --trace --Mdir $(BUILD)
+
+ifdef IMG
+VFLAGS += -CFLAGS -DIMG=$(IMG_PATH)$(IMG)-riscv64-npc.bin
+endif
+
+sim:$(V_TOP) $(V_SOURCE) $(C_SOURCE) $(CC_SOURCE)
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
-	verilator --Wall --cc --exe --Mdir $(BUILD) --trace $^
-	make -j -C $(BUILD) -f Vysyx_22041461_$(module).mk Vysyx_22041461_$(module)
-	cd $(BUILD)&&./Vysyx_22041461_$(module)
+	verilator $(VFLAGS) $^
+	make -j -C $(BUILD) -f $(Vmodule_name).mk
+	cd $(BUILD)&&./$(Vmodule_name)
 	gtkwave ./$(BUILD)/wave.vcd
-
-.PHONY: clean
+	make clean
+.PHONY: clean sim
 
 clean:
 	rm -rf ./$(BUILD)
