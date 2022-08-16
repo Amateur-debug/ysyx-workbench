@@ -27,6 +27,11 @@ WP *HEAD = NULL;
 void init_regex();
 void init_wp_pool();
 
+void init_mtrace(){
+  FILE *p = fopen("/home/cxy/ysyx-workbench/nemu/build/mtrace.txt", "w");
+  fclose(p);
+}
+
 /* We use the `readline' library to provide more flexibility to read from stdin. */
 static char* rl_gets() {
   static char *line_read = NULL;
@@ -232,4 +237,8 @@ void init_sdb() {
 
   /* Initialize the watchpoint pool. */
   init_wp_pool();
+
+#ifdef CONFIG_MTRACE
+  init_mtrace();
+#endif
 }

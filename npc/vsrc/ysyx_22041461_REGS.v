@@ -2,34 +2,74 @@ module ysyx_22041461_REGS(
 
     input   wire [0:0]  clk       ,
     input   wire [0:0]  rst       ,
+    input   wire [2:0]  sel_REGS  ,
     input   wire [4:0]  rs1       ,
+    input   wire [4:0]  rs2       ,
     input   wire [4:0]  rd        ,
-    input   wire [0:0]  en_regw   ,
-    input   wire [63:0] data_write,
+    input   wire [63:0] imm       ,
+    input   wire [63:0] dest      ,
+    input   wire [63:0] pc        ,
+    input   wire [63:0] snpc      ,
+    input   wire [63:0] mem       ,
 
-    output  wire [63:0] data_rs1  
+    output  wire [63:0] rs1_data  ,
+    output  wire [63:0] rs2_data  
 );
 
-reg [63:0] x [31:0];
-reg [63:0] d [31:0];
+import "DPI-C" function void ebreak();
+
+reg [63:0] x [31:0];    //寄存器现态的值
+reg [63:0] d [31:0];    //寄存器次态的值
 
 integer i;
 integer j;
 
-assign  data_rs1 = x[rs1];
+assign  rs1_data = x[rs1];
+assign  rs2_data = x[rs2];
 
 always@(*) begin
-    if(en_regw == 1'b1) begin
-        for(i = 0; i < 64; i = i + 1) begin
-            d[i] = x[i];
+    case(sel_REGS)
+        3'b000: begin
+            for(i = 0; i < 64; i = i+1) begin
+                d[i] = x[i];
+            end
         end
-        d[rd] = data_write;
-    end
-    else begin
-        for(i = 0; i < 64; i = i + 1) begin
-            d[i] = x[i];
+        3'b001: begin
+            for(i = 0; i < 64; i = i+1) begin
+                d[i] = x[i];
+            end
+            d[rd] = dest;
         end
-    end
+        3'b010: begin
+            for(i = 0; i < 64; i = i+1) begin
+                d[i] = x[i];
+            end
+            d[rd] = pc;
+        end
+        3'b011: begin
+            for(i = 0; i < 64; i = i+1) begin
+                d[i] = x[i];
+            end
+            d[rd] = snpc;
+        end        
+        3'b100: begin
+            for(i = 0; i < 64; i = i+1) begin
+                d[i] = x[i];
+            end
+            d[rd] = imm;
+        end
+        3'b101: begin
+            for(i = 0; i < 64; i = i+1) begin
+                d[i] = x[i];
+            end
+            d[rd] = mem;
+        end
+        default: begin
+            for(i = 0; i < 64; i = i+1) begin
+                d[i] = x[i];
+            end
+        end
+    endcase
 end
 
 always@(posedge clk) begin
