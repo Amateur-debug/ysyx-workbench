@@ -55,3 +55,12 @@ extern "C" void pmem_write(long long waddr, long long wdata, char wmask){
     }
   }
 }
+
+uint64_t direct_pmem_read(uint64_t addr, int len) {
+  uint64_t ret = host_read(guest_to_host(addr), len);
+  return ret;
+}
+
+void direct_pmem_write(uint64_t addr, int len, uint64_t data) {
+  host_write(guest_to_host(addr), len, data);
+}

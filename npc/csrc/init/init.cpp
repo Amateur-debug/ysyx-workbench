@@ -2,6 +2,10 @@
 #include <string.h>
 #include <stdio.h>
 #include <assert.h>
+#include "verilated_vcd_c.h" //可选，如果要导出vcd则需要加上
+#include "Vysyx_22041461_CPU.h"
+#include "svdpi.h"
+#include "Vysyx_22041461_CPU__Dpi.h"
 #include "/home/cxy/ysyx-workbench/npc/include/common.h"
 
 #define STR1(R) #R
@@ -45,5 +49,14 @@ void init_mem(){
 #endif
     extern uint8_t pmem[memory_size];
     memcpy(pmem, img, sizeof(img));
+}
+
+void init_sim(){
+    
+  top->trace(tfp, 0);   
+  tfp->open("wave.vcd"); //打开vcd
+  top->clk = 1;
+  top->rst = 0;
+  top->pc  = 0x80000000;
 }
 
