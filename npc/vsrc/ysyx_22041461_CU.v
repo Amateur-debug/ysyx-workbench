@@ -35,16 +35,9 @@ module ysyx_22041461_CU(
 
 import "DPI-C" function void ebreak();
 
-wire [2:0]  funct3;
-wire [6:0]  funct7;
-wire [6:0]  opcode;
-
 assign rs1    = inst[19:15];
 assign rs2    = inst[24:20];
 assign rd     = inst[11:7] ;
-assign funct3 = inst[14:12];
-assign funct7 = inst[31:25];
-assign opcode = inst[6:0]  ;
 
 function [63:0] immI(
     input  [31:0] INST
@@ -88,8 +81,8 @@ endfunction
 
 /* verilator lint_off CASEX */
 always@(*) begin             
-    casex({funct7, funct3, opcode})
-        17'bxxxxxxx_000_0010011: begin //addi
+    casex(inst)
+        32'bxxxxxxx_xxxxx_xxxxx_000_xxxxx_0010011: begin //addi 
             imm          = immI(inst);     
             ctrl_ALU     = 3'b001    ;         
             sel_ALU      = 3'b001    ;         
@@ -99,7 +92,7 @@ always@(*) begin
             sel_MEM_addr = 3'b000    ;
             sel_MEM_data = 3'b000    ;
         end  
-        17'bxxxxxxx_000_1100111: begin //jalr
+        32'bxxxxxxx_xxxxx_xxxxx_000_xxxxx_1100111: begin //jalr
             imm          = immI(inst);     
             ctrl_ALU     = 3'b010    ;         
             sel_ALU      = 3'b001    ;         
@@ -109,7 +102,7 @@ always@(*) begin
             sel_MEM_addr = 3'b000    ;
             sel_MEM_data = 3'b000    ;   
         end
-        17'b000000x_001_0010011: begin //slli
+        32'b000000x_xxxxx_xxxxx_001_xxxxx_0010011: begin //slli
             imm          = immI(inst);     
             ctrl_ALU     = 3'b011    ;         
             sel_ALU      = 3'b001    ;         
@@ -119,7 +112,7 @@ always@(*) begin
             sel_MEM_addr = 3'b000    ;
             sel_MEM_data = 3'b000    ;   
         end
-        17'bxxxxxxx_011_0100011: begin //sd
+        32'bxxxxxxx_xxxxx_xxxxx_011_xxxxx_0100011: begin //sd
             imm          = immI(inst);     
             ctrl_ALU     = 3'b001    ;         
             sel_ALU      = 3'b001    ;         
@@ -129,7 +122,7 @@ always@(*) begin
             sel_MEM_addr = 3'b000    ;
             sel_MEM_data = 3'b010    ;                
         end
-        17'bxxxxxxx_xxx_0010111: begin //auipc      
+        32'bxxxxxxx_xxxxx_xxxxx_xxx_xxxxx_0010111: begin //auipc      
             imm          = immU(inst);     
             ctrl_ALU     = 3'b001    ;         
             sel_ALU      = 3'b100    ;         
@@ -139,7 +132,7 @@ always@(*) begin
             sel_MEM_addr = 3'b000    ;
             sel_MEM_data = 3'b000    ;         
         end
-        17'bxxxxxxx_xxx_0110111: begin //lui
+        32'bxxxxxxx_xxxxx_xxxxx_xxx_xxxxx_0110111: begin //lui
             imm          = immU(inst);     
             ctrl_ALU     = 3'b000    ;         
             sel_ALU      = 3'b000    ;         
@@ -149,7 +142,7 @@ always@(*) begin
             sel_MEM_addr = 3'b000    ;
             sel_MEM_data = 3'b000    ;    
         end
-        17'bxxxxxxx_xxx_1101111: begin //jal
+        32'bxxxxxxx_xxxxx_xxxxx_xxx_xxxxx_1101111: begin //jal
             imm          = immJ(inst);     
             ctrl_ALU     = 3'b001    ;         
             sel_ALU      = 3'b100    ;         
@@ -157,7 +150,10 @@ always@(*) begin
             sel_PC       = 2'b01     ;
             ctrl_MEM     = 2'b00     ;
             sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ;            
+            sel_MEM_data = 3'b000    ; 
+        end 
+        32'b0000000_00001_00000_000_00000_1110011: begin //ebreak
+           ebreak();          
         end
         default: begin
             

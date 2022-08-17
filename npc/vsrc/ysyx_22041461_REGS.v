@@ -17,6 +17,9 @@ module ysyx_22041461_REGS(
 );
 
 import "DPI-C" function void ebreak();
+import "DPI-C" function void set_gpr_ptr(input logic [63:0] a []);
+
+initial set_gpr_ptr(d);  // rf为通用寄存器的二维数组变量
 
 reg [63:0] x [31:0];    //寄存器现态的值
 reg [63:0] d [31:0];    //寄存器次态的值

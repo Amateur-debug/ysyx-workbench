@@ -5,6 +5,8 @@
 #include "Vysyx_22041461_CPU__Dpi.h"
 #include "/home/cxy/ysyx-workbench/npc/include/common.h"
 
+uint8_t pmem[memory_size] = {};
+
 uint8_t *guest_to_host(uint64_t paddr){ 
   return pmem + paddr - 0x80000000; 
 }
@@ -52,4 +54,13 @@ extern "C" void pmem_write(long long waddr, long long wdata, char wmask){
       host_write(guest_to_host((waddr & ~0x7ull) + i), 1, wdata);
     }
   }
+}
+
+uint64_t direct_pmem_read(uint64_t addr, int len) {
+  uint64_t ret = host_read(guest_to_host(addr), len);
+  return ret;
+}
+
+void direct_pmem_write(uint64_t addr, int len, uint64_t data) {
+  host_write(guest_to_host(addr), len, data);
 }

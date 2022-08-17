@@ -13,7 +13,7 @@ C_SOURCE := $(shell find $(C_PATH) -name "*.c")
 
 BUILD := build
 
-VFLAGS +=  --cc --exe --trace --Mdir $(BUILD)
+VFLAGS +=  --cc --exe --trace --Mdir $(BUILD) -LDFLAGS -lreadline
 
 ifdef IMG
 VFLAGS += -CFLAGS -DIMG=$(IMG_PATH)$(IMG)-riscv64-npc.bin
