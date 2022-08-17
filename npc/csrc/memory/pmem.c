@@ -5,6 +5,8 @@
 #include "Vysyx_22041461_CPU__Dpi.h"
 #include "/home/cxy/ysyx-workbench/npc/include/common.h"
 
+uint8_t pmem[memory_size] = {};
+
 uint8_t *guest_to_host(uint64_t paddr){ 
   return pmem + paddr - 0x80000000; 
 }

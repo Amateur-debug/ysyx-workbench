@@ -7,7 +7,13 @@
 #define STR1(R) #R
 #define STR2(R) STR1(R)
 
-extern
+uint32_t img[memory_size/4] = {
+    0x00000297,  // auipc t0,0
+    0x0002b823,  // sd  zero,16(t0)
+    0x0102b503,  // ld  a0,16(t0)
+    0x00100073,  // ebreak (used as nemu_trap)
+    0xdeadbeef,  // some data
+};
 
 long long  getFileSize(FILE *fp){
     long long size;
@@ -37,6 +43,7 @@ void init_mem(){
 #ifdef IMG    
     load_img();
 #endif
+    extern uint8_t pmem[memory_size];
     memcpy(pmem, img, sizeof(img));
 }
 
