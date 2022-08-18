@@ -73,6 +73,7 @@ always@(*) begin
             end
         end
     endcase
+    d[0] = 64'b0;
 end
 
 always@(posedge clk) begin

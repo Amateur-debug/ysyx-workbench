@@ -1640,6 +1640,7 @@ void Vysyx_22041461_CPU___024root___settle__TOP__1(Vysyx_22041461_CPU___024root*
             = vlSelf->ysyx_22041461_CPU__DOT__REGS__DOT__x
             [0x1fU];
     }
+    vlSelf->ysyx_22041461_CPU__DOT__REGS__DOT__d[0U] = 0ULL;
 }
 
 void Vysyx_22041461_CPU___024root____Vdpiimwrap_ysyx_22041461_CPU__DOT__REGS__DOT__set_gpr_ptr__Vdpioc2_TOP(const VlUnpacked<QData/*63:0*/, 32> &a);

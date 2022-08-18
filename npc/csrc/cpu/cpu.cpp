@@ -5,10 +5,12 @@
 #include "svdpi.h"
 #include "Vysyx_22041461_CPU__Dpi.h"
 #include "/home/cxy/ysyx-workbench/npc/include/state.h"
+#include "/home/cxy/ysyx-workbench/npc/include/difftest.h"
 
 #define MAX_MAIN_TIME 100
 #define RST_END_TIME 1  //rst拉高时间
 #define MAX_INST_TO_PRINT 10
+#define DIFFTEST
 
 static vluint64_t main_time = 0;  //initial 仿真时间
 static bool g_print_step = false;
@@ -40,6 +42,15 @@ static void exec_once(){
   top->eval(); 
   tfp->dump(main_time); //dump wave
   main_time++; //推动仿真时间
+
+  #ifdef DIFFTEST
+    difftest_exec(1);
+    extern uint64_t *cpu_gpr;
+    if(!difftest_checkregs(cpu_gpr)){
+      npc_state.state = NPC_ABORT;
+    }
+  #endif
+
 }
 
 static void execute(uint64_t n){

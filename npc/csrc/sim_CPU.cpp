@@ -34,6 +34,7 @@ int main(int argc, char **argv){
 
   init_mem();
   init_sdb();
+  init_difftest();
 
   sdb_mainloop();
 
