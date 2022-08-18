@@ -5,6 +5,7 @@ IMG =
 module := CPU
 module_name := $(addprefix ysyx_22041461_,$(module))
 Vmodule_name := $(addprefix Vysyx_22041461_,$(module))
+LD_LIBRARY_PATH += /home/cxy/ysyx-workbench/nemu/build
 
 V_TOP := $(V_PATH)/$(module_name).v
 V_SOURCE := $(shell find $(V_PATH) -name "*.v")
@@ -13,10 +14,9 @@ C_SOURCE := $(shell find $(C_PATH) -name "*.c")
 
 BUILD := build
 
-VFLAGS +=  --cc --exe --trace --Mdir $(BUILD) -LDFLAGS -lreadline
-VFLAGS += -LDFLAGS -L../nemu/build
-VFLAGS += -LDFLAGS -lriscv64-nemu-interpreter
-
+VFLAGS +=  --cc --exe --trace --Mdir $(BUILD) -LDFLAGS -lreadline 
+VFLAGS += -LDFLAGS -L/home/cxy/ysyx-workbench/nemu/build
+VFLAGS += -LDFLAGS -lriscv64-nemu-interpreter-so
 
 ifdef IMG
 VFLAGS += -CFLAGS -DIMG=$(IMG_PATH)$(IMG)-riscv64-npc.bin
