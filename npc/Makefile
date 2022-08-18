@@ -15,7 +15,8 @@ BUILD := build
 
 VFLAGS +=  --cc --exe --trace --Mdir $(BUILD) -LDFLAGS -lreadline
 VFLAGS += -LDFLAGS -L../nemu/build
-VFLAGS += -LDFLAGS -lriscv64-nemu
+VFLAGS += -LDFLAGS -lriscv64-nemu-interpreter
+
 
 ifdef IMG
 VFLAGS += -CFLAGS -DIMG=$(IMG_PATH)$(IMG)-riscv64-npc.bin
