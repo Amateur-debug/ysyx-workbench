@@ -14,7 +14,8 @@ C_SOURCE := $(shell find $(C_PATH) -name "*.c")
 BUILD := build
 
 VFLAGS +=  --cc --exe --trace --Mdir $(BUILD) -LDFLAGS -lreadline
-VFLAGS += -CFLAGS /home/ysyx-workbench/nemu/build/obj-riscv64-nemu-interpreter-so
+VFLAGS += -LDFLAGS -L /home/cxy/ysyx-workbench/nemu/build
+VFLAGS += -LDFLAGS -lriscv64-nemu-interpreter-so
 
 ifdef IMG
 VFLAGS += -CFLAGS -DIMG=$(IMG_PATH)$(IMG)-riscv64-npc.bin

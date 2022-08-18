@@ -35,7 +35,7 @@ VM_PREFIX = Vysyx_22041461_CPU
 VM_MODPREFIX = Vysyx_22041461_CPU
 # User CFLAGS (from -CFLAGS on Verilator command line)
 VM_USER_CFLAGS = \
-	/home/ysyx-workbench/nemu/build/obj-riscv64-nemu-interpreter-so \
+	/home/cxy/ysyx-workbench/nemu/build/riscv64-nemu-interpreter-so \
 	-DIMG=/home/cxy/ysyx-workbench/am-kernels/tests/cpu-tests/build/dummy-riscv64-npc.bin \
 
 # User LDLIBS (from -LDFLAGS on Verilator command line)
