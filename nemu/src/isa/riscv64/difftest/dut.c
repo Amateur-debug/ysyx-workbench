@@ -21,7 +21,7 @@ bool isa_difftest_checkregs(CPU_state *ref_r, vaddr_t pc) {
   int i;
   extern CPU_state cpu;
   for(i = 0; i < 32; i++){
-    if(cpu.gpr[i] != ref_r->gpr[i] || cpu.pc != pc){
+    if(cpu.gpr[i] != ref_r->gpr[i]){
       return false;
     }
     else return true;
