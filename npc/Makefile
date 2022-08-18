@@ -5,7 +5,6 @@ IMG =
 module := CPU
 module_name := $(addprefix ysyx_22041461_,$(module))
 Vmodule_name := $(addprefix Vysyx_22041461_,$(module))
-LD_LIBRARY_PATH += /home/cxy/ysyx-workbench/nemu/build
 
 V_TOP := $(V_PATH)/$(module_name).v
 V_SOURCE := $(shell find $(V_PATH) -name "*.v")
