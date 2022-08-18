@@ -7,6 +7,7 @@
 #include "svdpi.h"
 #include "Vysyx_22041461_CPU__Dpi.h"
 #include "/home/cxy/ysyx-workbench/npc/include/common.h"
+#include "/home/cxy/ysyx-workbench/npc/include/sdb.h"
 
 #define STR1(R) #R
 #define STR2(R) STR1(R)
@@ -51,12 +52,15 @@ void init_mem(){
     memcpy(pmem, img, sizeof(img));
 }
 
-void init_sim(){
-    
-  top->trace(tfp, 0);   
-  tfp->open("wave.vcd"); //打开vcd
-  top->clk = 1;
-  top->rst = 0;
-  top->pc  = 0x80000000;
+void init_sdb() {
+  /* Compile the regular expressions. */
+  init_regex();
+
+  /* Initialize the watchpoint pool. */
+  init_wp_pool();
+
+#ifdef CONFIG_MTRACE
+  init_mtrace();
+#endif
 }
 

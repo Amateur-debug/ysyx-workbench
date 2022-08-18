@@ -1,13 +1,6 @@
 #include "/home/cxy/ysyx-workbench/npc/include/state.h"
 #include <stdint.h>
-
-typedef struct {
-  int state;
-  uint32_t halt_pc;
-  uint32_t halt_ret;
-} NPCState;
-
-enum {NPC_RUNNING, NPC_STOP, NPC_END, NPC_ABORT, NPC_QUIT};
+#include "/home/cxy/ysyx-workbench/npc/include/state.h"
 
 NPCState npc_state;
 

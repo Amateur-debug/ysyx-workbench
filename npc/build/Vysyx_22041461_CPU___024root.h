@@ -65,8 +65,8 @@ VL_MODULE(Vysyx_22041461_CPU___024root) {
     QData/*63:0*/ __Vfunc_ysyx_22041461_CPU__DOT__CU__DOT__immU__4__Vfuncout;
     QData/*63:0*/ __Vfunc_ysyx_22041461_CPU__DOT__CU__DOT__immU__5__Vfuncout;
     QData/*63:0*/ __Vfunc_ysyx_22041461_CPU__DOT__CU__DOT__immJ__6__Vfuncout;
-    QData/*63:0*/ __Vtask_ysyx_22041461_CPU__DOT__MEM__DOT__pmem_read__8__rdata;
-    QData/*63:0*/ __Vtask_ysyx_22041461_CPU__DOT__MEM__DOT__pmem_read__10__rdata;
+    QData/*63:0*/ __Vtask_ysyx_22041461_CPU__DOT__MEM__DOT__pmem_read__9__rdata;
+    QData/*63:0*/ __Vtask_ysyx_22041461_CPU__DOT__MEM__DOT__pmem_read__11__rdata;
     VlUnpacked<CData/*0:0*/, 2> __Vm_traceActivity;
 
     // INTERNAL VARIABLES

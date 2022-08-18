@@ -12,28 +12,30 @@
 #include "/home/cxy/ysyx-workbench/npc/include/common.h"
 #include "/home/cxy/ysyx-workbench/npc/include/init.h"
 #include "/home/cxy/ysyx-workbench/npc/include/pmem.h"
+#include "/home/cxy/ysyx-workbench/npc/include/sdb.h"
 #include "/home/cxy/ysyx-workbench/npc/include/state.h"
 
-double sc_time_stamp(){
-  return main_time;
-}
+Vysyx_22041461_CPU *top = new Vysyx_22041461_CPU("CPU"); //调用VAccumulator.h里面的IO struct
+VerilatedVcdC* tfp = new VerilatedVcdC; //导出vcd波形需要加此语句
 
 void ebreak(){
-  main_time = MAX_MAIN_TIME - 1;
+  extern Vysyx_22041461_CPU *top; 
+  set_npc_state(NPC_END, top->pc, 1);
 }
 
 int main(int argc, char **argv){
   Verilated::commandArgs(argc, argv); 
   Verilated::traceEverOn(true); //导出vcd波形需要加此语句
-  VerilatedVcdC* tfp = new VerilatedVcdC; //导出vcd波形需要加此语句
-  Vysyx_22041461_CPU *top = new Vysyx_22041461_CPU("CPU"); //调用VAccumulator.h里面的IO struct
+  top->trace(tfp, 0);   
+  tfp->open("wave.vcd"); //打开vcd
+  top->clk = 1;
+  top->rst = 0;
+  top->pc  = 0x80000000;
 
   init_mem();
-  init_sim();
-  
-  
+  init_sdb();
 
-
+  sdb_mainloop();
 
   top->final();
   tfp->close();

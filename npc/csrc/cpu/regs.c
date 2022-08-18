@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <string.h>
 #include "verilated_dpi.h"
 
 const char *regs[] = {
@@ -20,3 +21,13 @@ void dump_gpr(){
   }
 }
 
+uint64_t isa_reg_str2val(const char *s, bool *success) {
+  int i;
+  for(i = 0; i<=31; i++){
+    if(strcmp(regs[i], s) == 0){
+      break;
+    }
+    *success = true;
+  }
+  return cpu_gpr[i];
+}

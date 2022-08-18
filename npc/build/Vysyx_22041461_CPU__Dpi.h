@@ -19,6 +19,8 @@ extern "C" {
     extern void pmem_read(long long raddr, long long* rdata);
     // DPI import at vsrc/ysyx_22041461_MEM.v:23:30
     extern void pmem_write(long long waddr, long long wdata, char wmask);
+    // DPI import at vsrc/ysyx_22041461_REGS.v:20:30
+    extern void set_gpr_ptr(const svOpenArrayHandle a);
 
 #ifdef __cplusplus
 }

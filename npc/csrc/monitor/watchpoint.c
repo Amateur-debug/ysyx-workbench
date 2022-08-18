@@ -1,5 +1,7 @@
 #include <stdint.h>
 #include <stdio.h>
+#include <assert.h>
+#include <string.h>
 #include "/home/cxy/ysyx-workbench/npc/include/sdb.h"
 
 static WP wp_pool[NR_WP] = {};
@@ -17,7 +19,6 @@ void init_wp_pool() {
   free_ = wp_pool;
 }
 
-/* TODO: Implement the functionality of watchpoint */
 WP* new_wp(char *EXPR){
   if(free_ == NULL){
     assert(0);
