@@ -34,7 +34,7 @@ module ysyx_22041461_CU(
 
 
 import "DPI-C" function void ebreak();
-
+import "DPI-C" function void invalid_inst();
 assign rs1    = inst[19:15];
 assign rs2    = inst[24:20];
 assign rd     = inst[11:7] ;
@@ -153,10 +153,10 @@ always@(*) begin
             sel_MEM_data = 3'b000    ; 
         end 
         32'b0000000_00001_00000_000_00000_1110011: begin //ebreak
-           ebreak();          
+            ebreak();          
         end
         default: begin
-            
+            invalid_inst();
         end
     endcase
 end

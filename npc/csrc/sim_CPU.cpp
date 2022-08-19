@@ -19,11 +19,6 @@
 Vysyx_22041461_CPU *top = new Vysyx_22041461_CPU("CPU"); //调用VAccumulator.h里面的IO struct
 VerilatedVcdC* tfp = new VerilatedVcdC; //导出vcd波形需要加此语句
 
-void ebreak(){
-  extern Vysyx_22041461_CPU *top; 
-  set_npc_state(NPC_END, top->pc, 1);
-}
-
 int main(int argc, char **argv){
   Verilated::commandArgs(argc, argv); 
   Verilated::traceEverOn(true); //导出vcd波形需要加此语句
