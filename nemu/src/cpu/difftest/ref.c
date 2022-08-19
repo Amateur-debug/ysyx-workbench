@@ -20,10 +20,10 @@
 
 void difftest_memcpy(paddr_t addr, uint8_t *buf, size_t n, bool direction) {
   if(direction == DIFFTEST_TO_DUT){
-    memcpy(buf + addr - 0x8000000, guest_to_host(addr), n);
+    memcpy(buf + addr - 0x80000000, guest_to_host(addr), n);
   }
   else if(direction == DIFFTEST_TO_REF){
-    memcpy(guest_to_host(addr), buf + addr - 0x8000000, n);
+    memcpy(guest_to_host(addr), buf + addr - 0x80000000, n);
   }
 }
 
