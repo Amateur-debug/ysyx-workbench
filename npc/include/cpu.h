@@ -4,5 +4,6 @@
 #include<stdint.h>
 
 void cpu_exec(uint64_t n);
+void exec_once();
 
 #endif

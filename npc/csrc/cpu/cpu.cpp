@@ -22,7 +22,7 @@ double sc_time_stamp(){
   return main_time;
 }
 
-static void exec_once(){
+void exec_once(){
 
   npc_state.halt_pc = top->pc;
   //negedge
@@ -42,21 +42,19 @@ static void exec_once(){
   top->eval(); 
   tfp->dump(main_time); //dump wave
   main_time++; //推动仿真时间
-
-  #ifdef DIFFTEST
-    difftest_exec(1);
-    extern uint64_t *cpu_gpr;
-    if(!difftest_checkregs(cpu_gpr)){
-      npc_state.state = NPC_ABORT;
-    }
-  #endif
-
 }
 
 static void execute(uint64_t n){
-  for (;n > 0; n --) {
+  extern uint64_t *cpu_gpr;
+  for (;n > 0; n --){
     if(!Verilated::gotFinish()){
       exec_once();
+      #ifdef DIFFTEST
+        difftest_exec(1);
+        if(!difftest_checkregs(cpu_gpr)){
+          npc_state.state = NPC_ABORT;
+        }
+      #endif
     }
     if (npc_state.state != NPC_RUNNING){
       break;

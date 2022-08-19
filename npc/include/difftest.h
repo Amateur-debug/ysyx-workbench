@@ -15,6 +15,8 @@ extern "C" void difftest_exec(uint64_t n);
 
 extern "C" bool difftest_checkregs(uint64_t *dut);
 
+extern "C" void difftest_init();
+
 enum { DIFFTEST_TO_DUT, DIFFTEST_TO_REF };
 
 #endif
