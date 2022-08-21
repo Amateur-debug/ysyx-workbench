@@ -24,6 +24,7 @@ void ebreak(){      //结束指令
 
 void invalid_inst(){  
   set_npc_state(NPC_ABORT, top->pc, 1);
+  printf("pc = 0x%016lx  指令没有实现\n", top->pc);
 }
 
 double sc_time_stamp(){

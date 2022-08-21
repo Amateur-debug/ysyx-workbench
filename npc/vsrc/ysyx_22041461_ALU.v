@@ -32,6 +32,9 @@ always@(*) begin
         end
         3'b011: begin
             dest = SLL_out;
+        end  
+        3'b100: begin
+            dest = {{32{sum[31:31]}}, sum[31:0]};
         end    
         default: begin
             dest = 64'd0;

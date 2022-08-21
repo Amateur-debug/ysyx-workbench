@@ -55,18 +55,21 @@ VL_MODULE(Vysyx_22041461_CPU___024root) {
     IData/*31:0*/ __Vfunc_ysyx_22041461_CPU__DOT__CU__DOT__immI__1__INST;
     IData/*31:0*/ __Vfunc_ysyx_22041461_CPU__DOT__CU__DOT__immI__2__INST;
     IData/*31:0*/ __Vfunc_ysyx_22041461_CPU__DOT__CU__DOT__immI__3__INST;
-    IData/*31:0*/ __Vfunc_ysyx_22041461_CPU__DOT__CU__DOT__immU__4__INST;
+    IData/*31:0*/ __Vfunc_ysyx_22041461_CPU__DOT__CU__DOT__immS__4__INST;
     IData/*31:0*/ __Vfunc_ysyx_22041461_CPU__DOT__CU__DOT__immU__5__INST;
-    IData/*31:0*/ __Vfunc_ysyx_22041461_CPU__DOT__CU__DOT__immJ__6__INST;
+    IData/*31:0*/ __Vfunc_ysyx_22041461_CPU__DOT__CU__DOT__immU__6__INST;
+    IData/*31:0*/ __Vfunc_ysyx_22041461_CPU__DOT__CU__DOT__immJ__7__INST;
     QData/*63:0*/ __Vfunc_ysyx_22041461_CPU__DOT__CU__DOT__immI__0__Vfuncout;
     QData/*63:0*/ __Vfunc_ysyx_22041461_CPU__DOT__CU__DOT__immI__1__Vfuncout;
     QData/*63:0*/ __Vfunc_ysyx_22041461_CPU__DOT__CU__DOT__immI__2__Vfuncout;
     QData/*63:0*/ __Vfunc_ysyx_22041461_CPU__DOT__CU__DOT__immI__3__Vfuncout;
-    QData/*63:0*/ __Vfunc_ysyx_22041461_CPU__DOT__CU__DOT__immU__4__Vfuncout;
+    QData/*63:0*/ __Vfunc_ysyx_22041461_CPU__DOT__CU__DOT__immS__4__Vfuncout;
     QData/*63:0*/ __Vfunc_ysyx_22041461_CPU__DOT__CU__DOT__immU__5__Vfuncout;
-    QData/*63:0*/ __Vfunc_ysyx_22041461_CPU__DOT__CU__DOT__immJ__6__Vfuncout;
-    QData/*63:0*/ __Vtask_ysyx_22041461_CPU__DOT__MEM__DOT__pmem_read__10__rdata;
+    QData/*63:0*/ __Vfunc_ysyx_22041461_CPU__DOT__CU__DOT__immU__6__Vfuncout;
+    QData/*63:0*/ __Vfunc_ysyx_22041461_CPU__DOT__CU__DOT__immJ__7__Vfuncout;
+    QData/*63:0*/ __Vtask_ysyx_22041461_CPU__DOT__MEM__DOT__pmem_read__11__rdata;
     QData/*63:0*/ __Vtask_ysyx_22041461_CPU__DOT__MEM__DOT__pmem_read__12__rdata;
+    QData/*63:0*/ __Vtask_ysyx_22041461_CPU__DOT__MEM__DOT__pmem_read__14__rdata;
     VlUnpacked<CData/*0:0*/, 2> __Vm_traceActivity;
 
     // INTERNAL VARIABLES

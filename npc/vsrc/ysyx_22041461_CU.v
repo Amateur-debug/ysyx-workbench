@@ -15,13 +15,13 @@ module ysyx_22041461_CU(
     output  reg  [2:0]  sel_MEM_data    
 );
 
-//ctrl_ALU     操作                sel_ALU       操作数来源                  
-//  000         无                  000       rs1_data,rs2_data
-//  001         +                   001       rs1_data,imm 
-//  010    +且设最低有效位为0         010       rs1_data,pc
-//  011         <<                  011       rs1_data,snpc
-//                                  100       imm,pc  
-//                                  101       imm,snpc  
+//ctrl_ALU     操作                 sel_ALU       操作数来源                  
+//  000         无                    000       rs1_data,rs2_data
+//  001         +                     001       rs1_data,imm 
+//  010    +且设最低有效位为0           010       rs1_data,pc
+//  011         <<                    011       rs1_data,snpc
+//  100    +且截断为32位并符号位扩展      100       imm,pc  
+//                                    101       imm,snpc  
 
 
 //sel_REGS     输入来源         sel_PC         输入来源
@@ -82,6 +82,20 @@ endfunction
 /* verilator lint_off CASEX */
 always@(*) begin             
     casex(inst)
+
+    //Type-R
+        32'b0000000_xxxxx_xxxxx_000_xxxxx_0111011: begin //addw
+            imm          = 64'd0     ;     
+            ctrl_ALU     = 3'b100    ;         
+            sel_ALU      = 3'b000    ;         
+            sel_REGS     = 3'b001    ;         
+            sel_PC       = 2'b00     ;
+            ctrl_MEM     = 2'b00     ;
+            sel_MEM_addr = 3'b000    ;
+            sel_MEM_data = 3'b000    ;
+        end 
+
+    //Type-I
         32'bxxxxxxx_xxxxx_xxxxx_000_xxxxx_0010011: begin //addi 
             imm          = immI(inst);     
             ctrl_ALU     = 3'b001    ;         
@@ -112,16 +126,30 @@ always@(*) begin
             sel_MEM_addr = 3'b000    ;
             sel_MEM_data = 3'b000    ;   
         end
-        32'bxxxxxxx_xxxxx_xxxxx_011_xxxxx_0100011: begin //sd
+        32'bxxxxxxx_xxxxx_xxxxx_010_xxxxx_0000011: begin //lw
             imm          = immI(inst);     
+            ctrl_ALU     = 3'b001    ;         
+            sel_ALU      = 3'b001    ;         
+            sel_REGS     = 3'b101    ;         
+            sel_PC       = 2'b00     ;
+            ctrl_MEM     = 2'b10     ;
+            sel_MEM_addr = 3'b000    ;
+            sel_MEM_data = 3'b000    ;                
+        end
+
+    //Type-S
+        32'bxxxxxxx_xxxxx_xxxxx_011_xxxxx_0100011: begin //sd
+            imm          = immS(inst);     
             ctrl_ALU     = 3'b001    ;         
             sel_ALU      = 3'b001    ;         
             sel_REGS     = 3'b000    ;         
             sel_PC       = 2'b00     ;
-            ctrl_MEM     = 2'b00     ;
+            ctrl_MEM     = 2'b11     ;
             sel_MEM_addr = 3'b000    ;
             sel_MEM_data = 3'b010    ;                
         end
+
+    //Type-U  
         32'bxxxxxxx_xxxxx_xxxxx_xxx_xxxxx_0010111: begin //auipc      
             imm          = immU(inst);     
             ctrl_ALU     = 3'b001    ;         
@@ -142,6 +170,8 @@ always@(*) begin
             sel_MEM_addr = 3'b000    ;
             sel_MEM_data = 3'b000    ;    
         end
+
+    //Type-J
         32'bxxxxxxx_xxxxx_xxxxx_xxx_xxxxx_1101111: begin //jal
             imm          = immJ(inst);     
             ctrl_ALU     = 3'b001    ;         
@@ -152,6 +182,7 @@ always@(*) begin
             sel_MEM_addr = 3'b000    ;
             sel_MEM_data = 3'b000    ; 
         end 
+
         32'b0000000_00001_00000_000_00000_1110011: begin //ebreak
             ebreak();          
         end

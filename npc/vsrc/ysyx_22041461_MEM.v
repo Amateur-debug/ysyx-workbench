@@ -27,6 +27,24 @@ reg [63:0]  addr;
 reg [63:0]  write_data;
 reg [7:0]   wmask;
 
+always@(*) begin        
+    case(ctrl_MEM)
+        2'b00: begin            //不读不写
+            read_data = 64'd0;
+        end
+        2'b01: begin            //读取8字节数据
+            pmem_read(addr, read_data);
+        end
+        2'b10: begin            //读取4字节数据并进行符号位扩展
+            pmem_read(addr, read_data);
+            read_data = {{32{read_data[31:31]}}, read_data[31:0]};
+        end
+        2'b11: begin            //写入数据
+            read_data = 64'd0;
+        end
+    endcase
+end
+
 always@(*) begin
     case(sel_MEM_addr)
         3'b000: begin
@@ -102,32 +120,12 @@ always@(*) begin
     endcase
 end
 
-
-always@(*) begin        
-    case(ctrl_MEM)
-        2'b00: begin            //不读不写
-            read_data = 64'd0;
-        end
-        2'b01: begin            //读取数据
-            pmem_read(addr, read_data);
-        end
-        2'b10: begin            //写入数据
-            read_data = 64'd0;
-        end
-        default: begin
-            read_data = 64'd0;
-        end
-    endcase
-end
-
-
-
 always@(posedge clk) begin
     if(rst == 1'b0) begin
 
     end
     else begin
-        if(ctrl_MEM == 2'b10) begin
+        if(ctrl_MEM == 2'b11) begin
             pmem_write(addr, write_data, wmask);
         end
         else begin
