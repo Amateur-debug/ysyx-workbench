@@ -88,9 +88,11 @@ void cpu_exec(uint64_t n){
   char *out = NULL;
   switch(npc_state.state){
     case NPC_RUNNING: out = (char *)"stop"; npc_state.state = NPC_STOP; break;
-    case NPC_END: difftest_exec(1); out = (char *)"HIT GOOD TRAP"; break;
-    case NPC_ABORT: out = (char *)"ABORT"; break;
-    default: out = (char *)"HIT BAD TRAP"; break;
+    case NPC_END: difftest_exec(1); out = (char *)"HIT GOOD TRAP"; 
+      printf("npc: %s at pc = 0x%016lx\n", out, top->pc); break;
+    case NPC_ABORT: out = (char *)"ABORT"; 
+      printf("npc: %s at pc = 0x%016lx\n", out, top->pc); break;
+    default: out = (char *)"HIT BAD TRAP"; 
+      printf("npc: %s at pc = 0x%016lx\n", out, top->pc); break;
   }
-  printf("npc: %s at pc = 0x%016lx\n", out, top->pc);
 }
