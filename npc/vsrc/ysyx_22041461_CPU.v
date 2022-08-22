@@ -19,6 +19,11 @@ wire    [63:0]  dest        ;
 wire    [63:0]  mem         ;
 wire    [2:0]   ctrl_ALU    ;
 wire    [2:0]   sel_ALU     ;
+wire    [1:0]   sel_CMP     ;
+wire    [0:0]   ctrl_CMP    ;
+/* verilator lint_off UNOPTFLAT */
+wire    [1:0]   CMP_out     ;
+/* verilator lint_on UNOPTFLAT */
 wire    [2:0]   sel_REGS    ;
 wire    [1:0]   sel_PC      ;
 wire    [1:0]   ctrl_MEM    ;
@@ -29,6 +34,7 @@ wire    [2:0]   sel_MEM_data;
 ysyx_22041461_CU   CU(
 
     .inst           (inst        ),
+    .CMP_out        (CMP_out     ),
          
     .rs1            (rs1         ),
     .rs2            (rs2         ),
@@ -36,6 +42,8 @@ ysyx_22041461_CU   CU(
     .imm            (imm         ),
     .ctrl_ALU       (ctrl_ALU    ),
     .sel_ALU        (sel_ALU     ),
+    .ctrl_CMP       (ctrl_CMP    ),
+    .sel_CMP        (sel_CMP     ),
     .sel_REGS       (sel_REGS    ),
     .sel_PC         (sel_PC      ),
     .ctrl_MEM       (ctrl_MEM    ),
@@ -70,6 +78,17 @@ ysyx_22041461_REGS  REGS(
 
     .rs1_data   (rs1_data),
     .rs2_data   (rs2_data)
+);
+
+ysyx_22041461_CMP   CMP(
+
+    .imm        (imm)     ,
+    .rs1_data   (rs1_data),
+    .rs2_data   (rs2_data),
+    .sel_CMP    (sel_CMP) ,
+    .ctrl_CMP   (ctrl_CMP),
+
+    .CMP_out    (CMP_out)
 );
 
 ysyx_22041461_ALU   ALU(

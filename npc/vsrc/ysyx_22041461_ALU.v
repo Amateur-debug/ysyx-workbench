@@ -20,29 +20,6 @@ wire [63:0] sum    ;
 wire [63:0] SLL_out;
 
 always@(*) begin
-    case(ctrl_ALU)
-        3'b000: begin
-            dest = 64'd0;
-        end
-        3'b001: begin
-            dest = sum;
-        end
-        3'b010: begin
-            dest = {sum[63:1], 1'b0};
-        end
-        3'b011: begin
-            dest = SLL_out;
-        end  
-        3'b100: begin
-            dest = {{32{sum[31:31]}}, sum[31:0]};
-        end    
-        default: begin
-            dest = 64'd0;
-        end
-    endcase
-end
-
-always@(*) begin
     case(sel_ALU)
         3'b000: begin
             src1 = rs1_data;
@@ -75,6 +52,30 @@ always@(*) begin
     endcase
 end
 
+always@(*) begin
+    case(ctrl_ALU)
+            3'b000: begin
+                dest = 64'd0;
+            end
+            3'b001: begin
+                dest = sum;
+            end
+            3'b010: begin
+                dest = {sum[63:1], 1'b0};
+            end
+            3'b011: begin
+                dest = SLL_out;
+            end  
+            3'b100: begin
+                dest = {{32{sum[31:31]}}, sum[31:0]};
+            end
+            default: begin
+                dest = 64'd0;
+            end
+    
+    endcase
+end
+
 ysyx_22041461_ADDER ADDER(
     
     .src1    (src1),
@@ -91,9 +92,6 @@ ysyx_22041461_SLL SLL(
 
     .SLL_out(SLL_out)
 );
-
-
-
 
 endmodule
 

@@ -67,10 +67,17 @@ always@(*) begin
             end
             d[rd] = mem;
         end
-        default: begin
+        3'b110: begin
             for(i = 0; i < 64; i = i+1) begin
                 d[i] = x[i];
             end
+            d[rd] = 64'd0;
+        end
+        3'b111: begin
+            for(i = 0; i < 64; i = i+1) begin
+                d[i] = x[i];
+            end
+            d[rd] = 64'd1;
         end
     endcase
     d[0] = 64'b0;
