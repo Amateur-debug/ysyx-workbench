@@ -23,6 +23,8 @@ extern "C" {
     extern void pmem_write(long long waddr, long long wdata, char wmask);
     // DPI import at vsrc/ysyx_22041461_REGS.v:20:30
     extern void set_gpr_ptr(const svOpenArrayHandle a);
+    // DPI import at vsrc/ysyx_22041461_PC.v:12:30
+    extern void set_pc(const svOpenArrayHandle a);
 
 #ifdef __cplusplus
 }

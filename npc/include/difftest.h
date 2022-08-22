@@ -13,7 +13,7 @@ extern "C" void difftest_regcpy(uint64_t *dut, bool direction);
 
 extern "C" void difftest_exec(uint64_t n);
 
-extern "C" bool difftest_checkregs(uint64_t *dut);
+extern "C" bool difftest_checkregs(uint64_t *dut, uint64_t *dut_pc);
 
 extern "C" void difftest_init();
 

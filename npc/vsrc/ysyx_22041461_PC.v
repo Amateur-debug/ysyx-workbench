@@ -9,7 +9,11 @@ module ysyx_22041461_PC(
     output  reg  [63:0]  pc       
 );
 
-import "DPI-C" function void ebreak();
+import "DPI-C" function void set_pc(input logic [63:0] a []);
+
+initial begin
+    set_pc(npc);
+end
 
 reg [63:0] npc;  
 

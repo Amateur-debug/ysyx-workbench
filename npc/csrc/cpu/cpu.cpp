@@ -54,19 +54,20 @@ void exec_once(){
 
 static void execute(uint64_t n){
   extern uint64_t *cpu_gpr;
+  extern uint64_t *cpu_pc;
   for (;n > 0; n --){
     if(!Verilated::gotFinish()){
       exec_once();
       if(g_print_step){
         printf("excute at pc = 0x%016x\n", npc_state.halt_pc);
       }
-      #ifdef DIFFTEST
-        difftest_exec(1);
-        if(!difftest_checkregs(cpu_gpr)){
-          npc_state.state = NPC_ABORT;
-        }
-      #endif
     }
+    #ifdef DIFFTEST
+      difftest_exec(1);
+      if(!difftest_checkregs(cpu_gpr, cpu_pc)){
+        npc_state.state = NPC_ABORT;
+      }
+    #endif
     if (npc_state.state != NPC_RUNNING){
       break;
     }
