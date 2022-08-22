@@ -597,9 +597,9 @@ VL_INLINE_OPT void Vysyx_22041461_CPU___024root___sequent__TOP__2(Vysyx_22041461
     }
     vlSelf->pc = ((IData)(vlSelf->rst) ? vlSelf->ysyx_22041461_CPU__DOT__PC__DOT__npc
                    : 0x80000000ULL);
-    Vysyx_22041461_CPU___024root____Vdpiimwrap_ysyx_22041461_CPU__DOT__MEM__DOT__pmem_read_TOP(vlSelf->pc, vlSelf->__Vtask_ysyx_22041461_CPU__DOT__MEM__DOT__pmem_read__16__rdata);
+    Vysyx_22041461_CPU___024root____Vdpiimwrap_ysyx_22041461_CPU__DOT__MEM__DOT__pmem_read_TOP(vlSelf->pc, vlSelf->__Vtask_ysyx_22041461_CPU__DOT__MEM__DOT__pmem_read__17__rdata);
     vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__rinst 
-        = vlSelf->__Vtask_ysyx_22041461_CPU__DOT__MEM__DOT__pmem_read__16__rdata;
+        = vlSelf->__Vtask_ysyx_22041461_CPU__DOT__MEM__DOT__pmem_read__17__rdata;
     vlSelf->ysyx_22041461_CPU__DOT__inst = ((0U == 
                                              (7U & (IData)(vlSelf->pc)))
                                              ? (IData)(vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__rinst)
@@ -803,25 +803,35 @@ VL_INLINE_OPT void Vysyx_22041461_CPU___024root___combo__TOP__4(Vysyx_22041461_C
         vlSelf->ysyx_22041461_CPU__DOT__sel_MEM_addr = 0U;
         vlSelf->ysyx_22041461_CPU__DOT__sel_MEM_data = 0U;
         vlSelf->ysyx_22041461_CPU__DOT__imm = vlSelf->__Vfunc_ysyx_22041461_CPU__DOT__CU__DOT__immB__6__Vfuncout;
-    } else if ((0x17U == (0x7fU & vlSelf->ysyx_22041461_CPU__DOT__inst))) {
-        vlSelf->__Vfunc_ysyx_22041461_CPU__DOT__CU__DOT__immU__7__INST 
+    } else if ((0x1063U == (0x707fU & vlSelf->ysyx_22041461_CPU__DOT__inst))) {
+        vlSelf->__Vfunc_ysyx_22041461_CPU__DOT__CU__DOT__immB__7__INST 
             = vlSelf->ysyx_22041461_CPU__DOT__inst;
-        vlSelf->__Vfunc_ysyx_22041461_CPU__DOT__CU__DOT__immU__7__Vfuncout 
-            = (((QData)((IData)((- (IData)((vlSelf->__Vfunc_ysyx_22041461_CPU__DOT__CU__DOT__immU__7__INST 
-                                            >> 0x1fU))))) 
-                << 0x20U) | (QData)((IData)((0xfffff000U 
-                                             & vlSelf->__Vfunc_ysyx_22041461_CPU__DOT__CU__DOT__immU__7__INST))));
+        vlSelf->__Vfunc_ysyx_22041461_CPU__DOT__CU__DOT__immB__7__Vfuncout 
+            = (((- (QData)((IData)((vlSelf->__Vfunc_ysyx_22041461_CPU__DOT__CU__DOT__immB__7__INST 
+                                    >> 0x1fU)))) << 0xdU) 
+               | (QData)((IData)(((0x1000U & (vlSelf->__Vfunc_ysyx_22041461_CPU__DOT__CU__DOT__immB__7__INST 
+                                              >> 0x13U)) 
+                                  | ((0x800U & (vlSelf->__Vfunc_ysyx_22041461_CPU__DOT__CU__DOT__immB__7__INST 
+                                                << 4U)) 
+                                     | ((0x7e0U & (vlSelf->__Vfunc_ysyx_22041461_CPU__DOT__CU__DOT__immB__7__INST 
+                                                   >> 0x14U)) 
+                                        | (0x1eU & 
+                                           (vlSelf->__Vfunc_ysyx_22041461_CPU__DOT__CU__DOT__immB__7__INST 
+                                            >> 7U))))))));
         vlSelf->ysyx_22041461_CPU__DOT__sel_CMP = 0U;
         vlSelf->ysyx_22041461_CPU__DOT__ctrl_CMP = 0U;
         vlSelf->ysyx_22041461_CPU__DOT__ctrl_ALU = 1U;
         vlSelf->ysyx_22041461_CPU__DOT__sel_ALU = 4U;
-        vlSelf->ysyx_22041461_CPU__DOT__sel_REGS = 1U;
-        vlSelf->ysyx_22041461_CPU__DOT__sel_PC = 0U;
+        vlSelf->ysyx_22041461_CPU__DOT__sel_REGS = 0U;
+        vlSelf->ysyx_22041461_CPU__DOT__sel_PC = ((0U 
+                                                   != (IData)(vlSelf->ysyx_22041461_CPU__DOT__CMP_out))
+                                                   ? 1U
+                                                   : 0U);
         vlSelf->ysyx_22041461_CPU__DOT__ctrl_MEM = 0U;
         vlSelf->ysyx_22041461_CPU__DOT__sel_MEM_addr = 0U;
         vlSelf->ysyx_22041461_CPU__DOT__sel_MEM_data = 0U;
-        vlSelf->ysyx_22041461_CPU__DOT__imm = vlSelf->__Vfunc_ysyx_22041461_CPU__DOT__CU__DOT__immU__7__Vfuncout;
-    } else if ((0x37U == (0x7fU & vlSelf->ysyx_22041461_CPU__DOT__inst))) {
+        vlSelf->ysyx_22041461_CPU__DOT__imm = vlSelf->__Vfunc_ysyx_22041461_CPU__DOT__CU__DOT__immB__7__Vfuncout;
+    } else if ((0x17U == (0x7fU & vlSelf->ysyx_22041461_CPU__DOT__inst))) {
         vlSelf->__Vfunc_ysyx_22041461_CPU__DOT__CU__DOT__immU__8__INST 
             = vlSelf->ysyx_22041461_CPU__DOT__inst;
         vlSelf->__Vfunc_ysyx_22041461_CPU__DOT__CU__DOT__immU__8__Vfuncout 
@@ -831,6 +841,24 @@ VL_INLINE_OPT void Vysyx_22041461_CPU___024root___combo__TOP__4(Vysyx_22041461_C
                                              & vlSelf->__Vfunc_ysyx_22041461_CPU__DOT__CU__DOT__immU__8__INST))));
         vlSelf->ysyx_22041461_CPU__DOT__sel_CMP = 0U;
         vlSelf->ysyx_22041461_CPU__DOT__ctrl_CMP = 0U;
+        vlSelf->ysyx_22041461_CPU__DOT__ctrl_ALU = 1U;
+        vlSelf->ysyx_22041461_CPU__DOT__sel_ALU = 4U;
+        vlSelf->ysyx_22041461_CPU__DOT__sel_REGS = 1U;
+        vlSelf->ysyx_22041461_CPU__DOT__sel_PC = 0U;
+        vlSelf->ysyx_22041461_CPU__DOT__ctrl_MEM = 0U;
+        vlSelf->ysyx_22041461_CPU__DOT__sel_MEM_addr = 0U;
+        vlSelf->ysyx_22041461_CPU__DOT__sel_MEM_data = 0U;
+        vlSelf->ysyx_22041461_CPU__DOT__imm = vlSelf->__Vfunc_ysyx_22041461_CPU__DOT__CU__DOT__immU__8__Vfuncout;
+    } else if ((0x37U == (0x7fU & vlSelf->ysyx_22041461_CPU__DOT__inst))) {
+        vlSelf->__Vfunc_ysyx_22041461_CPU__DOT__CU__DOT__immU__9__INST 
+            = vlSelf->ysyx_22041461_CPU__DOT__inst;
+        vlSelf->__Vfunc_ysyx_22041461_CPU__DOT__CU__DOT__immU__9__Vfuncout 
+            = (((QData)((IData)((- (IData)((vlSelf->__Vfunc_ysyx_22041461_CPU__DOT__CU__DOT__immU__9__INST 
+                                            >> 0x1fU))))) 
+                << 0x20U) | (QData)((IData)((0xfffff000U 
+                                             & vlSelf->__Vfunc_ysyx_22041461_CPU__DOT__CU__DOT__immU__9__INST))));
+        vlSelf->ysyx_22041461_CPU__DOT__sel_CMP = 0U;
+        vlSelf->ysyx_22041461_CPU__DOT__ctrl_CMP = 0U;
         vlSelf->ysyx_22041461_CPU__DOT__ctrl_ALU = 0U;
         vlSelf->ysyx_22041461_CPU__DOT__sel_ALU = 0U;
         vlSelf->ysyx_22041461_CPU__DOT__sel_REGS = 4U;
@@ -838,20 +866,20 @@ VL_INLINE_OPT void Vysyx_22041461_CPU___024root___combo__TOP__4(Vysyx_22041461_C
         vlSelf->ysyx_22041461_CPU__DOT__ctrl_MEM = 0U;
         vlSelf->ysyx_22041461_CPU__DOT__sel_MEM_addr = 0U;
         vlSelf->ysyx_22041461_CPU__DOT__sel_MEM_data = 0U;
-        vlSelf->ysyx_22041461_CPU__DOT__imm = vlSelf->__Vfunc_ysyx_22041461_CPU__DOT__CU__DOT__immU__8__Vfuncout;
+        vlSelf->ysyx_22041461_CPU__DOT__imm = vlSelf->__Vfunc_ysyx_22041461_CPU__DOT__CU__DOT__immU__9__Vfuncout;
     } else if ((0x6fU == (0x7fU & vlSelf->ysyx_22041461_CPU__DOT__inst))) {
-        vlSelf->__Vfunc_ysyx_22041461_CPU__DOT__CU__DOT__immJ__9__INST 
+        vlSelf->__Vfunc_ysyx_22041461_CPU__DOT__CU__DOT__immJ__10__INST 
             = vlSelf->ysyx_22041461_CPU__DOT__inst;
-        vlSelf->__Vfunc_ysyx_22041461_CPU__DOT__CU__DOT__immJ__9__Vfuncout 
-            = (((- (QData)((IData)((vlSelf->__Vfunc_ysyx_22041461_CPU__DOT__CU__DOT__immJ__9__INST 
+        vlSelf->__Vfunc_ysyx_22041461_CPU__DOT__CU__DOT__immJ__10__Vfuncout 
+            = (((- (QData)((IData)((vlSelf->__Vfunc_ysyx_22041461_CPU__DOT__CU__DOT__immJ__10__INST 
                                     >> 0x1fU)))) << 0x15U) 
-               | (QData)((IData)(((0x100000U & (vlSelf->__Vfunc_ysyx_22041461_CPU__DOT__CU__DOT__immJ__9__INST 
+               | (QData)((IData)(((0x100000U & (vlSelf->__Vfunc_ysyx_22041461_CPU__DOT__CU__DOT__immJ__10__INST 
                                                 >> 0xbU)) 
-                                  | ((0xff000U & vlSelf->__Vfunc_ysyx_22041461_CPU__DOT__CU__DOT__immJ__9__INST) 
-                                     | ((0x800U & (vlSelf->__Vfunc_ysyx_22041461_CPU__DOT__CU__DOT__immJ__9__INST 
+                                  | ((0xff000U & vlSelf->__Vfunc_ysyx_22041461_CPU__DOT__CU__DOT__immJ__10__INST) 
+                                     | ((0x800U & (vlSelf->__Vfunc_ysyx_22041461_CPU__DOT__CU__DOT__immJ__10__INST 
                                                    >> 9U)) 
                                         | (0x7feU & 
-                                           (vlSelf->__Vfunc_ysyx_22041461_CPU__DOT__CU__DOT__immJ__9__INST 
+                                           (vlSelf->__Vfunc_ysyx_22041461_CPU__DOT__CU__DOT__immJ__10__INST 
                                             >> 0x14U))))))));
         vlSelf->ysyx_22041461_CPU__DOT__sel_CMP = 0U;
         vlSelf->ysyx_22041461_CPU__DOT__ctrl_CMP = 0U;
@@ -862,7 +890,7 @@ VL_INLINE_OPT void Vysyx_22041461_CPU___024root___combo__TOP__4(Vysyx_22041461_C
         vlSelf->ysyx_22041461_CPU__DOT__ctrl_MEM = 0U;
         vlSelf->ysyx_22041461_CPU__DOT__sel_MEM_addr = 0U;
         vlSelf->ysyx_22041461_CPU__DOT__sel_MEM_data = 0U;
-        vlSelf->ysyx_22041461_CPU__DOT__imm = vlSelf->__Vfunc_ysyx_22041461_CPU__DOT__CU__DOT__immJ__9__Vfuncout;
+        vlSelf->ysyx_22041461_CPU__DOT__imm = vlSelf->__Vfunc_ysyx_22041461_CPU__DOT__CU__DOT__immJ__10__Vfuncout;
     } else if ((0x100073U == vlSelf->ysyx_22041461_CPU__DOT__inst)) {
         Vysyx_22041461_CPU___024root____Vdpiimwrap_ysyx_22041461_CPU__DOT__CU__DOT__ebreak_TOP();
     } else {
@@ -992,8 +1020,8 @@ VL_INLINE_OPT void Vysyx_22041461_CPU___024root___combo__TOP__4(Vysyx_22041461_C
         if ((1U & (IData)(vlSelf->ysyx_22041461_CPU__DOT__ctrl_MEM))) {
             vlSelf->ysyx_22041461_CPU__DOT__mem = 0ULL;
         } else {
-            Vysyx_22041461_CPU___024root____Vdpiimwrap_ysyx_22041461_CPU__DOT__MEM__DOT__pmem_read_TOP(vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__addr, vlSelf->__Vtask_ysyx_22041461_CPU__DOT__MEM__DOT__pmem_read__13__rdata);
-            vlSelf->ysyx_22041461_CPU__DOT__mem = vlSelf->__Vtask_ysyx_22041461_CPU__DOT__MEM__DOT__pmem_read__13__rdata;
+            Vysyx_22041461_CPU___024root____Vdpiimwrap_ysyx_22041461_CPU__DOT__MEM__DOT__pmem_read_TOP(vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__addr, vlSelf->__Vtask_ysyx_22041461_CPU__DOT__MEM__DOT__pmem_read__14__rdata);
+            vlSelf->ysyx_22041461_CPU__DOT__mem = vlSelf->__Vtask_ysyx_22041461_CPU__DOT__MEM__DOT__pmem_read__14__rdata;
             vlSelf->ysyx_22041461_CPU__DOT__mem = (
                                                    ((QData)((IData)(
                                                                     (- (IData)(
@@ -1005,8 +1033,8 @@ VL_INLINE_OPT void Vysyx_22041461_CPU___024root___combo__TOP__4(Vysyx_22041461_C
                                                    | (QData)((IData)(vlSelf->ysyx_22041461_CPU__DOT__mem)));
         }
     } else if ((1U & (IData)(vlSelf->ysyx_22041461_CPU__DOT__ctrl_MEM))) {
-        Vysyx_22041461_CPU___024root____Vdpiimwrap_ysyx_22041461_CPU__DOT__MEM__DOT__pmem_read_TOP(vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__addr, vlSelf->__Vtask_ysyx_22041461_CPU__DOT__MEM__DOT__pmem_read__14__rdata);
-        vlSelf->ysyx_22041461_CPU__DOT__mem = vlSelf->__Vtask_ysyx_22041461_CPU__DOT__MEM__DOT__pmem_read__14__rdata;
+        Vysyx_22041461_CPU___024root____Vdpiimwrap_ysyx_22041461_CPU__DOT__MEM__DOT__pmem_read_TOP(vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__addr, vlSelf->__Vtask_ysyx_22041461_CPU__DOT__MEM__DOT__pmem_read__15__rdata);
+        vlSelf->ysyx_22041461_CPU__DOT__mem = vlSelf->__Vtask_ysyx_22041461_CPU__DOT__MEM__DOT__pmem_read__15__rdata;
     } else {
         vlSelf->ysyx_22041461_CPU__DOT__mem = 0ULL;
     }

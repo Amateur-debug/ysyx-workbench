@@ -21,9 +21,9 @@ wire    [2:0]   ctrl_ALU    ;
 wire    [2:0]   sel_ALU     ;
 wire    [1:0]   sel_CMP     ;
 wire    [0:0]   ctrl_CMP    ;
-/* verilator lint_off UNOPTFLAT */
+/*verilator lint_off UNOPTFLAT*/
 wire    [1:0]   CMP_out     ;
-/* verilator lint_on UNOPTFLAT */
+/*verilator lint_on UNOPTFLAT*/
 wire    [2:0]   sel_REGS    ;
 wire    [1:0]   sel_PC      ;
 wire    [1:0]   ctrl_MEM    ;

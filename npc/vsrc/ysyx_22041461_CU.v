@@ -1,4 +1,4 @@
-module ysyx_22041461_CU(
+module ysyx_22041461_CU( 
     
     input   wire [31:0] inst        ,
     input   wire [1:0]  CMP_out     ,
@@ -16,7 +16,7 @@ module ysyx_22041461_CU(
     output  reg  [1:0]  ctrl_MEM    ,
     output  reg  [2:0]  sel_MEM_addr,
     output  reg  [2:0]  sel_MEM_data    
-);
+); 
 
 //ctrl_ALU     操作                 sel_ALU       操作数来源                  
 //  000         无                    000       rs1_data,rs2_data
@@ -85,7 +85,7 @@ immJ = {{43{INST[31:31]}}, INST[31:31], INST[19:12], INST[20:20], INST[30:21], 1
 endfunction
 
 /* verilator lint_off CASEX */
-always@(*) begin             
+always@(*) begin               
     casex(inst)
 
     //Type-R
@@ -204,6 +204,23 @@ always@(*) begin
             sel_ALU      = 3'b100    ;         
             sel_REGS     = 3'b000    ;
             if(CMP_out == 2'b00) begin         
+                sel_PC   = 2'b01;
+            end
+            else begin
+                sel_PC   = 2'b00;
+            end 
+            ctrl_MEM     = 2'b00     ;
+            sel_MEM_addr = 3'b000    ;
+            sel_MEM_data = 3'b000    ;                 
+        end 
+        32'bxxxxxxx_xxxxx_xxxxx_001_xxxxx_1100011: begin //bne      
+            imm          = immB(inst);
+            sel_CMP      = 2'b00     ;
+            ctrl_CMP     = 1'b0      ;     
+            ctrl_ALU     = 3'b001    ;         
+            sel_ALU      = 3'b100    ;         
+            sel_REGS     = 3'b000    ;
+            if(CMP_out != 2'b00) begin         
                 sel_PC   = 2'b01;
             end
             else begin
