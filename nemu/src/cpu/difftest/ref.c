@@ -43,7 +43,6 @@ void difftest_regcpy(uint64_t *dut, bool direction) {
 
 bool difftest_checkregs(uint64_t *dut, uint64_t *dut_pc){
   int i;
-  extern CPU_state cpu;
   if(*dut_pc != cpu.pc){
     return false;
   }
@@ -51,7 +50,6 @@ bool difftest_checkregs(uint64_t *dut, uint64_t *dut_pc){
     if(dut[i] != cpu.gpr[i]){
       return false;
     }
-    else return true;
   }
   return true;
 }

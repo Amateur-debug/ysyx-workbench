@@ -68,7 +68,7 @@ static void execute(uint64_t n){
         npc_state.state = NPC_ABORT;
       }
     #endif
-    if (npc_state.state != NPC_RUNNING){
+    if(npc_state.state != NPC_RUNNING){
       break;
     }
   }
