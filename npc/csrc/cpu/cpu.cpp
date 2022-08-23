@@ -64,7 +64,7 @@ static void execute(uint64_t n){
     }
     #ifdef DIFFTEST
       difftest_exec(1);
-      if(!difftest_checkregs(cpu_gpr, cpu_pc)){
+      if(!difftest_checkregs(cpu_gpr, top->pc)){
         npc_state.state = NPC_ABORT;
       }
     #endif
