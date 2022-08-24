@@ -96,7 +96,7 @@ always@(*) begin
         5'b01010: begin
             dest = OR_out;
         end
-        5'b01011: begin
+        5'b01011: begin //srli, srl
             dest = SRL_out;
         end
         5'b01100: begin  //mulw
@@ -150,6 +150,12 @@ always@(*) begin
         5'b11100: begin  //sraw
             dest = SRA_out;
         end
+        5'b11101: begin  //srliw
+            dest = SRL_out;
+        end
+        5'b11110: begin  //srlw
+            dest = SRL_out;
+        end
 
         default: begin
             dest = 64'd0;
@@ -186,10 +192,11 @@ ysyx_22041461_SRA SRA(
 
 ysyx_22041461_SRL SRL(
 
-    .src1   (src1   ),
-    .src2   (src2   ),
+    .src1       (src1   ) ,
+    .src2       (src2   ) ,
+    .ctrl_ALU   (ctrl_ALU),
 
-    .SRL_out(SRL_out)
+    .SRL_out    (SRL_out)
 );
 
 ysyx_22041461_SUB SUB(

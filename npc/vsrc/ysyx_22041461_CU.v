@@ -244,6 +244,18 @@ always@(*) begin
             sel_MEM_addr = 3'b000    ;
             sel_MEM_data = 3'b000    ; 
         end
+        32'b0000001_xxxxx_xxxxx_000_xxxxx_0110011: begin //mul
+            imm          = 64'd0     ;
+            sel_CMP      = 2'b00     ;
+            ctrl_CMP     = 1'b0      ;     
+            ctrl_ALU     = 5'b10000  ;         
+            sel_ALU      = 3'b000    ;         
+            sel_REGS     = 3'b001    ;         
+            sel_PC       = 2'b00     ;
+            ctrl_MEM     = 4'b0000   ;
+            sel_MEM_addr = 3'b000    ;
+            sel_MEM_data = 3'b000    ; 
+        end
 
     //Type-I
         32'bxxxxxxx_xxxxx_xxxxx_000_xxxxx_0010011: begin //addi 
@@ -383,7 +395,7 @@ always@(*) begin
             sel_MEM_addr = 3'b000    ;
             sel_MEM_data = 3'b000    ;         
         end
-        32'bxxxxxxx_xxxxx_xxxxx_101_xxxxx_0010011: begin //srli
+        32'b000000x_xxxxx_xxxxx_101_xxxxx_0010011: begin //srli
             imm          = immI(inst); 
             sel_CMP      = 2'b00     ;
             ctrl_CMP     = 1'b0      ;    
@@ -438,6 +450,23 @@ always@(*) begin
             ctrl_ALU     = 5'b11011  ;         
             sel_ALU      = 3'b001    ;         
             sel_REGS     = 3'b001    ;         
+            sel_PC       = 2'b00     ;
+            ctrl_MEM     = 4'b0000   ;
+            sel_MEM_addr = 3'b000    ;
+            sel_MEM_data = 3'b000    ;         
+        end
+        32'b000000x_xxxxx_xxxxx_101_xxxxx_0011011: begin //srliw
+            imm          = immI(inst); 
+            sel_CMP      = 2'b00     ;
+            ctrl_CMP     = 1'b0      ;    
+            ctrl_ALU     = 5'b11101  ;         
+            sel_ALU      = 3'b001    ;
+            if(imm[5:5] == 1'b0) begin
+                sel_REGS     = 3'b001;     
+            end
+            else begin
+                sel_REGS     = 3'b000;
+            end
             sel_PC       = 2'b00     ;
             ctrl_MEM     = 4'b0000   ;
             sel_MEM_addr = 3'b000    ;

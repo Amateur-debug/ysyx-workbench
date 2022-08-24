@@ -182,37 +182,34 @@ void Vysyx_22041461_CPU___024root__traceChgSub0(Vysyx_22041461_CPU___024root* vl
                                         ^ vlSelf->ysyx_22041461_CPU__DOT__ALU__DOT__src2)),64);
             tracep->chgQData(oldp+176,((vlSelf->ysyx_22041461_CPU__DOT__ALU__DOT__src1 
                                         | vlSelf->ysyx_22041461_CPU__DOT__ALU__DOT__src2)),64);
-            tracep->chgQData(oldp+178,(((0x3fU >= (0x7fU 
-                                                   & (IData)(vlSelf->ysyx_22041461_CPU__DOT__ALU__DOT__src2)))
-                                         ? (vlSelf->ysyx_22041461_CPU__DOT__ALU__DOT__src1 
-                                            >> (0x7fU 
-                                                & (IData)(vlSelf->ysyx_22041461_CPU__DOT__ALU__DOT__src2)))
-                                         : 0ULL)),64);
+            tracep->chgQData(oldp+178,(vlSelf->ysyx_22041461_CPU__DOT__ALU__DOT__SRL_out),64);
             tracep->chgQData(oldp+180,(vlSelf->ysyx_22041461_CPU__DOT__ALU__DOT__MUL_out),64);
             tracep->chgQData(oldp+182,(vlSelf->ysyx_22041461_CPU__DOT__ALU__DOT__DIV_out),64);
             tracep->chgQData(oldp+184,(vlSelf->ysyx_22041461_CPU__DOT__ALU__DOT__REM_out),64);
             tracep->chgQData(oldp+186,(vlSelf->ysyx_22041461_CPU__DOT__ALU__DOT__SLL__DOT__sll),64);
-            tracep->chgQData(oldp+188,(vlSelf->ysyx_22041461_CPU__DOT__ALU__DOT__SRA__DOT__sra),64);
-            tracep->chgWData(oldp+190,(vlSelf->ysyx_22041461_CPU__DOT__ALU__DOT__MUL__DOT__mul),128);
-            tracep->chgQData(oldp+194,(vlSelf->ysyx_22041461_CPU__DOT__ALU__DOT__DIV__DOT__div),64);
-            tracep->chgQData(oldp+196,(vlSelf->ysyx_22041461_CPU__DOT__ALU__DOT__REM__DOT__rem),64);
-            tracep->chgQData(oldp+198,(vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__read_data1),64);
-            tracep->chgQData(oldp+200,(vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__read_data2),64);
-            tracep->chgQData(oldp+202,(vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__rread_data),64);
-            tracep->chgQData(oldp+204,(vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__addr),64);
-            tracep->chgQData(oldp+206,(vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__write_data),64);
-            tracep->chgQData(oldp+208,(vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__write_data1),64);
-            tracep->chgQData(oldp+210,(vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__write_data2),64);
-            tracep->chgSData(oldp+212,(vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__wmask),16);
-            tracep->chgCData(oldp+213,(vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__wmask1),8);
-            tracep->chgCData(oldp+214,(vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__wmask2),8);
+            tracep->chgIData(oldp+188,(vlSelf->ysyx_22041461_CPU__DOT__ALU__DOT__SRA__DOT__sra),32);
+            tracep->chgIData(oldp+189,((IData)(vlSelf->ysyx_22041461_CPU__DOT__ALU__DOT__src1)),32);
+            tracep->chgQData(oldp+190,(vlSelf->ysyx_22041461_CPU__DOT__ALU__DOT__SRL__DOT__srl),64);
+            tracep->chgWData(oldp+192,(vlSelf->ysyx_22041461_CPU__DOT__ALU__DOT__MUL__DOT__mul),128);
+            tracep->chgQData(oldp+196,(vlSelf->ysyx_22041461_CPU__DOT__ALU__DOT__DIV__DOT__div),64);
+            tracep->chgQData(oldp+198,(vlSelf->ysyx_22041461_CPU__DOT__ALU__DOT__REM__DOT__rem),64);
+            tracep->chgQData(oldp+200,(vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__read_data1),64);
+            tracep->chgQData(oldp+202,(vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__read_data2),64);
+            tracep->chgQData(oldp+204,(vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__rread_data),64);
+            tracep->chgQData(oldp+206,(vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__addr),64);
+            tracep->chgQData(oldp+208,(vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__write_data),64);
+            tracep->chgQData(oldp+210,(vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__write_data1),64);
+            tracep->chgQData(oldp+212,(vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__write_data2),64);
+            tracep->chgSData(oldp+214,(vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__wmask),16);
+            tracep->chgCData(oldp+215,(vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__wmask1),8);
+            tracep->chgCData(oldp+216,(vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__wmask2),8);
         }
-        tracep->chgBit(oldp+215,(vlSelf->clk));
-        tracep->chgBit(oldp+216,(vlSelf->rst));
-        tracep->chgQData(oldp+217,(vlSelf->pc),64);
-        tracep->chgBit(oldp+219,(vlSelf->flag));
-        tracep->chgQData(oldp+220,((4ULL + vlSelf->pc)),64);
-        tracep->chgQData(oldp+222,(((0U == (IData)(vlSelf->ysyx_22041461_CPU__DOT__sel_PC))
+        tracep->chgBit(oldp+217,(vlSelf->clk));
+        tracep->chgBit(oldp+218,(vlSelf->rst));
+        tracep->chgQData(oldp+219,(vlSelf->pc),64);
+        tracep->chgBit(oldp+221,(vlSelf->flag));
+        tracep->chgQData(oldp+222,((4ULL + vlSelf->pc)),64);
+        tracep->chgQData(oldp+224,(((0U == (IData)(vlSelf->ysyx_22041461_CPU__DOT__sel_PC))
                                      ? (4ULL + vlSelf->pc)
                                      : ((1U == (IData)(vlSelf->ysyx_22041461_CPU__DOT__sel_PC))
                                          ? vlSelf->ysyx_22041461_CPU__DOT__dest

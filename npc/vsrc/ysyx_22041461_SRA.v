@@ -7,24 +7,29 @@ module ysyx_22041461_SRA(
     output  reg  [63:0] SRA_out
 );
 
-reg [63:0] sra;
+reg  [31:0] sra;
+wire signed [31:0] src1_32;
+wire signed [63:0] src1_64;
+
+assign src1_32 = src1[31:0];
+assign src1_64 = src1;
 
 always@(*) begin
-    case(ctrl_ALU)
+    case(ctrl_ALU) 
         5'b00110: begin
-            sra     = src1 >>> src2[5:0];
-            SRA_out = sra;
+            sra     = 32'd0;
+            SRA_out = src1_64 >>> src2[5:0];
         end
         5'b11011: begin
-            sra     = {32'd0, src1[31:0] >>> src2[5:0]};
+            sra     = src1_32 >>> src2[5:0];
             SRA_out = {{32{sra[31:31]}}, sra[31:0]};
         end
         5'b11100: begin
-            sra     = {32'd0, src1[31:0] >>> src2[4:0]};
+            sra = src1_32 >>> src2[4:0];
             SRA_out = {{32{sra[31:31]}}, sra[31:0]};
         end
         default: begin
-            sra     = 64'd0;
+            sra     = 32'd0;
             SRA_out = 64'd0;
         end
     endcase
