@@ -17,7 +17,7 @@ wire    [63:0]  rs1_data    ;
 wire    [63:0]  rs2_data    ;
 wire    [63:0]  dest        ;
 wire    [63:0]  mem         ;
-wire    [2:0]   ctrl_ALU    ;
+wire    [4:0]   ctrl_ALU    ;
 wire    [2:0]   sel_ALU     ;
 wire    [1:0]   sel_CMP     ;
 wire    [0:0]   ctrl_CMP    ;
@@ -26,7 +26,7 @@ wire    [1:0]   CMP_out     ;
 /*verilator lint_on UNOPTFLAT*/
 wire    [2:0]   sel_REGS    ;
 wire    [1:0]   sel_PC      ;
-wire    [1:0]   ctrl_MEM    ;
+wire    [3:0]   ctrl_MEM    ;
 wire    [2:0]   sel_MEM_addr;
 wire    [2:0]   sel_MEM_data; 
 

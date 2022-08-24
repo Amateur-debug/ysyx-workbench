@@ -55,6 +55,7 @@ extern "C" void pmem_write(long long waddr, long long wdata, char wmask){
     if((wmask >> i) & 1 == 1){
       host_write(guest_to_host((waddr & ~0x7ull) + i), 1, wdata);
     }
+    wdata = wdata >> 8;
   }
 }
 
