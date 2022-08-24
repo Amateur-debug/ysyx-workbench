@@ -21,7 +21,6 @@ wire [63:0] SLL_out ;
 wire [63:0] SRA_out ;
 wire [63:0] sub     ;
 wire [63:0] AND_out ;
-wire [63:0] SLLW_out;
 wire [63:0] XOR_out ;
 wire [63:0] OR_out  ;
 wire [63:0] SRL_out ;
@@ -67,13 +66,13 @@ always@(*) begin
         5'b00000: begin
             dest = 64'd0;
         end
-        5'b0001: begin
+        5'b00001: begin
             dest = sum;
         end
         5'b00010: begin
             dest = {sum[63:1], 1'b0};
         end
-        5'b00011: begin
+        5'b00011: begin //slli,sll
             dest = SLL_out;
         end  
         5'b00100: begin
@@ -82,14 +81,14 @@ always@(*) begin
         5'b00101: begin
             dest = sub;
         end
-        5'b00110: begin
+        5'b00110: begin //srai, sra
             dest = SRA_out;
         end
         5'b00111: begin
             dest = AND_out;
         end
-        5'b01000: begin
-            dest = SLLW_out;
+        5'b01000: begin //sllw
+            dest = SLL_out;
         end
         5'b01001: begin
             dest = XOR_out;
@@ -142,6 +141,16 @@ always@(*) begin
         5'b11001: begin  //subw
             dest = {{32{sub[31:31]}}, sub[31:0]};
         end
+        5'b11010: begin  //slliw
+            dest = SLL_out;
+        end
+        5'b11011: begin  //sraiw
+            dest = SRA_out;
+        end
+        5'b11100: begin  //sraw
+            dest = SRA_out;
+        end
+
         default: begin
             dest = 64'd0;
         end
@@ -159,18 +168,20 @@ ysyx_22041461_ADDER ADDER(
 
 ysyx_22041461_SLL SLL(
 
-    .src1   (src1   ),
-    .src2   (src2   ),
+    .src1       (src1    ),
+    .src2       (src2    ),
+    .ctrl_ALU   (ctrl_ALU),
 
-    .SLL_out(SLL_out)
+    .SLL_out    (SLL_out)
 );
 
 ysyx_22041461_SRA SRA(
 
-    .src1   (src1   ),
-    .src2   (src2   ),
+    .src1       (src1    ),
+    .src2       (src2    ),
+    .ctrl_ALU   (ctrl_ALU),
 
-    .SRA_out(SRA_out)
+    .SRA_out    (SRA_out)
 );
 
 ysyx_22041461_SRL SRL(
@@ -195,14 +206,6 @@ ysyx_22041461_AND AND(
     .src2   (src2   ),
 
     .AND_out(AND_out)
-);
-
-ysyx_22041461_SLLW SLLW(
-
-    .src1    (src1),
-    .src2    (src2),
-
-    .SLLW_out(SLLW_out)
 );
 
 ysyx_22041461_XOR XOR(

@@ -419,6 +419,30 @@ always@(*) begin
             sel_MEM_addr = 3'b001    ;
             sel_MEM_data = 3'b000    ;         
         end
+        32'b000000x_xxxxx_xxxxx_001_xxxxx_0011011: begin //slliw
+            imm          = immI(inst); 
+            sel_CMP      = 2'b00     ;
+            ctrl_CMP     = 1'b0      ;    
+            ctrl_ALU     = 5'b11010  ;         
+            sel_ALU      = 3'b001    ;         
+            sel_REGS     = 3'b001    ;         
+            sel_PC       = 2'b00     ;
+            ctrl_MEM     = 4'b0000   ;
+            sel_MEM_addr = 3'b000    ;
+            sel_MEM_data = 3'b000    ;         
+        end
+        32'b010000x_xxxxx_xxxxx_101_xxxxx_0011011: begin //sraiw
+            imm          = immI(inst); 
+            sel_CMP      = 2'b00     ;
+            ctrl_CMP     = 1'b0      ;    
+            ctrl_ALU     = 5'b11011  ;         
+            sel_ALU      = 3'b001    ;         
+            sel_REGS     = 3'b001    ;         
+            sel_PC       = 2'b00     ;
+            ctrl_MEM     = 4'b0000   ;
+            sel_MEM_addr = 3'b000    ;
+            sel_MEM_data = 3'b000    ;         
+        end
 
     //Type-S
         32'bxxxxxxx_xxxxx_xxxxx_011_xxxxx_0100011: begin //sd
@@ -504,7 +528,7 @@ always@(*) begin
             ctrl_MEM     = 4'b0000   ;
             sel_MEM_addr = 3'b000    ;
             sel_MEM_data = 3'b000    ;                 
-        end 
+        end
         32'bxxxxxxx_xxxxx_xxxxx_101_xxxxx_1100011: begin //bge      
             imm          = immB(inst);
             sel_CMP      = 2'b00     ;
