@@ -122,8 +122,6 @@ uint64_t expr(char *e) {
   if (!make_token(e)) {
     return 0;
   }
-
-  /* TODO: Insert codes to evaluate the expression. */
   else{
     int i;
     for (i = 0; i < nr_token; i ++) {

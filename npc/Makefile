@@ -13,7 +13,13 @@ C_SOURCE := $(shell find $(C_PATH) -name "*.c")
 
 BUILD := build
 
-VFLAGS +=  --cc --exe --trace --Mdir $(BUILD) -LDFLAGS -lreadline
+VFLAGS +=  --cc --exe --trace --Mdir $(BUILD)
+VFLAGS += -LDFLAGS -lasan
+VFLAGS += -LDFLAGS -lreadline
+VFLAGS += -LDFLAGS -lriscv64-nemu-interpreter-so
+VFLAGS += -CFLAGS -include
+VFLAGS += -CFLAGS /home/cxy/ysyx-workbench/npc/include/difftest.h
+VFLAGS += -CFLAGS -fPIC
 
 ifdef IMG
 VFLAGS += -CFLAGS -DIMG=$(IMG_PATH)$(IMG)-riscv64-npc.bin

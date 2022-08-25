@@ -9,8 +9,6 @@ module ysyx_22041461_PC(
     output  reg  [63:0]  pc       
 );
 
-import "DPI-C" function void ebreak();
-
 reg [63:0] npc;  
 
 assign snpc = pc + 4;

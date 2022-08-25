@@ -18,23 +18,51 @@
 #include <difftest-def.h>
 #include <memory/paddr.h>
 
-void difftest_memcpy(paddr_t addr, void *buf, size_t n, bool direction) {
-  assert(0);
+void difftest_memcpy(paddr_t addr, uint8_t *buf, size_t n, bool direction) {
+  if(direction == DIFFTEST_TO_DUT){
+    memcpy(buf + addr - 0x80000000, guest_to_host(addr), n);
+  }
+  else if(direction == DIFFTEST_TO_REF){
+    memcpy(guest_to_host(addr), buf + addr - 0x80000000, n);
+  }
 }
 
-void difftest_regcpy(void *dut, bool direction) {
-  assert(0);
+void difftest_regcpy(uint64_t *dut, bool direction) {
+  int i;
+  if(direction == DIFFTEST_TO_DUT){
+    for(i = 0; i < 32; i++){
+      dut[i] = cpu.gpr[i];
+    }
+  }
+  else if(direction == DIFFTEST_TO_REF){
+    for(i = 0; i < 32; i++){
+      cpu.gpr[i] = dut[i];
+    }
+  }
+}
+
+bool difftest_checkregs(uint64_t *dut, uint64_t dut_pc){
+  int i;
+  if(dut_pc != cpu.pc){
+    return false;
+  }
+  for(i = 0; i < 32; i++){
+    if(dut[i] != cpu.gpr[i]){
+      return false;
+    }
+  }
+  return true;
 }
 
 void difftest_exec(uint64_t n) {
-  assert(0);
+  cpu_exec(n);
 }
 
 void difftest_raise_intr(word_t NO) {
   assert(0);
 }
 
-void difftest_init(int port) {
+void difftest_init() {
   /* Perform ISA dependent initialization. */
   init_isa();
 }

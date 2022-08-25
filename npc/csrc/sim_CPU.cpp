@@ -14,14 +14,10 @@
 #include "/home/cxy/ysyx-workbench/npc/include/pmem.h"
 #include "/home/cxy/ysyx-workbench/npc/include/sdb.h"
 #include "/home/cxy/ysyx-workbench/npc/include/state.h"
+#include "/home/cxy/ysyx-workbench/npc/include/cpu.h"
 
 Vysyx_22041461_CPU *top = new Vysyx_22041461_CPU("CPU"); //调用VAccumulator.h里面的IO struct
 VerilatedVcdC* tfp = new VerilatedVcdC; //导出vcd波形需要加此语句
-
-void ebreak(){
-  extern Vysyx_22041461_CPU *top; 
-  set_npc_state(NPC_END, top->pc, 1);
-}
 
 int main(int argc, char **argv){
   Verilated::commandArgs(argc, argv); 
@@ -34,6 +30,8 @@ int main(int argc, char **argv){
 
   init_mem();
   init_sdb();
+  exec_once();      //先执行一个周期，让寄存器的值能够被读出
+  init_difftest();
 
   sdb_mainloop();
 

@@ -4,6 +4,7 @@
 #include "svdpi.h"
 #include "Vysyx_22041461_CPU__Dpi.h"
 #include "/home/cxy/ysyx-workbench/npc/include/common.h"
+#include "/home/cxy/ysyx-workbench/npc/include/state.h"
 
 uint8_t pmem[memory_size] = {};
 
@@ -39,6 +40,7 @@ extern "C" void pmem_read(long long raddr, long long *rdata) {
   }
   else{
     printf("越界地址为： %llu\n", raddr);
+    npc_state.state = NPC_ABORT;
   }
 }
 
@@ -53,6 +55,7 @@ extern "C" void pmem_write(long long waddr, long long wdata, char wmask){
     if((wmask >> i) & 1 == 1){
       host_write(guest_to_host((waddr & ~0x7ull) + i), 1, wdata);
     }
+    wdata = wdata >> 8;
   }
 }
 

@@ -3,5 +3,6 @@
 
 void init_mem();
 void init_sdb();
+void init_difftest();
 
 #endif
