@@ -462,10 +462,10 @@ always@(*) begin
             ctrl_ALU     = 5'b11101  ;         
             sel_ALU      = 3'b001    ;
             if(imm[5:5] == 1'b0) begin
-                sel_REGS     = 3'b001;     
+                sel_REGS = 3'b001;     
             end
             else begin
-                sel_REGS     = 3'b000;
+                sel_REGS = 3'b000;
             end
             sel_PC       = 2'b00     ;
             ctrl_MEM     = 4'b0000   ;
