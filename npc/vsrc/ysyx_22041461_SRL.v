@@ -16,7 +16,7 @@ always@(*) begin
             SRL_out = srl;
         end
         5'b11101: begin
-            srl     = src1 >> src2[5:0];
+            srl     = {32'd0, src1[31:0] >> src2[5:0]};
             SRL_out = {{32{srl[31:31]}}, srl[31:0]};
         end
         5'b11110: begin
