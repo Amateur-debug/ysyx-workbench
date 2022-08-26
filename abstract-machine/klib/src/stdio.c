@@ -9,11 +9,11 @@ int printf(const char *fmt, ...){
   char *out = "";
   int i;
   int ret = sprintf(out, fmt);
-  if(ret >= 0){
+  
     for(i = 0; out[i] != '\0'; i++){
       putch(out[i]);
     }
-  }
+  
   return ret;
 }
 
