@@ -6,7 +6,7 @@
 #if !defined(__ISA_NATIVE__) || defined(__NATIVE_USE_KLIB__)
 
 int printf(const char *fmt, ...){
-  char out[100];
+  char out[100]; //最多输出100个字节
   int i;
   int ret = sprintf(out, fmt);
   if(ret >= 0){
