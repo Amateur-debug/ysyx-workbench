@@ -256,6 +256,30 @@ always@(*) begin
             sel_MEM_addr = 3'b000    ;
             sel_MEM_data = 3'b000    ; 
         end
+        32'b0100000_xxxxx_xxxxx_101_xxxxx_0111011: begin //sraw
+            imm          = 64'd0     ;
+            sel_CMP      = 2'b00     ;
+            ctrl_CMP     = 1'b0      ;     
+            ctrl_ALU     = 5'b11100  ;         
+            sel_ALU      = 3'b000    ;         
+            sel_REGS     = 3'b001    ;         
+            sel_PC       = 2'b00     ;
+            ctrl_MEM     = 4'b0000   ;
+            sel_MEM_addr = 3'b000    ;
+            sel_MEM_data = 3'b000    ; 
+        end
+        32'b0000000_xxxxx_xxxxx_101_xxxxx_0111011: begin //srlw
+            imm          = 64'd0     ;
+            sel_CMP      = 2'b00     ;
+            ctrl_CMP     = 1'b0      ;     
+            ctrl_ALU     = 5'b11110  ;         
+            sel_ALU      = 3'b000    ;         
+            sel_REGS     = 3'b001    ;         
+            sel_PC       = 2'b00     ;
+            ctrl_MEM     = 4'b0000   ;
+            sel_MEM_addr = 3'b000    ;
+            sel_MEM_data = 3'b000    ; 
+        end
 
     //Type-I
         32'bxxxxxxx_xxxxx_xxxxx_000_xxxxx_0010011: begin //addi 
