@@ -6,14 +6,14 @@
 #if !defined(__ISA_NATIVE__) || defined(__NATIVE_USE_KLIB__)
 
 int printf(const char *fmt, ...){
-  char *out = "";
+  char out[100];
   int i;
   int ret = sprintf(out, fmt);
-  
+  if(ret >= 0){
     for(i = 0; out[i] != '\0'; i++){
       putch(out[i]);
     }
-  
+  }
   return ret;
 }
 
