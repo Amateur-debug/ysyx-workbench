@@ -54,7 +54,7 @@ int sprintf(char *out, const char *fmt, ...) {
           }
           break;
         }
-        default: return -1;
+        default: va_end(ap); return -1;
       }
     }
     else{
