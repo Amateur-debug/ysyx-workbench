@@ -27,15 +27,15 @@ void __am_gpu_fbdraw(AM_GPU_FBDRAW_T *ctl) {
   y = ctl->y;
   w = ctl->w;
   h = ctl->h;
-  uint64_t addr = FB_ADDR + x * 4 + y * inw(VGACTL_ADDR) * 4;
+  uint64_t addr;
   uint32_t data;
   for(j = 0; j < h; j++){
+    addr = FB_ADDR + x * 4 + (y + j) * inw(VGACTL_ADDR) * 4;
     for(i = 0; i < w; i++){
       data = *(pixels + i + j * w);
       outl(addr, data);
       addr += 4;
     }
-    addr += inw(VGACTL_ADDR) * 4;
   }
   if (ctl->sync) {
     outl(SYNC_ADDR, 1);
