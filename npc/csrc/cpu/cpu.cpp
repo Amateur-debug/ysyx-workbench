@@ -10,7 +10,7 @@
 #define MAX_MAIN_TIME 100
 #define RST_END_TIME 1  //rst拉高时间
 #define MAX_INST_TO_PRINT 10
-#define DIFFTEST
+//#define DIFFTEST
 
 static vluint64_t main_time = 0;  //initial 仿真时间
 static bool g_print_step = false;
