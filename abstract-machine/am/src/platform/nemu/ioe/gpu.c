@@ -21,10 +21,6 @@ void __am_gpu_config(AM_GPU_CONFIG_T *cfg) {
 }
 
 void __am_gpu_fbdraw(AM_GPU_FBDRAW_T *ctl) {
-  int i;
-  for(i = 0; i < 10; i++){
-    outl(FB_ADDR + i*4, *((uint32_t *)ctl->pixels + i));
-  }
   if (ctl->sync) {
     outl(SYNC_ADDR, 1);
   }
