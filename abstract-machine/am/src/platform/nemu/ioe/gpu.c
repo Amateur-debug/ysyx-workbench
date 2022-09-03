@@ -27,9 +27,9 @@ void __am_gpu_fbdraw(AM_GPU_FBDRAW_T *ctl) {
   y = ctl->y;
   w = ctl->w;
   h = ctl->h;
-  uint64_t addr = FB_ADDR + x * 4 + y * inw(VGACTL_ADDR + 2) * 4;
+  uint64_t addr = FB_ADDR + x * 4 + y * 400 * 4;
   for(j = 0; j < h; j++){
-    addr += j * inw(VGACTL_ADDR + 2) * 4;
+    addr += j * 400 * 4;
     for(i = 0; i < w; i++){
       addr += i * 4;
       outl(addr, *pixels);
