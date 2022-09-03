@@ -12,6 +12,7 @@
 
 #define STR1(R) #R
 #define STR2(R) STR1(R)
+#define memory_size 128*1024*1024
 
 uint32_t img[memory_size/4] = {
   0x00000297,  // auipc t0,0

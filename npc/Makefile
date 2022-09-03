@@ -22,17 +22,19 @@ VFLAGS += -CFLAGS /home/cxy/ysyx-workbench/npc/include/difftest.h
 VFLAGS += -CFLAGS -fPIC
 
 ifdef IMG
-VFLAGS += -CFLAGS -DIMG=$(IMG_PATH)$(IMG)-riscv64-npc.bin
+VFLAGS += -CFLAGS -DIMG=$(IMG)
 endif
 
-sim:$(V_TOP) $(V_SOURCE) $(C_SOURCE) $(CC_SOURCE)
+run:$(V_TOP) $(V_SOURCE) $(C_SOURCE) $(CC_SOURCE)
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 	verilator $(VFLAGS) $^
 	make -j -C $(BUILD) -f $(Vmodule_name).mk
 	cd $(BUILD)&&./$(Vmodule_name)
 	gtkwave ./$(BUILD)/wave.vcd
 	make clean
-.PHONY: clean sim
+
+.PHONY: clean
 
 clean:
 	rm -rf ./$(BUILD)
+

@@ -1,6 +1,9 @@
 #ifndef __COMMON_H__
 #define __COMMON_H__
 
-#define memory_size 128*1024*1024
+#include <stdint.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <assert.h>
 
 #endif
