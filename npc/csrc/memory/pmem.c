@@ -1,8 +1,8 @@
 #include "svdpi.h"
-#include <time.h>
 #include "Vysyx_22041461_CPU__Dpi.h"
 #include "/home/cxy/ysyx-workbench/npc/include/common.h"
 #include "/home/cxy/ysyx-workbench/npc/include/state.h"
+#include "/home/cxy/ysyx-workbench/npc/include/timer.h"
 
 #define memory_size 128*1024*1024
 
@@ -37,8 +37,8 @@ static inline void host_write(void *addr, int len, uint64_t data) {
 
 extern "C" void pmem_read(long long raddr, long long *rdata) {
 
-  if(raddr >= RTC_ADDR || raddr < RTC_ADDR + 24){
-    *rdata = time(NULL);
+  if(raddr >= RTC_ADDR && raddr < RTC_ADDR + 24){
+    *rdata = get_time();
     return;
   }
 
