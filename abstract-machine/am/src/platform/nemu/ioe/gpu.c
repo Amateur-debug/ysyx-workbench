@@ -36,7 +36,7 @@ void __am_gpu_fbdraw(AM_GPU_FBDRAW_T *ctl) {
     }
   }*/
   uint64_t addr = FB_ADDR + x * 4 + y * inw(VGACTL_ADDR) * 4;
-  for(i = 0; i < sizeof(pixels); i++){
+  for(i = 0; i < 1024; i++){
       addr += i * 4;
       outl(addr, *pixels);
   }
