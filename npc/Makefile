@@ -33,7 +33,7 @@ run:$(V_TOP) $(V_SOURCE) $(C_SOURCE) $(CC_SOURCE)
 	gtkwave ./$(BUILD)/wave.vcd
 	make clean
 
-.PHONY: clean
+.PHONY: clean run
 
 clean:
 	rm -rf ./$(BUILD)
