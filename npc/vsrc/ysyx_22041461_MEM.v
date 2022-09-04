@@ -61,8 +61,40 @@ always@(*) begin
 end
 
 always@(*) begin
-    pmem_read(addr, read_data1);
-    pmem_read((addr + 64'd8), read_data2);
+    case(ctrl_MEM)
+        4'b0001: begin            //读取8字节数据
+            pmem_read(addr, read_data1);
+            pmem_read((addr + 64'd8), read_data2);
+        end
+        4'b0010: begin            //读取4字节数据并进行符号位扩展
+            pmem_read(addr, read_data1);
+            pmem_read((addr + 64'd8), read_data2);
+        end
+        4'b0011: begin            //读取2字节数据并进行符号位扩展
+            pmem_read(addr, read_data1);
+            pmem_read((addr + 64'd8), read_data2);
+        end
+        4'b0100: begin            //读取1字节数据并进行符号位扩展
+            pmem_read(addr, read_data1);
+            pmem_read((addr + 64'd8), read_data2);
+        end
+        4'b0101: begin            //读取4字节数据并进行零扩展
+            pmem_read(addr, read_data1);
+            pmem_read((addr + 64'd8), read_data2);
+        end
+        4'b0110: begin            //读取2字节数据并进行零扩展
+            pmem_read(addr, read_data1);
+            pmem_read((addr + 64'd8), read_data2);
+        end
+        4'b0111: begin            //读取1字节数据并进行零扩展
+            pmem_read(addr, read_data1);
+            pmem_read((addr + 64'd8), read_data2);
+        end
+        default: begin
+            read_data1 = 64'd0;
+            read_data2 = 64'd0;
+        end
+    endcase
 end
 
 always@(*) begin

@@ -23,7 +23,7 @@ int main(int argc, char **argv){
   Verilated::commandArgs(argc, argv); 
   Verilated::traceEverOn(true); //导出vcd波形需要加此语句
   top->trace(tfp, 0);   
-  tfp->open("wave.vcd"); //打开vcd
+  //tfp->open("wave.vcd"); //打开vcd
   top->clk = 1;
   top->rst = 0;
   top->pc  = 0x80000000;

@@ -1,10 +1,13 @@
-#include <stdint.h>
-#include <stdio.h>
-#include <assert.h>
 #include "svdpi.h"
 #include "Vysyx_22041461_CPU__Dpi.h"
 #include "/home/cxy/ysyx-workbench/npc/include/common.h"
 #include "/home/cxy/ysyx-workbench/npc/include/state.h"
+#include "/home/cxy/ysyx-workbench/npc/include/timer.h"
+
+#define memory_size 128*1024*1024
+
+#define RTC_ADDR    0xa0000048
+#define SERIAL_PORT 0xa00003f8
 
 uint8_t pmem[memory_size] = {};
 
@@ -34,17 +37,27 @@ static inline void host_write(void *addr, int len, uint64_t data) {
 
 extern "C" void pmem_read(long long raddr, long long *rdata) {
 
+  if(raddr >= RTC_ADDR && raddr < RTC_ADDR + 24){
+    *rdata = get_time();
+    return;
+  }
+
   // 总是读取地址为`raddr & ~0x7ull`的8字节返回给`rdata`
   if(raddr >= 0x80000000 && raddr < 0x80000000 + 128*1024*1024){
     *rdata = host_read(guest_to_host(raddr & ~0x7ull), 8);
   }
   else{
-    printf("越界地址为： %llu\n", raddr);
+    printf("read越界地址为: 0x%016lx\n", raddr);
     npc_state.state = NPC_ABORT;
   }
 }
 
 extern "C" void pmem_write(long long waddr, long long wdata, char wmask){
+
+  if(waddr >= SERIAL_PORT && waddr < SERIAL_PORT + 8){
+    printf("%c", wdata);
+    return;
+  }
 
   // 总是往地址为`waddr & ~0x7ull`的8字节按写掩码`wmask`写入`wdata`
   // `wmask`中每比特表示`wdata`中1个字节的掩码,
