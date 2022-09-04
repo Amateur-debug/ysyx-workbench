@@ -31,7 +31,7 @@ run:$(V_TOP) $(V_SOURCE) $(C_SOURCE) $(CC_SOURCE)
 	make -j -C $(BUILD) -f $(Vmodule_name).mk
 	cd $(BUILD)&&./$(Vmodule_name)
 	gtkwave ./$(BUILD)/wave.vcd
-	make clean
+	-make clean
 
 .PHONY: clean run
 

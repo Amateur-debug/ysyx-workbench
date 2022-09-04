@@ -4,6 +4,8 @@
 
 #if !defined(__ISA_NATIVE__) || defined(__NATIVE_USE_KLIB__)
 static unsigned long int next = 1;
+extern char _heap_start;
+static void *addr = &_heap_start;
 
 int rand(void) {
   // RAND_MAX assumed to be 32767
@@ -36,7 +38,9 @@ void *malloc(size_t size) {
 #if !(defined(__ISA_NATIVE__) && defined(__NATIVE_USE_KLIB__))
   panic("Not implemented");
 #endif
-  return NULL;
+  void *out = addr;
+  addr += size;
+  return out;
 }
 
 void free(void *ptr) {
