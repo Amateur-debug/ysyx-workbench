@@ -18,7 +18,7 @@
 NEMUState nemu_state = { .state = NEMU_STOP };
 
 int is_exit_status_bad() {
-  int good = (nemu_state.state == NEMU_END ) ||
+  int good = (nemu_state.state == NEMU_END && cpu.gpr[10] == 0) ||
     (nemu_state.state == NEMU_QUIT && nemu_state.halt_ret != -1) || (nemu_state.state == NEMU_STOP) ;
   return !good;
 }
