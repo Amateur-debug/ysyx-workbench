@@ -6,7 +6,7 @@
 #if !defined(__ISA_NATIVE__) || defined(__NATIVE_USE_KLIB__)
 
 int printf(const char *fmt, ...){
-  char out[1000]; //最多输出100个字节
+  char out[10000]; //最多输出1000个字节
   va_list ap;
   va_start(ap, fmt);
   int i = 0;
