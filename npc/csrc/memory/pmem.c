@@ -37,7 +37,7 @@ static inline void host_write(void *addr, int len, uint64_t data) {
 
 extern "C" void pmem_read(long long raddr, long long *rdata) {
 
-  if(raddr >= RTC_ADDR && raddr < RTC_ADDR + 24){
+  if(raddr >= RTC_ADDR && raddr < RTC_ADDR + 16){
     *rdata = get_time();
     return;
   }
@@ -54,8 +54,11 @@ extern "C" void pmem_read(long long raddr, long long *rdata) {
 
 extern "C" void pmem_write(long long waddr, long long wdata, char wmask){
 
-  if(waddr >= SERIAL_PORT && waddr < SERIAL_PORT + 8){
-    printf("%c", wdata);
+  if(waddr == SERIAL_PORT){
+    putc((char)wdata, stderr);
+    return;
+  }
+  if(waddr > SERIAL_PORT && waddr < SERIAL_PORT + 8){
     return;
   }
 
