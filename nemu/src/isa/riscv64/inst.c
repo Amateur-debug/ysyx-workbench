@@ -25,15 +25,15 @@
 word_t RCSR(int csr_num){
   switch (csr_num){
     case 0x305: return cpu.mtvec;
-    default: assert(0);
+    default: return 0;
   }
   return 0;
 }
 
 void WCSR(int csr_num, uint64_t wdata){
   switch (csr_num){
-    case 0x305: cpu.mtvec = wdata;
-    default: assert(0);
+    case 0x305: cpu.mtvec = wdata; break;
+    default: return;
   }
 }
 
