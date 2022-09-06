@@ -19,7 +19,11 @@
 #include <common.h>
 
 typedef struct {
+  //GPR
   word_t gpr[32];
+  //CSR
+  word_t mtvec; //0x305
+  //PC
   vaddr_t pc;
 } riscv64_CPU_state;
 

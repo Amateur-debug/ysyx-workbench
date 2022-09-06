@@ -22,6 +22,21 @@
 #define Mr vaddr_read
 #define Mw vaddr_write
 
+word_t RCSR(int csr_num){
+  switch (csr_num){
+    case 0x305: return cpu.mtvec;
+    default: assert(0);
+  }
+  return 0;
+}
+
+void WCSR(int csr_num, uint64_t wdata){
+  switch (csr_num){
+    case 0x305: cpu.mtvec = wdata;
+    default: assert(0);
+  }
+}
+
 enum {
   TYPE_I, TYPE_U, TYPE_S,
   TYPE_N, TYPE_J, TYPE_R, TYPE_B  // none
@@ -40,14 +55,14 @@ static word_t immS(uint32_t i) { return SEXT(BITS(i, 31, 25), 7) << 5 | BITS(i, 
 static word_t immJ(uint32_t i) { return SEXT(BITS(i, 31, 31), 1) << 20 | BITS(i, 19, 12) << 12 | BITS(i, 20, 20) << 11 | BITS(i, 30, 21) << 1;}
 static word_t immB(uint32_t i) { return SEXT(BITS(i, 31, 31), 1) << 12 | BITS(i, 7, 7) << 11 | BITS(i, 30, 25) << 5 | BITS(i, 11, 8) << 1;}
 
-static void decode_operand(Decode *s, word_t *dest, word_t *src1, word_t *src2, int type) {
+static void decode_operand(Decode *s, word_t *dest, word_t *src1, word_t *src2, word_t *csr, int type) {
   uint32_t i = s->isa.inst.val;
   int rd  = BITS(i, 11, 7);
   int rs1 = BITS(i, 19, 15);
   int rs2 = BITS(i, 24, 20);
   destR(rd);
   switch (type) {
-    case TYPE_I: src1R(rs1);     src2I(immI(i)); break;
+    case TYPE_I: src1R(rs1); src2I(immI(i)); *csr = RCSR(*src2); break;
     case TYPE_U: src1I(immU(i)); break;
     case TYPE_S: destI(immS(i)); src1R(rs1); src2R(rs2); break;
     case TYPE_J: src1I(immJ(i)); break;
@@ -57,12 +72,12 @@ static void decode_operand(Decode *s, word_t *dest, word_t *src1, word_t *src2, 
 }
 
 static int decode_exec(Decode *s) {
-  word_t dest = 0, src1 = 0, src2 = 0;
+  word_t dest = 0, src1 = 0, src2 = 0, csr = 0;
   s->dnpc = s->snpc;
 
 #define INSTPAT_INST(s) ((s)->isa.inst.val)
 #define INSTPAT_MATCH(s, name, type, ... /* body */ ) { \
-  decode_operand(s, &dest, &src1, &src2, concat(TYPE_, type)); \
+  decode_operand(s, &dest, &src1, &src2, &csr, concat(TYPE_, type)); \
   __VA_ARGS__ ; \
 }
 
@@ -145,6 +160,7 @@ static int decode_exec(Decode *s) {
  
   INSTPAT("0000001 ????? ????? 100 ????? 01100 11", div    , R, R(dest) = (int64_t)src1 / (int64_t)src2);
   INSTPAT("??????? ????? ????? 110 ????? 00000 11", lwu    , I, R(dest) = Mr(src1 +src2, 4));
+  INSTPAT("??????? ????? ????? 001 ????? 11100 11", csrrw  , I, WCSR(src2, src1); R(dest) = csr);
 
   INSTPAT("??????? ????? ????? ??? ????? ????? ??", inv    , N, INV(s->pc));
   INSTPAT_END();             
