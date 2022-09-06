@@ -144,7 +144,7 @@ always@(*) begin
             read_data = {{48{rread_data[15:15]}}, rread_data[15:0]};
         end
         4'b0100: begin            //读取1字节数据并进行符号位扩展
-            read_data = {56'd0, rread_data[7:0]};
+            read_data = {{56{rread_data[7:7]}}, rread_data[7:0]};
         end
         4'b0101: begin            //读取4字节数据并进行零扩展
             read_data = {32'd0, rread_data[31:0]};

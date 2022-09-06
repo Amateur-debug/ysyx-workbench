@@ -10,7 +10,7 @@
 #define MAX_MAIN_TIME 100
 #define RST_END_TIME 1  //rst拉高时间
 #define MAX_INST_TO_PRINT 10
-#define DIFFTEST
+//#define DIFFTEST
 
 extern Vysyx_22041461_CPU *top; 
 extern VerilatedVcdC* tfp;
@@ -102,10 +102,10 @@ void cpu_exec(uint64_t n){
   switch(npc_state.state){
     case NPC_RUNNING: out = (char *)"stop"; npc_state.state = NPC_STOP; break;
     case NPC_END: difftest_exec(1); out = (char *)"HIT GOOD TRAP"; 
-      printf("npc: %s at pc = 0x%016lx\n", out, top->pc); break;
+      printf("npc: %s at pc = 0x%016lx\n", out, npc_state.halt_pc ); break;
     case NPC_ABORT: out = (char *)"ABORT"; 
-      printf("npc: %s at pc = 0x%016lx\n", out, top->pc); break;
+      printf("npc: %s at pc = 0x%016lx\n", out, npc_state.halt_pc); break;
     default: out = (char *)"HIT BAD TRAP"; 
-      printf("npc: %s at pc = 0x%016lx\n", out, top->pc); break;
+      printf("npc: %s at pc = 0x%016lx\n", out, npc_state.halt_pc); break;
   }
 }
