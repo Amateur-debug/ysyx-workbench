@@ -22,6 +22,8 @@ import "DPI-C" function void pmem_read(input longint raddr, output longint rdata
 
 import "DPI-C" function void pmem_write(input longint waddr, input longint wdata, input byte wmask);
 
+import "DPI-C" function void set_difftest_next();
+
 reg [63:0]  rinst;
 reg [63:0]  read_data1;
 reg [63:0]  read_data2;
@@ -93,6 +95,7 @@ always@(*) begin
         default: begin
             read_data1 = 64'd0;
             read_data2 = 64'd0;
+            set_difftest_next();
         end
     endcase
 end

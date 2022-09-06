@@ -10,13 +10,17 @@
 #define MAX_MAIN_TIME 100
 #define RST_END_TIME 1  //rst拉高时间
 #define MAX_INST_TO_PRINT 10
-//#define DIFFTEST
+#define DIFFTEST
+
+extern Vysyx_22041461_CPU *top; 
+extern VerilatedVcdC* tfp;
 
 static vluint64_t main_time = 0;  //initial 仿真时间
 static bool g_print_step = false;
 
-extern Vysyx_22041461_CPU *top; 
-extern VerilatedVcdC* tfp;
+int is_difftest_this = 1;
+int is_difftest_next = 1;
+
 
 void ebreak(){      //结束指令
   set_npc_state(NPC_END, top->pc, 1);
@@ -63,10 +67,18 @@ static void execute(uint64_t n){
       }
     }
     #ifdef DIFFTEST
-      difftest_exec(1);
+      extern int is_difftest_this;
+      extern int is_difftest_next;
+      if(is_difftest_this){
+        difftest_exec(1);
+      }
+      else{
+        difftest_regcpy(cpu_gpr, cpu_pc, DIFFTEST_TO_REF);
+      }
       if(!difftest_checkregs(cpu_gpr, top->pc)){
         npc_state.state = NPC_ABORT;
       }
+      is_difftest_this = is_difftest_next;
     #endif
     if(npc_state.state != NPC_RUNNING){
       break;
