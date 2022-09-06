@@ -6,7 +6,6 @@
 #if !defined(__ISA_NATIVE__) || defined(__NATIVE_USE_KLIB__)
 
 int printf(const char *fmt, ...){
-  char out[100000]; //最多输出10000个字节
   va_list ap;
   va_start(ap, fmt);
   int i = 0;
@@ -17,7 +16,7 @@ int printf(const char *fmt, ...){
         case 's': {
           char *string = va_arg(ap, char *);
           while(*string != '\0'){
-            out[i] = *string;
+            putch(*string);
             i++;
             string++;
           }
@@ -34,7 +33,7 @@ int printf(const char *fmt, ...){
           }
           dd[j] = d + '0';
           for(; j >= 0; j--){
-            out[i] = dd[j];
+            putch(dd[j]);
             i++;
           }
           break;
@@ -43,16 +42,12 @@ int printf(const char *fmt, ...){
       }
     }
     else{
-      out[i] = *fmt;
+      putch(*fmt);
       i++;
     }
     fmt++;
   }
   va_end(ap);
-  out[i] = '\0';
-  for(i = 0; out[i] != '\0'; i++){
-    putch(out[i]);
-  }
   return i;
 }
 
