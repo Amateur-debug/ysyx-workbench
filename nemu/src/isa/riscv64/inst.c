@@ -25,6 +25,9 @@
 word_t RCSR(int csr_num){
   switch (csr_num){
     case 0x305: return cpu.mtvec;
+    case 0x341: return cpu.mepc;
+    case 0x342: return cpu.mcause;
+    case 0x300: return cpu.mstatus;
     default: return 0;
   }
   return 0;
@@ -33,6 +36,9 @@ word_t RCSR(int csr_num){
 void WCSR(int csr_num, uint64_t wdata){
   switch (csr_num){
     case 0x305: cpu.mtvec = wdata; break;
+    case 0x341: cpu.mepc = wdata; break;
+    case 0x342: cpu.mcause = wdata; break;
+    case 0x300: cpu.mstatus = wdata; break;
     default: return;
   }
 }
