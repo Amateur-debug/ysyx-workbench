@@ -38,6 +38,32 @@ int printf(const char *fmt, ...){
           }
           break;
         }
+        case 'x': {
+          uint64_t d = va_arg(ap, uint64_t);
+          int j = 0;
+          char dd[30];
+          while(d / 16){
+            if(d % 16 < 10){
+              dd[j] = (char)(d % 16 + '0');
+            }
+            else{
+              dd[j] = (char)(d % 16 - 10 + 'a');
+            }
+            j++;
+            d = d / 16;
+          }
+          if(d < 10){
+            dd[j] = (char)(d % 16 + '0');
+          }
+          else{
+            dd[j] = (char)(d % 16 - 10 + 'a');
+          }
+          for(; j >= 0; j--){
+            putch(dd[j]);
+            i++;
+          }
+          break;
+        }
         default: va_end(ap); return -1;
       }
     }
