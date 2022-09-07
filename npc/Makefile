@@ -20,6 +20,7 @@ VFLAGS += -LDFLAGS -lriscv64-nemu-interpreter-so
 VFLAGS += -CFLAGS -include
 VFLAGS += -CFLAGS /home/cxy/ysyx-workbench/npc/include/difftest.h
 VFLAGS += -CFLAGS -fPIC
+VFLAGS += -O3 
 
 ifdef IMG
 VFLAGS += -CFLAGS -DIMG=$(IMG)
