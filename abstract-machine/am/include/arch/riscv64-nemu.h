@@ -7,7 +7,6 @@ struct Context {
   void *pdir;
   uintptr_t gpr[31];
   uintptr_t mcause, mstatus, mepc;
-  //void *pdir;
 
 };
 

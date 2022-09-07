@@ -23,7 +23,7 @@ int printf(const char *fmt, ...){
           break;
         }
         case 'd': {
-          int d = va_arg(ap, int);
+          uint64_t d = va_arg(ap, uint64_t);
           int j = 0;
           char dd[30];
           while(d / 10){
