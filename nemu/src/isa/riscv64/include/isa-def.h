@@ -21,13 +21,13 @@
 typedef struct {
   //GPR
   word_t gpr[32];
+  //PC
+  vaddr_t pc;
   //CSR
   word_t mtvec;   //0x305
   word_t mepc;    //0x341
   word_t mcause;  //0x342
   word_t mstatus; //0x300
-  //PC
-  vaddr_t pc;
 } riscv64_CPU_state;
 
 // decode
