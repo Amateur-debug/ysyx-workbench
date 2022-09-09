@@ -10,10 +10,16 @@
 #endif
 
 size_t ramdisk_read(void *buf, size_t offset, size_t len);
+int fs_open(const char *pathname, int flags, int mode);
+long fs_read(int fd, void *buf, size_t len);
+long fs_write(int fd, const void *buf, size_t len);
+size_t fs_lseek(int fd, size_t offset, int whence);
+int fs_close(int fd);
 
 static uintptr_t loader(PCB *pcb, const char *filename) {
+  int fd = fs_open(filename, 0, 0);
   Elf_Ehdr ehdr;
-  ramdisk_read(&ehdr, 0, sizeof(Elf_Ehdr));
+  fs_read(fd, &ehdr, sizeof(Elf_Ehdr));
   Elf_Phdr phdr[ehdr.e_phnum];
   ramdisk_read(phdr, ehdr.e_phoff, ehdr.e_phnum * ehdr.e_phentsize);
   int i;
@@ -25,6 +31,7 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
     }
   }
   printf("%x\n", ehdr.e_entry);
+  fs_close(fd);
   return ehdr.e_entry;
 }
 
