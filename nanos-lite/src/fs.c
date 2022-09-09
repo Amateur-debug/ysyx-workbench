@@ -55,7 +55,7 @@ int fs_open(const char *pathname, int flags, int mode){
 
 long fs_read(int fd, void *buf, size_t len){
   long i = -1;
-  if(fd > 3 && fd < fs_size){
+  if(fd >= 3 && fd < fs_size){
     if(len <= file_table[fd].size){
       i = ramdisk_read(buf, file_table[fd].disk_offset, len);
       file_table[fd].open_offset += i;
@@ -78,7 +78,7 @@ long fs_write(int fd, const void *buf, size_t len){
   else if(fd == FD_STDIN){
     i = 0;
   }
-  else if(fd > 3 && fd < fs_size){
+  else if(fd >= 3 && fd < fs_size){
     if(len <= file_table[fd].size){
       i = ramdisk_write(buf, file_table[fd].disk_offset, len);
       file_table[fd].open_offset += i;
@@ -91,7 +91,7 @@ long fs_write(int fd, const void *buf, size_t len){
 }
 
 size_t fs_lseek(int fd, size_t offset, int whence){
-  if(fd > 3 && fd < fs_size){
+  if(fd >= 3 && fd < fs_size){
     long open_offset = file_table[fd].open_offset;
     switch(whence){
       case SEEK_SET: 
@@ -128,7 +128,7 @@ size_t fs_lseek(int fd, size_t offset, int whence){
 }
 
 int fs_close(int fd){
-  if(fd > 3 && fd < fs_size){
+  if(fd >= 3 && fd < fs_size){
     file_table[fd].open_offset = 0;
     return 0;
   }
