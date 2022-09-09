@@ -19,7 +19,6 @@ void do_syscall(Context *c) {
         a[2]++;
       }
       c->GPRx = i;
-      printf("i = %d\n", i);
     }
     else{
       c->GPRx = -1;
