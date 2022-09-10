@@ -91,16 +91,17 @@ long fs_write(int fd, const void *buf, size_t len){
   return i;
 }
 
-size_t fs_lseek(int fd, size_t offset, int whence){
+size_t fs_lseek(int fd, long offset, int whence){
   if(fd >= 3 && fd < fs_size){
     long open_offset = file_table[fd].open_offset;
     switch(whence){
       case SEEK_SET: 
-      if(offset < file_table[fd].size){
+      if(offset < file_table[fd].size && offset >= 0){
         file_table[fd].open_offset = offset; 
         break;
       }
       else{
+        printf("fs_lseek: SEEK_SET erro\n");
         return -1;
       }
       case SEEK_CUR: 
@@ -109,14 +110,16 @@ size_t fs_lseek(int fd, size_t offset, int whence){
         break;
       }
       else{
+        printf("fs_lseek: SEEK_CUR erro\n");
         return -1;
       }
       case SEEK_END: 
-      if(open_offset + offset < file_table[fd].size && open_offset + offset >=0){
-        file_table[fd].open_offset = open_offset + offset;
+      if(offset <= 0 && (long)file_table[fd].size + offset -1 >= 0){
+        file_table[fd].open_offset = (long)file_table[fd].size + offset -1;
         break;
       }
       else{
+        printf("fs_lseek: SEEK_END erro\n");
         return -1;
       }
       default: return -1;
