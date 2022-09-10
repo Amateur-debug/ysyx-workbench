@@ -63,10 +63,13 @@ int _write(int fd, void *buf, size_t count) {
   return _syscall_(SYS_write, fd, (intptr_t)buf, count);
 }
 
+extern char _end;
+static unsigned long pb = (unsigned long)&_end;
+
 void *_sbrk(intptr_t increment) {
-  extern char _end;
-  void * ret = &_end;
-  if(_syscall_(SYS_brk,(intptr_t)(&_end + increment), 0, 0) == 0){
+  void *ret = (void *)pb;
+  if(_syscall_(SYS_brk, (intptr_t)(pb + increment), 0, 0) == 0){
+    pb = pb + increment;
     return ret;
   }
   else{
