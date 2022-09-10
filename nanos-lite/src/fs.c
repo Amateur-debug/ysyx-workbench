@@ -56,7 +56,7 @@ int fs_open(const char *pathname, int flags, int mode){
 long fs_read(int fd, void *buf, size_t len){
   long i = -1;
   if(fd >= 3 && fd < fs_size){
-    if(len <= file_table[fd].size){
+    if(len + file_table[fd].open_offset <= file_table[fd].size){
       i = ramdisk_read(buf, file_table[fd].disk_offset + file_table[fd].open_offset, len);
       file_table[fd].open_offset += i;
     }
@@ -79,7 +79,7 @@ long fs_write(int fd, const void *buf, size_t len){
     i = 0;
   }
   else if(fd >= 3 && fd < fs_size){
-    if(len <= file_table[fd].size){
+    if(len + file_table[fd].open_offset <= file_table[fd].size){
       i = ramdisk_write(buf, file_table[fd].disk_offset + file_table[fd].open_offset, len);
       file_table[fd].open_offset += i;
     }
