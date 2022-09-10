@@ -56,18 +56,17 @@ void _exit(int status) {
 }
 
 int _open(const char *path, int flags, mode_t mode) {
-  return _syscall_(SYS_open, path, flags, mode);
+  return _syscall_(SYS_open, (intptr_t)path, flags, mode);
 }
 
 int _write(int fd, void *buf, size_t count) {
-  return _syscall_(SYS_write, fd, buf, count);
+  return _syscall_(SYS_write, fd, (intptr_t)buf, count);
 }
 
 void *_sbrk(intptr_t increment) {
   extern char _end;
   void * ret = &_end;
-  if(_syscall_(SYS_brk, &_end + increment, 0, 0) == 0){
-    _end = *(char *)(&_end + increment); 
+  if(_syscall_(SYS_brk,(intptr_t)(&_end + increment), 0, 0) == 0){
     return ret;
   }
   else{
@@ -76,7 +75,7 @@ void *_sbrk(intptr_t increment) {
 }
 
 int _read(int fd, void *buf, size_t count) {
-  return _syscall_(SYS_read, fd, buf, count);
+  return _syscall_(SYS_read, fd, (intptr_t)buf, count);
 }
 
 int _close(int fd) {
