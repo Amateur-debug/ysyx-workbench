@@ -16,6 +16,7 @@ void do_syscall(Context *c) {
   a[3] = c->GPR4;
   printf("a[0] = %x\n", a[0]);
   printf("a[1] = %x\n", a[1]);
+  printf("a[2] = %x\n", a[2]);
   switch (a[0]) {
     case SYS_yield: yield(); c->GPRx = 0; break;
     case SYS_exit: halt(0); break;
