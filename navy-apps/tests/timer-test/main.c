@@ -2,7 +2,8 @@
 #include <sys/time.h>
 
 int main(){
-  struct timeval *tv;
+  struct timeval _tv;
+  struct timeval *tv = &_tv;
   int sec = 1;
   int i = 0;
   while (1) {
