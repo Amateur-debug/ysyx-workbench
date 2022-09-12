@@ -1,8 +1,6 @@
 #include <common.h>
 #include <sys/time.h>
 #include "syscall.h"
-#include <klib.h>
-#include <klib-macros.h>
 
 int fs_open(const char *pathname, int flags, int mode);
 size_t fs_read(int fd, void *buf, size_t len);
@@ -16,7 +14,7 @@ void do_syscall(Context *c) {
   a[1] = c->GPR2;
   a[2] = c->GPR3;
   a[3] = c->GPR4;
-
+  printf("ok\n");
   switch (a[0]) {
     case SYS_yield: yield(); c->GPRx = 0; break;
     case SYS_exit: halt(0); break;
