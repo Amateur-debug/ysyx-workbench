@@ -1,6 +1,8 @@
 #include <common.h>
 #include <sys/time.h>
 #include "syscall.h"
+#include <klib.h>
+#include <klib-macros.h>
 
 int fs_open(const char *pathname, int flags, int mode);
 size_t fs_read(int fd, void *buf, size_t len);
