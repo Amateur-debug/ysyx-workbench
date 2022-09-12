@@ -27,7 +27,7 @@ void do_syscall(Context *c) {
     case SYS_gettimeofday: 
     ((struct timeval *)a[1])->tv_sec = io_read(AM_TIMER_UPTIME).us / 1000000;
     ((struct timeval *)a[1])->tv_usec = io_read(AM_TIMER_UPTIME).us % 1000000;
-    printf("tv_sec");
+    printf("tv_sec\n");
     c->GPRx = 0; break;
     default: panic("Unhandled syscall ID = %d", a[0]);
   }
