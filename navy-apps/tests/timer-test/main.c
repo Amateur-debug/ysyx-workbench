@@ -1,8 +1,9 @@
 #include <stdio.h>
 #include <stdint.h>
-#include </home/cxy/ysyx-workbench/navy-apps/libs/libndl/include/NDL.h>
+#include <NDL.h>
 
 int main(){
+  NDL_Init(0);
   uint32_t time;
   uint32_t time_now = NDL_GetTicks();
   int sec = 1;
@@ -20,5 +21,6 @@ int main(){
       }
     }
   }
+  NDL_Quit();
   return 0;
 }
