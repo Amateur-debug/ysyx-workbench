@@ -37,7 +37,7 @@ size_t events_read(void *buf, size_t offset, size_t len) {
     strcat(out, "\n");
     ret = strlen(out) + 1;
   }
-  else if(ev.keydown == 0){
+  else {
     out = "ku ";
     strcat(out, keyname[ev.keycode]);
     strcat(out, "\n");
