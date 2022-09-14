@@ -27,10 +27,6 @@ always@(*) begin
             rem     = $signed(src1) % $signed(src2);
             REM_out = rem;
         end
-        5'b10111: begin
-            rem     = src1 % src2;
-            REM_out = rem;
-        end
         default: begin
             rem = 64'd0;
             REM_out = 64'd0;

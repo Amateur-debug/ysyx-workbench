@@ -150,6 +150,8 @@ VL_MODULE(Vysyx_22041461_CPU___024root) {
         QData/*63:0*/ __Vfunc_ysyx_22041461_CPU__DOT__CU__DOT__immU__31__Vfuncout;
         QData/*63:0*/ __Vfunc_ysyx_22041461_CPU__DOT__CU__DOT__immU__32__Vfuncout;
         QData/*63:0*/ __Vfunc_ysyx_22041461_CPU__DOT__CU__DOT__immJ__33__Vfuncout;
+        QData/*63:0*/ __Vtask_ysyx_22041461_CPU__DOT__MEM__DOT__pmem_read__37__rdata;
+        QData/*63:0*/ __Vtask_ysyx_22041461_CPU__DOT__MEM__DOT__pmem_read__38__rdata;
         QData/*63:0*/ __Vtask_ysyx_22041461_CPU__DOT__MEM__DOT__pmem_read__39__rdata;
         QData/*63:0*/ __Vtask_ysyx_22041461_CPU__DOT__MEM__DOT__pmem_read__40__rdata;
         QData/*63:0*/ __Vtask_ysyx_22041461_CPU__DOT__MEM__DOT__pmem_read__41__rdata;
@@ -162,9 +164,7 @@ VL_MODULE(Vysyx_22041461_CPU___024root) {
         QData/*63:0*/ __Vtask_ysyx_22041461_CPU__DOT__MEM__DOT__pmem_read__48__rdata;
         QData/*63:0*/ __Vtask_ysyx_22041461_CPU__DOT__MEM__DOT__pmem_read__49__rdata;
         QData/*63:0*/ __Vtask_ysyx_22041461_CPU__DOT__MEM__DOT__pmem_read__50__rdata;
-        QData/*63:0*/ __Vtask_ysyx_22041461_CPU__DOT__MEM__DOT__pmem_read__51__rdata;
-        QData/*63:0*/ __Vtask_ysyx_22041461_CPU__DOT__MEM__DOT__pmem_read__52__rdata;
-        QData/*63:0*/ __Vtask_ysyx_22041461_CPU__DOT__MEM__DOT__pmem_read__56__rdata;
+        QData/*63:0*/ __Vtask_ysyx_22041461_CPU__DOT__MEM__DOT__pmem_read__53__rdata;
         VlUnpacked<CData/*0:0*/, 3> __Vm_traceActivity;
     };
 

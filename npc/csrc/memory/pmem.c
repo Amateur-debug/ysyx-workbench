@@ -11,14 +11,6 @@
 
 uint8_t pmem[memory_size] = {};
 
-extern int is_difftest_this;
-extern int is_difftest_next;
-
-void set_difftest_next(){
-  is_difftest_next = 1;
-  return;
-}
-
 uint8_t *guest_to_host(uint64_t paddr){ 
   return pmem + paddr - 0x80000000; 
 }
@@ -45,33 +37,25 @@ static inline void host_write(void *addr, int len, uint64_t data) {
 
 extern "C" void pmem_read(long long raddr, long long *rdata) {
 
-  if(raddr >= RTC_ADDR && raddr < RTC_ADDR + 16){
+  if(raddr >= RTC_ADDR && raddr < RTC_ADDR + 24){
     *rdata = get_time();
-    is_difftest_next = 0;
     return;
   }
 
   // 总是读取地址为`raddr & ~0x7ull`的8字节返回给`rdata`
   if(raddr >= 0x80000000 && raddr < 0x80000000 + 128*1024*1024){
     *rdata = host_read(guest_to_host(raddr & ~0x7ull), 8);
-    is_difftest_next = 1;
   }
   else{
     printf("read越界地址为: 0x%016lx\n", raddr);
     npc_state.state = NPC_ABORT;
-    is_difftest_next = 1;
   }
 }
 
 extern "C" void pmem_write(long long waddr, long long wdata, char wmask){
 
-  if(waddr == SERIAL_PORT){
-    putc((char)wdata, stderr);
-    is_difftest_this = 0;
-    return;
-  }
-  if(waddr > SERIAL_PORT && waddr < SERIAL_PORT + 8){
-    is_difftest_this = 0;
+  if(waddr >= SERIAL_PORT && waddr < SERIAL_PORT + 8){
+    printf("%c", wdata);
     return;
   }
 

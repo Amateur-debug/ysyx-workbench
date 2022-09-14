@@ -215,30 +215,6 @@ always@(*) begin
             sel_MEM_addr = 3'b000    ;
             sel_MEM_data = 3'b000    ; 
         end
-        32'b0000001_xxxxx_xxxxx_111_xxxxx_0110011: begin //remu
-            imm          = 64'd0     ;
-            sel_CMP      = 2'b00     ;
-            ctrl_CMP     = 1'b0      ;     
-            ctrl_ALU     = 5'b10111  ;         
-            sel_ALU      = 3'b000    ;         
-            sel_REGS     = 3'b001    ;         
-            sel_PC       = 2'b00     ;
-            ctrl_MEM     = 4'b0000   ;
-            sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ; 
-        end
-        32'b0000001_xxxxx_xxxxx_111_xxxxx_0111011: begin //remuw
-            imm          = 64'd0     ;
-            sel_CMP      = 2'b00     ;
-            ctrl_CMP     = 1'b0      ;     
-            ctrl_ALU     = 5'b10110  ;         
-            sel_ALU      = 3'b000    ;         
-            sel_REGS     = 3'b001    ;         
-            sel_PC       = 2'b00     ;
-            ctrl_MEM     = 4'b0000   ;
-            sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ; 
-        end
         32'b0100000_xxxxx_xxxxx_000_xxxxx_0111011: begin //subw
             imm          = 64'd0     ;
             sel_CMP      = 2'b00     ;
