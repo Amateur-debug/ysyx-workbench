@@ -23,7 +23,7 @@ int NDL_PollEvent(char *buf, int len) {
   // 读出一条事件信息, 将其写入`buf`中, 最长写入`len`字节
   // 若读出了有效的事件, 函数返回1, 否则返回0
   int fd = open("/dev/events", O_RDONLY);
-  if(read(fd, buf, len) > 0){
+  if(read(fd, buf, len) >= 0){
     close(fd);
     return 1;
   }
@@ -31,7 +31,6 @@ int NDL_PollEvent(char *buf, int len) {
     close(fd);
     return 0;
   }
-  close(fd);
 }
 
 void NDL_OpenCanvas(int *w, int *h) {
