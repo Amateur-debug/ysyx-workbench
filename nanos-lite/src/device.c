@@ -28,17 +28,18 @@ size_t events_read(void *buf, size_t offset, size_t len) {
   AM_INPUT_KEYBRD_T ev = io_read(AM_INPUT_KEYBRD);
   char _out[len];
   char *out = _out;
-  printf("out = %s\n", out);
   if(ev.keycode == AM_KEY_NONE){
     return 0;
   }
   if(ev.keydown == 1){
+    printf("out = %s\n", out);
     out = "kd ";
     strcat(out, keyname[ev.keycode]);
     strcat(out, "\n");
     ret = strlen(out) + 1;
   }
   else if(ev.keydown == 0){
+    printf("out = %s\n", out);
     out = "ku ";
     strcat(out, keyname[ev.keycode]);
     strcat(out, "\n");
