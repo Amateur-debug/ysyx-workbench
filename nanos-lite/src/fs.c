@@ -74,8 +74,7 @@ size_t fs_read(int fd, void *buf, size_t len){
     }
   }
   else{
-    (*file_table[fd].read)(buf, 0, len);
-    i = 0;
+    i = (*file_table[fd].read)(buf, 0, len);
   }
   return i;
 }
