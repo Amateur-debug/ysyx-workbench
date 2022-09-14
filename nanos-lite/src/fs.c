@@ -50,7 +50,7 @@ int fs_open(const char *pathname, int flags, int mode){
   int i;
   for(i = 0; i < fs_size; i++){
     if(strcmp(pathname, file_table[i].name) == 0){
-      printf("open fd = %d\n", i);
+      //printf("open fd = %d\n", i);
       return i;
     }
   }
@@ -145,6 +145,6 @@ size_t fs_lseek(int fd, long offset, int whence){
 
 int fs_close(int fd){
   file_table[fd].open_offset = 0;
-  printf("close fd = %d\n", fd);
+  //printf("close fd = %d\n", fd);
   return 0;
 }
