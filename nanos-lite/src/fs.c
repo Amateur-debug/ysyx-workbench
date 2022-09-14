@@ -92,8 +92,7 @@ size_t fs_write(int fd, const void *buf, size_t len){
     }
   }
   else{
-    (*file_table[fd].write)(buf, 0, len);
-    i = 0;
+    i = (*file_table[fd].write)(buf, 0, len);
   }
   return i;
 }
