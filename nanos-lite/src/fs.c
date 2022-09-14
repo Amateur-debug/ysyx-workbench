@@ -12,10 +12,12 @@ typedef struct {
   size_t open_offset;
 } Finfo;
 
-enum {FD_STDIN, FD_STDOUT, FD_STDERR, FD_FB};
+enum {FD_STDIN, FD_STDOUT, FD_STDERR, FD_KEY, FD_FB};
 
 size_t ramdisk_read(void *buf, size_t offset, size_t len);
 size_t ramdisk_write(const void *buf, size_t offset, size_t len);
+size_t serial_write(const void *buf, size_t offset, size_t len);
+size_t events_read(void *buf, size_t offset, size_t len);
 
 size_t invalid_read(void *buf, size_t offset, size_t len) {
   panic("should not reach here");
@@ -30,8 +32,9 @@ size_t invalid_write(const void *buf, size_t offset, size_t len) {
 /* This is the information about all files in disk. */
 static Finfo file_table[] __attribute__((used)) = {
   [FD_STDIN]  = {"stdin", 0, 0, invalid_read, invalid_write, 0},
-  [FD_STDOUT] = {"stdout", 0, 0, invalid_read, invalid_write, 0},
-  [FD_STDERR] = {"stderr", 0, 0, invalid_read, invalid_write, 0},
+  [FD_STDOUT] = {"stdout", 0, 0, invalid_read, serial_write, 0},
+  [FD_STDERR] = {"stderr", 0, 0, invalid_read, serial_write, 0},
+  [FD_KEY]    = {"/dev/events", 0, 0, events_read, invalid_write, 0},
 #include "files.h"
 };
 
@@ -47,7 +50,7 @@ int fs_open(const char *pathname, int flags, int mode){
   int i;
   for(i = 0; i < fs_size; i++){
     if(strcmp(pathname, file_table[i].name) == 0){
-      printf("open fd = %d\n", i);
+      //printf("open fd = %d\n", i);
       return i;
     }
   }
@@ -56,7 +59,7 @@ int fs_open(const char *pathname, int flags, int mode){
 
 size_t fs_read(int fd, void *buf, size_t len){
   long i = -1;
-  if(fd >= 3 && fd < fs_size){
+  if(file_table[fd].read == NULL){ 
     if(len + file_table[fd].open_offset <= file_table[fd].size){
       i = ramdisk_read(buf, file_table[fd].disk_offset + file_table[fd].open_offset, len);
       file_table[fd].open_offset = file_table[fd].open_offset + (size_t)i;
@@ -71,23 +74,15 @@ size_t fs_read(int fd, void *buf, size_t len){
     }
   }
   else{
-    assert(0);
+    (*file_table[fd].read)(buf, 0, len);
+    i = 0;
   }
   return i;
 }
 
 size_t fs_write(int fd, const void *buf, size_t len){
   long i = -1;
-  if(fd == FD_STDOUT || fd == FD_STDERR){
-    for(i = 0; i < len; i ++){
-      putch(*(char *)buf);
-      buf++;
-    }
-  }
-  else if(fd == FD_STDIN){
-    i = 0;
-  }
-  else if(fd >= 3 && fd < fs_size){
+  if(file_table[fd].write == NULL){
     if(len + file_table[fd].open_offset <= file_table[fd].size){
       i = ramdisk_write(buf, file_table[fd].disk_offset + file_table[fd].open_offset, len);
       file_table[fd].open_offset += i;
@@ -95,6 +90,9 @@ size_t fs_write(int fd, const void *buf, size_t len){
     else{
       assert(0);
     }
+  }
+  else{
+    i = (*file_table[fd].write)(buf, 0, len);
   }
   return i;
 }
@@ -141,6 +139,6 @@ size_t fs_lseek(int fd, long offset, int whence){
 
 int fs_close(int fd){
   file_table[fd].open_offset = 0;
-  printf("close fd = %d\n", fd);
+  //printf("close fd = %d\n", fd);
   return 0;
 }
