@@ -22,6 +22,8 @@ import "DPI-C" function void pmem_read(input longint raddr, output longint rdata
 
 import "DPI-C" function void pmem_write(input longint waddr, input longint wdata, input byte wmask);
 
+import "DPI-C" function void set_difftest_next();
+
 reg [63:0]  rinst;
 reg [63:0]  read_data1;
 reg [63:0]  read_data2;
@@ -93,6 +95,7 @@ always@(*) begin
         default: begin
             read_data1 = 64'd0;
             read_data2 = 64'd0;
+            set_difftest_next();
         end
     endcase
 end
@@ -141,7 +144,7 @@ always@(*) begin
             read_data = {{48{rread_data[15:15]}}, rread_data[15:0]};
         end
         4'b0100: begin            //读取1字节数据并进行符号位扩展
-            read_data = {56'd0, rread_data[7:0]};
+            read_data = {{56{rread_data[7:7]}}, rread_data[7:0]};
         end
         4'b0101: begin            //读取4字节数据并进行零扩展
             read_data = {32'd0, rread_data[31:0]};

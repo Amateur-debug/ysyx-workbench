@@ -94,9 +94,16 @@ void Vysyx_22041461_CPU___024root__traceChgSub0(Vysyx_22041461_CPU___024root* vl
                                                    ((1U 
                                                      & (IData)(vlSelf->ysyx_22041461_CPU__DOT__ctrl_MEM))
                                                      ? (QData)((IData)(vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__rread_data))
-                                                     : (QData)((IData)(
+                                                     : 
+                                                    (((- (QData)((IData)(
+                                                                         (1U 
+                                                                          & (IData)(
+                                                                                (vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__rread_data 
+                                                                                >> 7U)))))) 
+                                                      << 8U) 
+                                                     | (QData)((IData)(
                                                                        (0xffU 
-                                                                        & (IData)(vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__rread_data))))))
+                                                                        & (IData)(vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__rread_data)))))))
                                                    : 
                                                   ((2U 
                                                     & (IData)(vlSelf->ysyx_22041461_CPU__DOT__ctrl_MEM))

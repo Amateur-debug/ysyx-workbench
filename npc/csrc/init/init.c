@@ -68,9 +68,10 @@ void init_sdb() {
 
 void init_difftest(){
   extern uint64_t *cpu_gpr;
+  extern uint64_t *cpu_pc;
   extern uint8_t pmem[memory_size];
   difftest_init();
   difftest_memcpy(0x80000000, pmem, sizeof(img), DIFFTEST_TO_REF);
-  difftest_regcpy(cpu_gpr, DIFFTEST_TO_REF);
+  difftest_regcpy(cpu_gpr, cpu_pc, DIFFTEST_TO_REF);
 }
 

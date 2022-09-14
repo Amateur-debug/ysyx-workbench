@@ -9,6 +9,10 @@ module ysyx_22041461_PC(
     output  reg  [63:0]  pc       
 );
 
+import "DPI-C" function void set_pc_ptr(input logic [63:0] a []);
+
+initial set_pc_ptr(pc);  // rf为通用寄存器的二维数组变量
+
 reg [63:0] npc;  
 
 assign snpc = pc + 4;
