@@ -33,11 +33,12 @@ size_t events_read(void *buf, size_t offset, size_t len) {
   }
   if(ev.keydown == 1){
     out = "kd ";
+    printf("out = %s\n", out);
     strcat(out, keyname[ev.keycode]);
     strcat(out, "\n");
     ret = strlen(out) + 1;
   }
-  else {
+  else if(ev.keydown == 0){
     out = "ku ";
     strcat(out, keyname[ev.keycode]);
     strcat(out, "\n");
