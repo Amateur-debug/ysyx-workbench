@@ -1,14 +1,15 @@
 #include <stdio.h>
-#include <sys/time.h>
+#include <stdint.h>
+#include </home/cxy/ysyx-workbench/navy-apps/libs/libndl/include/NDL.h>
 
 int main(){
-  struct timeval _tv;
-  struct timeval *tv = &_tv;
+  uint32_t time;
+  uint32_t time_now = NDL_GetTicks();
   int sec = 1;
   int i = 0;
   while (1) {
-    gettimeofday(tv, NULL);
-    while(tv->tv_sec + tv->tv_usec/1000000 >= sec){
+    time = NDL_GetTicks();
+    while((time - time_now) / 1000 >= sec){
       if(i == 0){
         printf("timer-test\n");
         sec ++;

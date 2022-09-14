@@ -9,7 +9,13 @@ static int fbdev = -1;
 static int screen_w = 0, screen_h = 0;
 
 uint32_t NDL_GetTicks() {
-  return 0;
+  // 以毫秒为单位返回系统时间
+  struct timeval _tv;
+  struct timeval *tv = &_tv;
+  uint32_t ret;
+  gettimeofday(tv, NULL);
+  ret = tv->tv_sec * 1000 + tv->tv_usec / 1000;
+  return ret;
 }
 
 int NDL_PollEvent(char *buf, int len) {
