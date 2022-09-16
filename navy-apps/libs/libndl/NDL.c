@@ -69,7 +69,7 @@ void NDL_DrawRect(uint32_t *pixels, int x, int y, int w, int h) {
   assert(x < draw_w);
   assert(y < draw_h);
   uint32_t color_buf[screen_w * screen_h];
-  memset(color_buf, 0, screen_w * screen_h * 4);
+  memset(color_buf, 0, screen_w * screen_h);
   int fd = open("/dev/fb", O_WRONLY);
   int i;
   int offset;
@@ -79,7 +79,7 @@ void NDL_DrawRect(uint32_t *pixels, int x, int y, int w, int h) {
       color_buf[offset] = *pixels;
     }
     else{
-      x = 0;
+      x = draw_w - w;
       y++;
       offset = x + y * screen_w;
       assert(y < draw_h);
@@ -89,6 +89,7 @@ void NDL_DrawRect(uint32_t *pixels, int x, int y, int w, int h) {
     pixels++;
   }
   write(fd, color_buf, screen_w * screen_h);
+  close(fd);
 }
 
 void NDL_OpenAudio(int freq, int channels, int samples) {
