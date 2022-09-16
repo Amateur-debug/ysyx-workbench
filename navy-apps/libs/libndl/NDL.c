@@ -79,7 +79,7 @@ void NDL_DrawRect(uint32_t *pixels, int x, int y, int w, int h) {
       color_buf[offset] = *pixels;
     }
     else{
-      x = 0;
+      x = draw_w - w;
       y++;
       offset = x + y * screen_w;
       assert(y < draw_h);
@@ -88,6 +88,7 @@ void NDL_DrawRect(uint32_t *pixels, int x, int y, int w, int h) {
     x++;
     pixels++;
   }
+  close(fd);
   write(fd, color_buf, screen_w * screen_h);
 }
 
