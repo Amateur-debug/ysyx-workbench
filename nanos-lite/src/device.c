@@ -1,4 +1,5 @@
 #include <common.h>
+#include <stdint.h>
 
 #if defined(MULTIPROGRAM) && !defined(TIME_SHARING)
 # define MULTIPROGRAM_YIELD() yield()
@@ -53,8 +54,28 @@ size_t dispinfo_read(void *buf, size_t offset, size_t len) {
   return i;
 }
 
-size_t fb_write(const void *buf, size_t offset, size_t len) {
-  return 0;
+size_t fb_write(void *buf, size_t offset, size_t len) {
+  int x, y, screen_w, screen_h, i;
+  screen_w = io_read(AM_GPU_CONFIG).width;
+  screen_h = io_read(AM_GPU_CONFIG).height;
+  x = offset % screen_w;
+  y = offset / screen_w;
+  assert(y < screen_h);
+  for(i = 0; i < len; i++){
+    if(x < screen_w){
+      io_write(AM_GPU_FBDRAW, x , y, buf, 1, 1, false);
+    }
+    else{
+      x = 0;
+      y++;
+      assert(y < screen_h);
+      io_write(AM_GPU_FBDRAW, x , y, buf, 1, 1, false);
+    }
+    x++;
+    buf = buf + 4;
+  }
+  io_write(AM_GPU_FBDRAW, 0, 0, NULL, 0, 0, true);
+  return len;
 }
 
 void init_device() {
