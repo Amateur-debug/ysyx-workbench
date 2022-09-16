@@ -88,7 +88,7 @@ void NDL_DrawRect(uint32_t *pixels, int x, int y, int w, int h) {
     x++;
     pixels++;
   }
-  write(fd, color_buf, screen_w * screen_h);
+  write(fd, color_buf, screen_w * screen_h * 4);
   close(fd);
 }
 
