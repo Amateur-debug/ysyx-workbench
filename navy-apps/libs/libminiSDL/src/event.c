@@ -26,7 +26,7 @@ int SDL_WaitEvent(SDL_Event *event) {
       break;
     }
   }
-  printf("%s\n", buf);
+  printf("%s111\n", buf);
   if(buf[0] == 'k' && buf[1] == 'd'){
     event->type = SDL_KEYDOWN;
   }
