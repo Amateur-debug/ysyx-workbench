@@ -19,8 +19,7 @@ int SDL_PollEvent(SDL_Event *ev) {
 
 int SDL_WaitEvent(SDL_Event *event) {
   char buf[64] = {};
-  while(NDL_PollEvent(buf, sizeof(buf)) != 1){}
-  printf("%s\n", buf);  
+  while(NDL_PollEvent(buf, sizeof(buf)) != 1){} 
   if(buf[0] == 'k' && buf[1] == 'd'){
     event->type = SDL_KEYDOWN;
   }
@@ -28,7 +27,6 @@ int SDL_WaitEvent(SDL_Event *event) {
     event->type = SDL_KEYUP;
   }
   int i = 0;
-  printf("%s\n", buf + 3);
   while(buf[i] != '\n'){
     i++;
   }
@@ -37,9 +35,7 @@ int SDL_WaitEvent(SDL_Event *event) {
   while(strcmp(keyname[i], buf + 3) != 0){
     i++;
   }
-  printf("aaa\n");
   event->key.keysym.sym = i;
-  printf("i = %d\n", i);
   return 1;
 }
 
