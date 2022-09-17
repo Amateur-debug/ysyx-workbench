@@ -70,7 +70,7 @@ void NDL_DrawRect(uint32_t *pixels, int x, int y, int w, int h) {
   assert(y < draw_h);
   uint32_t color_buf[screen_w * screen_h];
   printf("screen_w = %d screen_h = %d\n", screen_w, screen_h);
- 
+  memset(color_buf, 0, sizeof(uint32_t) * screen_w * screen_h);
   printf("screen_w = %d screen_h = %d\n", screen_w, screen_h);
   int fd = open("/dev/fb", O_WRONLY);
   int i;
