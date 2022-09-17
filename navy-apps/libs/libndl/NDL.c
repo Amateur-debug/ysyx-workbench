@@ -71,9 +71,6 @@ void NDL_DrawRect(uint32_t *pixels, int x, int y, int w, int h) {
   uint32_t color_buf[screen_w * screen_h];
   printf("screen_w = %d screen_h = %d\n", screen_w, screen_h);
   printf("screen_w = %d screen_h = %d\n", screen_w, screen_h);
-  memset(color_buf, 0, sizeof(uint32_t) * screen_w * screen_h);
-  printf("screen_w = %d screen_h = %d\n", screen_w, screen_h);
-  printf("screen_w = %d screen_h = %d\n", screen_w, screen_h);
   int fd = open("/dev/fb", O_WRONLY);
   int i;
   int offset;
@@ -134,7 +131,6 @@ int NDL_Init(uint32_t flags) {
   }
   buf++;
   screen_h = atoi(buf);
-  printf("screen_w = %d screen_h = %d\n", screen_w, screen_h);
   close(fd);
   return 0;
 }
