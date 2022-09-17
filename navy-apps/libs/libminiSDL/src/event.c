@@ -29,7 +29,7 @@ int SDL_WaitEvent(SDL_Event *event) {
   }
   int i = 0;
   char *_buf = buf;
-  printf("aaa\n");
+  printf("%s\n", _buf + 3);
   while(strcmp(keyname[i], _buf + 3) != 0){
     i++;
   }
