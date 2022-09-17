@@ -75,13 +75,18 @@ void NDL_DrawRect(uint32_t *pixels, int x, int y, int w, int h) {
   int fd = open("/dev/fb", O_WRONLY);
   int i;
   int offset;
-  for(i = 0; i < draw_w * draw_h; i++){
+  int x_max = x + w;
+  if(x_max >= draw_w){
+    x_max = draw_w;
+  }
+  int x_min = x;
+  for(i = 0; i < w * h; i++){
     offset = x + y * screen_w;
-    if(x < draw_w){
+    if(x < x_max){
       color_buf[offset] = *pixels;
     }
     else{
-      x = draw_w - w;
+      x = x_min;
       y++;
       offset = x + y * screen_w;
       assert(y < draw_h);
