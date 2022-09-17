@@ -32,14 +32,14 @@ size_t events_read(void *buf, size_t offset, size_t len) {
   if(ev.keycode == AM_KEY_NONE){
     return 0;
   }
-  char out[256];
+  char out[256] = {"k"};
   if(ev.keydown == 1){
-    strcat(out, "kd ");
+    strcat(out, "d ");
     strcat(out, keyname[ev.keycode]);
     strcat(out, "\n");
   }
   else if(ev.keydown == 0){
-    strcat(out, "ku ");
+    strcat(out, "u ");
     strcat(out, keyname[ev.keycode]);
     strcat(out, "\n");
   }
