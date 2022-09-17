@@ -58,8 +58,8 @@ size_t fb_write(const void *buf, size_t offset, size_t len) {
   int x, y, screen_w, screen_h, i;
   screen_w = io_read(AM_GPU_CONFIG).width;
   screen_h = io_read(AM_GPU_CONFIG).height;
-  x = offset % screen_w;
-  y = offset / screen_w;
+  x = (offset / 4) % screen_w;
+  y = (offset / 4) / screen_w;
   assert(y < screen_h);
   for(i = 0; i < len; i += 4){
     if(x < screen_w){
