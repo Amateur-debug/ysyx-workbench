@@ -21,7 +21,7 @@ int SDL_WaitEvent(SDL_Event *event) {
   char _buf[20];
   char *buf = _buf;
   while(NDL_PollEvent(buf, 20) != 1);
-  printf("aaa\n");
+  printf("%s\n", buf);
   if(_buf[0] == 'k' && buf[1] == 'd'){
     event->type = SDL_KEYDOWN;
   }
