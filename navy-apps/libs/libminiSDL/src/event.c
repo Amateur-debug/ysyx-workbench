@@ -28,9 +28,13 @@ int SDL_WaitEvent(SDL_Event *event) {
     event->type = SDL_KEYUP;
   }
   int i = 0;
-  char *_buf = buf;
-  printf("%s\n", _buf + 3);
-  while(strcmp(keyname[i], _buf + 3) != 0){
+  printf("%s\n", buf + 3);
+  while(buf[i] != '\n'){
+    i++;
+  }
+  buf[i] = '\0';
+  i = 0;
+  while(strcmp(keyname[i], buf + 3) != 0){
     i++;
   }
   printf("aaa\n");
