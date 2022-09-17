@@ -1,4 +1,5 @@
 #include <common.h>
+#include <stdint.h>
 
 #if defined(MULTIPROGRAM) && !defined(TIME_SHARING)
 # define MULTIPROGRAM_YIELD() yield()
@@ -24,36 +25,62 @@ size_t serial_write(const void *buf, size_t offset, size_t len) {
 }
 
 size_t events_read(void *buf, size_t offset, size_t len) {
-  size_t ret = 0;
+  if(len < 64){
+    printf("%d\n", len);
+  }
   AM_INPUT_KEYBRD_T ev = io_read(AM_INPUT_KEYBRD);
-  char *out = NULL;
   if(ev.keycode == AM_KEY_NONE){
-    printf("%d\n", ev.keycode);
     return 0;
   }
+  char out[256] = {"k"};
   if(ev.keydown == 1){
-    out = "kd ";
+    strcat(out, "d ");
     strcat(out, keyname[ev.keycode]);
     strcat(out, "\n");
-    ret = strlen(out);
   }
   else if(ev.keydown == 0){
-    out = "ku ";
+    strcat(out, "u ");
     strcat(out, keyname[ev.keycode]);
     strcat(out, "\n");
-    ret = strlen(out);
   }
-  strcpy(buf, out);
-  printf("buf = %s\n", buf);
-  return ret;
+  int i;
+  for(i = 0; i < len; i++){
+    *(char *)buf = out[i];
+    buf++;
+  }
+  return i;
 }
 
 size_t dispinfo_read(void *buf, size_t offset, size_t len) {
-  return 0;
+  int i;
+  i = snprintf(buf, len, "WIDTH:%d\nHEIGHT:%d", io_read(AM_GPU_CONFIG).width, io_read(AM_GPU_CONFIG).height);
+  return i;
 }
 
 size_t fb_write(const void *buf, size_t offset, size_t len) {
-  return 0;
+  int x, y, screen_w, screen_h, i;
+  screen_w = io_read(AM_GPU_CONFIG).width;
+  screen_h = io_read(AM_GPU_CONFIG).height;
+  x = (offset / 4) % screen_w;
+  y = (offset / 4) / screen_w;
+  assert(y < screen_h);
+  for(i = 0; i < len; i += 4){
+    if(x < screen_w){
+      io_write(AM_GPU_FBDRAW, x , y, (void *)buf, 1, 1, false);
+    }
+    else{
+      x = 0;
+      y++;
+      if(y >= screen_h){
+        break;
+      }
+      io_write(AM_GPU_FBDRAW, x , y, (void *)buf, 1, 1, false);
+    }
+    x++;
+    buf = buf + 4;
+  }
+  io_write(AM_GPU_FBDRAW, 0, 0, NULL, 0, 0, true);
+  return len;
 }
 
 void init_device() {
