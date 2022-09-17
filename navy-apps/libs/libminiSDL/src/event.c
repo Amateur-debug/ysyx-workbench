@@ -18,29 +18,25 @@ int SDL_PollEvent(SDL_Event *ev) {
 }
 
 int SDL_WaitEvent(SDL_Event *event) {
-  char buf[64] = {};
   while (1) {
-    char _buf[64] = {};
+    char buf[64] = {};
     if (NDL_PollEvent(buf, sizeof(buf))) {
-      strcpy(buf, _buf);
-      break;
+      if(buf[0] == 'k' && buf[1] == 'd'){
+        event->type = SDL_KEYDOWN;
+      }
+      else if(buf[0] == 'k' && buf[1] == 'u'){
+        event->type = SDL_KEYUP;
+      }
+      int i = 0;
+      char *_buf = buf;
+      while(strcmp(keyname[i], _buf + 3) != 0){
+        i++;
+      }
+      event->key.keysym.sym = i;
+      printf("i = %d\n", i);
+      return 1;
     }
   }
-  printf("%s111\n", buf);
-  if(buf[0] == 'k' && buf[1] == 'd'){
-    event->type = SDL_KEYDOWN;
-  }
-  else if(buf[0] == 'k' && buf[1] == 'u'){
-    event->type = SDL_KEYUP;
-  }
-  int i = 0;
-  char *_buf = buf;
-  while(strcmp(keyname[i], _buf + 3) != 0){
-    i++;
-  }
-  event->key.keysym.sym = i;
-  printf("i = %d\n", i);
-  return 1;
 }
 
 int SDL_PeepEvents(SDL_Event *ev, int numevents, int action, uint32_t mask) {
