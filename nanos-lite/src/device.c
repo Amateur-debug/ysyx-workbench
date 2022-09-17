@@ -40,6 +40,7 @@ size_t events_read(void *buf, size_t offset, size_t len) {
     strcat(out, keyname[ev.keycode]);
     strcat(out, "\n");
   }
+  printf("out =%s", out);
   int i;
   for(i = 0; i < len; i++){
     *(char *)buf = out[i];
