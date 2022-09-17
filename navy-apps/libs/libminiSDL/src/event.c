@@ -21,6 +21,7 @@ int SDL_WaitEvent(SDL_Event *event) {
   while (1) {
     char buf[64] = {};
     if (NDL_PollEvent(buf, sizeof(buf))) {
+      printf("111%s\n", buf);
       if(buf[0] == 'k' && buf[1] == 'd'){
         event->type = SDL_KEYDOWN;
       }
