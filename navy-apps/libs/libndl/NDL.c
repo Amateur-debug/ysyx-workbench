@@ -122,12 +122,16 @@ int NDL_Init(uint32_t flags) {
   buf++;
   screen_h = atoi(buf);
   close(fd);
+  //将屏幕变为全黑
   uint32_t pixels[screen_w * screen_h];
   int i;
   for(i = 0; i < screen_w * screen_h; i++){
     pixels[i] = 0;
   }
-  NDL_DrawRect(pixels, 0, 0, screen_w, screen_h);
+  int w = 0;
+  int h = 0;
+  NDL_OpenCanvas(&w, &h);
+  NDL_DrawRect(pixels, 0, 0, w, h);
   return 0;
 }
 
