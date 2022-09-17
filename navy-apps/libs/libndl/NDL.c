@@ -125,9 +125,11 @@ int NDL_Init(uint32_t flags) {
   //将屏幕变为全黑
   uint32_t pixels[screen_w * screen_h];
   printf("aaa\n");
-  
-  
-  memset(pixels, 0, screen_w * screen_h * 4);
+  int i;
+  for(i = 0; i < screen_w * screen_h; i++){
+    printf("aaa\n");
+    pixels[i] = 0;
+  }
   printf("aaa\n");
   int w = 0;
   int h = 0;
