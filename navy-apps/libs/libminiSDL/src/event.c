@@ -18,7 +18,7 @@ int SDL_PollEvent(SDL_Event *ev) {
 }
 
 int SDL_WaitEvent(SDL_Event *event) {
-  char buf[64];
+  char buf[64] = {};
   while (1) {
     char _buf[64] = {};
     if (NDL_PollEvent(buf, sizeof(buf))) {
