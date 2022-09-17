@@ -95,6 +95,7 @@ void NDL_DrawRect(uint32_t *pixels, int x, int y, int w, int h) {
     x++;
     pixels++;
   }
+  printf("screen_w = %d screen_h = %d\n", screen_w, screen_h);
   write(fd, color_buf, screen_w * screen_h * 4);
   close(fd);
 }
