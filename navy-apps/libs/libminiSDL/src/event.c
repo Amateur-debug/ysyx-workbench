@@ -27,9 +27,9 @@ int SDL_WaitEvent(SDL_Event *event) {
   else if(buf[0] == 'k' && buf[1] == 'u'){
     event->type = SDL_KEYUP;
   }
-
   int i = 0;
   char *_buf = buf;
+  printf("aaa\n");
   while(strcmp(keyname[i], _buf + 3) != 0){
     i++;
   }
