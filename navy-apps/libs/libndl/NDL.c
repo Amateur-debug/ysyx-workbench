@@ -122,6 +122,12 @@ int NDL_Init(uint32_t flags) {
   buf++;
   screen_h = atoi(buf);
   close(fd);
+  uint32_t pixels[screen_w * screen_h];
+  int i;
+  for(i = 0; i < screen_w * screen_h; i++){
+    pixels[i] = 0;
+  }
+  NDL_DrawRect(pixels, 0, 0, screen_w, screen_h);
   return 0;
 }
 
