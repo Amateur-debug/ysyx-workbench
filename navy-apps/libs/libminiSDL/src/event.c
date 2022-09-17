@@ -21,10 +21,10 @@ int SDL_WaitEvent(SDL_Event *event) {
   char _buf[20];
   char *buf = _buf;
   while(NDL_PollEvent(buf, 20) != 1);
-  if(buf[0] == 'k' && buf[1] == 'd'){
+  if(_buf[0] == 'k' && buf[1] == 'd'){
     event->type = SDL_KEYDOWN;
   }
-  else if(buf[0] == 'k' && buf[1] == 'u'){
+  else if(_buf[0] == 'k' && buf[1] == 'u'){
     event->type = SDL_KEYUP;
   }
   int i = 0;
