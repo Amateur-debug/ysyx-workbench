@@ -38,12 +38,12 @@ int NDL_PollEvent(char *buf, int len) {
 // 打开一张(*w) X (*h)的画布
 // 如果*w和*h均为0, 则将系统全屏幕作为画布, 并将*w和*h分别设为系统屏幕的大小
 void NDL_OpenCanvas(int *w, int *h) {
-  draw_w = *w;
-  draw_h = *h;
-  if(draw_w == 0 && draw_h == 0){
+  if(*w == 0 && *h == 0){
     *w = screen_w;
     *h = screen_h;
   }
+  draw_w = *w;
+  draw_h = *h;
   if (getenv("NWM_APP")) {
     int fbctl = 4;
     fbdev = 5;
