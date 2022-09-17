@@ -126,8 +126,7 @@ int NDL_Init(uint32_t flags) {
   printf("screen_w = %d screen_h = %d\n", screen_w, screen_h);
   uint32_t pixels[screen_w * screen_h];
   int i;
-  for(i = 0; i < 1200; i++){
-    printf("aaa\n");
+  for(i = 0; i < 120000; i++){
     pixels[i] = 0;
   }
   printf("aaa\n");
