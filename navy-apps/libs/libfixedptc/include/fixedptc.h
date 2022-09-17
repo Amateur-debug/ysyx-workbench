@@ -126,44 +126,7 @@ typedef	__uint128_t fixedptud;
 #define fixedpt_tofloat(T) ((float) ((T)*((float)(1)/(float)(1L << FIXEDPT_FBITS))))
 
 /* Multiplies a fixedpt number with an integer, returns the result. */
-static inline fixedpt fixedpt_muli(fixedpt A, int B) {
-	return (fixedpt)(A * B);
-}
 
-/* Divides a fixedpt number with an integer, returns the result. */
-static inline fixedpt fixedpt_divi(fixedpt A, int B) {
-	return (fixedpt)(A / B);
-}
-
-/* Multiplies two fixedpt numbers, returns the result. */
-static inline fixedpt fixedpt_mul(fixedpt A, fixedpt B) {
-	fixedptd C = A * B;
-	return (fixedpt)(C >> FIXEDPT_FBITS);
-}
-
-
-/* Divides two fixedpt numbers, returns the result. */
-static inline fixedpt fixedpt_div(fixedpt A, fixedpt B) {
-	fixedpt C = A / B;
-	return C << FIXEDPT_FBITS;
-}
-
-static inline fixedpt fixedpt_abs(fixedpt A) {
-	return (A >= 0 ? A : (~A + 1));
-}
-
-static inline fixedpt fixedpt_floor(fixedpt A) {
-	return A - A & FIXEDPT_FMASK;
-}
-
-static inline fixedpt fixedpt_ceil(fixedpt A) {
-	if(A & FIXEDPT_FMASK == 0){
-		return A;
-	}
-	else{
-		return A - A & FIXEDPT_FMASK + (fixedpt)1 << FIXEDPT_FBITS;
-	}
-}
 
 /*
  * Note: adding and substracting fixedpt numbers can be done by using
