@@ -129,6 +129,7 @@ int NDL_Init(uint32_t flags) {
   for(i = 0; i < screen_w * screen_h; i++){
     pixels[i] = 0;
   }
+  printf("aaa\n");
   int w = 0;
   int h = 0;
   NDL_OpenCanvas(&w, &h);
