@@ -61,7 +61,7 @@ size_t fb_write(const void *buf, size_t offset, size_t len) {
   x = offset % screen_w;
   y = offset / screen_w;
   assert(y < screen_h);
-  for(i = 0; 4 * i < len; i++){
+  for(i = 0; i < len; i += 4){
     if(x < screen_w){
       io_write(AM_GPU_FBDRAW, x , y, (void *)buf, 1, 1, false);
     }
