@@ -18,8 +18,14 @@ int SDL_PollEvent(SDL_Event *ev) {
 }
 
 int SDL_WaitEvent(SDL_Event *event) {
-  char buf[64] = {};
-  while(NDL_PollEvent(buf, sizeof(buf)) != 1){}
+  char buf[64];
+  while (1) {
+    char _buf[64] = {};
+    if (NDL_PollEvent(buf, sizeof(buf))) {
+      strcpy(buf, _buf);
+      break;
+    }
+  }
   printf("%s\n", buf);
   if(buf[0] == 'k' && buf[1] == 'd'){
     event->type = SDL_KEYDOWN;

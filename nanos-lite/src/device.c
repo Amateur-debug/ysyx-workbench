@@ -42,7 +42,7 @@ size_t events_read(void *buf, size_t offset, size_t len) {
     strcat(out, "ku ");
     strcat(out, keyname[ev.keycode]);
     strcat(out, "\n");
-    ret = strlen(out);
+    ret = strlen(out) + 1;
   }
   strcpy(buf, out);
   return ret;
