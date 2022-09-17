@@ -19,7 +19,7 @@ int SDL_PollEvent(SDL_Event *ev) {
 
 int SDL_WaitEvent(SDL_Event *event) {
   while (1) {
-    char buf[64] = {};
+    char buf[128] = {};
     if (NDL_PollEvent(buf, sizeof(buf))) {
       printf("111%s\n", buf);
       if(buf[0] == 'k' && buf[1] == 'd'){
