@@ -7,9 +7,61 @@
 void SDL_BlitSurface(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_Rect *dstrect) {
   assert(dst && src);
   assert(dst->format->BitsPerPixel == src->format->BitsPerPixel);
+  int x1 ,y1, w1, h1, x1_min, x1_max, y1_max;
+  int x2, y2, w2, h2, x2_min, x2_max, y2_max;
+  x1 = srcrect->x;  x2 = dstrect->x;
+  y1 = srcrect->y;  y2 = dstrect->y;
+  w1 = srcrect->w;  w2 = dstrect->w;
+  h1 = srcrect->h;  h2 = dstrect->h;
+  //超出部分截断
+  if(w1 > w2){w1 = w2;} else{w2 = w1;}
+  if(h1 > h2){h1 = h2;} else{h2 = h1;}
+  x1_min = x1;      x2_min = x2;
+  x1_max = x1 + w1; x2_max = x2 + w2;
+  y1_max = y1 + h1; y2_max = y2 + h2;
+  if(x1_max > srcrect->w){x1_max = srcrect->w;}
+  if(y1_max > srcrect->h){y1_max = srcrect->h;}
+  if(x2_max > dstrect->w){x2_max = dstrect->w;}
+  if(y2_max > dstrect->h){y2_max = dstrect->h;}
+  int offset1, offset2;
+  while(y1 < y1_max && y2 < y2_max){
+    while(x1 < x1_max && x2 < x2_max){
+      offset1 = x1 + y1 * src->w;
+      offset2 = x2 + y2 * dst->w;
+      *((uint32_t *)dst->pixels + offset2) = *((uint32_t *)src->pixels + offset1);
+      x1++; x2++;
+    }
+    y1++; y2++;
+    x1 = x1_min; x2 = x2_min;
+  }
 }
 
+//往画布的指定矩形区域中填充指定的颜色
 void SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, uint32_t color) {
+  int x, y, w, h, x_min, x_max, y_max;
+  x = dstrect->x;
+  y = dstrect->y;
+  w = dstrect->w;
+  h = dstrect->h;
+  x_min = x;
+  x_max = x + w;
+  y_max = y + h;
+  //超出部分截断
+  if(x_max > dst->w){
+    x_max = dst->w;
+  }
+  if(y_max > dst->w){
+    y_max = dst->h;
+  }
+  int offset;
+  int i;
+  for(; y < y_max; y++){
+    for(; x < x_max; x++){
+      offset = x + y * dst->w;
+      *((uint32_t *)dst->pixels + offset) = color;
+    }
+    x = x_min;
+  }
 }
 
 void SDL_UpdateRect(SDL_Surface *s, int x, int y, int w, int h) {
