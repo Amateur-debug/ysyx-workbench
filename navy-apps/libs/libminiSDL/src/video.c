@@ -21,7 +21,7 @@ void SDL_BlitSurface(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_
     w1 = srcrect->w;
     h1 = srcrect->h;
   }
-  if(srcrect == NULL){
+  if(dstrect == NULL){
     x2 = 0;
     y2 = 0;
     w2 = w1;
