@@ -57,10 +57,18 @@ void SDL_BlitSurface(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_
 //往画布的指定矩形区域中填充指定的颜色
 void SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, uint32_t color) {
   int x, y, w, h, x_min, x_max, y_max;
-  x = dstrect->x;
-  y = dstrect->y;
-  w = dstrect->w;
-  h = dstrect->h;
+  if(dstrect == NULL){
+    x = 0;
+    y = 0;
+    w = dst->w;
+    h = dst->h;
+  }
+  else{
+    x = dstrect->x;
+    y = dstrect->y;
+    w = dstrect->w;
+    h = dstrect->h;
+  }
   x_min = x;
   x_max = x + w;
   y_max = y + h;
