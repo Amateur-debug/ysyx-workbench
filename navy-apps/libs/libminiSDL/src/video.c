@@ -19,10 +19,10 @@ void SDL_BlitSurface(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_
   x1_min = x1;      x2_min = x2;
   x1_max = x1 + w1; x2_max = x2 + w2;
   y1_max = y1 + h1; y2_max = y2 + h2;
-  if(x1_max > srcrect->w){x1_max = srcrect->w;}
-  if(y1_max > srcrect->h){y1_max = srcrect->h;}
-  if(x2_max > dstrect->w){x2_max = dstrect->w;}
-  if(y2_max > dstrect->h){y2_max = dstrect->h;}
+  if(x1_max > src->w){x1_max = src->w;}
+  if(y1_max > src->h){y1_max = src->h;}
+  if(x2_max > dst->w){x2_max = dst->w;}
+  if(y2_max > dst->h){y2_max = dst->h;}
   int offset1, offset2;
   while(y1 < y1_max && y2 < y2_max){
     while(x1 < x1_max && x2 < x2_max){
