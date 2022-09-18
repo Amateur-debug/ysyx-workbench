@@ -9,16 +9,34 @@ void SDL_BlitSurface(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_
   assert(dst->format->BitsPerPixel == src->format->BitsPerPixel);
   int x1 ,y1, w1, h1, x1_min, x1_max, y1_max;
   int x2, y2, w2, h2, x2_min, x2_max, y2_max;
-  x1 = srcrect->x;  x2 = dstrect->x;
-  y1 = srcrect->y;  y2 = dstrect->y;
-  w1 = srcrect->w;  w2 = dstrect->w;
-  h1 = srcrect->h;  h2 = dstrect->h;
-  //超出部分截断
-  if(w1 > w2){w1 = w2;} else{w2 = w1;}
-  if(h1 > h2){h1 = h2;} else{h2 = h1;}
+  if(srcrect == NULL){
+    x1 = 0;
+    y1 = 0;
+    w1 = src->w;
+    h1 = src->h;
+  }
+  else{
+    x1 = srcrect->x;
+    y1 = srcrect->y;
+    w1 = srcrect->w;
+    h1 = srcrect->h;
+  }
+  if(srcrect == NULL){
+    x2 = 0;
+    y2 = 0;
+    w2 = w1;
+    h2 = h1;
+  }
+  else{
+    x2 = dstrect->x;
+    y2 = dstrect->y;
+    w2 = w1;
+    h2 = h1;
+  }
   x1_min = x1;      x2_min = x2;
   x1_max = x1 + w1; x2_max = x2 + w2;
   y1_max = y1 + h1; y2_max = y2 + h2;
+  //超出部分截断
   if(x1_max > src->w){x1_max = src->w;}
   if(y1_max > src->h){y1_max = src->h;}
   if(x2_max > dst->w){x2_max = dst->w;}
