@@ -63,7 +63,7 @@ int SDL_WaitEvent(SDL_Event *event) {
 }
 
 int SDL_PeepEvents(SDL_Event *ev, int numevents, int action, uint32_t mask) {
-  printf("aaa11\n");
+  printf("SDL_PeepEvents\n");
   return 0;
 }
 
