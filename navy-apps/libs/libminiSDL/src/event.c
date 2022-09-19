@@ -37,6 +37,7 @@ int SDL_PollEvent(SDL_Event *ev) {
     }
     ev->key.keysym.sym = i;
     printf("i = %d\n", i);
+    printf("type = %d\n", ev->type);
     if(ev->type = SDL_KEYDOWN){
       printf("i = %d\n", i);
       keystates[i] = 1;
