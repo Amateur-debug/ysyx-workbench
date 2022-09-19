@@ -10,7 +10,6 @@ static const char *keyname[] = {
 };
 
 uint8_t keystates[83] = {0};
-uint8_t pre = 0;
 
 int SDL_PushEvent(SDL_Event *ev) {
   printf("SDL_PushEvent\n");
@@ -39,8 +38,6 @@ int SDL_PollEvent(SDL_Event *ev) {
     ev->key.keysym.sym = i;
     if(ev->type = SDL_KEYDOWN){
       keystates[i] = 1;
-      keystates[pre] = 0;
-      pre = i;
     }
     printf("%s\n", keyname[i]);
     return 1;
