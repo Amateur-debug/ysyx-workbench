@@ -102,8 +102,9 @@ void SDL_UpdateRect(SDL_Surface *s, int x, int y, int w, int h) {
       uint8_t num = *(s->pixels + i);
       printf("下标 = %d\n", num);
       SDL_Palette *palette = s->format->palette + num;
+      SDL_Color *color = palette->colors;
       printf("aaa\n");
-      pixels[i] = palette->colors->val;
+      pixels[i] = color->val;
     }
     if(x == 0 && y == 0 && w == 0 && h == 0){
       NDL_DrawRect(pixels, 0, 0, draw_w, draw_h);
