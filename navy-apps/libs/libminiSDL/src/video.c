@@ -91,8 +91,8 @@ void SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, uint32_t color) {
 }
 
 void SDL_UpdateRect(SDL_Surface *s, int x, int y, int w, int h) {
-  int draw_w = 0;
-  int draw_h = 0;
+  int draw_w = s->w;
+  int draw_h = s->h;
   printf("%d %d\n", s->w, s->h);
   NDL_OpenCanvas(&draw_w, &draw_h);
   if(x == 0 && y == 0 && w == 0 && h == 0){
