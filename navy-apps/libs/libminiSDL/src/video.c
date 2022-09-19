@@ -44,15 +44,29 @@ void SDL_BlitSurface(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_
   if(x2_max > dst->w){x2_max = dst->w;}
   if(y2_max > dst->h){y2_max = dst->h;}
   int offset1, offset2;
-  while(y1 < y1_max && y2 < y2_max){
-    while(x1 < x1_max && x2 < x2_max){
-      offset1 = x1 + y1 * src->w;
-      offset2 = x2 + y2 * dst->w;
-      *((uint32_t *)dst->pixels + offset2) = *((uint32_t *)src->pixels + offset1);
-      x1++; x2++;
+  if(src->format->palette != NULL && dst->format->palette != NULL){
+    while(y1 < y1_max && y2 < y2_max){
+      while(x1 < x1_max && x2 < x2_max){
+        offset1 = x1 + y1 * src->w;
+        offset2 = x2 + y2 * dst->w;
+        *((uint8_t *)dst->pixels + offset2) = *((uint8_t *)src->pixels + offset1);
+        x1++; x2++;
+      }
+      y1++; y2++;
+      x1 = x1_min; x2 = x2_min;
     }
-    y1++; y2++;
-    x1 = x1_min; x2 = x2_min;
+  }
+  else{
+    while(y1 < y1_max && y2 < y2_max){
+      while(x1 < x1_max && x2 < x2_max){
+        offset1 = x1 + y1 * src->w;
+        offset2 = x2 + y2 * dst->w;
+        *((uint32_t *)dst->pixels + offset2) = *((uint32_t *)src->pixels + offset1);
+        x1++; x2++;
+      }
+      y1++; y2++;
+      x1 = x1_min; x2 = x2_min;
+    }
   }
 }
 
@@ -84,12 +98,30 @@ void SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, uint32_t color) {
   }
   int offset;
   int i;
-  for(; y < y_max; y++){
-    for(; x < x_max; x++){
-      offset = x + y * dst->w;
-      *((uint32_t *)dst->pixels + offset) = color;
+  if(dst->format->palette != NULL){
+    uint8_t num;
+    int n = dst->format->palette->ncolors;
+    for(num = 0; num < n; num++){
+      if((dst->format->palette->colors + num)->val == color){
+        break;
+      }
     }
-    x = x_min;
+    for(; y < y_max; y++){
+      for(; x < x_max; x++){
+        offset = x + y * dst->w;
+        *(dst->pixels + offset) = num;
+      }
+      x = x_min;
+    }
+  }
+  else{
+    for(; y < y_max; y++){
+      for(; x < x_max; x++){
+        offset = x + y * dst->w;
+        *((uint32_t *)dst->pixels + offset) = color;
+      }
+      x = x_min;
+    }
   }
 }
 
