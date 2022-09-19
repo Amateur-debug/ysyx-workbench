@@ -15,6 +15,7 @@ int SDL_PushEvent(SDL_Event *ev) {
 }
 
 int SDL_PollEvent(SDL_Event *ev) {
+  printf("SDL_PollEvent\n");
   char buf[64] = {};
   if(NDL_PollEvent(buf, sizeof(buf)) == 1){
     if(buf[0] == 'k' && buf[1] == 'd'){
@@ -39,6 +40,7 @@ int SDL_PollEvent(SDL_Event *ev) {
 }
 
 int SDL_WaitEvent(SDL_Event *event) {
+  printf("SDL_WaitEvent\n");
   char buf[64] = {};
   while(NDL_PollEvent(buf, sizeof(buf)) != 1){} 
   if(buf[0] == 'k' && buf[1] == 'd'){
@@ -67,6 +69,7 @@ int SDL_PeepEvents(SDL_Event *ev, int numevents, int action, uint32_t mask) {
 
 static uint8_t keystate[84] = {0};
 uint8_t* SDL_GetKeyState(int *numkeys) {
+  printf("SDL_GetKeyState\n");
   SDL_Event ev;
   printf("aaa\n");
   while(SDL_PollEvent(&ev) != 0 && keystate[ev.key.keysym.sym] == !ev.key.type){

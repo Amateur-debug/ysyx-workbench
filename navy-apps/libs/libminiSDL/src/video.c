@@ -7,6 +7,7 @@
 void SDL_BlitSurface(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_Rect *dstrect) {
   assert(dst && src);
   assert(dst->format->BitsPerPixel == src->format->BitsPerPixel);
+  printf("SDL_BlitSurface\n");
   int x1 ,y1, w1, h1, x1_min, x1_max, y1_max;
   int x2, y2, w2, h2, x2_min, x2_max, y2_max;
   if(srcrect == NULL){
@@ -56,6 +57,7 @@ void SDL_BlitSurface(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_
 
 //往画布的指定矩形区域中填充指定的颜色
 void SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, uint32_t color) {
+  printf("SDL_FillRect\n");
   int x, y, w, h, x_min, x_max, y_max;
   if(dstrect == NULL){
     x = 0;
@@ -93,6 +95,7 @@ void SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, uint32_t color) {
 void SDL_UpdateRect(SDL_Surface *s, int x, int y, int w, int h) {
   int draw_w = s->w;
   int draw_h = s->h;
+  printf("SDL_UpdateRect\n");
   NDL_OpenCanvas(&draw_w, &draw_h);
   if(s->format->palette != NULL){   //使用调色板
     uint32_t pixels[120000];
