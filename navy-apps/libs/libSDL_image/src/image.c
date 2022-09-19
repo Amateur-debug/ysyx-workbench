@@ -26,6 +26,7 @@ SDL_Surface* IMG_Load(const char *filename) {
 }
 
 int IMG_isPNG(SDL_RWops *src) {
+  assert(0);
   return 0;
 }
 
