@@ -45,7 +45,7 @@ void NDL_OpenCanvas(int *w, int *h) {
   }
   draw_w = *w;
   draw_h = *h;
-  if (getenv("NWM_APP")) {
+  /*if (getenv("NWM_APP")) {
     int fbctl = 4;
     fbdev = 5;
     screen_w = *w; screen_h = *h;
@@ -61,7 +61,7 @@ void NDL_OpenCanvas(int *w, int *h) {
       if (strcmp(buf, "mmap ok") == 0) break;
     }
     close(fbctl);
-  }
+  }*/
 }
 
 // 向画布`(x, y)`坐标处绘制`w*h`的矩形图像, 并将该绘制区域同步到屏幕上
