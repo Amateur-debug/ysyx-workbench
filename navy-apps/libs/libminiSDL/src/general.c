@@ -1,4 +1,5 @@
 #include <NDL.h>
+#include<stdio.h>
 
 int SDL_Init(uint32_t flags) {
   return NDL_Init(flags);
@@ -23,6 +24,10 @@ int SDL_ShowCursor(int toggle) {
 }
 
 void SDL_WM_SetCaption(const char *title, const char *icon) {
-  printf("%s\n", title);
-  printf("%s\n",icon);
+  if(title != NULL){
+    printf("%s\n", title);
+  }
+  if(icon != NULL){
+    printf("%s\n",icon);
+  }
 }
