@@ -18,7 +18,7 @@ int SDL_PushEvent(SDL_Event *ev) {
 
 int SDL_PollEvent(SDL_Event *ev) {
   printf("SDL_PollEvent\n");
-  char buf[64] = {};
+  char buf[64] = {0};
   if(NDL_PollEvent(buf, sizeof(buf)) == 1){
     if(buf[0] == 'k' && buf[1] == 'd'){
       ev->type = SDL_KEYDOWN;
@@ -36,11 +36,13 @@ int SDL_PollEvent(SDL_Event *ev) {
       i++;
     }
     ev->key.keysym.sym = i;
+    printf("i = %d\n", i);
     if(ev->type = SDL_KEYDOWN){
       printf("i = %d\n", i);
       keystates[i] = 1;
       printf("%d", keystates[i]);
     }
+
     printf("%s\n", keyname[i]);
     return 1;
   }
