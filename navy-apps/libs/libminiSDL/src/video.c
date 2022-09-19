@@ -96,7 +96,7 @@ void SDL_UpdateRect(SDL_Surface *s, int x, int y, int w, int h) {
   NDL_OpenCanvas(&draw_w, &draw_h);
   if(s->format->palette != NULL){   //使用调色板
     uint32_t a[12] = {0};
-    printf("%d\n", sizeof(pixels));
+    printf("%d\n", sizeof(a));
     int i;
     for(i = 0; i < draw_w * draw_h; i++){
       uint8_t num = *(s->pixels + i);
