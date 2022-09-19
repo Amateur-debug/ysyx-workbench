@@ -73,8 +73,16 @@ uint8_t* SDL_GetKeyState(int *numkeys) {
   printf("SDL_GetKeyState\n");
   SDL_Event ev;
   if(SDL_PollEvent(&ev) != 0){
-    keystates[ev.key.keysym.sym] = !ev.key.type;
-    printf("%d\n", keystates[ev.key.keysym.sym]);
+    if(ev.key.type == SDL_KEYDOWN){
+      printf("%d\n", ev.key.keysym.sym);
+      keystates[ev.key.keysym.sym] = 1;
+      printf("%d\n", keystates[ev.key.keysym.sym]);
+    }
+    else if(ev.key.type == SDL_KEYUP){
+      printf("%d\n", ev.key.keysym.sym);
+      keystates[ev.key.keysym.sym] = 0;
+      printf("%d\n", keystates[ev.key.keysym.sym]);
+    }
   }
   if(numkeys != NULL){
     *numkeys = 83;
