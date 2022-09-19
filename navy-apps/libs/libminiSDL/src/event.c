@@ -39,8 +39,9 @@ int SDL_PollEvent(SDL_Event *ev) {
     if(ev->type == SDL_KEYDOWN){
       keystates[i] = 1;
     }
-    
+    printf("keystates[%d] = %d\n", i, keystates[i]);
     printf("%s\n", keyname[i]);
+    printf("aaa\n");
     return 1;
   }
   return 0;
