@@ -19,7 +19,7 @@ int SDL_SetError(const char* fmt, ...) {
 }
 
 int SDL_ShowCursor(int toggle) {
-  printf("aaa333\n");
+  printf("SDL_ShowCursor\n");
   return 0;
 }
 

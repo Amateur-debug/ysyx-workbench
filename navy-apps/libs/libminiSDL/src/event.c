@@ -10,7 +10,7 @@ static const char *keyname[] = {
 };
 
 int SDL_PushEvent(SDL_Event *ev) {
-  printf("aaa1\n");
+  printf("SDL_PushEvent\n");
   return 0;
 }
 
@@ -71,7 +71,6 @@ static uint8_t keystate[84] = {0};
 uint8_t* SDL_GetKeyState(int *numkeys) {
   printf("SDL_GetKeyState\n");
   SDL_Event ev;
-  printf("aaa\n");
   while(SDL_PollEvent(&ev) != 0 && keystate[ev.key.keysym.sym] == !ev.key.type){
     keystate[ev.key.keysym.sym] = !ev.key.type;
   }
