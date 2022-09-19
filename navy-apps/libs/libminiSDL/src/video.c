@@ -105,7 +105,7 @@ void SDL_UpdateRect(SDL_Surface *s, int x, int y, int w, int h) {
     for(i = 0; i < draw_w * draw_h; i++){
       uint8_t num = *(s->pixels + i);
       SDL_Color *color = (SDL_Color *)(s->format->palette->colors + num);
-      pixels[i] = color->a;
+      pixels[i] = color->val;
       /*pixels[j] = color->a;
       j++;
       pixels[j] = color->r;
