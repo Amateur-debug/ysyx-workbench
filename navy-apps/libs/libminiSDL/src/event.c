@@ -14,6 +14,10 @@ int SDL_PushEvent(SDL_Event *ev) {
 }
 
 int SDL_PollEvent(SDL_Event *ev) {
+  char buf[64] = {};
+  if(NDL_PollEvent(buf, sizeof(buf)) == 1){
+    return 1;
+  }
   return 0;
 }
 
