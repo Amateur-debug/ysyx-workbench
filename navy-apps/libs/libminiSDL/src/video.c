@@ -95,7 +95,7 @@ void SDL_UpdateRect(SDL_Surface *s, int x, int y, int w, int h) {
   int draw_h = s->h;
   NDL_OpenCanvas(&draw_w, &draw_h);
   if(s->format->palette != NULL){   //使用调色板
-    uint32_t *pixels = malloc(draw_w * draw_h * 4);
+    uint32_t pixels[120000];
     printf("%d\n", sizeof(pixels));
     int i;
     for(i = 0; i < draw_w * draw_h; i++){
@@ -108,11 +108,9 @@ void SDL_UpdateRect(SDL_Surface *s, int x, int y, int w, int h) {
     }
     if(x == 0 && y == 0 && w == 0 && h == 0){
       NDL_DrawRect(pixels, 0, 0, draw_w, draw_h);
-      free(pixels);
     }
     else{
       NDL_DrawRect(pixels, x, y, w, h);
-      free(pixels);
     }
   }
   else{
