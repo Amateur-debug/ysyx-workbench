@@ -18,10 +18,10 @@ int SDL_SetError(const char* fmt, ...) {
 }
 
 int SDL_ShowCursor(int toggle) {
-  printf("aaa3\n");
+  printf("aaa333\n");
   return 0;
 }
 
 void SDL_WM_SetCaption(const char *title, const char *icon) {
-  printf("aaa3\n");
+  printf("aaa344\n");
 }
