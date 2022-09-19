@@ -91,17 +91,24 @@ void SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, uint32_t color) {
 }
 
 void SDL_UpdateRect(SDL_Surface *s, int x, int y, int w, int h) {
-  
-  printf("%d\n", s->format->palette->ncolors);
-  
   int draw_w = s->w;
   int draw_h = s->h;
   NDL_OpenCanvas(&draw_w, &draw_h);
-  if(x == 0 && y == 0 && w == 0 && h == 0){
-    NDL_DrawRect(s->pixels, 0, 0, draw_w, draw_h);
+  if(s->format->palette != NULL){//使用调色板
+    if(x == 0 && y == 0 && w == 0 && h == 0){
+      NDL_DrawRect(((s->format->palette) + *(s->pixels))->colors, 0, 0, draw_w, draw_h);
+    }
+    else{
+      NDL_DrawRect(((s->format->palette) + *(s->pixels))->colors, x, y, w, h);
+    }
   }
   else{
-    NDL_DrawRect(s->pixels, x, y, w, h);
+    if(x == 0 && y == 0 && w == 0 && h == 0){
+      NDL_DrawRect(s->pixels, 0, 0, draw_w, draw_h);
+    }
+    else{
+      NDL_DrawRect(s->pixels, x, y, w, h);
+    }
   }
 }
 
