@@ -91,7 +91,7 @@ void SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, uint32_t color) {
 }
 
 void SDL_UpdateRect(SDL_Surface *s, int x, int y, int w, int h) {
- 
+  
   printf("%d\n", s->format->palette->ncolors);
   
   int draw_w = s->w;
