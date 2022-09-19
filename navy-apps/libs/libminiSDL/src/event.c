@@ -61,11 +61,11 @@ int SDL_WaitEvent(SDL_Event *event) {
 }
 
 int SDL_PeepEvents(SDL_Event *ev, int numevents, int action, uint32_t mask) {
-  printf("aaa1\n");
+  printf("aaa11\n");
   return 0;
 }
 
 uint8_t* SDL_GetKeyState(int *numkeys) {
-  printf("aaa1\n");
+  printf("aaa111\n");
   return NULL;
 }
