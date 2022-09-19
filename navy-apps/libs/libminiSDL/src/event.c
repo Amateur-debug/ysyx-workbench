@@ -65,13 +65,15 @@ int SDL_PeepEvents(SDL_Event *ev, int numevents, int action, uint32_t mask) {
   return 0;
 }
 
+static uint8_t keystate[84] = {0};
 uint8_t* SDL_GetKeyState(int *numkeys) {
-  uint8_t keystate[84] = {0};
   SDL_Event ev;
   printf("aaa\n");
   while(SDL_PollEvent(&ev) != 0 && keystate[ev.key.keysym.sym] == !ev.key.type){
     keystate[ev.key.keysym.sym] = !ev.key.type;
   }
-  *numkeys = 84;
+  if(numkeys != NULL){
+    *numkeys = 84;
+  }
   return keystate;
 }
