@@ -102,7 +102,7 @@ void SDL_UpdateRect(SDL_Surface *s, int x, int y, int w, int h) {
       uint8_t num = *(uint8_t *)((uint8_t *)(s->pixels) + i);
       printf("下标 = %d\n", num);
       SDL_Palette palette = *(SDL_Palette *)((SDL_Palette *)(s->format->palette) + num);
-      uint32_t color = ((SDL_Color *)palette.colors)->val;
+      uint32_t color = ((SDL_Color *)(palette.colors))->val;
       printf("aaa %d\n", color);
       pixels[i] = color;
     }
