@@ -95,6 +95,7 @@ void SDL_UpdateRect(SDL_Surface *s, int x, int y, int w, int h) {
   int draw_h = 0;
   NDL_OpenCanvas(&draw_w,&draw_h);
   if(x == 0 && y == 0 && w == 0 && h == 0){
+    printf("111\n");
     NDL_DrawRect(s->pixels, 0, 0, draw_w, draw_h);
   }
   else{
