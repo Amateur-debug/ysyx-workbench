@@ -99,9 +99,9 @@ void SDL_UpdateRect(SDL_Surface *s, int x, int y, int w, int h) {
     printf("%d\n", sizeof(pixels));
     int i;
     for(i = 0; i < draw_w * draw_h; i++){
-      uint8_t num = *((uint8_t *)s->pixels + i);
+      uint8_t num = *(uint8_t *)((uint8_t *)(s->pixels) + i);
       printf("下标 = %d\n", num);
-      SDL_Palette palette = *((SDL_Palette *)(s->format->palette) + num);
+      SDL_Palette palette = *(SDL_Palette *)((SDL_Palette *)(s->format->palette) + num);
       printf("aaa %d\n", palette.colors->val);
       pixels[i] = palette.colors->val;
     }
