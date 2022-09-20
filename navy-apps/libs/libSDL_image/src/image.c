@@ -12,10 +12,21 @@ SDL_Surface* IMG_Load_RW(SDL_RWops *src, int freesrc) {
 }
 
 SDL_Surface* IMG_Load(const char *filename) {
-  return NULL;
+  FILE *fp = fopen(filename, "r");//打开文件。
+  int size;
+  fseek(fp, 0, SEEK_END);//定位文件指针到文件尾
+  size = ftell(fp);//获取文件指针偏移量，即文件大小
+  fseek(fp, 0, SEEK_SET);//定位文件指针到文件头
+  void *buf = SDL_malloc(size);
+  fread(buf, 1, size, fp);
+  SDL_Surface *ret = STBIMG_LoadFromMemory(buf, size);
+  fclose(fp);//关闭文件
+  SDL_free(buf);//释放申请的内存
+  return ret;
 }
 
 int IMG_isPNG(SDL_RWops *src) {
+  assert(0);
   return 0;
 }
 

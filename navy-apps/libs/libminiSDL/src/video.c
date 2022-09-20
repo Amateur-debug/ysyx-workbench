@@ -3,24 +3,159 @@
 #include <assert.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 void SDL_BlitSurface(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_Rect *dstrect) {
   assert(dst && src);
   assert(dst->format->BitsPerPixel == src->format->BitsPerPixel);
+  printf("SDL_BlitSurface\n");
+  int x1 ,y1, w1, h1, x1_min, x1_max, y1_max;
+  int x2, y2, w2, h2, x2_min, x2_max, y2_max;
+  if(srcrect == NULL){
+    x1 = 0;
+    y1 = 0;
+    w1 = src->w;
+    h1 = src->h;
+  }
+  else{
+    x1 = srcrect->x;
+    y1 = srcrect->y;
+    w1 = srcrect->w;
+    h1 = srcrect->h;
+  }
+  if(dstrect == NULL){
+    x2 = 0;
+    y2 = 0;
+    w2 = w1;
+    h2 = h1;
+  }
+  else{
+    x2 = dstrect->x;
+    y2 = dstrect->y;
+    w2 = w1;
+    h2 = h1;
+  }
+  x1_min = x1;      x2_min = x2;
+  x1_max = x1 + w1; x2_max = x2 + w2;
+  y1_max = y1 + h1; y2_max = y2 + h2;
+  //超出部分截断
+  if(x1_max > src->w){x1_max = src->w;}
+  if(y1_max > src->h){y1_max = src->h;}
+  if(x2_max > dst->w){x2_max = dst->w;}
+  if(y2_max > dst->h){y2_max = dst->h;}
+  int offset1, offset2;
+  if(src->format->palette != NULL && dst->format->palette != NULL){ //使用调色板
+    while(y1 < y1_max && y2 < y2_max){
+      while(x1 < x1_max && x2 < x2_max){
+        offset1 = x1 + y1 * src->w;
+        offset2 = x2 + y2 * dst->w;
+        *((uint8_t *)dst->pixels + offset2) = *((uint8_t *)src->pixels + offset1);
+        x1++; x2++;
+      }
+      y1++; y2++;
+      x1 = x1_min; x2 = x2_min;
+    }
+  }
+  else{
+    while(y1 < y1_max && y2 < y2_max){
+      while(x1 < x1_max && x2 < x2_max){
+        offset1 = x1 + y1 * src->w;
+        offset2 = x2 + y2 * dst->w;
+        *((uint32_t *)dst->pixels + offset2) = *((uint32_t *)src->pixels + offset1);
+        x1++; x2++;
+      }
+      y1++; y2++;
+      x1 = x1_min; x2 = x2_min;
+    }
+  }
 }
 
+//往画布的指定矩形区域中填充指定的颜色
 void SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, uint32_t color) {
+  printf("SDL_FillRect\n");
+  int x, y, w, h, x_min, x_max, y_max;
+  if(dstrect == NULL){
+    x = 0;
+    y = 0;
+    w = dst->w;
+    h = dst->h;
+  }
+  else{
+    x = dstrect->x;
+    y = dstrect->y;
+    w = dstrect->w;
+    h = dstrect->h;
+  }
+  x_min = x;
+  x_max = x + w;
+  y_max = y + h;
+  //超出部分截断
+  if(x_max > dst->w){
+    x_max = dst->w;
+  }
+  if(y_max > dst->w){
+    y_max = dst->h;
+  }
+  int offset;
+  int i;  
+  if(dst->format->palette != NULL){ //使用调色板
+    uint8_t num;
+    uint32_t _color = (color << 8) | (color >> 24);
+    int n = dst->format->palette->ncolors;
+    for(num = 0; num < n; num++){
+      if((dst->format->palette->colors + num)->val == _color){
+        break;
+      }
+    }
+    for(; y < y_max; y++){
+      for(; x < x_max; x++){
+        offset = x + y * dst->w;
+        *(dst->pixels + offset) = num;
+      }
+      x = x_min;
+    }
+  }
+  else{
+    for(; y < y_max; y++){
+      for(; x < x_max; x++){
+        offset = x + y * dst->w;
+        *((uint32_t *)dst->pixels + offset) = color;
+      }
+      x = x_min;
+    }
+  }
 }
 
 void SDL_UpdateRect(SDL_Surface *s, int x, int y, int w, int h) {
-  int draw_w = 0;
-  int draw_h = 0;
-  NDL_OpenCanvas(&draw_w,&draw_h);
-  if(x == 0 && y == 0 && w == 0 && h == 0){
-    NDL_DrawRect(s->pixels, 0, 0, draw_w, draw_h);
+  int draw_w = s->w;
+  int draw_h = s->h;
+  printf("SDL_UpdateRect\n");
+  NDL_OpenCanvas(&draw_w, &draw_h);
+  if(s->format->palette != NULL){   //使用调色板
+    uint8_t pixels[480000];
+    int i = 0;
+    for(i = 0; i < draw_w * draw_h; i++){
+      uint8_t num = *(s->pixels + i);
+      SDL_Color *color = (SDL_Color *)(s->format->palette->colors + num);
+      pixels[i * 4] = color->b;
+      pixels[i * 4 + 1] = color->g;
+      pixels[i * 4 + 2] = color->r;
+      pixels[i * 4 + 3] = color->a;
+    }
+    if(x == 0 && y == 0 && w == 0 && h == 0){
+      NDL_DrawRect(pixels, 0, 0, draw_w, draw_h);
+    }
+    else{
+      NDL_DrawRect(pixels, x, y, w, h);
+    }
   }
   else{
-    NDL_DrawRect(s->pixels, x, y, w, h);
+    if(x == 0 && y == 0 && w == 0 && h == 0){
+      NDL_DrawRect(s->pixels, 0, 0, draw_w, draw_h);
+    }
+    else{
+      NDL_DrawRect(s->pixels, x, y, w, h);
+    }
   }
 }
 
