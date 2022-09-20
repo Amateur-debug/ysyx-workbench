@@ -43,9 +43,6 @@ int SDL_PollEvent(SDL_Event *ev) {
     if(ev->type == SDL_KEYDOWN){
       keystates[i] = 1;
     }
-    else if(ev->type == SDL_KEYUP){
-      keystates[i] = 0;
-    }
     return 1;
   }
   return 0;
