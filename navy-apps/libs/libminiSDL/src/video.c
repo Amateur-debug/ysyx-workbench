@@ -131,12 +131,15 @@ void SDL_UpdateRect(SDL_Surface *s, int x, int y, int w, int h) {
   printf("SDL_UpdateRect\n");
   NDL_OpenCanvas(&draw_w, &draw_h);
   if(s->format->palette != NULL){   //使用调色板
-    uint32_t pixels[120000];
+    uint8_t pixels[480000];
     int i = 0;
-    for(i = 0; i < draw_w * draw_h; i++){
+    for(i = 0; i < draw_w * draw_h * 4; i++){
       uint8_t num = *(s->pixels + i);
       SDL_Color *color = (SDL_Color *)(s->format->palette->colors + num);
-      pixels[i] = color->val;
+      pixels[i * 4] = color->a;
+      pixels[i * 4 + 1] = color->r;
+      pixels[i * 4 + 2] = color->g;
+      pixels[i * 4 + 3] = color->b;
     }
     if(x == 0 && y == 0 && w == 0 && h == 0){
       NDL_DrawRect(pixels, 0, 0, draw_w, draw_h);
