@@ -19,6 +19,7 @@ int SDL_PushEvent(SDL_Event *ev) {
 int SDL_PollEvent(SDL_Event *ev) {
   printf("SDL_PollEvent\n");
   if(ev == NULL){
+    printf("ev = NULL\n");
     return 1;
   }
   char buf[64] = {0};
@@ -45,8 +46,6 @@ int SDL_PollEvent(SDL_Event *ev) {
     else if(ev->type == SDL_KEYUP){
       keystates[i] = 0;
     }
-    printf("keystates[%d] = %d\n", i, keystates[i]);
-    printf("%s\n", keyname[i]);
     return 1;
   }
   return 0;
