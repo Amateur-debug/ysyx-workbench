@@ -137,10 +137,10 @@ void SDL_UpdateRect(SDL_Surface *s, int x, int y, int w, int h) {
     for(i = 0; i < draw_w * draw_h; i++){
       uint8_t num = *(s->pixels + i);
       SDL_Color *color = (SDL_Color *)(s->format->palette->colors + num);
-      pixels[i * 4] = color->a;
-      pixels[i * 4 + 1] = color->r;
-      pixels[i * 4 + 2] = color->g;
-      pixels[i * 4 + 3] = color->b;
+      pixels[i * 4] = color->b;
+      pixels[i * 4 + 1] = color->g;
+      pixels[i * 4 + 2] = color->r;
+      pixels[i * 4 + 3] = color->a;
     }
     if(x == 0 && y == 0 && w == 0 && h == 0){
       NDL_DrawRect(pixels, 0, 0, draw_w, draw_h);
