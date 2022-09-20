@@ -110,6 +110,7 @@ int SDL_PollEvent(SDL_Event *ev) {
 int SDL_WaitEvent(SDL_Event *event) {
   printf("SDL_WaitEvent\n");
   while(ev_used == 0){
+    printf("abcd\n");
     SDL_PumpEvents();
   }
   if(event == NULL){
