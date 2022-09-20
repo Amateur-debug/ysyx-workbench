@@ -1,8 +1,10 @@
 #include <NDL.h>
 #include <SDL.h>
 #include <string.h>
+#include <assert.h>
 
 #define keyname(k) #k,
+#define NR_EV 32  //事件队列池，最多存储32个事件
 
 static const char *keyname[] = {
   "NONE",
@@ -11,24 +13,36 @@ static const char *keyname[] = {
 
 uint8_t keystates[83] = {0};
 
-int SDL_PushEvent(SDL_Event *ev) {
-  printf("SDL_PushEvent\n");
-  return 0;
+typedef struct event{
+  SDL_Event ev;
+  struct event *next;
+} EV;  
+
+static EV ev_queue[NR_EV] = {}; 
+static EV *head = NULL, *rear = NULL;
+static int ev_used = 0;
+
+void init_ev_queue() {
+  int i;
+  for (i = 0; i < NR_EV; i ++) {
+    //环形链表
+    ev_queue[i].next = (i == NR_EV - 1 ? ev_queue : &ev_queue[i + 1]);
+  }
+  head = ev_queue;
+  rear = ev_queue;
+  ev_used = 0;
 }
 
-int SDL_PollEvent(SDL_Event *ev) {
-  printf("SDL_PollEvent\n");
-  if(ev == NULL){
-    printf("ev = NULL\n");
-    return 1;
-  }
+int new_ev(){
+  assert(ev_used < NR_EV);
   char buf[64] = {0};
   if(NDL_PollEvent(buf, sizeof(buf)) == 1){
+    SDL_Event ev;
     if(buf[0] == 'k' && buf[1] == 'd'){
-      ev->type = SDL_KEYDOWN;
+      ev.type = SDL_KEYDOWN;
     }
     else if(buf[0] == 'k' && buf[1] == 'u'){
-      ev->type = SDL_KEYUP;
+      ev.type = SDL_KEYUP;
     }
     int i = 0;
     while(buf[i] != '\n'){
@@ -39,35 +53,71 @@ int SDL_PollEvent(SDL_Event *ev) {
     while(strcmp(keyname[i], buf + 3) != 0){
       i++;
     }
-    ev->key.keysym.sym = i;
-    if(ev->type == SDL_KEYDOWN){
+    ev.key.keysym.sym = i;
+    if(ev.type == SDL_KEYDOWN){
       keystates[i] = 1;
+    }
+    if(ev_used == 0){
+      head->ev = ev;
+      ev_used++;
+    }
+    else{
+      rear->next->ev = ev;
+      rear = rear->next;
+      ev_used++;
     }
     return 1;
   }
+  else{
+    return 0;
+  }
+}
+
+void free_ev(){
+  if(ev_used == 0){
+    return;
+  }
+  if(ev_used == 1){
+    ev_used--;
+  }
+  head = head->next;
+  ev_used--;
+}
+
+int SDL_PushEvent(SDL_Event *ev) {
+  printf("SDL_PushEvent\n");
   return 0;
+}
+
+int SDL_PollEvent(SDL_Event *ev) {
+  printf("SDL_PollEvent\n");
+  if(new_ev() == 1){
+    if(ev == NULL){
+      //donothing
+    }
+    else{
+      *ev = head->ev;
+      free_ev();
+    }
+    return 1;
+  }
+  else{
+    return 0;
+  }
 }
 
 int SDL_WaitEvent(SDL_Event *event) {
   printf("SDL_WaitEvent\n");
-  char buf[64] = {};
-  while(NDL_PollEvent(buf, sizeof(buf)) != 1){} 
-  if(buf[0] == 'k' && buf[1] == 'd'){
-    event->type = SDL_KEYDOWN;
+  while(ev_used != 0){
+    new_ev();
   }
-  else if(buf[0] == 'k' && buf[1] == 'u'){
-    event->type = SDL_KEYUP;
+  if(event == NULL){
+    //donothing
   }
-  int i = 0;
-  while(buf[i] != '\n'){
-    i++;
+  else{
+    *event = head->ev;
+    free_ev();
   }
-  buf[i] = '\0';
-  i = 0;
-  while(strcmp(keyname[i], buf + 3) != 0){
-    i++;
-  }
-  event->key.keysym.sym = i;
   return 1;
 }
 
