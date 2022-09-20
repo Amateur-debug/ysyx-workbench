@@ -54,6 +54,12 @@ void SDL_PumpEvents(){
       i++;
     }
     ev.key.keysym.sym = i;
+    if(ev.type == SDL_KEYDOWN){
+      keystates[ev.key.keysym.sym] = 1;
+    }
+    else if(ev.type == SDL_KEYUP){
+      keystates[ev.key.keysym.sym] = 0;
+    }
     if(ev_used == 0){
       head->ev = ev;
       ev_used++;
@@ -92,12 +98,6 @@ int SDL_PollEvent(SDL_Event *ev) {
     }
     else{
       *ev = head->ev;
-      if(ev->type == SDL_KEYDOWN){
-        keystates[ev->key.keysym.sym] = 1;
-      }
-      else if(ev->type == SDL_KEYUP){
-        keystates[ev->key.keysym.sym] = 0;
-      }
       free_ev();
     }
     return 1;
