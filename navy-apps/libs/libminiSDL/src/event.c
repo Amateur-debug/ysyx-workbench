@@ -76,7 +76,7 @@ void free_ev(){
   if(ev_used == 0){
     return;
   }
-  if(ev_used == 1){
+  if(ev_used >= 1){
     ev_used--;
   }
   head = head->next;
