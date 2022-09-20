@@ -19,4 +19,7 @@ uint32_t SDL_GetTicks() {
 
 void SDL_Delay(uint32_t ms) {
   printf("SDL_Delay\n");
+  uint32_t now = NDL_GetTicks();
+  while(NDL_GetTicks() - now < ms){}
+  return;
 }

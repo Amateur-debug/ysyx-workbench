@@ -1,8 +1,11 @@
 #include <NDL.h>
 #include <stdio.h>
 
+void init_ev_queue();
+
 int SDL_Init(uint32_t flags) {
   printf("SDL_Init\n");
+  init_ev_queue();
   return NDL_Init(flags);
 }
 
