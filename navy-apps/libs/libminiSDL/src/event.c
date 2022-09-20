@@ -80,7 +80,6 @@ void free_ev(){
     ev_used--;
   }
   head = head->next;
-  ev_used--;
 }
 
 int SDL_PushEvent(SDL_Event *ev) {
