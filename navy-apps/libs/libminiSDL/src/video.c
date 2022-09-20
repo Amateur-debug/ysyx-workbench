@@ -133,7 +133,7 @@ void SDL_UpdateRect(SDL_Surface *s, int x, int y, int w, int h) {
   if(s->format->palette != NULL){   //使用调色板
     uint8_t pixels[480000];
     int i = 0;
-    for(i = 0; i < draw_w * draw_h * 4; i++){
+    for(i = 0; i < draw_w * draw_h; i++){
       uint8_t num = *(s->pixels + i);
       SDL_Color *color = (SDL_Color *)(s->format->palette->colors + num);
       pixels[i * 4] = color->a;
