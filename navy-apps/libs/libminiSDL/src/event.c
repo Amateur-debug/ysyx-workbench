@@ -18,6 +18,9 @@ int SDL_PushEvent(SDL_Event *ev) {
 
 int SDL_PollEvent(SDL_Event *ev) {
   printf("SDL_PollEvent\n");
+  if(ev == NULL){
+    return 1;
+  }
   char buf[64] = {0};
   if(NDL_PollEvent(buf, sizeof(buf)) == 1){
     if(buf[0] == 'k' && buf[1] == 'd'){
