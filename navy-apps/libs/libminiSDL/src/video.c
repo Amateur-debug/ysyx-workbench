@@ -97,12 +97,13 @@ void SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, uint32_t color) {
     y_max = dst->h;
   }
   int offset;
-  int i;
+  int i;  
   if(dst->format->palette != NULL){ //使用调色板
     uint8_t num;
+    uint32_t _color = (color << 8) | (color >> 24);
     int n = dst->format->palette->ncolors;
     for(num = 0; num < n; num++){
-      if((dst->format->palette->colors + num)->val == color){
+      if((dst->format->palette->colors + num)->val == _color){
         break;
       }
     }
