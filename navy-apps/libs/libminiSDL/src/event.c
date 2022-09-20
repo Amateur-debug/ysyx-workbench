@@ -33,10 +33,10 @@ void init_ev_queue() {
   ev_used = 0;
 }
 
-int new_ev(){
+void SDL_PumpEvents(){
   assert(ev_used < NR_EV);
   char buf[64] = {0};
-  if(NDL_PollEvent(buf, sizeof(buf)) == 1){
+  while(NDL_PollEvent(buf, sizeof(buf)) == 1){
     SDL_Event ev;
     if(buf[0] == 'k' && buf[1] == 'd'){
       ev.type = SDL_KEYDOWN;
@@ -57,6 +57,9 @@ int new_ev(){
     if(ev.type == SDL_KEYDOWN){
       keystates[i] = 1;
     }
+    else if(ev.type == SDL_KEYUP){
+      keystates[i] = 0;
+    }
     if(ev_used == 0){
       head->ev = ev;
       ev_used++;
@@ -66,10 +69,6 @@ int new_ev(){
       rear = rear->next;
       ev_used++;
     }
-    return 1;
-  }
-  else{
-    return 0;
   }
 }
 
@@ -91,7 +90,8 @@ int SDL_PushEvent(SDL_Event *ev) {
 
 int SDL_PollEvent(SDL_Event *ev) {
   printf("SDL_PollEvent\n");
-  if(new_ev() == 1){
+  SDL_PumpEvents();
+  if(ev_used > 0){
     if(ev == NULL){
       //donothing
     }
@@ -108,8 +108,8 @@ int SDL_PollEvent(SDL_Event *ev) {
 
 int SDL_WaitEvent(SDL_Event *event) {
   printf("SDL_WaitEvent\n");
-  while(ev_used != 0){
-    new_ev();
+  while(ev_used == 0){
+    SDL_PumpEvents();
   }
   if(event == NULL){
     //donothing
