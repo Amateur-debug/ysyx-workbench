@@ -42,9 +42,11 @@ int SDL_PollEvent(SDL_Event *ev) {
     if(ev->type == SDL_KEYDOWN){
       keystates[i] = 1;
     }
+    else if(ev->type == SDL_KEYUP){
+      keystates[i] = 0;
+    }
     printf("keystates[%d] = %d\n", i, keystates[i]);
     printf("%s\n", keyname[i]);
-    printf("aaa\n");
     return 1;
   }
   return 0;
@@ -83,6 +85,5 @@ uint8_t* SDL_GetKeyState(int *numkeys) {
   if(numkeys != NULL){
     *numkeys = 83;
   }
-  printf("%d\n", keystates[54]);
   return keystates;
 }
