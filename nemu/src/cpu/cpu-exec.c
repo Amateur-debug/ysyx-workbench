@@ -30,16 +30,6 @@ CPU_state cpu = {};
 uint64_t g_nr_guest_inst = 0;
 static uint64_t g_timer = 0; // unit: us
 static bool g_print_step = false;
-static char iringbuf[10][128];  //指令环形缓冲区
-static int wp = 0; //环形缓冲区写位置标记
-
-void iringbuf_w(char *str){  //指令环形缓冲区写函数
-  strcpy(iringbuf[wp], str);
-  if(wp == 9){
-    wp = 0;
-  }
-  else wp++;
-}
 
 void device_update();
 
@@ -58,7 +48,7 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
         extern int nr_token;
         if(HEAD->num != eval(0, nr_token - 1)){
           nemu_state.state = NEMU_STOP;
-          printf("%s发生了变化\npc = 0x%016lx\n", HEAD->experence, _this->pc);
+          printf("%s发生了变化\n", HEAD->experence);
           HEAD = HEAD->next;
         }
       }
@@ -66,7 +56,6 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
     else break;
   }
 #endif
-
 }
 
 static void exec_once(Decode *s, vaddr_t pc) {
@@ -93,9 +82,6 @@ static void exec_once(Decode *s, vaddr_t pc) {
   void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
   disassemble(p, s->logbuf + sizeof(s->logbuf) - p,
       MUXDEF(CONFIG_ISA_x86, s->snpc, s->pc), (uint8_t *)&s->isa.inst.val, ilen);
-
-  iringbuf_w(s->logbuf);  //将指令信息写入环形缓冲区
-
 #endif
 }
 

@@ -27,11 +27,6 @@ WP *HEAD = NULL;
 void init_regex();
 void init_wp_pool();
 
-void init_mtrace(){
-  FILE *p = fopen("/home/cxy/ysyx-workbench/nemu/build/mtrace.txt", "w");
-  fclose(p);
-}
-
 /* We use the `readline' library to provide more flexibility to read from stdin. */
 static char* rl_gets() {
   static char *line_read = NULL;
@@ -56,7 +51,6 @@ static int cmd_c(char *args) {
 }
 
 static int cmd_q(char *args) {
-  nemu_state.state = NEMU_QUIT;
   return -1;
 }
 
@@ -103,7 +97,7 @@ static int cmd_x(char *args){
   int i;
   for(i = 0;i < n;i++){
     word_t data ;
-    data = paddr_read(address, len);
+    data = pmem_read(address, len);
     printf("0x%016lx\n", data);  
     address = address + 4;
   }
@@ -237,8 +231,4 @@ void init_sdb() {
 
   /* Initialize the watchpoint pool. */
   init_wp_pool();
-
-#ifdef CONFIG_MTRACE
-  init_mtrace();
-#endif
 }

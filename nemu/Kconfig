@@ -214,7 +214,3 @@ endmenu
 config WATCHPOINT
   bool "watchpoints"
   default n
-
-config MTRACE
-  bool "mtrace"
-  default n
