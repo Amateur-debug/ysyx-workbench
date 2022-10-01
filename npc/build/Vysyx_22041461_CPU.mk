@@ -38,7 +38,7 @@ VM_USER_CFLAGS = \
 	-include \
 	/home/cxy/ysyx-workbench/npc/include/difftest.h \
 	-fPIC \
-	-DIMG=/home/cxy/ysyx-workbench/fceux-am/build/fceux-riscv64-npc.bin \
+	-DIMG=/home/cxy/ysyx-workbench/nanos-lite/build/nanos-lite-riscv64-npc.bin \
 
 # User LDLIBS (from -LDFLAGS on Verilator command line)
 VM_USER_LDLIBS = \

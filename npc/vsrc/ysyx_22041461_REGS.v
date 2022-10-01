@@ -86,6 +86,11 @@ always@(*) begin
             end
             d[rd] = csr_data;
         end
+        default: begin
+            for(i = 0; i < 64; i = i+1) begin
+                d[i] = x[i];
+            end
+        end
     endcase
     d[0] = 64'b0;
 end

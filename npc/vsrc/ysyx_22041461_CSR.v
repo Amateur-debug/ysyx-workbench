@@ -8,7 +8,8 @@ module ysyx_22041461_CSR(
     input   wire [63:0] pc        ,
     input   wire [63:0] rs1_data  ,
 
-    output  reg  [63:0] csr_data  
+    output  reg  [63:0] csr_data  ,
+    output  wire [63:0] csr_mepc  
 );
 
 reg [63:0] mtvec;    //0x305
@@ -20,6 +21,7 @@ reg [63:0] mcause_next;
 reg [63:0] mstatus;  //0x300
 reg [63:0] mstatus_next; 
 
+assign csr_mepc = mepc;
 
 always@(*) begin
     case(imm[11:0])
@@ -33,7 +35,7 @@ always@(*) begin
             csr_data = mcause;
         end
         12'h300: begin
-            csr_data = status;
+            csr_data = mstatus;
         end
         default: begin
             csr_data = 64'd0;
@@ -98,16 +100,16 @@ end
 
 always@(posedge clk) begin
     if(rst == 1'b0) begin
-        mtvec   = 64'd0;
-        mepc    = 64'd0;
-        mcause  = 64'd0;
-        mstatus = 64'd0;
+        mtvec   <= 64'd0;
+        mepc    <= 64'd0;
+        mcause  <= 64'd0;
+        mstatus <= 64'd0;
     end
     else begin
-        mtvec   = mtvec_next  ;
-        mepc    = mepc_next   ;
-        mcause  = mcause_next ;
-        mstatus = mstatus_next;
+        mtvec   <= mtvec_next  ;
+        mepc    <= mepc_next   ;
+        mcause  <= mcause_next ;
+        mstatus <= mstatus_next;
     end
 end
 

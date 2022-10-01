@@ -28,7 +28,10 @@ wire    [3:0]   sel_REGS    ;
 wire    [1:0]   sel_PC      ;
 wire    [3:0]   ctrl_MEM    ;
 wire    [2:0]   sel_MEM_addr;
-wire    [2:0]   sel_MEM_data; 
+wire    [2:0]   sel_MEM_data;
+wire    [1:0]   ctrl_CSRS   ;
+wire    [63:0]  csr_data    ;
+wire    [63:0]  csr_mepc    ;
 
 
 ysyx_22041461_CU   CU(
@@ -48,17 +51,19 @@ ysyx_22041461_CU   CU(
     .sel_PC         (sel_PC      ),
     .ctrl_MEM       (ctrl_MEM    ),
     .sel_MEM_addr   (sel_MEM_addr),
-    .sel_MEM_data   (sel_MEM_data)
+    .sel_MEM_data   (sel_MEM_data),
+    .ctrl_CSRS      (ctrl_CSRS   )
 );
 
 ysyx_22041461_PC    PC(
 
-    .clk        (clk   ), 
-    .rst        (rst   ), 
-    .sel_PC     (sel_PC), 
-    .dest       (dest  ),
+    .clk        (clk   )  , 
+    .rst        (rst   )  , 
+    .sel_PC     (sel_PC)  , 
+    .dest       (dest  )  ,
+    .csr_mepc   (csr_mepc),
 
-    .snpc       (snpc  ),
+    .snpc       (snpc  )  ,
     .pc         (pc    )
 );
 
@@ -75,6 +80,7 @@ ysyx_22041461_REGS  REGS(
     .pc         (pc      ),
     .snpc       (snpc    ),
     .mem        (mem     ),
+    .csr_data   (csr_data),
 
     .rs1_data   (rs1_data),
     .rs2_data   (rs2_data)
@@ -100,6 +106,7 @@ ysyx_22041461_ALU   ALU(
     .imm        (imm     ),
     .pc         (pc      ),
     .snpc       (snpc    ),
+    .csr_data   (csr_data),
 
     .dest       (dest    ),
     .flag       (flag    )
@@ -121,6 +128,20 @@ ysyx_22041461_MEM   MEM(
 
     .read_data      (mem         ),
     .inst           (inst        )
+);
+
+ysyx_22041461_CSR CSR(
+
+    .clk       (clk      ),
+    .rst       (rst      ),
+    .ctrl_CSRS (ctrl_CSRS),
+    .imm       (imm      ),
+    .dest      (dest     ),
+    .pc        (pc       ),
+    .rs1_data  (rs1_data ),
+
+    .csr_data  (csr_data ),
+    .csr_mepc  (csr_mepc )
 );
 
 endmodule
