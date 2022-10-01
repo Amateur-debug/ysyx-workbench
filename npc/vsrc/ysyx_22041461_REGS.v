@@ -11,7 +11,7 @@ module ysyx_22041461_REGS(
     input   wire [63:0] pc        ,
     input   wire [63:0] snpc      ,
     input   wire [63:0] mem       ,
-    input   wire [63:0] csr_data  ,     ,
+    input   wire [63:0] csr_data  ,
 
     output  wire [63:0] rs1_data  ,
     output  wire [63:0] rs2_data  

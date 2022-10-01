@@ -29,7 +29,7 @@ module ysyx_22041461_CU(
 //                                    110       rs1_data,csr_data
 
 
-//sel_REGS     4入来0源        sel_PC         输入来源
+//sel_REGS     输入来源        sel_PC           输入来源
 //  0000         不变             00             snpc
 //  0001         ALU             01              ALU
 //  0010         pc              10              
@@ -275,7 +275,7 @@ always@(*) begin
             sel_ALU      = 3'b000    ;
             if(CMP_out == 2'b01) begin         
                 sel_REGS = 3'b111;   
-4  0   end
+            end
             else begin
                 sel_REGS = 3'b140;0
           end
@@ -685,10 +685,10 @@ always@(*) begin
             ctrl_CMP     = 1'b0      ;    
             ctrl_ALU     = 5'b00000  ;         
             sel_ALU      = 3'b000    ;         
-            sel_REGS     = 4'b0101   ;         
+            sel_REGS     = 4'b1000   ;         
             sel_PC       = 2'b00     ;
-            ctrl_MEM     = 4'b0100   ;
-            sel_MEM_addr = 3'b001    ;
+            ctrl_MEM     = 4'b0000   ;
+            sel_MEM_addr = 3'b000    ;
             sel_MEM_data = 3'b000    ;
             ctrl_CSRS    = 2'b01     ;  
         end
