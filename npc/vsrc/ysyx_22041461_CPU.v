@@ -32,7 +32,7 @@ wire    [2:0]   sel_MEM_data;
 wire    [1:0]   ctrl_CSRS   ;
 wire    [63:0]  csr_data    ;
 wire    [63:0]  csr_mepc    ;
-
+wire    [63:0]  csr_mtvec   ;
 
 ysyx_22041461_CU   CU(
 
@@ -57,13 +57,14 @@ ysyx_22041461_CU   CU(
 
 ysyx_22041461_PC    PC(
 
-    .clk        (clk   )  , 
-    .rst        (rst   )  , 
-    .sel_PC     (sel_PC)  , 
-    .dest       (dest  )  ,
-    .csr_mepc   (csr_mepc),
+    .clk        (clk   )   , 
+    .rst        (rst   )   , 
+    .sel_PC     (sel_PC)   , 
+    .dest       (dest  )   ,
+    .csr_mepc   (csr_mepc) ,
+    .csr_mtvec  (csr_mtvec),
 
-    .snpc       (snpc  )  ,
+    .snpc       (snpc  )   ,
     .pc         (pc    )
 );
 
@@ -141,7 +142,8 @@ ysyx_22041461_CSR CSR(
     .rs1_data  (rs1_data ),
 
     .csr_data  (csr_data ),
-    .csr_mepc  (csr_mepc )
+    .csr_mepc  (csr_mepc ),
+    .csr_mtvec (csr_mtvec)
 );
 
 endmodule

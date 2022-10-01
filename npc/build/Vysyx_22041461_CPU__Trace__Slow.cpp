@@ -53,6 +53,7 @@ void Vysyx_22041461_CPU___024root__traceInitSub0(Vysyx_22041461_CPU___024root* v
         tracep->declBus(c+103,"ysyx_22041461_CPU ctrl_CSRS", false,-1, 1,0);
         tracep->declQuad(c+104,"ysyx_22041461_CPU csr_data", false,-1, 63,0);
         tracep->declQuad(c+10,"ysyx_22041461_CPU csr_mepc", false,-1, 63,0);
+        tracep->declQuad(c+12,"ysyx_22041461_CPU csr_mtvec", false,-1, 63,0);
         tracep->declBus(c+2,"ysyx_22041461_CPU CU inst", false,-1, 31,0);
         tracep->declBus(c+97,"ysyx_22041461_CPU CU CMP_out", false,-1, 1,0);
         tracep->declBus(c+3,"ysyx_22041461_CPU CU rs1", false,-1, 4,0);
@@ -74,6 +75,7 @@ void Vysyx_22041461_CPU___024root__traceInitSub0(Vysyx_22041461_CPU___024root* v
         tracep->declBus(c+99,"ysyx_22041461_CPU PC sel_PC", false,-1, 1,0);
         tracep->declQuad(c+89,"ysyx_22041461_CPU PC dest", false,-1, 63,0);
         tracep->declQuad(c+10,"ysyx_22041461_CPU PC csr_mepc", false,-1, 63,0);
+        tracep->declQuad(c+12,"ysyx_22041461_CPU PC csr_mtvec", false,-1, 63,0);
         tracep->declQuad(c+242,"ysyx_22041461_CPU PC snpc", false,-1, 63,0);
         tracep->declQuad(c+239,"ysyx_22041461_CPU PC pc", false,-1, 63,0);
         tracep->declQuad(c+244,"ysyx_22041461_CPU PC npc", false,-1, 63,0);
@@ -92,18 +94,18 @@ void Vysyx_22041461_CPU___024root__traceInitSub0(Vysyx_22041461_CPU___024root* v
         tracep->declQuad(c+6,"ysyx_22041461_CPU REGS rs1_data", false,-1, 63,0);
         tracep->declQuad(c+8,"ysyx_22041461_CPU REGS rs2_data", false,-1, 63,0);
         {int i; for (i=0; i<32; i++) {
-                tracep->declQuad(c+12+i*2,"ysyx_22041461_CPU REGS x", true,(i+0), 63,0);}}
+                tracep->declQuad(c+14+i*2,"ysyx_22041461_CPU REGS x", true,(i+0), 63,0);}}
         {int i; for (i=0; i<32; i++) {
                 tracep->declQuad(c+106+i*2,"ysyx_22041461_CPU REGS d", true,(i+0), 63,0);}}
         tracep->declBus(c+1,"ysyx_22041461_CPU REGS i", false,-1, 31,0);
-        tracep->declBus(c+76,"ysyx_22041461_CPU REGS j", false,-1, 31,0);
+        tracep->declBus(c+78,"ysyx_22041461_CPU REGS j", false,-1, 31,0);
         tracep->declQuad(c+87,"ysyx_22041461_CPU CMP imm", false,-1, 63,0);
         tracep->declQuad(c+6,"ysyx_22041461_CPU CMP rs1_data", false,-1, 63,0);
         tracep->declQuad(c+8,"ysyx_22041461_CPU CMP rs2_data", false,-1, 63,0);
         tracep->declBus(c+95,"ysyx_22041461_CPU CMP sel_CMP", false,-1, 1,0);
         tracep->declBus(c+96,"ysyx_22041461_CPU CMP ctrl_CMP", false,-1, 0,0);
         tracep->declBus(c+97,"ysyx_22041461_CPU CMP CMP_out", false,-1, 1,0);
-        tracep->declQuad(c+77,"ysyx_22041461_CPU CMP src1", false,-1, 63,0);
+        tracep->declQuad(c+79,"ysyx_22041461_CPU CMP src1", false,-1, 63,0);
         tracep->declQuad(c+170,"ysyx_22041461_CPU CMP src2", false,-1, 63,0);
         tracep->declBus(c+93,"ysyx_22041461_CPU ALU ctrl_ALU", false,-1, 4,0);
         tracep->declBus(c+94,"ysyx_22041461_CPU ALU sel_ALU", false,-1, 2,0);
@@ -189,7 +191,7 @@ void Vysyx_22041461_CPU___024root__traceInitSub0(Vysyx_22041461_CPU___024root* v
         tracep->declBus(c+102,"ysyx_22041461_CPU MEM sel_MEM_data", false,-1, 2,0);
         tracep->declQuad(c+91,"ysyx_22041461_CPU MEM read_data", false,-1, 63,0);
         tracep->declBus(c+2,"ysyx_22041461_CPU MEM inst", false,-1, 31,0);
-        tracep->declQuad(c+79,"ysyx_22041461_CPU MEM rinst", false,-1, 63,0);
+        tracep->declQuad(c+81,"ysyx_22041461_CPU MEM rinst", false,-1, 63,0);
         tracep->declQuad(c+212,"ysyx_22041461_CPU MEM read_data1", false,-1, 63,0);
         tracep->declQuad(c+214,"ysyx_22041461_CPU MEM read_data2", false,-1, 63,0);
         tracep->declQuad(c+216,"ysyx_22041461_CPU MEM rread_data", false,-1, 63,0);
@@ -209,7 +211,8 @@ void Vysyx_22041461_CPU___024root__traceInitSub0(Vysyx_22041461_CPU___024root* v
         tracep->declQuad(c+6,"ysyx_22041461_CPU CSR rs1_data", false,-1, 63,0);
         tracep->declQuad(c+104,"ysyx_22041461_CPU CSR csr_data", false,-1, 63,0);
         tracep->declQuad(c+10,"ysyx_22041461_CPU CSR csr_mepc", false,-1, 63,0);
-        tracep->declQuad(c+81,"ysyx_22041461_CPU CSR mtvec", false,-1, 63,0);
+        tracep->declQuad(c+12,"ysyx_22041461_CPU CSR csr_mtvec", false,-1, 63,0);
+        tracep->declQuad(c+12,"ysyx_22041461_CPU CSR mtvec", false,-1, 63,0);
         tracep->declQuad(c+229,"ysyx_22041461_CPU CSR mtvec_next", false,-1, 63,0);
         tracep->declQuad(c+10,"ysyx_22041461_CPU CSR mepc", false,-1, 63,0);
         tracep->declQuad(c+231,"ysyx_22041461_CPU CSR mepc_next", false,-1, 63,0);
@@ -264,42 +267,42 @@ void Vysyx_22041461_CPU___024root__traceFullSub0(Vysyx_22041461_CPU___024root* v
         tracep->fullQData(oldp+6,(vlSelf->ysyx_22041461_CPU__DOT__rs1_data),64);
         tracep->fullQData(oldp+8,(vlSelf->ysyx_22041461_CPU__DOT__rs2_data),64);
         tracep->fullQData(oldp+10,(vlSelf->ysyx_22041461_CPU__DOT__CSR__DOT__mepc),64);
-        tracep->fullQData(oldp+12,(vlSelf->ysyx_22041461_CPU__DOT__REGS__DOT__x[0]),64);
-        tracep->fullQData(oldp+14,(vlSelf->ysyx_22041461_CPU__DOT__REGS__DOT__x[1]),64);
-        tracep->fullQData(oldp+16,(vlSelf->ysyx_22041461_CPU__DOT__REGS__DOT__x[2]),64);
-        tracep->fullQData(oldp+18,(vlSelf->ysyx_22041461_CPU__DOT__REGS__DOT__x[3]),64);
-        tracep->fullQData(oldp+20,(vlSelf->ysyx_22041461_CPU__DOT__REGS__DOT__x[4]),64);
-        tracep->fullQData(oldp+22,(vlSelf->ysyx_22041461_CPU__DOT__REGS__DOT__x[5]),64);
-        tracep->fullQData(oldp+24,(vlSelf->ysyx_22041461_CPU__DOT__REGS__DOT__x[6]),64);
-        tracep->fullQData(oldp+26,(vlSelf->ysyx_22041461_CPU__DOT__REGS__DOT__x[7]),64);
-        tracep->fullQData(oldp+28,(vlSelf->ysyx_22041461_CPU__DOT__REGS__DOT__x[8]),64);
-        tracep->fullQData(oldp+30,(vlSelf->ysyx_22041461_CPU__DOT__REGS__DOT__x[9]),64);
-        tracep->fullQData(oldp+32,(vlSelf->ysyx_22041461_CPU__DOT__REGS__DOT__x[10]),64);
-        tracep->fullQData(oldp+34,(vlSelf->ysyx_22041461_CPU__DOT__REGS__DOT__x[11]),64);
-        tracep->fullQData(oldp+36,(vlSelf->ysyx_22041461_CPU__DOT__REGS__DOT__x[12]),64);
-        tracep->fullQData(oldp+38,(vlSelf->ysyx_22041461_CPU__DOT__REGS__DOT__x[13]),64);
-        tracep->fullQData(oldp+40,(vlSelf->ysyx_22041461_CPU__DOT__REGS__DOT__x[14]),64);
-        tracep->fullQData(oldp+42,(vlSelf->ysyx_22041461_CPU__DOT__REGS__DOT__x[15]),64);
-        tracep->fullQData(oldp+44,(vlSelf->ysyx_22041461_CPU__DOT__REGS__DOT__x[16]),64);
-        tracep->fullQData(oldp+46,(vlSelf->ysyx_22041461_CPU__DOT__REGS__DOT__x[17]),64);
-        tracep->fullQData(oldp+48,(vlSelf->ysyx_22041461_CPU__DOT__REGS__DOT__x[18]),64);
-        tracep->fullQData(oldp+50,(vlSelf->ysyx_22041461_CPU__DOT__REGS__DOT__x[19]),64);
-        tracep->fullQData(oldp+52,(vlSelf->ysyx_22041461_CPU__DOT__REGS__DOT__x[20]),64);
-        tracep->fullQData(oldp+54,(vlSelf->ysyx_22041461_CPU__DOT__REGS__DOT__x[21]),64);
-        tracep->fullQData(oldp+56,(vlSelf->ysyx_22041461_CPU__DOT__REGS__DOT__x[22]),64);
-        tracep->fullQData(oldp+58,(vlSelf->ysyx_22041461_CPU__DOT__REGS__DOT__x[23]),64);
-        tracep->fullQData(oldp+60,(vlSelf->ysyx_22041461_CPU__DOT__REGS__DOT__x[24]),64);
-        tracep->fullQData(oldp+62,(vlSelf->ysyx_22041461_CPU__DOT__REGS__DOT__x[25]),64);
-        tracep->fullQData(oldp+64,(vlSelf->ysyx_22041461_CPU__DOT__REGS__DOT__x[26]),64);
-        tracep->fullQData(oldp+66,(vlSelf->ysyx_22041461_CPU__DOT__REGS__DOT__x[27]),64);
-        tracep->fullQData(oldp+68,(vlSelf->ysyx_22041461_CPU__DOT__REGS__DOT__x[28]),64);
-        tracep->fullQData(oldp+70,(vlSelf->ysyx_22041461_CPU__DOT__REGS__DOT__x[29]),64);
-        tracep->fullQData(oldp+72,(vlSelf->ysyx_22041461_CPU__DOT__REGS__DOT__x[30]),64);
-        tracep->fullQData(oldp+74,(vlSelf->ysyx_22041461_CPU__DOT__REGS__DOT__x[31]),64);
-        tracep->fullIData(oldp+76,(vlSelf->ysyx_22041461_CPU__DOT__REGS__DOT__j),32);
-        tracep->fullQData(oldp+77,(vlSelf->ysyx_22041461_CPU__DOT__CMP__DOT__src1),64);
-        tracep->fullQData(oldp+79,(vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__rinst),64);
-        tracep->fullQData(oldp+81,(vlSelf->ysyx_22041461_CPU__DOT__CSR__DOT__mtvec),64);
+        tracep->fullQData(oldp+12,(vlSelf->ysyx_22041461_CPU__DOT__CSR__DOT__mtvec),64);
+        tracep->fullQData(oldp+14,(vlSelf->ysyx_22041461_CPU__DOT__REGS__DOT__x[0]),64);
+        tracep->fullQData(oldp+16,(vlSelf->ysyx_22041461_CPU__DOT__REGS__DOT__x[1]),64);
+        tracep->fullQData(oldp+18,(vlSelf->ysyx_22041461_CPU__DOT__REGS__DOT__x[2]),64);
+        tracep->fullQData(oldp+20,(vlSelf->ysyx_22041461_CPU__DOT__REGS__DOT__x[3]),64);
+        tracep->fullQData(oldp+22,(vlSelf->ysyx_22041461_CPU__DOT__REGS__DOT__x[4]),64);
+        tracep->fullQData(oldp+24,(vlSelf->ysyx_22041461_CPU__DOT__REGS__DOT__x[5]),64);
+        tracep->fullQData(oldp+26,(vlSelf->ysyx_22041461_CPU__DOT__REGS__DOT__x[6]),64);
+        tracep->fullQData(oldp+28,(vlSelf->ysyx_22041461_CPU__DOT__REGS__DOT__x[7]),64);
+        tracep->fullQData(oldp+30,(vlSelf->ysyx_22041461_CPU__DOT__REGS__DOT__x[8]),64);
+        tracep->fullQData(oldp+32,(vlSelf->ysyx_22041461_CPU__DOT__REGS__DOT__x[9]),64);
+        tracep->fullQData(oldp+34,(vlSelf->ysyx_22041461_CPU__DOT__REGS__DOT__x[10]),64);
+        tracep->fullQData(oldp+36,(vlSelf->ysyx_22041461_CPU__DOT__REGS__DOT__x[11]),64);
+        tracep->fullQData(oldp+38,(vlSelf->ysyx_22041461_CPU__DOT__REGS__DOT__x[12]),64);
+        tracep->fullQData(oldp+40,(vlSelf->ysyx_22041461_CPU__DOT__REGS__DOT__x[13]),64);
+        tracep->fullQData(oldp+42,(vlSelf->ysyx_22041461_CPU__DOT__REGS__DOT__x[14]),64);
+        tracep->fullQData(oldp+44,(vlSelf->ysyx_22041461_CPU__DOT__REGS__DOT__x[15]),64);
+        tracep->fullQData(oldp+46,(vlSelf->ysyx_22041461_CPU__DOT__REGS__DOT__x[16]),64);
+        tracep->fullQData(oldp+48,(vlSelf->ysyx_22041461_CPU__DOT__REGS__DOT__x[17]),64);
+        tracep->fullQData(oldp+50,(vlSelf->ysyx_22041461_CPU__DOT__REGS__DOT__x[18]),64);
+        tracep->fullQData(oldp+52,(vlSelf->ysyx_22041461_CPU__DOT__REGS__DOT__x[19]),64);
+        tracep->fullQData(oldp+54,(vlSelf->ysyx_22041461_CPU__DOT__REGS__DOT__x[20]),64);
+        tracep->fullQData(oldp+56,(vlSelf->ysyx_22041461_CPU__DOT__REGS__DOT__x[21]),64);
+        tracep->fullQData(oldp+58,(vlSelf->ysyx_22041461_CPU__DOT__REGS__DOT__x[22]),64);
+        tracep->fullQData(oldp+60,(vlSelf->ysyx_22041461_CPU__DOT__REGS__DOT__x[23]),64);
+        tracep->fullQData(oldp+62,(vlSelf->ysyx_22041461_CPU__DOT__REGS__DOT__x[24]),64);
+        tracep->fullQData(oldp+64,(vlSelf->ysyx_22041461_CPU__DOT__REGS__DOT__x[25]),64);
+        tracep->fullQData(oldp+66,(vlSelf->ysyx_22041461_CPU__DOT__REGS__DOT__x[26]),64);
+        tracep->fullQData(oldp+68,(vlSelf->ysyx_22041461_CPU__DOT__REGS__DOT__x[27]),64);
+        tracep->fullQData(oldp+70,(vlSelf->ysyx_22041461_CPU__DOT__REGS__DOT__x[28]),64);
+        tracep->fullQData(oldp+72,(vlSelf->ysyx_22041461_CPU__DOT__REGS__DOT__x[29]),64);
+        tracep->fullQData(oldp+74,(vlSelf->ysyx_22041461_CPU__DOT__REGS__DOT__x[30]),64);
+        tracep->fullQData(oldp+76,(vlSelf->ysyx_22041461_CPU__DOT__REGS__DOT__x[31]),64);
+        tracep->fullIData(oldp+78,(vlSelf->ysyx_22041461_CPU__DOT__REGS__DOT__j),32);
+        tracep->fullQData(oldp+79,(vlSelf->ysyx_22041461_CPU__DOT__CMP__DOT__src1),64);
+        tracep->fullQData(oldp+81,(vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__rinst),64);
         tracep->fullQData(oldp+83,(vlSelf->ysyx_22041461_CPU__DOT__CSR__DOT__mcause),64);
         tracep->fullQData(oldp+85,(vlSelf->ysyx_22041461_CPU__DOT__CSR__DOT__mstatus),64);
         tracep->fullQData(oldp+87,(vlSelf->ysyx_22041461_CPU__DOT__imm),64);
@@ -450,12 +453,12 @@ void Vysyx_22041461_CPU___024root__traceFullSub0(Vysyx_22041461_CPU___024root* v
         tracep->fullQData(oldp+239,(vlSelf->pc),64);
         tracep->fullBit(oldp+241,(vlSelf->flag));
         tracep->fullQData(oldp+242,((4ULL + vlSelf->pc)),64);
-        tracep->fullQData(oldp+244,(((0U == (IData)(vlSelf->ysyx_22041461_CPU__DOT__sel_PC))
-                                      ? (4ULL + vlSelf->pc)
-                                      : ((1U == (IData)(vlSelf->ysyx_22041461_CPU__DOT__sel_PC))
+        tracep->fullQData(oldp+244,(((2U & (IData)(vlSelf->ysyx_22041461_CPU__DOT__sel_PC))
+                                      ? ((1U & (IData)(vlSelf->ysyx_22041461_CPU__DOT__sel_PC))
+                                          ? vlSelf->ysyx_22041461_CPU__DOT__CSR__DOT__mtvec
+                                          : vlSelf->ysyx_22041461_CPU__DOT__CSR__DOT__mepc)
+                                      : ((1U & (IData)(vlSelf->ysyx_22041461_CPU__DOT__sel_PC))
                                           ? vlSelf->ysyx_22041461_CPU__DOT__dest
-                                          : ((2U == (IData)(vlSelf->ysyx_22041461_CPU__DOT__sel_PC))
-                                              ? vlSelf->ysyx_22041461_CPU__DOT__CSR__DOT__mepc
-                                              : vlSelf->pc)))),64);
+                                          : (4ULL + vlSelf->pc)))),64);
     }
 }

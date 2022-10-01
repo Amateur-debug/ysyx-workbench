@@ -25,7 +25,7 @@ extern "C" {
     extern void set_difftest_next();
     // DPI import at vsrc/ysyx_22041461_REGS.v:21:30
     extern void set_gpr_ptr(const svOpenArrayHandle a);
-    // DPI import at vsrc/ysyx_22041461_PC.v:13:30
+    // DPI import at vsrc/ysyx_22041461_PC.v:14:30
     extern void set_pc_ptr(const svOpenArrayHandle a);
 
 #ifdef __cplusplus

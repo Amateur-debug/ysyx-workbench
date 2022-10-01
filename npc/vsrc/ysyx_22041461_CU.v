@@ -696,7 +696,7 @@ always@(*) begin
             imm          = immI(inst); 
             sel_CMP      = 2'b00     ;
             ctrl_CMP     = 1'b0      ;    
-            ctrl_ALU     = 5'b01001  ;         
+            ctrl_ALU     = 5'b01010  ;         
             sel_ALU      = 3'b110    ;         
             sel_REGS     = 4'b1000   ;         
             sel_PC       = 2'b00     ;
@@ -712,7 +712,7 @@ always@(*) begin
             ctrl_ALU     = 5'b00000  ;         
             sel_ALU      = 3'b000    ;         
             sel_REGS     = 4'b0000   ;         
-            sel_PC       = 2'b00     ;
+            sel_PC       = 2'b11     ;
             ctrl_MEM     = 4'b0000   ;
             sel_MEM_addr = 3'b000    ;
             sel_MEM_data = 3'b000    ;

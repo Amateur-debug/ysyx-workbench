@@ -161,7 +161,6 @@ always@(*) begin
         5'b11110: begin  //srlw
             dest = SRL_out;
         end
-
         default: begin
             dest = 64'd0;
         end

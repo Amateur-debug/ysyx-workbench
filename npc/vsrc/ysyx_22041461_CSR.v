@@ -9,8 +9,11 @@ module ysyx_22041461_CSR(
     input   wire [63:0] rs1_data  ,
 
     output  reg  [63:0] csr_data  ,
-    output  wire [63:0] csr_mepc  
+    output  wire [63:0] csr_mepc  ,
+    output  wire [63:0] csr_mtvec 
 );
+
+import "DPI-C" function void ebreak();
 
 reg [63:0] mtvec;    //0x305
 reg [63:0] mtvec_next;
@@ -22,6 +25,7 @@ reg [63:0] mstatus;  //0x300
 reg [63:0] mstatus_next; 
 
 assign csr_mepc = mepc;
+assign csr_mtvec = mtvec;
 
 always@(*) begin
     case(imm[11:0])
@@ -68,7 +72,7 @@ always@(*) begin
                     mstatus_next = rs1_data;
                 end
                 default: begin
-                    
+                    ebreak();
                 end
             endcase
         end
@@ -87,7 +91,7 @@ always@(*) begin
                     mstatus_next = dest;
                 end
                 default: begin
-                    
+                    ebreak();
                 end
             endcase
         end
