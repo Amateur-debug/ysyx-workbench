@@ -11,11 +11,12 @@ module ysyx_22041461_CU(
     output  reg  [2:0]  sel_ALU     ,    //ALU输入选择信号
     output  reg  [0:0]  ctrl_CMP    ,    //比较器控制信号
     output  reg  [1:0]  sel_CMP     ,    //比较器输入选择信号
-    output  reg  [2:0]  sel_REGS    ,    //寄存器输入选择信号
+    output  reg  [3:0]  sel_REGS    ,    //寄存器输入信号
     output  reg  [1:0]  sel_PC      ,    //pc输入选择信号
     output  reg  [3:0]  ctrl_MEM    ,
     output  reg  [2:0]  sel_MEM_addr,
-    output  reg  [2:0]  sel_MEM_data    
+    output  reg  [2:0]  sel_MEM_data,
+    output  reg  [1:0]  ctrl_CSRS    
 ); 
 
 //ctrl_ALU     操作                 sel_ALU       操作数来源                  
@@ -25,17 +26,19 @@ module ysyx_22041461_CU(
 //  011         <<                    011       rs1_data,snpc
 //  100    +且截断为32位并符号位扩展      100       imm,pc  
 //  101                               101       imm,snpc  
+//                                    110       rs1_data,csr_data
 
 
-//sel_REGS     输入来源         sel_PC         输入来源
-//  000         不变             00             snpc
-//  001         ALU             01              ALU
-//  010         pc              10              
-//  011         snpc
-//  100         imm
-//  101         memory
-//  110           0
-//  111           1
+//sel_REGS     4入来0源        sel_PC         输入来源
+//  0000         不变             00             snpc
+//  0001         ALU             01              ALU
+//  0010         pc              10              
+//  0011         snpc
+//  0100         imm
+//  0101         memory
+//  0110           0
+//  0111           1
+//  1000          CSR
 
 
 import "DPI-C" function void ebreak();
@@ -96,11 +99,12 @@ always@(*) begin
             ctrl_CMP     = 1'b0      ;     
             ctrl_ALU     = 5'b00001  ;         
             sel_ALU      = 3'b000    ;         
-            sel_REGS     = 3'b001    ;         
+            sel_REGS     = 4'b0001   ;         
             sel_PC       = 2'b00     ;
             ctrl_MEM     = 4'b0000   ;
             sel_MEM_addr = 3'b000    ;
             sel_MEM_data = 3'b000    ;
+            ctrl_CSRS    = 2'b00     ;
         end 
         32'b0000000_xxxxx_xxxxx_000_xxxxx_0111011: begin //addw
             imm          = 64'd0     ;
@@ -108,11 +112,12 @@ always@(*) begin
             ctrl_CMP     = 1'b0      ;     
             ctrl_ALU     = 5'b00100  ;         
             sel_ALU      = 3'b000    ;         
-            sel_REGS     = 3'b001    ;         
+            sel_REGS     = 4'b0001   ;         
             sel_PC       = 2'b00     ;
             ctrl_MEM     = 4'b0000   ;
             sel_MEM_addr = 3'b000    ;
             sel_MEM_data = 3'b000    ;
+            ctrl_CSRS    = 2'b00     ;
         end 
         32'b0100000_xxxxx_xxxxx_000_xxxxx_0110011: begin //sub
             imm          = 64'd0     ;
@@ -120,11 +125,12 @@ always@(*) begin
             ctrl_CMP     = 1'b0      ;     
             ctrl_ALU     = 5'b00101  ;         
             sel_ALU      = 3'b000    ;         
-            sel_REGS     = 3'b001    ;         
+            sel_REGS     = 4'b0001   ;         
             sel_PC       = 2'b00     ;
             ctrl_MEM     = 4'b0000   ;
             sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ; 
+            sel_MEM_data = 3'b000    ;
+            ctrl_CSRS    = 2'b00     ; 
         end 
         32'b0000000_xxxxx_xxxxx_001_xxxxx_0111011: begin //sllw
             imm          = 64'd0     ;
@@ -132,11 +138,12 @@ always@(*) begin
             ctrl_CMP     = 1'b0      ;     
             ctrl_ALU     = 5'b01000  ;         
             sel_ALU      = 3'b000    ;         
-            sel_REGS     = 3'b001    ;         
+            sel_REGS     = 4'b0001   ;         
             sel_PC       = 2'b00     ;
             ctrl_MEM     = 4'b0000   ;
             sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ; 
+            sel_MEM_data = 3'b000    ;
+            ctrl_CSRS    = 2'b00     ; 
         end 
         32'b0000000_xxxxx_xxxxx_111_xxxxx_0110011: begin //and
             imm          = 64'd0     ;
@@ -144,11 +151,12 @@ always@(*) begin
             ctrl_CMP     = 1'b0      ;     
             ctrl_ALU     = 5'b00111  ;         
             sel_ALU      = 3'b000    ;         
-            sel_REGS     = 3'b001    ;         
+            sel_REGS     = 4'b0001   ;         
             sel_PC       = 2'b00     ;
             ctrl_MEM     = 4'b0000   ;
             sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ; 
+            sel_MEM_data = 3'b000    ;
+            ctrl_CSRS    = 2'b00     ; 
         end 
         32'b0000000_xxxxx_xxxxx_011_xxxxx_0110011: begin //sltu
             imm          = 64'd0     ;
@@ -158,14 +166,15 @@ always@(*) begin
             sel_ALU      = 3'b000    ;
             if(CMP_out == 2'b01) begin         
                 sel_REGS = 3'b111;
-            end       
+    4 0   end       
             else begin
-                sel_REGS = 3'b110;
-            end
+                sel_REGS = 3'b140;0
+          end
             sel_PC       = 2'b00     ;
             ctrl_MEM     = 4'b0000   ;
             sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ; 
+            sel_MEM_data = 3'b000    ;
+            ctrl_CSRS    = 2'b00     ; 
         end 
         32'b0000000_xxxxx_xxxxx_110_xxxxx_0110011: begin //or
             imm          = 64'd0     ;
@@ -173,11 +182,12 @@ always@(*) begin
             ctrl_CMP     = 1'b0      ;     
             ctrl_ALU     = 5'b01010  ;         
             sel_ALU      = 3'b000    ;         
-            sel_REGS     = 3'b001    ;         
+            sel_REGS     = 4'b0001   ;         
             sel_PC       = 2'b00     ;
             ctrl_MEM     = 4'b0000   ;
             sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ; 
+            sel_MEM_data = 3'b000    ;
+            ctrl_CSRS    = 2'b00     ; 
         end 
         32'b0000001_xxxxx_xxxxx_000_xxxxx_0111011: begin //mulw
             imm          = 64'd0     ;
@@ -185,11 +195,12 @@ always@(*) begin
             ctrl_CMP     = 1'b0      ;     
             ctrl_ALU     = 5'b01100  ;         
             sel_ALU      = 3'b000    ;         
-            sel_REGS     = 3'b001    ;         
+            sel_REGS     = 4'b0001   ;         
             sel_PC       = 2'b00     ;
             ctrl_MEM     = 4'b0000   ;
             sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ; 
+            sel_MEM_data = 3'b000    ;
+            ctrl_CSRS    = 2'b00     ; 
         end
         32'b0000001_xxxxx_xxxxx_100_xxxxx_0111011: begin //divw
             imm          = 64'd0     ;
@@ -197,11 +208,12 @@ always@(*) begin
             ctrl_CMP     = 1'b0      ;     
             ctrl_ALU     = 5'b10001  ;         
             sel_ALU      = 3'b000    ;         
-            sel_REGS     = 3'b001    ;         
+            sel_REGS     = 4'b0001   ;         
             sel_PC       = 2'b00     ;
             ctrl_MEM     = 4'b0000   ;
             sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ; 
+            sel_MEM_data = 3'b000    ;
+            ctrl_CSRS    = 2'b00     ; 
         end
         32'b0000001_xxxxx_xxxxx_110_xxxxx_0111011: begin //remw
             imm          = 64'd0     ;
@@ -209,11 +221,12 @@ always@(*) begin
             ctrl_CMP     = 1'b0      ;     
             ctrl_ALU     = 5'b10101  ;         
             sel_ALU      = 3'b000    ;         
-            sel_REGS     = 3'b001    ;         
+            sel_REGS     = 4'b0001   ;         
             sel_PC       = 2'b00     ;
             ctrl_MEM     = 4'b0000   ;
             sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ; 
+            sel_MEM_data = 3'b000    ;
+            ctrl_CSRS    = 2'b00     ; 
         end
         32'b0000001_xxxxx_xxxxx_111_xxxxx_0110011: begin //remu
             imm          = 64'd0     ;
@@ -221,11 +234,12 @@ always@(*) begin
             ctrl_CMP     = 1'b0      ;     
             ctrl_ALU     = 5'b10111  ;         
             sel_ALU      = 3'b000    ;         
-            sel_REGS     = 3'b001    ;         
+            sel_REGS     = 4'b0001   ;         
             sel_PC       = 2'b00     ;
             ctrl_MEM     = 4'b0000   ;
             sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ; 
+            sel_MEM_data = 3'b000    ;
+            ctrl_CSRS    = 2'b00     ; 
         end
         32'b0000001_xxxxx_xxxxx_111_xxxxx_0111011: begin //remuw
             imm          = 64'd0     ;
@@ -233,11 +247,12 @@ always@(*) begin
             ctrl_CMP     = 1'b0      ;     
             ctrl_ALU     = 5'b10110  ;         
             sel_ALU      = 3'b000    ;         
-            sel_REGS     = 3'b001    ;         
+            sel_REGS     = 4'b0001   ;         
             sel_PC       = 2'b00     ;
             ctrl_MEM     = 4'b0000   ;
             sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ; 
+            sel_MEM_data = 3'b000    ;
+            ctrl_CSRS    = 2'b00     ; 
         end
         32'b0100000_xxxxx_xxxxx_000_xxxxx_0111011: begin //subw
             imm          = 64'd0     ;
@@ -245,11 +260,12 @@ always@(*) begin
             ctrl_CMP     = 1'b0      ;     
             ctrl_ALU     = 5'b11001  ;         
             sel_ALU      = 3'b000    ;         
-            sel_REGS     = 3'b001    ;         
+            sel_REGS     = 4'b0001   ;         
             sel_PC       = 2'b00     ;
             ctrl_MEM     = 4'b0000   ;
             sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ; 
+            sel_MEM_data = 3'b000    ;
+            ctrl_CSRS    = 2'b00     ; 
         end
         32'b0000000_xxxxx_xxxxx_010_xxxxx_0110011: begin //slt
             imm          = 64'd0     ;
@@ -259,14 +275,15 @@ always@(*) begin
             sel_ALU      = 3'b000    ;
             if(CMP_out == 2'b01) begin         
                 sel_REGS = 3'b111;   
-            end
+4  0   end
             else begin
-                sel_REGS = 3'b110;
-            end
+                sel_REGS = 3'b140;0
+          end
             sel_PC       = 2'b00     ;
             ctrl_MEM     = 4'b0000   ;
             sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ; 
+            sel_MEM_data = 3'b000    ;
+            ctrl_CSRS    = 2'b00     ; 
         end
         32'b0000001_xxxxx_xxxxx_000_xxxxx_0110011: begin //mul
             imm          = 64'd0     ;
@@ -274,11 +291,12 @@ always@(*) begin
             ctrl_CMP     = 1'b0      ;     
             ctrl_ALU     = 5'b10000  ;         
             sel_ALU      = 3'b000    ;         
-            sel_REGS     = 3'b001    ;         
+            sel_REGS     = 4'b0001   ;         
             sel_PC       = 2'b00     ;
             ctrl_MEM     = 4'b0000   ;
             sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ; 
+            sel_MEM_data = 3'b000    ;
+            ctrl_CSRS    = 2'b00     ; 
         end
         32'b0100000_xxxxx_xxxxx_101_xxxxx_0111011: begin //sraw
             imm          = 64'd0     ;
@@ -286,11 +304,12 @@ always@(*) begin
             ctrl_CMP     = 1'b0      ;     
             ctrl_ALU     = 5'b11100  ;         
             sel_ALU      = 3'b000    ;         
-            sel_REGS     = 3'b001    ;         
+            sel_REGS     = 4'b0001   ;         
             sel_PC       = 2'b00     ;
             ctrl_MEM     = 4'b0000   ;
             sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ; 
+            sel_MEM_data = 3'b000    ;
+            ctrl_CSRS    = 2'b00     ; 
         end
         32'b0000000_xxxxx_xxxxx_101_xxxxx_0111011: begin //srlw
             imm          = 64'd0     ;
@@ -298,11 +317,12 @@ always@(*) begin
             ctrl_CMP     = 1'b0      ;     
             ctrl_ALU     = 5'b11110  ;         
             sel_ALU      = 3'b000    ;         
-            sel_REGS     = 3'b001    ;         
+            sel_REGS     = 4'b0001   ;         
             sel_PC       = 2'b00     ;
             ctrl_MEM     = 4'b0000   ;
             sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ; 
+            sel_MEM_data = 3'b000    ;
+            ctrl_CSRS    = 2'b00     ; 
         end
         32'b0000001_xxxxx_xxxxx_101_xxxxx_0110011: begin //divu
             imm          = 64'd0     ;
@@ -310,11 +330,12 @@ always@(*) begin
             ctrl_CMP     = 1'b0      ;     
             ctrl_ALU     = 5'b10011  ;         
             sel_ALU      = 3'b000    ;         
-            sel_REGS     = 3'b001    ;         
+            sel_REGS     = 4'b0001   ;         
             sel_PC       = 2'b00     ;
             ctrl_MEM     = 4'b0000   ;
             sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ; 
+            sel_MEM_data = 3'b000    ;
+            ctrl_CSRS    = 2'b00     ; 
         end
         32'b0000000_xxxxx_xxxxx_100_xxxxx_0110011: begin //xor
             imm          = 64'd0     ;
@@ -322,11 +343,12 @@ always@(*) begin
             ctrl_CMP     = 1'b0      ;     
             ctrl_ALU     = 5'b01001  ;         
             sel_ALU      = 3'b000    ;         
-            sel_REGS     = 3'b001    ;         
+            sel_REGS     = 4'b0001   ;         
             sel_PC       = 2'b00     ;
             ctrl_MEM     = 4'b0000   ;
             sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ; 
+            sel_MEM_data = 3'b000    ;
+            ctrl_CSRS    = 2'b00     ; 
         end
         32'b0000000_xxxxx_xxxxx_001_xxxxx_0110011: begin //sll
             imm          = 64'd0     ;
@@ -334,11 +356,12 @@ always@(*) begin
             ctrl_CMP     = 1'b0      ;     
             ctrl_ALU     = 5'b00011  ;         
             sel_ALU      = 3'b000    ;         
-            sel_REGS     = 3'b001    ;         
+            sel_REGS     = 4'b0001   ;         
             sel_PC       = 2'b00     ;
             ctrl_MEM     = 4'b0000   ;
             sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ; 
+            sel_MEM_data = 3'b000    ;
+            ctrl_CSRS    = 2'b00     ; 
         end
         32'b0000001_xxxxx_xxxxx_101_xxxxx_0111011: begin //divuw
             imm          = 64'd0     ;
@@ -346,11 +369,25 @@ always@(*) begin
             ctrl_CMP     = 1'b0      ;     
             ctrl_ALU     = 5'b10010  ;         
             sel_ALU      = 3'b000    ;         
-            sel_REGS     = 3'b001    ;         
+            sel_REGS     = 4'b0001   ;         
             sel_PC       = 2'b00     ;
             ctrl_MEM     = 4'b0000   ;
             sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ; 
+            sel_MEM_data = 3'b000    ;
+            ctrl_CSRS    = 2'b00     ; 
+        end
+        32'b0011000_00010_00000_000_00000_1110011: begin //mret
+            imm          = immI(inst); 
+            sel_CMP      = 2'b00     ;
+            ctrl_CMP     = 1'b0      ;    
+            ctrl_ALU     = 5'b00001  ;         
+            sel_ALU      = 3'b001    ;         
+            sel_REGS     = 4'b0101   ;         
+            sel_PC       = 2'b00     ;
+            ctrl_MEM     = 4'b0100   ;
+            sel_MEM_addr = 3'b001    ;
+            sel_MEM_data = 3'b000    ;
+            ctrl_CSRS    = 2'b00     ; 
         end
 
     //Type-I
@@ -360,11 +397,12 @@ always@(*) begin
             ctrl_CMP     = 1'b0      ;     
             ctrl_ALU     = 5'b00001  ;         
             sel_ALU      = 3'b001    ;         
-            sel_REGS     = 3'b001    ;         
+            sel_REGS     = 4'b0001   ;         
             sel_PC       = 2'b00     ;
             ctrl_MEM     = 4'b0000   ;
             sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ; 
+            sel_MEM_data = 3'b000    ;
+            ctrl_CSRS    = 2'b00     ; 
         end  
         32'bxxxxxxx_xxxxx_xxxxx_000_xxxxx_1100111: begin //jalr
             imm          = immI(inst);
@@ -372,11 +410,12 @@ always@(*) begin
             ctrl_CMP     = 1'b0      ;     
             ctrl_ALU     = 5'b00010  ;         
             sel_ALU      = 3'b001    ;         
-            sel_REGS     = 3'b011    ;         
+            sel_REGS     = 4'b0011   ;         
             sel_PC       = 2'b01     ; 
             ctrl_MEM     = 4'b0000   ;
             sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ;      
+            sel_MEM_data = 3'b000    ;
+            ctrl_CSRS    = 2'b00     ;      
         end
         32'b000000x_xxxxx_xxxxx_001_xxxxx_0010011: begin //slli
             imm          = immI(inst); 
@@ -384,11 +423,12 @@ always@(*) begin
             ctrl_CMP     = 1'b0      ;    
             ctrl_ALU     = 5'b00011  ;         
             sel_ALU      = 3'b001    ;         
-            sel_REGS     = 3'b001    ;         
+            sel_REGS     = 4'b0001   ;         
             sel_PC       = 2'b00     ; 
             ctrl_MEM     = 4'b0000   ;
             sel_MEM_addr = 3'b000    ;
             sel_MEM_data = 3'b000    ;
+            ctrl_CSRS    = 2'b00     ;
         end
         32'bxxxxxxx_xxxxx_xxxxx_010_xxxxx_0000011: begin //lw
             imm          = immI(inst); 
@@ -396,11 +436,12 @@ always@(*) begin
             ctrl_CMP     = 1'b0      ;    
             ctrl_ALU     = 5'b00001  ;         
             sel_ALU      = 3'b001    ;         
-            sel_REGS     = 3'b101    ;         
+            sel_REGS     = 4'b0101   ;         
             sel_PC       = 2'b00     ;
             ctrl_MEM     = 4'b0010   ;
             sel_MEM_addr = 3'b001    ;
-            sel_MEM_data = 3'b000    ;         
+            sel_MEM_data = 3'b000    ;
+            ctrl_CSRS    = 2'b00     ;         
         end
         32'bxxxxxxx_xxxxx_xxxxx_011_xxxxx_0010011: begin //sltiu
             imm          = immI(inst);
@@ -410,14 +451,15 @@ always@(*) begin
             sel_ALU      = 3'b000    ;
             if(CMP_out == 2'b01) begin
                 sel_REGS = 3'b111;
-            end
+    4 0   end
             else begin
-                sel_REGS = 3'b110;
-            end        
+                sel_REGS = 3'b140;0
+          end        
             sel_PC       = 2'b00     ;
             ctrl_MEM     = 4'b0000   ;
             sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ;               
+            sel_MEM_data = 3'b000    ;
+            ctrl_CSRS    = 2'b00     ;               
         end
         32'bxxxxxxx_xxxxx_xxxxx_010_xxxxx_0010011: begin //slti
             imm          = immI(inst);
@@ -427,14 +469,15 @@ always@(*) begin
             sel_ALU      = 3'b000    ;
             if(CMP_out == 2'b01) begin
                 sel_REGS = 3'b111;
-            end
+    4 0   end
             else begin
-                sel_REGS = 3'b110;
-            end        
+                sel_REGS = 3'b140;0
+          end        
             sel_PC       = 2'b00     ;
             ctrl_MEM     = 4'b0000   ;
             sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ;               
+            sel_MEM_data = 3'b000    ;
+            ctrl_CSRS    = 2'b00     ;               
         end
         32'bxxxxxxx_xxxxx_xxxxx_000_xxxxx_0011011: begin //addiw
             imm          = immI(inst); 
@@ -442,11 +485,12 @@ always@(*) begin
             ctrl_CMP     = 1'b0      ;    
             ctrl_ALU     = 5'b00100  ;         
             sel_ALU      = 3'b001    ;         
-            sel_REGS     = 3'b001    ;         
+            sel_REGS     = 4'b0001   ;         
             sel_PC       = 2'b00     ;
             ctrl_MEM     = 4'b0000   ;
             sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ;         
+            sel_MEM_data = 3'b000    ;
+            ctrl_CSRS    = 2'b00     ;         
         end
         32'bxxxxxxx_xxxxx_xxxxx_011_xxxxx_0000011: begin //ld
             imm          = immI(inst); 
@@ -454,11 +498,12 @@ always@(*) begin
             ctrl_CMP     = 1'b0      ;    
             ctrl_ALU     = 5'b00001  ;         
             sel_ALU      = 3'b001    ;         
-            sel_REGS     = 3'b101    ;         
+            sel_REGS     = 4'b0101   ;         
             sel_PC       = 2'b00     ;
             ctrl_MEM     = 4'b001    ;
             sel_MEM_addr = 3'b0001   ;
-            sel_MEM_data = 3'b000    ;         
+            sel_MEM_data = 3'b000    ;
+            ctrl_CSRS    = 2'b00     ;         
         end
         32'b010000x_xxxxx_xxxxx_101_xxxxx_0010011: begin //srai
             imm          = immI(inst); 
@@ -466,11 +511,12 @@ always@(*) begin
             ctrl_CMP     = 1'b0      ;    
             ctrl_ALU     = 5'b00110  ;         
             sel_ALU      = 3'b001    ;         
-            sel_REGS     = 3'b001    ;         
+            sel_REGS     = 4'b0001   ;         
             sel_PC       = 2'b00     ;
             ctrl_MEM     = 4'b0000   ;
             sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ;         
+            sel_MEM_data = 3'b000    ;
+            ctrl_CSRS    = 2'b00     ;         
         end
         32'bxxxxxxx_xxxxx_xxxxx_100_xxxxx_0000011: begin //lbu
             imm          = immI(inst); 
@@ -478,11 +524,12 @@ always@(*) begin
             ctrl_CMP     = 1'b0      ;    
             ctrl_ALU     = 5'b00001  ;         
             sel_ALU      = 3'b001    ;         
-            sel_REGS     = 3'b101    ;         
+            sel_REGS     = 4'b0101   ;         
             sel_PC       = 2'b00     ;
             ctrl_MEM     = 4'b0111   ;
             sel_MEM_addr = 3'b001    ;
-            sel_MEM_data = 3'b000    ;         
+            sel_MEM_data = 3'b000    ;
+            ctrl_CSRS    = 2'b00     ;         
         end
         32'bxxxxxxx_xxxxx_xxxxx_111_xxxxx_0010011: begin //andi
             imm          = immI(inst); 
@@ -490,11 +537,12 @@ always@(*) begin
             ctrl_CMP     = 1'b0      ;    
             ctrl_ALU     = 5'b00111  ;         
             sel_ALU      = 3'b001    ;         
-            sel_REGS     = 3'b001    ;         
+            sel_REGS     = 4'b0001   ;         
             sel_PC       = 2'b00     ;
             ctrl_MEM     = 4'b0000   ;
             sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ;         
+            sel_MEM_data = 3'b000    ;
+            ctrl_CSRS    = 2'b00     ;         
         end
         32'bxxxxxxx_xxxxx_xxxxx_100_xxxxx_0010011: begin //xori
             imm          = immI(inst); 
@@ -502,11 +550,12 @@ always@(*) begin
             ctrl_CMP     = 1'b0      ;    
             ctrl_ALU     = 5'b01001  ;         
             sel_ALU      = 3'b001    ;         
-            sel_REGS     = 3'b001    ;         
+            sel_REGS     = 4'b0001   ;         
             sel_PC       = 2'b00     ;
             ctrl_MEM     = 4'b0000   ;
             sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ;         
+            sel_MEM_data = 3'b000    ;
+            ctrl_CSRS    = 2'b00     ;         
         end
         32'b000000x_xxxxx_xxxxx_101_xxxxx_0010011: begin //srli
             imm          = immI(inst); 
@@ -514,11 +563,12 @@ always@(*) begin
             ctrl_CMP     = 1'b0      ;    
             ctrl_ALU     = 5'b01011  ;         
             sel_ALU      = 3'b001    ;         
-            sel_REGS     = 3'b001    ;         
+            sel_REGS     = 4'b0001   ;         
             sel_PC       = 2'b00     ;
             ctrl_MEM     = 4'b0000   ;
             sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ;         
+            sel_MEM_data = 3'b000    ;
+            ctrl_CSRS    = 2'b00     ;         
         end
         32'bxxxxxxx_xxxxx_xxxxx_001_xxxxx_0000011: begin //lh
             imm          = immI(inst); 
@@ -526,11 +576,12 @@ always@(*) begin
             ctrl_CMP     = 1'b0      ;    
             ctrl_ALU     = 5'b00001  ;         
             sel_ALU      = 3'b001    ;         
-            sel_REGS     = 3'b101    ;         
+            sel_REGS     = 4'b0101   ;         
             sel_PC       = 2'b00     ;
             ctrl_MEM     = 4'b0011   ;
             sel_MEM_addr = 3'b001    ;
-            sel_MEM_data = 3'b000    ;         
+            sel_MEM_data = 3'b000    ;
+            ctrl_CSRS    = 2'b00     ;         
         end
         32'bxxxxxxx_xxxxx_xxxxx_101_xxxxx_0000011: begin //lhu
             imm          = immI(inst); 
@@ -538,11 +589,12 @@ always@(*) begin
             ctrl_CMP     = 1'b0      ;    
             ctrl_ALU     = 5'b00001  ;         
             sel_ALU      = 3'b001    ;         
-            sel_REGS     = 3'b101    ;         
+            sel_REGS     = 4'b0101   ;         
             sel_PC       = 2'b00     ;
             ctrl_MEM     = 4'b0110   ;
             sel_MEM_addr = 3'b001    ;
-            sel_MEM_data = 3'b000    ;         
+            sel_MEM_data = 3'b000    ;
+            ctrl_CSRS    = 2'b00     ;         
         end
         32'b000000x_xxxxx_xxxxx_001_xxxxx_0011011: begin //slliw
             imm          = immI(inst); 
@@ -550,11 +602,12 @@ always@(*) begin
             ctrl_CMP     = 1'b0      ;    
             ctrl_ALU     = 5'b11010  ;         
             sel_ALU      = 3'b001    ;         
-            sel_REGS     = 3'b001    ;         
+            sel_REGS     = 4'b0001   ;         
             sel_PC       = 2'b00     ;
             ctrl_MEM     = 4'b0000   ;
             sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ;         
+            sel_MEM_data = 3'b000    ;
+            ctrl_CSRS    = 2'b00     ;         
         end
         32'b010000x_xxxxx_xxxxx_101_xxxxx_0011011: begin //sraiw
             imm          = immI(inst); 
@@ -562,11 +615,12 @@ always@(*) begin
             ctrl_CMP     = 1'b0      ;    
             ctrl_ALU     = 5'b11011  ;         
             sel_ALU      = 3'b001    ;         
-            sel_REGS     = 3'b001    ;         
+            sel_REGS     = 4'b0001   ;         
             sel_PC       = 2'b00     ;
             ctrl_MEM     = 4'b0000   ;
             sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ;         
+            sel_MEM_data = 3'b000    ;
+            ctrl_CSRS    = 2'b00     ;         
         end
         32'b000000x_xxxxx_xxxxx_101_xxxxx_0011011: begin //srliw
             imm          = immI(inst); 
@@ -576,14 +630,15 @@ always@(*) begin
             sel_ALU      = 3'b001    ;
             if(imm[5:5] == 1'b0) begin
                 sel_REGS = 3'b001;     
-            end
+  4  0   end
             else begin
-                sel_REGS = 3'b000;
-            end
+                sel_REGS = 3'b040;0
+          end
             sel_PC       = 2'b00     ;
             ctrl_MEM     = 4'b0000   ;
             sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ;         
+            sel_MEM_data = 3'b000    ;
+            ctrl_CSRS    = 2'b00     ;         
         end
         32'bxxxxxxx_xxxxx_xxxxx_110_xxxxx_0000011: begin //lwu
             imm          = immI(inst); 
@@ -591,11 +646,12 @@ always@(*) begin
             ctrl_CMP     = 1'b0      ;    
             ctrl_ALU     = 5'b00001  ;         
             sel_ALU      = 3'b001    ;         
-            sel_REGS     = 3'b101    ;         
+            sel_REGS     = 4'b0101   ;         
             sel_PC       = 2'b00     ;
             ctrl_MEM     = 4'b0101   ;
             sel_MEM_addr = 3'b001    ;
-            sel_MEM_data = 3'b000    ;         
+            sel_MEM_data = 3'b000    ;
+            ctrl_CSRS    = 2'b00     ;         
         end
         32'bxxxxxxx_xxxxx_xxxxx_110_xxxxx_0010011: begin //ori
             imm          = immI(inst); 
@@ -603,11 +659,12 @@ always@(*) begin
             ctrl_CMP     = 1'b0      ;    
             ctrl_ALU     = 5'b01010  ;         
             sel_ALU      = 3'b001    ;         
-            sel_REGS     = 3'b001    ;         
+            sel_REGS     = 4'b0001   ;         
             sel_PC       = 2'b00     ;
             ctrl_MEM     = 4'b0000   ;
             sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ;         
+            sel_MEM_data = 3'b000    ;
+            ctrl_CSRS    = 2'b00     ;         
         end
         32'bxxxxxxx_xxxxx_xxxxx_000_xxxxx_0000011: begin //lb
             imm          = immI(inst); 
@@ -615,12 +672,52 @@ always@(*) begin
             ctrl_CMP     = 1'b0      ;    
             ctrl_ALU     = 5'b00001  ;         
             sel_ALU      = 3'b001    ;         
-            sel_REGS     = 3'b101    ;         
+            sel_REGS     = 4'b0101   ;         
             sel_PC       = 2'b00     ;
             ctrl_MEM     = 4'b0100   ;
             sel_MEM_addr = 3'b001    ;
-            sel_MEM_data = 3'b000    ;         
+            sel_MEM_data = 3'b000    ;
+            ctrl_CSRS    = 2'b00     ;         
         end
+        32'bxxxxxxx_xxxxx_xxxxx_001_xxxxx_1110011: begin //csrrw
+            imm          = immI(inst); 
+            sel_CMP      = 2'b00     ;
+            ctrl_CMP     = 1'b0      ;    
+            ctrl_ALU     = 5'b00000  ;         
+            sel_ALU      = 3'b000    ;         
+            sel_REGS     = 4'b0101   ;         
+            sel_PC       = 2'b00     ;
+            ctrl_MEM     = 4'b0100   ;
+            sel_MEM_addr = 3'b001    ;
+            sel_MEM_data = 3'b000    ;
+            ctrl_CSRS    = 2'b01     ;  
+        end
+        32'bxxxxxxx_xxxxx_xxxxx_010_xxxxx_1110011: begin //csrrs
+            imm          = immI(inst); 
+            sel_CMP      = 2'b00     ;
+            ctrl_CMP     = 1'b0      ;    
+            ctrl_ALU     = 5'b00001  ;         
+            sel_ALU      = 3'b001    ;         
+            sel_REGS     = 4'b0101   ;         
+            sel_PC       = 2'b00     ;
+            ctrl_MEM     = 4'b0100   ;
+            sel_MEM_addr = 3'b001    ;
+            sel_MEM_data = 3'b000    ;
+            ctrl_CSRS    = 2'b01     ;         
+        end     
+        32'b0000000_00000_00000_000_00000_1110011: begin //ecall
+            imm          = immI(inst); 
+            sel_CMP      = 2'b00     ;
+            ctrl_CMP     = 1'b0      ;    
+            ctrl_ALU     = 5'b00000  ;         
+            sel_ALU      = 3'b000    ;         
+            sel_REGS     = 4'b0000   ;         
+            sel_PC       = 2'b00     ;
+            ctrl_MEM     = 4'b0100   ;
+            sel_MEM_addr = 3'b001    ;
+            sel_MEM_data = 3'b000    ;
+            ctrl_CSRS    = 2'b00     ;         
+        end     
 
     //Type-S
         32'bxxxxxxx_xxxxx_xxxxx_011_xxxxx_0100011: begin //sd
@@ -629,11 +726,12 @@ always@(*) begin
             ctrl_CMP     = 1'b0      ;    
             ctrl_ALU     = 5'b00001  ;         
             sel_ALU      = 3'b001    ;         
-            sel_REGS     = 3'b000    ;         
+            sel_REGS     = 4'b0000   ;         
             sel_PC       = 2'b00     ;
             ctrl_MEM     = 4'b1000   ;
             sel_MEM_addr = 3'b001    ;
-            sel_MEM_data = 3'b010    ;                        
+            sel_MEM_data = 3'b010    ;
+            ctrl_CSRS    = 2'b00     ;                        
         end
         32'bxxxxxxx_xxxxx_xxxxx_001_xxxxx_0100011: begin //sh
             imm          = immS(inst); 
@@ -641,11 +739,12 @@ always@(*) begin
             ctrl_CMP     = 1'b0      ;    
             ctrl_ALU     = 5'b00001  ;         
             sel_ALU      = 3'b001    ;         
-            sel_REGS     = 3'b000    ;         
+            sel_REGS     = 4'b0000   ;         
             sel_PC       = 2'b00     ;
             ctrl_MEM     = 4'b1010   ;
             sel_MEM_addr = 3'b001    ;
-            sel_MEM_data = 3'b010    ;                        
+            sel_MEM_data = 3'b010    ;
+            ctrl_CSRS    = 2'b00     ;                        
         end
         32'bxxxxxxx_xxxxx_xxxxx_000_xxxxx_0100011: begin //sb
             imm          = immS(inst); 
@@ -653,11 +752,12 @@ always@(*) begin
             ctrl_CMP     = 1'b0      ;    
             ctrl_ALU     = 5'b00001  ;         
             sel_ALU      = 3'b001    ;         
-            sel_REGS     = 3'b000    ;         
+            sel_REGS     = 4'b0000   ;         
             sel_PC       = 2'b00     ;
             ctrl_MEM     = 4'b1011   ;
             sel_MEM_addr = 3'b001    ;
-            sel_MEM_data = 3'b010    ;                        
+            sel_MEM_data = 3'b010    ;
+            ctrl_CSRS    = 2'b00     ;                        
         end
         32'bxxxxxxx_xxxxx_xxxxx_010_xxxxx_0100011: begin //sw
             imm          = immS(inst); 
@@ -665,11 +765,12 @@ always@(*) begin
             ctrl_CMP     = 1'b0      ;    
             ctrl_ALU     = 5'b00001  ;         
             sel_ALU      = 3'b001    ;         
-            sel_REGS     = 3'b000    ;         
+            sel_REGS     = 4'b0000   ;         
             sel_PC       = 2'b00     ;
             ctrl_MEM     = 4'b1001   ;
             sel_MEM_addr = 3'b001    ;
-            sel_MEM_data = 3'b010    ;                        
+            sel_MEM_data = 3'b010    ;
+            ctrl_CSRS    = 2'b00     ;                        
         end
 
     //Type-B
@@ -679,8 +780,8 @@ always@(*) begin
             ctrl_CMP     = 1'b0      ;     
             ctrl_ALU     = 5'b00001  ;         
             sel_ALU      = 3'b100    ;         
-            sel_REGS     = 3'b000    ;
-            if(CMP_out == 2'b00) begin         
+            sel_REGS     = 3'b000    
+    4  0     if(CMP_out == 2'b00) begin         
                 sel_PC   = 2'b01;
             end
             else begin
@@ -688,7 +789,8 @@ always@(*) begin
             end 
             ctrl_MEM     = 4'b0000   ;
             sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ;                 
+            sel_MEM_data = 3'b000    ;
+            ctrl_CSRS    = 2'b00     ;                 
         end 
         32'bxxxxxxx_xxxxx_xxxxx_001_xxxxx_1100011: begin //bne      
             imm          = immB(inst);
@@ -696,8 +798,8 @@ always@(*) begin
             ctrl_CMP     = 1'b0      ;     
             ctrl_ALU     = 5'b00001  ;         
             sel_ALU      = 3'b100    ;         
-            sel_REGS     = 3'b000    ;
-            if(CMP_out != 2'b00) begin         
+            sel_REGS     = 3'b000    
+    4  0     if(CMP_out != 2'b00) begin         
                 sel_PC   = 2'b01;
             end
             else begin
@@ -705,7 +807,8 @@ always@(*) begin
             end 
             ctrl_MEM     = 4'b0000   ;
             sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ;                 
+            sel_MEM_data = 3'b000    ;
+            ctrl_CSRS    = 2'b00     ;                 
         end
         32'bxxxxxxx_xxxxx_xxxxx_101_xxxxx_1100011: begin //bge      
             imm          = immB(inst);
@@ -713,8 +816,8 @@ always@(*) begin
             ctrl_CMP     = 1'b1      ;     
             ctrl_ALU     = 5'b00001  ;         
             sel_ALU      = 3'b100    ;         
-            sel_REGS     = 3'b000    ;
-            if(CMP_out == 2'b00 || CMP_out == 2'b10) begin         
+            sel_REGS     = 3'b000    
+    4  0     if(CMP_out == 2'b00 || CMP_out == 2'b10) begin         
                 sel_PC   = 2'b01;
             end
             else begin
@@ -722,7 +825,8 @@ always@(*) begin
             end 
             ctrl_MEM     = 4'b0000   ;
             sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ;                 
+            sel_MEM_data = 3'b000    ;
+            ctrl_CSRS    = 2'b00     ;                 
         end 
         32'bxxxxxxx_xxxxx_xxxxx_111_xxxxx_1100011: begin //bgeu      
             imm          = immB(inst);
@@ -730,8 +834,8 @@ always@(*) begin
             ctrl_CMP     = 1'b0      ;     
             ctrl_ALU     = 5'b00001  ;         
             sel_ALU      = 3'b100    ;         
-            sel_REGS     = 3'b000    ;
-            if(CMP_out == 2'b00 || CMP_out == 2'b10) begin         
+            sel_REGS     = 3'b000    
+    4  0     if(CMP_out == 2'b00 || CMP_out == 2'b10) begin         
                 sel_PC   = 2'b01;
             end
             else begin
@@ -739,7 +843,8 @@ always@(*) begin
             end 
             ctrl_MEM     = 4'b0000   ;
             sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ;                 
+            sel_MEM_data = 3'b000    ;
+            ctrl_CSRS    = 2'b00     ;                 
         end 
         32'bxxxxxxx_xxxxx_xxxxx_110_xxxxx_1100011: begin //bltu      
             imm          = immB(inst);
@@ -747,8 +852,8 @@ always@(*) begin
             ctrl_CMP     = 1'b0      ;     
             ctrl_ALU     = 5'b00001  ;         
             sel_ALU      = 3'b100    ;         
-            sel_REGS     = 3'b000    ;
-            if(CMP_out == 2'b01) begin         
+            sel_REGS     = 3'b000    
+    4  0     if(CMP_out == 2'b01) begin         
                 sel_PC   = 2'b01;
             end
             else begin
@@ -756,7 +861,8 @@ always@(*) begin
             end 
             ctrl_MEM     = 4'b0000   ;
             sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ;                 
+            sel_MEM_data = 3'b000    ;
+            ctrl_CSRS    = 2'b00     ;                 
         end 
         32'bxxxxxxx_xxxxx_xxxxx_100_xxxxx_1100011: begin //blt     
             imm          = immB(inst);
@@ -764,8 +870,8 @@ always@(*) begin
             ctrl_CMP     = 1'b1      ;     
             ctrl_ALU     = 5'b00001  ;         
             sel_ALU      = 3'b100    ;         
-            sel_REGS     = 3'b000    ;
-            if(CMP_out == 2'b01) begin         
+            sel_REGS     = 3'b000    
+    4  0     if(CMP_out == 2'b01) begin         
                 sel_PC   = 2'b01;
             end
             else begin
@@ -773,7 +879,8 @@ always@(*) begin
             end 
             ctrl_MEM     = 4'b0000   ;
             sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ;                 
+            sel_MEM_data = 3'b000    ;
+            ctrl_CSRS    = 2'b00     ;                 
         end 
         
 
@@ -784,11 +891,12 @@ always@(*) begin
             ctrl_CMP     = 1'b0      ;     
             ctrl_ALU     = 5'b00001  ;         
             sel_ALU      = 3'b100    ;         
-            sel_REGS     = 3'b001    ;         
+            sel_REGS     = 4'b0001   ;         
             sel_PC       = 2'b00     ;
             ctrl_MEM     = 4'b0000   ;
             sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ;               
+            sel_MEM_data = 3'b000    ;
+            ctrl_CSRS    = 2'b00     ;               
         end
         32'bxxxxxxx_xxxxx_xxxxx_xxx_xxxxx_0110111: begin //lui
             imm          = immU(inst);
@@ -796,11 +904,12 @@ always@(*) begin
             ctrl_CMP     = 1'b0      ;     
             ctrl_ALU     = 5'b00000  ;         
             sel_ALU      = 3'b000    ;         
-            sel_REGS     = 3'b100    ;         
+            sel_REGS     = 4'b0100   ;         
             sel_PC       = 2'b00     ;
             ctrl_MEM     = 4'b0000   ;
             sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ;         
+            sel_MEM_data = 3'b000    ;
+            ctrl_CSRS    = 2'b00     ;         
         end
 
     //Type-J
@@ -810,11 +919,12 @@ always@(*) begin
             ctrl_CMP     = 1'b0      ;    
             ctrl_ALU     = 5'b00001  ;         
             sel_ALU      = 3'b100    ;         
-            sel_REGS     = 3'b011    ;         
+            sel_REGS     = 4'b0011   ;         
             sel_PC       = 2'b01     ;
             ctrl_MEM     = 4'b0000   ;
             sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ;   
+            sel_MEM_data = 3'b000    ;
+            ctrl_CSRS    = 2'b00     ;   
         end 
 
         32'b0000000_00001_00000_000_00000_1110011: begin //ebreak

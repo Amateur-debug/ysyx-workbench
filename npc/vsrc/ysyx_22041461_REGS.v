@@ -2,7 +2,7 @@ module ysyx_22041461_REGS(
 
     input   wire [0:0]  clk       ,
     input   wire [0:0]  rst       ,
-    input   wire [2:0]  sel_REGS  ,
+    input   wire [3:0]  sel_REGS  ,
     input   wire [4:0]  rs1       ,
     input   wire [4:0]  rs2       ,
     input   wire [4:0]  rd        ,
@@ -11,6 +11,7 @@ module ysyx_22041461_REGS(
     input   wire [63:0] pc        ,
     input   wire [63:0] snpc      ,
     input   wire [63:0] mem       ,
+    input   wire [63:0] csr_data  ,     ,
 
     output  wire [63:0] rs1_data  ,
     output  wire [63:0] rs2_data  
@@ -32,52 +33,58 @@ assign  rs2_data = x[rs2];
 
 always@(*) begin
     case(sel_REGS)
-        3'b000: begin
+        4'b0000: begin
             for(i = 0; i < 64; i = i+1) begin
                 d[i] = x[i];
             end
         end
-        3'b001: begin
+        4'b0001: begin
             for(i = 0; i < 64; i = i+1) begin
                 d[i] = x[i];
             end
             d[rd] = dest;
         end
-        3'b010: begin
+        4'b0010: begin
             for(i = 0; i < 64; i = i+1) begin
                 d[i] = x[i];
             end
             d[rd] = pc;
         end
-        3'b011: begin
+        4'b0011: begin
             for(i = 0; i < 64; i = i+1) begin
                 d[i] = x[i];
             end
             d[rd] = snpc;
         end        
-        3'b100: begin
+        4'b0100: begin
             for(i = 0; i < 64; i = i+1) begin
                 d[i] = x[i];
             end
             d[rd] = imm;
         end
-        3'b101: begin
+        4'b0101: begin
             for(i = 0; i < 64; i = i+1) begin
                 d[i] = x[i];
             end
             d[rd] = mem;
         end
-        3'b110: begin
+        4'b0110: begin
             for(i = 0; i < 64; i = i+1) begin
                 d[i] = x[i];
             end
             d[rd] = 64'd0;
         end
-        3'b111: begin
+        4'b0111: begin
             for(i = 0; i < 64; i = i+1) begin
                 d[i] = x[i];
             end
             d[rd] = 64'd1;
+        end
+        4'b1000: begin
+            for(i = 0; i < 64; i = i+1) begin
+                d[i] = x[i];
+            end
+            d[rd] = csr_data;
         end
     endcase
     d[0] = 64'b0;

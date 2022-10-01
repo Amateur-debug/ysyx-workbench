@@ -24,7 +24,7 @@ wire    [0:0]   ctrl_CMP    ;
 /*verilator lint_off UNOPTFLAT*/
 wire    [1:0]   CMP_out     ;
 /*verilator lint_on UNOPTFLAT*/
-wire    [2:0]   sel_REGS    ;
+wire    [3:0]   sel_REGS    ;
 wire    [1:0]   sel_PC      ;
 wire    [3:0]   ctrl_MEM    ;
 wire    [2:0]   sel_MEM_addr;
