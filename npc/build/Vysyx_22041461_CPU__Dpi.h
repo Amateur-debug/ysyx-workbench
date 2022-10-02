@@ -13,9 +13,9 @@ extern "C" {
 
 
     // DPI IMPORTS
-    // DPI import at vsrc/ysyx_22041461_CU.v:41:30
+    // DPI import at vsrc/ysyx_22041461_CU.v:44:30
     extern void ebreak();
-    // DPI import at vsrc/ysyx_22041461_CU.v:42:30
+    // DPI import at vsrc/ysyx_22041461_CU.v:45:30
     extern void invalid_inst();
     // DPI import at vsrc/ysyx_22041461_MEM.v:21:30
     extern void pmem_read(long long raddr, long long* rdata);
@@ -23,9 +23,9 @@ extern "C" {
     extern void pmem_write(long long waddr, long long wdata, char wmask);
     // DPI import at vsrc/ysyx_22041461_MEM.v:25:30
     extern void set_difftest_next();
-    // DPI import at vsrc/ysyx_22041461_REGS.v:20:30
+    // DPI import at vsrc/ysyx_22041461_REGS.v:21:30
     extern void set_gpr_ptr(const svOpenArrayHandle a);
-    // DPI import at vsrc/ysyx_22041461_PC.v:12:30
+    // DPI import at vsrc/ysyx_22041461_PC.v:14:30
     extern void set_pc_ptr(const svOpenArrayHandle a);
 
 #ifdef __cplusplus

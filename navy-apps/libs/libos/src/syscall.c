@@ -3,6 +3,7 @@
 #include <setjmp.h>
 #include <sys/time.h>
 #include <assert.h>
+#include <stdio.h>
 #include <time.h>
 #include "syscall.h"
 

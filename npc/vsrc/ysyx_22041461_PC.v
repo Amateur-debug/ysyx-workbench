@@ -1,11 +1,13 @@
 module ysyx_22041461_PC(
 
-    input   wire [0:0]   clk    ,
-    input   wire [0:0]   rst    ,
-    input   wire [1:0]   sel_PC ,   //选择下一个pc的值
-    input   wire [63:0]  dest   ,
+    input   wire [0:0]   clk      ,
+    input   wire [0:0]   rst      ,
+    input   wire [1:0]   sel_PC   ,   //选择下一个pc的值
+    input   wire [63:0]  dest     ,
+    input   wire [63:0]  csr_mepc ,
+    input   wire [63:0]  csr_mtvec,
 
-    output  wire [63:0]  snpc   ,
+    output  wire [63:0]  snpc     ,
     output  reg  [63:0]  pc       
 );
 
@@ -25,8 +27,11 @@ always@(*) begin
         2'b01: begin
             npc = dest;
         end
-        default: begin
-            npc = pc;
+        2'b10: begin
+            npc = csr_mepc;
+        end
+        2'b11: begin
+            npc = csr_mtvec;
         end
     endcase
 end

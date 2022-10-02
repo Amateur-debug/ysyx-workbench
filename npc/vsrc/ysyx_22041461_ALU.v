@@ -7,6 +7,7 @@ module ysyx_22041461_ALU(
     input   wire [63:0] imm     ,
     input   wire [63:0] pc      ,
     input   wire [63:0] snpc    ,
+    input   wire [63:0] csr_data,
 
     output  reg  [63:0] dest    ,
     output  wire [0:0]  flag
@@ -53,6 +54,10 @@ always@(*) begin
         3'b101: begin
             src1 = imm;
             src2 = snpc;
+        end
+        3'b110: begin
+            src1 = rs1_data;
+            src2 = csr_data;
         end
         default: begin
             src1 = rs1_data;
@@ -156,7 +161,6 @@ always@(*) begin
         5'b11110: begin  //srlw
             dest = SRL_out;
         end
-
         default: begin
             dest = 64'd0;
         end
