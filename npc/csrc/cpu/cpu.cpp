@@ -10,7 +10,7 @@
 #define MAX_MAIN_TIME 100
 #define RST_END_TIME 1  //rst拉高时间
 #define MAX_INST_TO_PRINT 10
-//#define DIFFTEST
+#define DIFFTEST
 
 extern Vysyx_22041461_CPU *top; 
 extern VerilatedVcdC* tfp;
@@ -29,6 +29,7 @@ void ebreak(){      //结束指令
 void invalid_inst(){  
   npc_state.state = NPC_ABORT;
   printf("pc = 0x%016lx  指令没有实现\n", top->pc);
+  printf("inst = 0x%x\n", top->inst);
 }
 
 double sc_time_stamp(){

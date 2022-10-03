@@ -18,6 +18,8 @@ module ysyx_22041461_MEM(
 
 import "DPI-C" function void ebreak();
 
+import "DPI-C" function void pmem_read_pc(input longint raddr, output longint rdata);
+
 import "DPI-C" function void pmem_read(input longint raddr, output longint rdata);
 
 import "DPI-C" function void pmem_write(input longint waddr, input longint wdata, input byte wmask);
@@ -94,8 +96,7 @@ always@(*) begin
         end
         default: begin
             read_data1 = 64'd0;
-            read_data2 = 64'd0;
-            set_difftest_next();
+            read_data2 = 64'd0;           
         end
     endcase
 end
@@ -133,6 +134,7 @@ always@(*) begin
     case(ctrl_MEM)
         4'b0000: begin            //不读不写
             read_data = 64'd0;
+            set_difftest_next();
         end
         4'b0001: begin            //读取8字节数据
             read_data = rread_data;
@@ -278,7 +280,7 @@ always@(posedge clk) begin
 end
 
 always@(*) begin
-    pmem_read(pc, rinst);
+    pmem_read_pc(pc, rinst);
 end
 
 always@(*) begin

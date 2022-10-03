@@ -4,10 +4,11 @@ module ysyx_22041461_CPU(
     input   wire [0:0]  rst ,
 
     output  wire [63:0] pc  ,
-    output  wire [0:0]  flag
+    output  wire [0:0]  flag,
+    output  wire [31:0] inst
 );
 
-wire    [31:0]  inst        ;
+
 wire    [4:0]   rs1         ;
 wire    [4:0]   rs2         ;
 wire    [4:0]   rd          ;

@@ -8,6 +8,7 @@ static int nr_map = 0;
 
 static IOMap* fetch_mmio_map(uint32_t addr) {
   int mapid = find_mapid_by_addr(maps, nr_map, addr);
+  printf("device : %s\n", maps[mapid].name);
   return (mapid == -1 ? NULL : &maps[mapid]);
 }
 
