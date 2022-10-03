@@ -51,12 +51,12 @@ void mmio_write(uint32_t addr, int len, uint64_t data);
 
 extern "C" void pmem_read(long long raddr, long long *rdata) {
 
-  if(raddr >= CONFIG_RTC_MMIO && raddr < CONFIG_RTC_MMIO + 8){
+  if(raddr == CONFIG_RTC_MMIO || raddr == CONFIG_RTC_MMIO + 4){
     *rdata = mmio_read(raddr, 4);
     is_difftest_next = 0;
     return;
   }
-  if(raddr == CONFIG_RTC_MMIO + 8){
+  if(raddr >= CONFIG_RTC_MMIO && raddr <= CONFIG_RTC_MMIO + 16){
     is_difftest_next = 0;
     return;
   }
