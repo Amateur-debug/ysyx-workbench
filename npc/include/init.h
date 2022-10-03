@@ -4,5 +4,6 @@
 void init_mem();
 void init_sdb();
 void init_difftest();
+void init_device();
 
 #endif

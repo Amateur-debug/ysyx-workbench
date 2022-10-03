@@ -56,12 +56,15 @@ void exec_once(){
   main_time++; //推动仿真时间
 }
 
+void device_update();
+
 static void execute(uint64_t n){
   extern uint64_t *cpu_gpr;
   extern uint64_t *cpu_pc;
   for (;n > 0; n --){
     if(!Verilated::gotFinish()){
       exec_once();
+      device_update();
       if(g_print_step){
         printf("excute at pc = 0x%016x\n", npc_state.halt_pc);
       }

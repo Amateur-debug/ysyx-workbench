@@ -17,10 +17,12 @@ VFLAGS +=  --cc --exe --trace --Mdir $(BUILD)
 VFLAGS += -LDFLAGS -lasan
 VFLAGS += -LDFLAGS -lreadline
 VFLAGS += -LDFLAGS -lriscv64-nemu-interpreter-so
+VFLAGS += -LDFLAGS -lSDL2
 VFLAGS += -CFLAGS -include
 VFLAGS += -CFLAGS /home/cxy/ysyx-workbench/npc/include/difftest.h
 VFLAGS += -CFLAGS -fPIC
-VFLAGS += -O3 
+VFLAGS += -CFLAGS -I
+VFLAGS += -CFLAGS /home/cxy/ysyx-workbench/npc/include
 
 ifdef IMG
 VFLAGS += -CFLAGS -DIMG=$(IMG)

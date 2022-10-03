@@ -38,6 +38,8 @@ VM_USER_CFLAGS = \
 	-include \
 	/home/cxy/ysyx-workbench/npc/include/difftest.h \
 	-fPIC \
+	-I \
+	/home/cxy/ysyx-workbench/npc/include \
 	-DIMG=/home/cxy/ysyx-workbench/nanos-lite/build/nanos-lite-riscv64-npc.bin \
 
 # User LDLIBS (from -LDFLAGS on Verilator command line)
@@ -45,12 +47,19 @@ VM_USER_LDLIBS = \
 	-lasan \
 	-lreadline \
 	-lriscv64-nemu-interpreter-so \
+	-lSDL2 \
 
 # User .cpp files (from .cpp's on Verilator command line)
 VM_USER_CLASSES = \
 	cpu \
 	regs \
+	device \
+	keyboard \
+	map \
+	mmio \
+	serial \
 	timer \
+	vga \
 	difftest \
 	init \
 	pmem \
@@ -84,7 +93,19 @@ cpu.o: csrc/cpu/cpu.cpp
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST) -c -o $@ $<
 regs.o: csrc/cpu/regs.c
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST) -c -o $@ $<
+device.o: csrc/device/device.c
+	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST) -c -o $@ $<
+keyboard.o: csrc/device/keyboard.c
+	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST) -c -o $@ $<
+map.o: csrc/device/map.c
+	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST) -c -o $@ $<
+mmio.o: csrc/device/mmio.c
+	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST) -c -o $@ $<
+serial.o: csrc/device/serial.c
+	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST) -c -o $@ $<
 timer.o: csrc/device/timer.c
+	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST) -c -o $@ $<
+vga.o: csrc/device/vga.c
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST) -c -o $@ $<
 difftest.o: csrc/difftest/difftest.c
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST) -c -o $@ $<

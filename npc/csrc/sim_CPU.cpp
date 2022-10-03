@@ -30,6 +30,7 @@ int main(int argc, char **argv){
 
   init_mem();
   init_sdb();
+  init_device();
   exec_once();      //先执行一个周期，让寄存器的值能够被读出
   init_difftest();
 
