@@ -15,6 +15,7 @@ Vysyx_22041461_CPU::Vysyx_22041461_CPU(VerilatedContext* _vcontextp__, const cha
     , rst{vlSymsp->TOP.rst}
     , pc{vlSymsp->TOP.pc}
     , flag{vlSymsp->TOP.flag}
+    , inst{vlSymsp->TOP.inst}
     , rootp{&(vlSymsp->TOP)}
 {
 }

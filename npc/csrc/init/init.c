@@ -14,6 +14,13 @@
 #define STR2(R) STR1(R)
 #define memory_size 128*1024*1024
 
+void init_map();
+void init_serial();
+void init_timer();
+void init_vga();
+void init_i8042();
+void init_disk();
+
 uint32_t img[memory_size/4] = {
   0x00000297,  // auipc t0,0
   0x0002b823,  // sd  zero,16(t0)
@@ -75,3 +82,10 @@ void init_difftest(){
   difftest_regcpy(cpu_gpr, cpu_pc, DIFFTEST_TO_REF);
 }
 
+void init_device() {
+  init_map();
+  init_serial();
+  init_timer();
+  init_vga();
+  init_i8042();
+} 

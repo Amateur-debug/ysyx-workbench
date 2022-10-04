@@ -107,7 +107,7 @@ always@(posedge clk) begin
         mtvec   <= 64'd0;
         mepc    <= 64'd0;
         mcause  <= 64'd0;
-        mstatus <= 64'd0;
+        mstatus <= 64'ha00001800;
     end
     else begin
         mtvec   <= mtvec_next  ;

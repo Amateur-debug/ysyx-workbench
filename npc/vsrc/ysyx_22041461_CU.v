@@ -337,6 +337,19 @@ always@(*) begin
             sel_MEM_data = 3'b000    ;
             ctrl_CSRS    = 2'b00     ; 
         end
+        32'b0000001_xxxxx_xxxxx_100_xxxxx_0110011: begin //div
+            imm          = 64'd0     ;
+            sel_CMP      = 2'b00     ;
+            ctrl_CMP     = 1'b0      ;     
+            ctrl_ALU     = 5'b10100  ;         
+            sel_ALU      = 3'b000    ;         
+            sel_REGS     = 4'b0001   ;         
+            sel_PC       = 2'b00     ;
+            ctrl_MEM     = 4'b0000   ;
+            sel_MEM_addr = 3'b000    ;
+            sel_MEM_data = 3'b000    ;
+            ctrl_CSRS    = 2'b00     ; 
+        end
         32'b0000000_xxxxx_xxxxx_100_xxxxx_0110011: begin //xor
             imm          = 64'd0     ;
             sel_CMP      = 2'b00     ;

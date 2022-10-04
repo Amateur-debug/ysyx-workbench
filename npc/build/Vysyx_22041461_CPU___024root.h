@@ -22,6 +22,7 @@ VL_MODULE(Vysyx_22041461_CPU___024root) {
     VL_IN8(clk,0,0);
     VL_IN8(rst,0,0);
     VL_OUT8(flag,0,0);
+    VL_OUT(inst,31,0);
     VL_OUT64(pc,63,0);
 
     // LOCAL SIGNALS
@@ -39,7 +40,6 @@ VL_MODULE(Vysyx_22041461_CPU___024root) {
     CData/*7:0*/ ysyx_22041461_CPU__DOT__MEM__DOT__wmask1;
     CData/*7:0*/ ysyx_22041461_CPU__DOT__MEM__DOT__wmask2;
     SData/*15:0*/ ysyx_22041461_CPU__DOT__MEM__DOT__wmask;
-    IData/*31:0*/ ysyx_22041461_CPU__DOT__inst;
     IData/*31:0*/ ysyx_22041461_CPU__DOT__REGS__DOT__i;
     IData/*31:0*/ ysyx_22041461_CPU__DOT__REGS__DOT__j;
     IData/*31:0*/ ysyx_22041461_CPU__DOT__ALU__DOT__SRA__DOT__sra;
@@ -48,6 +48,7 @@ VL_MODULE(Vysyx_22041461_CPU___024root) {
     QData/*63:0*/ ysyx_22041461_CPU__DOT__rs1_data;
     QData/*63:0*/ ysyx_22041461_CPU__DOT__rs2_data;
     QData/*63:0*/ ysyx_22041461_CPU__DOT__dest;
+    QData/*63:0*/ ysyx_22041461_CPU__DOT__mem;
     QData/*63:0*/ ysyx_22041461_CPU__DOT__csr_data;
     QData/*63:0*/ ysyx_22041461_CPU__DOT__PC__DOT__npc;
     QData/*63:0*/ ysyx_22041461_CPU__DOT__CMP__DOT__src1;
@@ -168,6 +169,7 @@ VL_MODULE(Vysyx_22041461_CPU___024root) {
         QData/*63:0*/ __Vfunc_ysyx_22041461_CPU__DOT__CU__DOT__immU__35__Vfuncout;
         QData/*63:0*/ __Vfunc_ysyx_22041461_CPU__DOT__CU__DOT__immU__36__Vfuncout;
         QData/*63:0*/ __Vfunc_ysyx_22041461_CPU__DOT__CU__DOT__immJ__37__Vfuncout;
+        QData/*63:0*/ __Vtask_ysyx_22041461_CPU__DOT__MEM__DOT__pmem_read__42__rdata;
         QData/*63:0*/ __Vtask_ysyx_22041461_CPU__DOT__MEM__DOT__pmem_read__43__rdata;
         QData/*63:0*/ __Vtask_ysyx_22041461_CPU__DOT__MEM__DOT__pmem_read__44__rdata;
         QData/*63:0*/ __Vtask_ysyx_22041461_CPU__DOT__MEM__DOT__pmem_read__45__rdata;
@@ -181,8 +183,7 @@ VL_MODULE(Vysyx_22041461_CPU___024root) {
         QData/*63:0*/ __Vtask_ysyx_22041461_CPU__DOT__MEM__DOT__pmem_read__53__rdata;
         QData/*63:0*/ __Vtask_ysyx_22041461_CPU__DOT__MEM__DOT__pmem_read__54__rdata;
         QData/*63:0*/ __Vtask_ysyx_22041461_CPU__DOT__MEM__DOT__pmem_read__55__rdata;
-        QData/*63:0*/ __Vtask_ysyx_22041461_CPU__DOT__MEM__DOT__pmem_read__56__rdata;
-        QData/*63:0*/ __Vtask_ysyx_22041461_CPU__DOT__MEM__DOT__pmem_read__60__rdata;
+        QData/*63:0*/ __Vtask_ysyx_22041461_CPU__DOT__MEM__DOT__pmem_read_pc__59__rdata;
         VlUnpacked<CData/*0:0*/, 3> __Vm_traceActivity;
     };
 
