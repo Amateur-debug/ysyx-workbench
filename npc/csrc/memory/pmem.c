@@ -124,20 +124,22 @@ extern "C" void pmem_write(long long waddr, long long wdata, char wmask){
   // 总是往地址为`waddr & ~0x7ull`的8字节按写掩码`wmask`写入`wdata`
   // `wmask`中每比特表示`wdata`中1个字节的掩码,
   // 如`wmask = 0x3`代表只写入最低2个字节, 内存中的其它字节保持不变
-
   int i;
-  if((waddr & ~0x7ull >= CONFIG_FB_ADDR && waddr & ~0x7ull <= CONFIG_FB_ADDR + 300 * 400 * 4 + 8) ||
-  (waddr & ~0x7ull >= CONFIG_VGA_CTL_MMIO && waddr & ~0x7ull <= CONFIG_VGA_CTL_MMIO + 8 + 8) ||
-  (waddr & ~0x7ull >= CONFIG_SERIAL_MMIO && waddr & ~0x7ull <= CONFIG_SERIAL_MMIO + 8 + 8)){
-    for(i = 0; i < 8; i++){    
+
+  if((waddr >= CONFIG_VGA_CTL_MMIO && waddr < CONFIG_VGA_CTL_MMIO + 8 + 8) ||
+  (waddr >= CONFIG_FB_ADDR && waddr < CONFIG_FB_ADDR + 300 * 400 * 4 + 8) ||
+  (waddr >= CONFIG_SERIAL_MMIO && waddr < CONFIG_SERIAL_MMIO + 8 + 8)){
+    for(i = 0; i < 8; i++){
       if((wmask >> i) & 1 == 1){
-        mmio_write(waddr & ~0x7ull + i , 1, wdata);
+        mmio_write(waddr & ~0x7ull + i, 1, wdata);
       }
       wdata = wdata >> 8;
     }
     is_difftest_this = 0;
+    is_difftest_next = 1;
     return;
   }
+
   if(waddr >= 0x80000000 && waddr < 0x80000000 + 128*1024*1024){
     for(i = 0; i < 8; i++){
       if((wmask >> i) & 1 == 1){
