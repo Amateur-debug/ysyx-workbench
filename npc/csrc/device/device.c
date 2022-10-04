@@ -17,7 +17,7 @@ void device_update() {
     return;
   }
   last = now;
-
+  
   vga_update_screen();
 
   SDL_Event event;

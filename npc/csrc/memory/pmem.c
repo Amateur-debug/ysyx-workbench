@@ -68,17 +68,17 @@ extern "C" void pmem_read(long long raddr, long long *rdata) {
     is_difftest_next = 0;
     return;
   }
-  if(raddr >= CONFIG_RTC_MMIO && raddr <= CONFIG_RTC_MMIO + 16){
+  else if(raddr >= CONFIG_RTC_MMIO && raddr < CONFIG_RTC_MMIO + 16){
     *rdata = 0;
     is_difftest_next = 0;
     return;
   }
   if(raddr >= CONFIG_I8042_DATA_MMIO && raddr < CONFIG_I8042_DATA_MMIO + 4){
-    *rdata = mmio_read(raddr, 1);
+    *rdata = mmio_read(raddr, 4);
     is_difftest_next = 0;
     return;
   }
-  if(raddr >= CONFIG_I8042_DATA_MMIO + 4 && raddr < CONFIG_I8042_DATA_MMIO + 4 + 8){
+  else if(raddr >= CONFIG_I8042_DATA_MMIO + 4 && raddr < CONFIG_I8042_DATA_MMIO + 4 + 8){
     *rdata = 0;
     is_difftest_next = 0;
     return;
@@ -88,17 +88,17 @@ extern "C" void pmem_read(long long raddr, long long *rdata) {
     is_difftest_next = 0;
     return;
   }
-  if(raddr >= CONFIG_VGA_CTL_MMIO + 8 && raddr < CONFIG_VGA_CTL_MMIO + 8 + 8){
+  else if(raddr >= CONFIG_VGA_CTL_MMIO + 8 && raddr < CONFIG_VGA_CTL_MMIO + 8 + 8){
     *rdata = 0;
     is_difftest_next = 0;
     return;
   }
   if(raddr >= CONFIG_FB_ADDR && raddr < CONFIG_FB_ADDR + 300 * 400 * 4){
-    *rdata = mmio_read(raddr, 8);
+    *rdata = mmio_read(raddr & ~0x7ull, 8);
     is_difftest_next = 0;
     return;
   } 
-  if(raddr >= CONFIG_FB_ADDR && raddr < CONFIG_FB_ADDR + 300 * 400 * 4){
+  else if(raddr >= CONFIG_FB_ADDR && raddr < CONFIG_FB_ADDR + 300 * 400 * 4 + 8){
     *rdata = 0;
     is_difftest_next = 0;
     return;
@@ -130,8 +130,8 @@ extern "C" void pmem_write(long long waddr, long long wdata, char wmask){
   (waddr >= CONFIG_FB_ADDR && waddr < CONFIG_FB_ADDR + 300 * 400 * 4 + 8) ||
   (waddr >= CONFIG_SERIAL_MMIO && waddr < CONFIG_SERIAL_MMIO + 8 + 8)){
     for(i = 0; i < 8; i++){
-      if((wmask >> i) & 1 == 1){
-        mmio_write(waddr & ~0x7ull + i, 1, wdata);
+      if(((wmask >> i) & 0x1u) == 1){
+        mmio_write((waddr & ~0x7ull) + i, 1, wdata);
       }
       wdata = wdata >> 8;
     }
