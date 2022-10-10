@@ -1,4 +1,4 @@
-module ysyx_22041461_CU( 
+module ysyx_22041461_ID( 
     
     input   wire [31:0] inst        ,
     input   wire [1:0]  CMP_out     ,
