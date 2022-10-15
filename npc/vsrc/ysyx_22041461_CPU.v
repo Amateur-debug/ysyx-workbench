@@ -35,7 +35,21 @@ wire    [63:0]  csr_data    ;
 wire    [63:0]  csr_mepc    ;
 wire    [63:0]  csr_mtvec   ;
 
-ysyx_22041461_CU   CU(
+ysyx_22041461_PC    PC(
+
+    .clk        (clk   )   , 
+    .rst        (rst   )   , 
+    .sel_PC     (sel_PC)   , 
+    .dest       (dest  )   ,
+    .csr_mepc   (csr_mepc) ,
+    .csr_mtvec  (csr_mtvec),
+
+    .snpc       (snpc  )   ,
+    .pc         (pc    )
+);
+
+
+ysyx_22041461_ID   ID(
 
     .inst           (inst        ),
     .CMP_out        (CMP_out     ),
@@ -54,19 +68,6 @@ ysyx_22041461_CU   CU(
     .sel_MEM_addr   (sel_MEM_addr),
     .sel_MEM_data   (sel_MEM_data),
     .ctrl_CSRS      (ctrl_CSRS   )
-);
-
-ysyx_22041461_PC    PC(
-
-    .clk        (clk   )   , 
-    .rst        (rst   )   , 
-    .sel_PC     (sel_PC)   , 
-    .dest       (dest  )   ,
-    .csr_mepc   (csr_mepc) ,
-    .csr_mtvec  (csr_mtvec),
-
-    .snpc       (snpc  )   ,
-    .pc         (pc    )
 );
 
 ysyx_22041461_REGS  REGS(

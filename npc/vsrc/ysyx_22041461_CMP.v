@@ -3,7 +3,7 @@ module ysyx_22041461_CMP(
     input   wire [63:0] imm     ,
     input   wire [63:0] rs1_data,
     input   wire [63:0] rs2_data,
-    input   wire [1:0]  sel_CMP ,
+    input   wire [0:0]  sel_CMP ,
     input   wire [0:0]  ctrl_CMP,
 
     output  reg  [1:0]  CMP_out  
@@ -14,17 +14,13 @@ reg [63:0] src2;
 
 always@(*) begin
     case(sel_CMP)
-        2'b00: begin
+        1'b0: begin
             src1 = rs1_data;
             src2 = rs2_data;
         end
-        2'b01: begin
+        1'b1: begin
             src1 = rs1_data;
             src2 = imm     ;
-        end
-        default: begin
-            src1 = rs1_data;
-            src2 = rs2_data;
         end
     endcase
 end
