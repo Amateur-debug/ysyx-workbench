@@ -11,7 +11,7 @@ module ysyx_22041461_ID(
     input   wire [63:0] csr_mtvec    ,
     input   wire [63:0] csr_mepc     ,
     
-    output  reg  [0:0]  ID_ID_valid_out ,
+    output  reg  [0:0]  ID_valid_out ,
     output  wire [4:0]  rd           ,
     output  wire [4:0]  rs1          ,
     output  wire [4:0]  rs2          ,
