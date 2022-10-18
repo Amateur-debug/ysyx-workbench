@@ -1,34 +1,38 @@
+`include "ysyx_22041461_macro"
+
 module  ysyx_22041461_EXE_reg(
 
-  input  wire [0:0]  clk             ,
-  input  wire [0:0]  flush           ,
-  input  wire [0:0]  enable          ,
+  input   wire  [0:0]  clk         ,
+  input   wire  [0:0]  flush       ,
+  input   wire  [0:0]  EXEreg_enable      ,
+  
+  input   wire  [0:0]  EXEreg_valid_fromCD ,
+  input   wire  [0:0]  EXEreg_valid_fromID,
+  
+  input   wire  [4:0]  EXEreg_rd_in       ,
+  input   wire  [4:0]  EXEreg_rs1_in      ,
+  input   wire  [4:0]  EXEreg_rs2_in      ,
+  input   wire  [11:0] EXEreg_csr_in      ,
+  input   wire  [63:0] EXEreg_imm_in      ,
+  input   wire  [63:0] EXEreg_zimm_in     ,
+  input   wire  [63:0] EXEreg_pc_in       ,
+  input   wire  [4:0]  EXEreg_EXE_ctrl_in ,
+  input   wire  [2:0]  EXEreg_EXE_src_in  ,
+  input   wire  [3:0]  EXEreg_MEM_ctrl_in ,
+  input   wire  [3:0]  EXEreg_WB_ctrl_in  ,
 
-  input  wire [0:0]  valid_in        ,
-  input  wire [4:0]  rs1_in          ,
-  input  wire [4:0]  rs2_in          ,
-  input  wire [4:0]  rd_in           ,
-  input  wire [63:0] imm_in          ,
-  input  wire [63:0] zimm_in         ,
-  input  wire [63:0] pc_in           ,
-  input  wire [63:0] ctrl_ALU_in     , 
-  input  wire [63:0] sel_ALU_in      ,
-  input  wire [63:0] sel_MEM_addr_in ,
-  input  wire [63:0] sel_MEM_data_in ,
-  input  wire [63:0] ctrl_MEM_in     ,
-
-  output  reg [0:0]  valid_out       ,
-  output  reg [4:0]  rs1_out         ,
-  output  reg [4:0]  rs2_out         ,
-  output  reg [4:0]  rd_out          ,
-  output  reg [63:0] imm_out         ,
-  output  reg [63:0] zimm_out        ,
-  output  reg [63:0] pc_out          ,
-  output  reg [63:0] ctrl_ALU_out    , 
-  output  reg [63:0] sel_ALU_out     ,
-  output  reg [63:0] sel_MEM_addr_out,
-  output  reg [63:0] sel_MEM_data_out,
-  output  reg [63:0] ctrl_MEM_out    ,
+  output  reg   [0:0]  EXEreg_valid_out   ,
+  output  reg   [4:0]  EXEreg_rd_out      ,
+  output  reg   [4:0]  EXEreg_rs1_out     ,
+  output  reg   [4:0]  EXEreg_rs2_out     ,
+  output  reg   [11:0] EXEreg_csr_out     ,
+  output  reg   [63:0] EXEreg_imm_out     ,
+  output  reg   [63:0] EXEreg_zimm_out    ,
+  output  reg   [63:0] EXEreg_pc_out      ,
+  output  reg   [4:0]  EXEreg_EXE_ctrl_out,
+  output  reg   [2:0]  EXEreg_EXE_src_out ,
+  output  reg   [3:0]  EXEreg_MEM_ctrl_out,
+  output  reg   [3:0]  EXEreg_WB_ctrl_out
 );
 
 //异步复位同步释放
@@ -53,14 +57,59 @@ end
 //流水线寄存器功能实现
 always@(posedge clk or negedge rst) begin
     if(rst == 1'b0) begin
-      valid_out <= 1'b0;
-
+        EXEreg_valid_out <= 1'b0;
     end
     else if(enable == 1'b0) begin
-      valid_out <= valid_out;
-
+        EXEreg_valid_out <= EXEreg_valid_out;
+    end
+    else if(EXEreg_valid_fromCD == 1'b0|| EXEreg_valid_fromIF == 1'b0) begin
+        EXEreg_valid_out <= 1'b0;
+    end
     else begin
-        valid_out <= valid_in;
-
+        EXEreg_valid_out <= 1'b1;
     end
 end
+
+always@(posedge clk or negedge rst) begin
+    if(rst == 1'b0) begin  
+        EXEreg_rd_out <= 5'b0;     
+        EXEreg_rs1_out <= 5'b0;     
+        EXEreg_rs2_out <= 5'b0;    
+        EXEreg_csr_out <= 12'b0;     
+        EXEreg_imm_out <= 64'b0;   
+        EXEreg_zimm_out <= 64'b0;   
+        EXEreg_pc_out <= 64'h0000_0000_8000_0000;     
+        EXEreg_EXE_ctrl_out <= EXE_NOP;
+        EXEreg_EXE_src_out <= EXE_src_NOP;
+        EXEreg_MEM_ctrl_out <= MEM_NOP;
+        EXEreg_WB_ctrl_out <= WB_NOP;                      
+    end
+    else if(EXEreg_enable == 1'b0) begin
+        EXEreg_rd_out <= EXEreg_rd_out;     
+        EXEreg_rs1_out <= EXEreg_rs1_out;     
+        EXEreg_rs2_out <= EXEreg_rs2_out;    
+        EXEreg_csr_out <= EXEreg_csr_out;     
+        EXEreg_imm_out <= EXEreg_imm_out;  
+        EXEreg_zimm_out <= EXEreg_zimm_out;   
+        EXEreg_pc_out <= EXEreg_pc_out;     
+        EXEreg_EXE_ctrl_out <= EXEreg_EXE_ctrl_out;
+        EXEreg_EXE_src_out <= EXEreg_EXE_src_out;
+        EXEreg_MEM_ctrl_out <= EXEreg_MEM_ctrl_out;
+        EXEreg_WB_ctrl_out <= EXEreg_WB_ctrl_out;  
+    end
+    else begin 
+        EXEreg_rd_out <= EXEreg_rd_in;     
+        EXEreg_rs1_out <= EXEreg_rs1_in;     
+        EXEreg_rs2_out <= EXEreg_rs2_in;    
+        EXEreg_csr_out <= EXEreg_csr_in;     
+        EXEreg_imm_out <= EXEreg_imm_in;   
+        EXEreg_zimm_out <= EXEreg_zimm_in;   
+        EXEreg_pc_out <= EXEreg_pc_in;     
+        EXEreg_EXE_ctrl_out <= EXEreg_EXE_ctrl_in;
+        EXEreg_EXE_src_out <= EXEreg_EXE_src_in;
+        EXEreg_MEM_ctrl_out <= EXEreg_MEM_ctrl_in;
+        EXEreg_WB_ctrl_out <= EXEreg_WB_ctrl_in;  
+    end
+end
+
+endmodule

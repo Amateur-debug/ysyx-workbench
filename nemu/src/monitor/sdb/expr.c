@@ -47,7 +47,7 @@ static struct rule {
   {"\\/", '/'},                 // divided
   {"\\(", '('},                 // (
   {"\\)", ')'},                 // )
-  {"\\d+", TK_NUMBER},  // decimal-number
+  {"\\b[0-9]+\\b", TK_NUMBER},  // decimal-number
   {"\\b0x[0-9A-Z]+\\b", TK_HEX},// hexadecimal-number
   {"\\$[a-z0-9]+\\b", TK_REG},  // reg
   {"!=", TK_NEQ},               // not equal

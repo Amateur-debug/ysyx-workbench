@@ -3,149 +3,77 @@ module ysyx_22041461_CPU(
     input   wire [0:0]  clk , 
     input   wire [0:0]  rst ,
 
-    output  wire [63:0] pc  ,
-    output  wire [0:0]  flag,
     output  wire [31:0] inst
 );
 
 
-wire    [4:0]   rs1         ;
-wire    [4:0]   rs2         ;
-wire    [4:0]   rd          ;
-wire    [63:0]  imm         ;
-wire    [63:0]  snpc        ;
-wire    [63:0]  rs1_data    ;
-wire    [63:0]  rs2_data    ;
-wire    [63:0]  dest        ;
-wire    [63:0]  mem         ;
-wire    [4:0]   ctrl_ALU    ;
-wire    [2:0]   sel_ALU     ;
-wire    [1:0]   sel_CMP     ;
-wire    [0:0]   ctrl_CMP    ;
-/*verilator lint_off UNOPTFLAT*/
-wire    [1:0]   CMP_out     ;
-/*verilator lint_on UNOPTFLAT*/
-wire    [3:0]   sel_REGS    ;
-wire    [1:0]   sel_PC      ;
-wire    [3:0]   ctrl_MEM    ;
-wire    [2:0]   sel_MEM_addr;
-wire    [2:0]   sel_MEM_data;
-wire    [1:0]   ctrl_CSRS   ;
-wire    [63:0]  csr_data    ;
-wire    [63:0]  csr_mepc    ;
-wire    [63:0]  csr_mtvec   ;
 
-ysyx_22041461_PC    PC(
+ysyx_22041461_IF_reg IF_reg(
 
-    .clk        (clk   )   , 
-    .rst        (rst   )   , 
-    .sel_PC     (sel_PC)   , 
-    .dest       (dest  )   ,
-    .csr_mepc   (csr_mepc) ,
-    .csr_mtvec  (csr_mtvec),
-
-    .snpc       (snpc  )   ,
-    .pc         (pc    )
+    .clk                (clk               ),
+    .flush              (rst               ),
+    .IFreg_valid_fromCD (IFreg_valid_fromCD),
+    .IFreg_enable       (IFreg_enable      ),
+    .IFreg_ctrl         (IFreg_ctrl        ),
+    .IFreg_next_pc      (IFreg_next_pc     ),
+ 
+    .IFreg_pc           (IFreg_pc          ),
+    .IFreg_valid_out    (IFreg_valid_out   )
 );
 
+ysyx_22041461_IF IF(
+    .IF_valid_in  (IF_valid_in ),
+    .IF_pc        (IF_pc       ),
 
-ysyx_22041461_ID   ID(
-
-    .inst           (inst        ),
-    .CMP_out        (CMP_out     ),
-         
-    .rs1            (rs1         ),
-    .rs2            (rs2         ),
-    .rd             (rd          ),
-    .imm            (imm         ),
-    .ctrl_ALU       (ctrl_ALU    ),
-    .sel_ALU        (sel_ALU     ),
-    .ctrl_CMP       (ctrl_CMP    ),
-    .sel_CMP        (sel_CMP     ),
-    .sel_REGS       (sel_REGS    ),
-    .sel_PC         (sel_PC      ),
-    .ctrl_MEM       (ctrl_MEM    ),
-    .sel_MEM_addr   (sel_MEM_addr),
-    .sel_MEM_data   (sel_MEM_data),
-    .ctrl_CSRS      (ctrl_CSRS   )
+    .IF_valid_out (IF_valid_out),
+    .IF_inst      (IF_inst     )
 );
 
-ysyx_22041461_REGS  REGS(
+ysyx_22041461_ID_reg ID_reg(
 
-    .clk        (clk     ),
-    .rst        (rst     ),
-    .sel_REGS   (sel_REGS),
-    .rs1        (rs1     ),
-    .rs2        (rs2     ),
-    .rd         (rd      ),
-    .imm        (imm     ),
-    .dest       (dest    ),
-    .pc         (pc      ),
-    .snpc       (snpc    ),
-    .mem        (mem     ),
-    .csr_data   (csr_data),
+    .clk                (clk               ),
+    .flush              (rst               ),
+    .IDreg_enable       (IDreg_enable      ),
 
-    .rs1_data   (rs1_data),
-    .rs2_data   (rs2_data)
+    .IDreg_valid_fromIF (IDreg_valid_fromIF),
+    .IDreg_valid_fromCD (IDreg_valid_fromCD),
+    .IDreg_inst_in      (IDreg_inst_in     ),
+    .IDreg_pc_in        (IDreg_pc_in       ),
+
+    .IDreg_valid_out    (IDreg_valid_out   ),  
+    .IDreg_inst_out     (IDreg_inst_out    ),   
+    .IDreg_pc_out       (IDreg_pc_out      )
 );
 
-ysyx_22041461_CMP   CMP(
+ysyx_22041461_ID ID( 
+    
+    .ID_inst      (ID_inst     ),
+    .ID_valid_in  (ID_valid_in ),
+    .ID_pc        (ID_pc       ),
+    .ID_rs1_data  (ID_rs1_data ),
+    .ID_rs2_data  (ID_rs2_data ),
+    .ID_csr_mtvec (ID_csr_mtvec),
+    .ID_csr_mepc  (ID_csr_mepc ),
+    
+    .ID_rd        (ID_rd       ),
+    .ID_rs1       (ID_rs1      ),
+    .ID_rs2       (ID_rs2      ),
+    .ID_csr       (ID_csr      ),
+    .ID_imm       (ID_imm      ),
+    .ID_shamt     (ID_shamt    ),
+    .ID_zimm      (ID_zimm     ),
+    .ID_next_pc   (ID_next_pc  ),
+    .ID_valid_out (ID_valid_out),
+    .ID_PC_ctrl   (ID_PC_ctrl  ),
+    .ID_CD_ctrl   (ID_CD_ctrl  ),
+    .ID_EXE_ctrl  (ID_EXE_ctrl ),
+    .ID_EXE_src   (ID_EXE_src  ),
+    .ID_MEM_ctrl  (ID_MEM_ctrl ),   
+    .ID_WB_ctrl   (ID_WB_ctrl  )  
+); 
 
-    .imm        (imm)     ,
-    .rs1_data   (rs1_data),
-    .rs2_data   (rs2_data),
-    .sel_CMP    (sel_CMP) ,
-    .ctrl_CMP   (ctrl_CMP),
-
-    .CMP_out    (CMP_out)
-);
-
-ysyx_22041461_ALU   ALU(
-
-    .ctrl_ALU   (ctrl_ALU),
-    .sel_ALU    (sel_ALU ),
-    .rs1_data   (rs1_data),
-    .rs2_data   (rs2_data),
-    .imm        (imm     ),
-    .pc         (pc      ),
-    .snpc       (snpc    ),
-    .csr_data   (csr_data),
-
-    .dest       (dest    ),
-    .flag       (flag    )
-);
-
-ysyx_22041461_MEM   MEM(
-
-    .clk            (clk         ),
-    .rst            (rst         ),
-    .dest           (dest        ),
-    .rs1_data       (rs1_data    ),
-    .rs2_data       (rs2_data    ),
-    .imm            (imm         ),
-    .pc             (pc          ),
-    .snpc           (snpc        ),
-    .ctrl_MEM       (ctrl_MEM    ),
-    .sel_MEM_addr   (sel_MEM_addr),
-    .sel_MEM_data   (sel_MEM_data),
-
-    .read_data      (mem         ),
-    .inst           (inst        )
-);
-
-ysyx_22041461_CSR CSR(
-
-    .clk       (clk      ),
-    .rst       (rst      ),
-    .ctrl_CSRS (ctrl_CSRS),
-    .imm       (imm      ),
-    .dest      (dest     ),
-    .pc        (pc       ),
-    .rs1_data  (rs1_data ),
-
-    .csr_data  (csr_data ),
-    .csr_mepc  (csr_mepc ),
-    .csr_mtvec (csr_mtvec)
-);
 
 endmodule
+
+
+

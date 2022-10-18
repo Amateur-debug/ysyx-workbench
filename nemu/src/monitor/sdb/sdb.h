@@ -29,7 +29,7 @@ typedef struct watchpoint {
 
 word_t expr(char *e); 
 bool make_token(char *e);
-uint32_t eval(int p, int q);
+uint64_t eval(int p, int q);
 WP* new_wp(char *EXPR);
 WP* free_wp(WP *wp);
 
