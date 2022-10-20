@@ -1,59 +1,39 @@
+`include "/home/cxy/ysyx-workbench/npc/vsrc/ysyx_22041461_macro.v"
+
 module ysyx_22041461_ID( 
     
-    input   wire [31:0] inst        ,
-    input   wire [1:0]  CMP_out     ,
-  
-    output  wire [4:0]  rs1         ,
-    output  wire [4:0]  rs2         ,   
-    output  wire [4:0]  rd          ,
-    output  reg  [63:0] imm         ,
-    output  reg  [4:0]  ctrl_ALU    ,    //ALU控制信号               
-    output  reg  [2:0]  sel_ALU     ,    //ALU输入选择信号
-    output  reg  [0:0]  ctrl_CMP    ,    //比较器控制信号
-    output  reg  [1:0]  sel_CMP     ,    //比较器输入选择信号
-    output  reg  [3:0]  sel_REGS    ,    //寄存器输入信号
-    output  reg  [1:0]  sel_PC      ,    //pc输入选择信号
-    output  reg  [3:0]  ctrl_MEM    ,
-    output  reg  [2:0]  sel_MEM_addr,
-    output  reg  [2:0]  sel_MEM_data,
-    output  reg  [1:0]  ctrl_CSRS    
+    input   wire [31:0] ID_inst     ,
+    input   wire [0:0]  ID_valid_in ,
+    input   wire [63:0] ID_pc       ,
+    input   wire [63:0] ID_rs1_data ,
+    input   wire [63:0] ID_rs2_data ,
+    input   wire [63:0] ID_csr_mtvec,
+    input   wire [63:0] ID_csr_mepc ,
+
+    output  wire [4:0]  ID_rd       ,
+    output  wire [4:0]  ID_rs1      ,
+    output  wire [4:0]  ID_rs2      ,
+    output  wire [11:0] ID_csr      ,
+    output  reg  [63:0] ID_imm      ,
+    output  wire [63:0] ID_zimm     ,
+    output  wire [63:0] ID_next_pc  ,
+    output  wire [0:0]  ID_valid_out,
+    output  reg  [0:0]  ID_PC_ctrl  ,
+    output  reg  [2:0]  ID_CD_ctrl  ,
+    output  reg  [4:0]  ID_EXE_ctrl ,
+    output  reg  [2:0]  ID_EXE_src  ,
+    output  reg  [3:0]  ID_MEM_ctrl ,   
+    output  reg  [3:0]  ID_WB_ctrl      
 ); 
-
-//ctrl_ALU     操作                 sel_ALU       操作数来源                  
-//  000         无                    000       rs1_data,rs2_data
-//  001         +                     001       rs1_data,imm 
-//  010    +且设最低有效位为0           010       rs1_data,pc
-//  011         <<                    011       rs1_data,snpc
-//  100    +且截断为32位并符号位扩展      100       imm,pc  
-//  101                               101       imm,snpc  
-//                                    110       rs1_data,csr_data
-
-
-//sel_REGS     输入来源        sel_PC           输入来源
-//  0000         不变             00             snpc
-//  0001         ALU             01              ALU
-//  0010         pc              10              mepc
-//  0011         snpc
-//  0100         imm
-//  0101         memory
-//  0110           0
-//  0111           1
-//  1000          CSR
-
 
 import "DPI-C" function void ebreak();
 import "DPI-C" function void invalid_inst();
-
-assign rs1    = inst[19:15];
-assign rs2    = inst[24:20];
-assign rd     = inst[11:7] ;
 
 function [63:0] immI(
     input  [31:0] INST
 );
 
 immI = {{52{INST[31:31]}}, INST[31:20]};
-
 endfunction
 
 function [63:0] immS(
@@ -61,7 +41,6 @@ function [63:0] immS(
 );
 
 immS = {{52{INST[31:31]}}, INST[31:25], INST[11:7]};
-
 endfunction
 
 function [63:0] immB(
@@ -69,7 +48,6 @@ function [63:0] immB(
 );
 
 immB = {{51{INST[31:31]}}, INST[31:31], INST[7:7], INST[30:25], INST[11:8],1'b0};
-
 endfunction
 
 function [63:0] immU(
@@ -77,7 +55,6 @@ function [63:0] immU(
 );
 
 immU = {{32{INST[31:31]}}, INST[31:12], 12'b0};
-
 endfunction
 
 function [63:0] immJ(
@@ -85,869 +62,474 @@ function [63:0] immJ(
 );
 
 immJ = {{43{INST[31:31]}}, INST[31:31], INST[19:12], INST[20:20], INST[30:21], 1'b0};
-
 endfunction
 
-/* verilator lint_off CASEX */
-always@(*) begin               
-    casex(inst)
+wire  [6:0]  opcode;
+wire  [2:0]  funct3;
+wire  [5:0]  funct6;
+wire  [6:0]  funct7;
+wire  [5:0]  shamt;
 
-    //Type-R
-        32'b0000000_xxxxx_xxxxx_000_xxxxx_0110011: begin //add
-            imm          = 64'd0     ;
-            sel_CMP      = 2'b00     ;
-            ctrl_CMP     = 1'b0      ;     
-            ctrl_ALU     = 5'b00001  ;         
-            sel_ALU      = 3'b000    ;         
-            sel_REGS     = 4'b0001   ;         
-            sel_PC       = 2'b00     ;
-            ctrl_MEM     = 4'b0000   ;
-            sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ;
-            ctrl_CSRS    = 2'b00     ;
-        end 
-        32'b0000000_xxxxx_xxxxx_000_xxxxx_0111011: begin //addw
-            imm          = 64'd0     ;
-            sel_CMP      = 2'b00     ;
-            ctrl_CMP     = 1'b0      ;     
-            ctrl_ALU     = 5'b00100  ;         
-            sel_ALU      = 3'b000    ;         
-            sel_REGS     = 4'b0001   ;         
-            sel_PC       = 2'b00     ;
-            ctrl_MEM     = 4'b0000   ;
-            sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ;
-            ctrl_CSRS    = 2'b00     ;
-        end 
-        32'b0100000_xxxxx_xxxxx_000_xxxxx_0110011: begin //sub
-            imm          = 64'd0     ;
-            sel_CMP      = 2'b00     ;
-            ctrl_CMP     = 1'b0      ;     
-            ctrl_ALU     = 5'b00101  ;         
-            sel_ALU      = 3'b000    ;         
-            sel_REGS     = 4'b0001   ;         
-            sel_PC       = 2'b00     ;
-            ctrl_MEM     = 4'b0000   ;
-            sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ;
-            ctrl_CSRS    = 2'b00     ; 
-        end 
-        32'b0000000_xxxxx_xxxxx_001_xxxxx_0111011: begin //sllw
-            imm          = 64'd0     ;
-            sel_CMP      = 2'b00     ;
-            ctrl_CMP     = 1'b0      ;     
-            ctrl_ALU     = 5'b01000  ;         
-            sel_ALU      = 3'b000    ;         
-            sel_REGS     = 4'b0001   ;         
-            sel_PC       = 2'b00     ;
-            ctrl_MEM     = 4'b0000   ;
-            sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ;
-            ctrl_CSRS    = 2'b00     ; 
-        end 
-        32'b0000000_xxxxx_xxxxx_111_xxxxx_0110011: begin //and
-            imm          = 64'd0     ;
-            sel_CMP      = 2'b00     ;
-            ctrl_CMP     = 1'b0      ;     
-            ctrl_ALU     = 5'b00111  ;         
-            sel_ALU      = 3'b000    ;         
-            sel_REGS     = 4'b0001   ;         
-            sel_PC       = 2'b00     ;
-            ctrl_MEM     = 4'b0000   ;
-            sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ;
-            ctrl_CSRS    = 2'b00     ; 
-        end 
-        32'b0000000_xxxxx_xxxxx_011_xxxxx_0110011: begin //sltu
-            imm          = 64'd0     ;
-            sel_CMP      = 2'b00     ;
-            ctrl_CMP     = 1'b0      ;     
-            ctrl_ALU     = 5'b00000  ;         
-            sel_ALU      = 3'b000    ;
-            if(CMP_out == 2'b01) begin         
-                sel_REGS = 4'b0111;
-            end       
-            else begin
-                sel_REGS = 4'b0110;
-            end
-            sel_PC       = 2'b00     ;
-            ctrl_MEM     = 4'b0000   ;
-            sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ;
-            ctrl_CSRS    = 2'b00     ; 
-        end 
-        32'b0000000_xxxxx_xxxxx_110_xxxxx_0110011: begin //or
-            imm          = 64'd0     ;
-            sel_CMP      = 2'b00     ;
-            ctrl_CMP     = 1'b0      ;     
-            ctrl_ALU     = 5'b01010  ;         
-            sel_ALU      = 3'b000    ;         
-            sel_REGS     = 4'b0001   ;         
-            sel_PC       = 2'b00     ;
-            ctrl_MEM     = 4'b0000   ;
-            sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ;
-            ctrl_CSRS    = 2'b00     ; 
-        end 
-        32'b0000001_xxxxx_xxxxx_000_xxxxx_0111011: begin //mulw
-            imm          = 64'd0     ;
-            sel_CMP      = 2'b00     ;
-            ctrl_CMP     = 1'b0      ;     
-            ctrl_ALU     = 5'b01100  ;         
-            sel_ALU      = 3'b000    ;         
-            sel_REGS     = 4'b0001   ;         
-            sel_PC       = 2'b00     ;
-            ctrl_MEM     = 4'b0000   ;
-            sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ;
-            ctrl_CSRS    = 2'b00     ; 
-        end
-        32'b0000001_xxxxx_xxxxx_100_xxxxx_0111011: begin //divw
-            imm          = 64'd0     ;
-            sel_CMP      = 2'b00     ;
-            ctrl_CMP     = 1'b0      ;     
-            ctrl_ALU     = 5'b10001  ;         
-            sel_ALU      = 3'b000    ;         
-            sel_REGS     = 4'b0001   ;         
-            sel_PC       = 2'b00     ;
-            ctrl_MEM     = 4'b0000   ;
-            sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ;
-            ctrl_CSRS    = 2'b00     ; 
-        end
-        32'b0000001_xxxxx_xxxxx_110_xxxxx_0111011: begin //remw
-            imm          = 64'd0     ;
-            sel_CMP      = 2'b00     ;
-            ctrl_CMP     = 1'b0      ;     
-            ctrl_ALU     = 5'b10101  ;         
-            sel_ALU      = 3'b000    ;         
-            sel_REGS     = 4'b0001   ;         
-            sel_PC       = 2'b00     ;
-            ctrl_MEM     = 4'b0000   ;
-            sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ;
-            ctrl_CSRS    = 2'b00     ; 
-        end
-        32'b0000001_xxxxx_xxxxx_111_xxxxx_0110011: begin //remu
-            imm          = 64'd0     ;
-            sel_CMP      = 2'b00     ;
-            ctrl_CMP     = 1'b0      ;     
-            ctrl_ALU     = 5'b10111  ;         
-            sel_ALU      = 3'b000    ;         
-            sel_REGS     = 4'b0001   ;         
-            sel_PC       = 2'b00     ;
-            ctrl_MEM     = 4'b0000   ;
-            sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ;
-            ctrl_CSRS    = 2'b00     ; 
-        end
-        32'b0000001_xxxxx_xxxxx_111_xxxxx_0111011: begin //remuw
-            imm          = 64'd0     ;
-            sel_CMP      = 2'b00     ;
-            ctrl_CMP     = 1'b0      ;     
-            ctrl_ALU     = 5'b10110  ;         
-            sel_ALU      = 3'b000    ;         
-            sel_REGS     = 4'b0001   ;         
-            sel_PC       = 2'b00     ;
-            ctrl_MEM     = 4'b0000   ;
-            sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ;
-            ctrl_CSRS    = 2'b00     ; 
-        end
-        32'b0100000_xxxxx_xxxxx_000_xxxxx_0111011: begin //subw
-            imm          = 64'd0     ;
-            sel_CMP      = 2'b00     ;
-            ctrl_CMP     = 1'b0      ;     
-            ctrl_ALU     = 5'b11001  ;         
-            sel_ALU      = 3'b000    ;         
-            sel_REGS     = 4'b0001   ;         
-            sel_PC       = 2'b00     ;
-            ctrl_MEM     = 4'b0000   ;
-            sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ;
-            ctrl_CSRS    = 2'b00     ; 
-        end
-        32'b0000000_xxxxx_xxxxx_010_xxxxx_0110011: begin //slt
-            imm          = 64'd0     ;
-            sel_CMP      = 2'b00     ;
-            ctrl_CMP     = 1'b1      ;     
-            ctrl_ALU     = 5'b00000  ;         
-            sel_ALU      = 3'b000    ;
-            if(CMP_out == 2'b01) begin         
-                sel_REGS = 4'b0111;   
-            end
-            else begin
-                sel_REGS = 4'b0110;
-            end
-            sel_PC       = 2'b00     ;
-            ctrl_MEM     = 4'b0000   ;
-            sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ;
-            ctrl_CSRS    = 2'b00     ; 
-        end
-        32'b0000001_xxxxx_xxxxx_000_xxxxx_0110011: begin //mul
-            imm          = 64'd0     ;
-            sel_CMP      = 2'b00     ;
-            ctrl_CMP     = 1'b0      ;     
-            ctrl_ALU     = 5'b10000  ;         
-            sel_ALU      = 3'b000    ;         
-            sel_REGS     = 4'b0001   ;         
-            sel_PC       = 2'b00     ;
-            ctrl_MEM     = 4'b0000   ;
-            sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ;
-            ctrl_CSRS    = 2'b00     ; 
-        end
-        32'b0100000_xxxxx_xxxxx_101_xxxxx_0111011: begin //sraw
-            imm          = 64'd0     ;
-            sel_CMP      = 2'b00     ;
-            ctrl_CMP     = 1'b0      ;     
-            ctrl_ALU     = 5'b11100  ;         
-            sel_ALU      = 3'b000    ;         
-            sel_REGS     = 4'b0001   ;         
-            sel_PC       = 2'b00     ;
-            ctrl_MEM     = 4'b0000   ;
-            sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ;
-            ctrl_CSRS    = 2'b00     ; 
-        end
-        32'b0000000_xxxxx_xxxxx_101_xxxxx_0111011: begin //srlw
-            imm          = 64'd0     ;
-            sel_CMP      = 2'b00     ;
-            ctrl_CMP     = 1'b0      ;     
-            ctrl_ALU     = 5'b11110  ;         
-            sel_ALU      = 3'b000    ;         
-            sel_REGS     = 4'b0001   ;         
-            sel_PC       = 2'b00     ;
-            ctrl_MEM     = 4'b0000   ;
-            sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ;
-            ctrl_CSRS    = 2'b00     ; 
-        end
-        32'b0000001_xxxxx_xxxxx_101_xxxxx_0110011: begin //divu
-            imm          = 64'd0     ;
-            sel_CMP      = 2'b00     ;
-            ctrl_CMP     = 1'b0      ;     
-            ctrl_ALU     = 5'b10011  ;         
-            sel_ALU      = 3'b000    ;         
-            sel_REGS     = 4'b0001   ;         
-            sel_PC       = 2'b00     ;
-            ctrl_MEM     = 4'b0000   ;
-            sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ;
-            ctrl_CSRS    = 2'b00     ; 
-        end
-        32'b0000001_xxxxx_xxxxx_100_xxxxx_0110011: begin //div
-            imm          = 64'd0     ;
-            sel_CMP      = 2'b00     ;
-            ctrl_CMP     = 1'b0      ;     
-            ctrl_ALU     = 5'b10100  ;         
-            sel_ALU      = 3'b000    ;         
-            sel_REGS     = 4'b0001   ;         
-            sel_PC       = 2'b00     ;
-            ctrl_MEM     = 4'b0000   ;
-            sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ;
-            ctrl_CSRS    = 2'b00     ; 
-        end
-        32'b0000000_xxxxx_xxxxx_100_xxxxx_0110011: begin //xor
-            imm          = 64'd0     ;
-            sel_CMP      = 2'b00     ;
-            ctrl_CMP     = 1'b0      ;     
-            ctrl_ALU     = 5'b01001  ;         
-            sel_ALU      = 3'b000    ;         
-            sel_REGS     = 4'b0001   ;         
-            sel_PC       = 2'b00     ;
-            ctrl_MEM     = 4'b0000   ;
-            sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ;
-            ctrl_CSRS    = 2'b00     ; 
-        end
-        32'b0000000_xxxxx_xxxxx_001_xxxxx_0110011: begin //sll
-            imm          = 64'd0     ;
-            sel_CMP      = 2'b00     ;
-            ctrl_CMP     = 1'b0      ;     
-            ctrl_ALU     = 5'b00011  ;         
-            sel_ALU      = 3'b000    ;         
-            sel_REGS     = 4'b0001   ;         
-            sel_PC       = 2'b00     ;
-            ctrl_MEM     = 4'b0000   ;
-            sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ;
-            ctrl_CSRS    = 2'b00     ; 
-        end
-        32'b0000001_xxxxx_xxxxx_101_xxxxx_0111011: begin //divuw
-            imm          = 64'd0     ;
-            sel_CMP      = 2'b00     ;
-            ctrl_CMP     = 1'b0      ;     
-            ctrl_ALU     = 5'b10010  ;         
-            sel_ALU      = 3'b000    ;         
-            sel_REGS     = 4'b0001   ;         
-            sel_PC       = 2'b00     ;
-            ctrl_MEM     = 4'b0000   ;
-            sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ;
-            ctrl_CSRS    = 2'b00     ; 
-        end
-        32'b0011000_00010_00000_000_00000_1110011: begin //mret
-            imm          = immI(inst); 
-            sel_CMP      = 2'b00     ;
-            ctrl_CMP     = 1'b0      ;    
-            ctrl_ALU     = 5'b00000  ;         
-            sel_ALU      = 3'b000    ;         
-            sel_REGS     = 4'b0000   ;         
-            sel_PC       = 2'b10     ;
-            ctrl_MEM     = 4'b0000   ;
-            sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ;
-            ctrl_CSRS    = 2'b00     ; 
-        end
+assign ID_rd   = ID_inst[11:7] ;
+assign ID_rs1  = ID_inst[19:15];
+assign ID_rs2  = ID_inst[24:20];
+assign ID_csr  = ID_inst[31:20];
+assign shamt   = ID_inst[25:20];
+assign ID_zimm = {59'b0, ID_inst[19:15]};
+assign opcode = ID_inst[6:0]  ;
+assign funct3 = ID_inst[14:12];
+assign funct6 = ID_inst[31:26];
+assign funct7 = ID_inst[31:25];
 
-    //Type-I
-        32'bxxxxxxx_xxxxx_xxxxx_000_xxxxx_0010011: begin //addi 
-            imm          = immI(inst);
-            sel_CMP      = 2'b00     ;
-            ctrl_CMP     = 1'b0      ;     
-            ctrl_ALU     = 5'b00001  ;         
-            sel_ALU      = 3'b001    ;         
-            sel_REGS     = 4'b0001   ;         
-            sel_PC       = 2'b00     ;
-            ctrl_MEM     = 4'b0000   ;
-            sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ;
-            ctrl_CSRS    = 2'b00     ; 
-        end  
-        32'bxxxxxxx_xxxxx_xxxxx_000_xxxxx_1100111: begin //jalr
-            imm          = immI(inst);
-            sel_CMP      = 2'b00     ;
-            ctrl_CMP     = 1'b0      ;     
-            ctrl_ALU     = 5'b00010  ;         
-            sel_ALU      = 3'b001    ;         
-            sel_REGS     = 4'b0011   ;         
-            sel_PC       = 2'b01     ; 
-            ctrl_MEM     = 4'b0000   ;
-            sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ;
-            ctrl_CSRS    = 2'b00     ;      
-        end
-        32'b000000x_xxxxx_xxxxx_001_xxxxx_0010011: begin //slli
-            imm          = immI(inst); 
-            sel_CMP      = 2'b00     ;
-            ctrl_CMP     = 1'b0      ;    
-            ctrl_ALU     = 5'b00011  ;         
-            sel_ALU      = 3'b001    ;         
-            sel_REGS     = 4'b0001   ;         
-            sel_PC       = 2'b00     ; 
-            ctrl_MEM     = 4'b0000   ;
-            sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ;
-            ctrl_CSRS    = 2'b00     ;
-        end
-        32'bxxxxxxx_xxxxx_xxxxx_010_xxxxx_0000011: begin //lw
-            imm          = immI(inst); 
-            sel_CMP      = 2'b00     ;
-            ctrl_CMP     = 1'b0      ;    
-            ctrl_ALU     = 5'b00001  ;         
-            sel_ALU      = 3'b001    ;         
-            sel_REGS     = 4'b0101   ;         
-            sel_PC       = 2'b00     ;
-            ctrl_MEM     = 4'b0010   ;
-            sel_MEM_addr = 3'b001    ;
-            sel_MEM_data = 3'b000    ;
-            ctrl_CSRS    = 2'b00     ;         
-        end
-        32'bxxxxxxx_xxxxx_xxxxx_011_xxxxx_0010011: begin //sltiu
-            imm          = immI(inst);
-            sel_CMP      = 2'b01     ;
-            ctrl_CMP     = 1'b0      ;     
-            ctrl_ALU     = 5'b00000  ;         
-            sel_ALU      = 3'b000    ;
-            if(CMP_out == 2'b01) begin
-                sel_REGS = 4'b0111;
-            end
-            else begin
-                sel_REGS = 4'b0110;
-            end        
-            sel_PC       = 2'b00     ;
-            ctrl_MEM     = 4'b0000   ;
-            sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ;
-            ctrl_CSRS    = 2'b00     ;               
-        end
-        32'bxxxxxxx_xxxxx_xxxxx_010_xxxxx_0010011: begin //slti
-            imm          = immI(inst);
-            sel_CMP      = 2'b01     ;
-            ctrl_CMP     = 1'b1      ;     
-            ctrl_ALU     = 5'b00000  ;         
-            sel_ALU      = 3'b000    ;
-            if(CMP_out == 2'b01) begin
-                sel_REGS = 4'b0111;
-            end
-            else begin
-                sel_REGS = 4'b0110;
-            end        
-            sel_PC       = 2'b00     ;
-            ctrl_MEM     = 4'b0000   ;
-            sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ;
-            ctrl_CSRS    = 2'b00     ;               
-        end
-        32'bxxxxxxx_xxxxx_xxxxx_000_xxxxx_0011011: begin //addiw
-            imm          = immI(inst); 
-            sel_CMP      = 2'b00     ;
-            ctrl_CMP     = 1'b0      ;    
-            ctrl_ALU     = 5'b00100  ;         
-            sel_ALU      = 3'b001    ;         
-            sel_REGS     = 4'b0001   ;         
-            sel_PC       = 2'b00     ;
-            ctrl_MEM     = 4'b0000   ;
-            sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ;
-            ctrl_CSRS    = 2'b00     ;         
-        end
-        32'bxxxxxxx_xxxxx_xxxxx_011_xxxxx_0000011: begin //ld
-            imm          = immI(inst); 
-            sel_CMP      = 2'b00     ;
-            ctrl_CMP     = 1'b0      ;    
-            ctrl_ALU     = 5'b00001  ;         
-            sel_ALU      = 3'b001    ;         
-            sel_REGS     = 4'b0101   ;         
-            sel_PC       = 2'b00     ;
-            ctrl_MEM     = 4'b001    ;
-            sel_MEM_addr = 3'b0001   ;
-            sel_MEM_data = 3'b000    ;
-            ctrl_CSRS    = 2'b00     ;         
-        end
-        32'b010000x_xxxxx_xxxxx_101_xxxxx_0010011: begin //srai
-            imm          = immI(inst); 
-            sel_CMP      = 2'b00     ;
-            ctrl_CMP     = 1'b0      ;    
-            ctrl_ALU     = 5'b00110  ;         
-            sel_ALU      = 3'b001    ;         
-            sel_REGS     = 4'b0001   ;         
-            sel_PC       = 2'b00     ;
-            ctrl_MEM     = 4'b0000   ;
-            sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ;
-            ctrl_CSRS    = 2'b00     ;         
-        end
-        32'bxxxxxxx_xxxxx_xxxxx_100_xxxxx_0000011: begin //lbu
-            imm          = immI(inst); 
-            sel_CMP      = 2'b00     ;
-            ctrl_CMP     = 1'b0      ;    
-            ctrl_ALU     = 5'b00001  ;         
-            sel_ALU      = 3'b001    ;         
-            sel_REGS     = 4'b0101   ;         
-            sel_PC       = 2'b00     ;
-            ctrl_MEM     = 4'b0111   ;
-            sel_MEM_addr = 3'b001    ;
-            sel_MEM_data = 3'b000    ;
-            ctrl_CSRS    = 2'b00     ;         
-        end
-        32'bxxxxxxx_xxxxx_xxxxx_111_xxxxx_0010011: begin //andi
-            imm          = immI(inst); 
-            sel_CMP      = 2'b00     ;
-            ctrl_CMP     = 1'b0      ;    
-            ctrl_ALU     = 5'b00111  ;         
-            sel_ALU      = 3'b001    ;         
-            sel_REGS     = 4'b0001   ;         
-            sel_PC       = 2'b00     ;
-            ctrl_MEM     = 4'b0000   ;
-            sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ;
-            ctrl_CSRS    = 2'b00     ;         
-        end
-        32'bxxxxxxx_xxxxx_xxxxx_100_xxxxx_0010011: begin //xori
-            imm          = immI(inst); 
-            sel_CMP      = 2'b00     ;
-            ctrl_CMP     = 1'b0      ;    
-            ctrl_ALU     = 5'b01001  ;         
-            sel_ALU      = 3'b001    ;         
-            sel_REGS     = 4'b0001   ;         
-            sel_PC       = 2'b00     ;
-            ctrl_MEM     = 4'b0000   ;
-            sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ;
-            ctrl_CSRS    = 2'b00     ;         
-        end
-        32'b000000x_xxxxx_xxxxx_101_xxxxx_0010011: begin //srli
-            imm          = immI(inst); 
-            sel_CMP      = 2'b00     ;
-            ctrl_CMP     = 1'b0      ;    
-            ctrl_ALU     = 5'b01011  ;         
-            sel_ALU      = 3'b001    ;         
-            sel_REGS     = 4'b0001   ;         
-            sel_PC       = 2'b00     ;
-            ctrl_MEM     = 4'b0000   ;
-            sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ;
-            ctrl_CSRS    = 2'b00     ;         
-        end
-        32'bxxxxxxx_xxxxx_xxxxx_001_xxxxx_0000011: begin //lh
-            imm          = immI(inst); 
-            sel_CMP      = 2'b00     ;
-            ctrl_CMP     = 1'b0      ;    
-            ctrl_ALU     = 5'b00001  ;         
-            sel_ALU      = 3'b001    ;         
-            sel_REGS     = 4'b0101   ;         
-            sel_PC       = 2'b00     ;
-            ctrl_MEM     = 4'b0011   ;
-            sel_MEM_addr = 3'b001    ;
-            sel_MEM_data = 3'b000    ;
-            ctrl_CSRS    = 2'b00     ;         
-        end
-        32'bxxxxxxx_xxxxx_xxxxx_101_xxxxx_0000011: begin //lhu
-            imm          = immI(inst); 
-            sel_CMP      = 2'b00     ;
-            ctrl_CMP     = 1'b0      ;    
-            ctrl_ALU     = 5'b00001  ;         
-            sel_ALU      = 3'b001    ;         
-            sel_REGS     = 4'b0101   ;         
-            sel_PC       = 2'b00     ;
-            ctrl_MEM     = 4'b0110   ;
-            sel_MEM_addr = 3'b001    ;
-            sel_MEM_data = 3'b000    ;
-            ctrl_CSRS    = 2'b00     ;         
-        end
-        32'b000000x_xxxxx_xxxxx_001_xxxxx_0011011: begin //slliw
-            imm          = immI(inst); 
-            sel_CMP      = 2'b00     ;
-            ctrl_CMP     = 1'b0      ;    
-            ctrl_ALU     = 5'b11010  ;         
-            sel_ALU      = 3'b001    ;         
-            sel_REGS     = 4'b0001   ;         
-            sel_PC       = 2'b00     ;
-            ctrl_MEM     = 4'b0000   ;
-            sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ;
-            ctrl_CSRS    = 2'b00     ;         
-        end
-        32'b010000x_xxxxx_xxxxx_101_xxxxx_0011011: begin //sraiw
-            imm          = immI(inst); 
-            sel_CMP      = 2'b00     ;
-            ctrl_CMP     = 1'b0      ;    
-            ctrl_ALU     = 5'b11011  ;         
-            sel_ALU      = 3'b001    ;         
-            sel_REGS     = 4'b0001   ;         
-            sel_PC       = 2'b00     ;
-            ctrl_MEM     = 4'b0000   ;
-            sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ;
-            ctrl_CSRS    = 2'b00     ;         
-        end
-        32'b000000x_xxxxx_xxxxx_101_xxxxx_0011011: begin //srliw
-            imm          = immI(inst); 
-            sel_CMP      = 2'b00     ;
-            ctrl_CMP     = 1'b0      ;    
-            ctrl_ALU     = 5'b11101  ;         
-            sel_ALU      = 3'b001    ;
-            if(imm[5:5] == 1'b0) begin
-                sel_REGS = 4'b0001;     
-            end
-            else begin
-                sel_REGS = 4'b0000;
-            end
-            sel_PC       = 2'b00     ;
-            ctrl_MEM     = 4'b0000   ;
-            sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ;
-            ctrl_CSRS    = 2'b00     ;         
-        end
-        32'bxxxxxxx_xxxxx_xxxxx_110_xxxxx_0000011: begin //lwu
-            imm          = immI(inst); 
-            sel_CMP      = 2'b00     ;
-            ctrl_CMP     = 1'b0      ;    
-            ctrl_ALU     = 5'b00001  ;         
-            sel_ALU      = 3'b001    ;         
-            sel_REGS     = 4'b0101   ;         
-            sel_PC       = 2'b00     ;
-            ctrl_MEM     = 4'b0101   ;
-            sel_MEM_addr = 3'b001    ;
-            sel_MEM_data = 3'b000    ;
-            ctrl_CSRS    = 2'b00     ;         
-        end
-        32'bxxxxxxx_xxxxx_xxxxx_110_xxxxx_0010011: begin //ori
-            imm          = immI(inst); 
-            sel_CMP      = 2'b00     ;
-            ctrl_CMP     = 1'b0      ;    
-            ctrl_ALU     = 5'b01010  ;         
-            sel_ALU      = 3'b001    ;         
-            sel_REGS     = 4'b0001   ;         
-            sel_PC       = 2'b00     ;
-            ctrl_MEM     = 4'b0000   ;
-            sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ;
-            ctrl_CSRS    = 2'b00     ;         
-        end
-        32'bxxxxxxx_xxxxx_xxxxx_000_xxxxx_0000011: begin //lb
-            imm          = immI(inst); 
-            sel_CMP      = 2'b00     ;
-            ctrl_CMP     = 1'b0      ;    
-            ctrl_ALU     = 5'b00001  ;         
-            sel_ALU      = 3'b001    ;         
-            sel_REGS     = 4'b0101   ;         
-            sel_PC       = 2'b00     ;
-            ctrl_MEM     = 4'b0100   ;
-            sel_MEM_addr = 3'b001    ;
-            sel_MEM_data = 3'b000    ;
-            ctrl_CSRS    = 2'b00     ;         
-        end
-        32'bxxxxxxx_xxxxx_xxxxx_001_xxxxx_1110011: begin //csrrw
-            imm          = immI(inst); 
-            sel_CMP      = 2'b00     ;
-            ctrl_CMP     = 1'b0      ;    
-            ctrl_ALU     = 5'b00000  ;         
-            sel_ALU      = 3'b000    ;         
-            sel_REGS     = 4'b1000   ;         
-            sel_PC       = 2'b00     ;
-            ctrl_MEM     = 4'b0000   ;
-            sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ;
-            ctrl_CSRS    = 2'b01     ;  
-        end
-        32'bxxxxxxx_xxxxx_xxxxx_010_xxxxx_1110011: begin //csrrs
-            imm          = immI(inst); 
-            sel_CMP      = 2'b00     ;
-            ctrl_CMP     = 1'b0      ;    
-            ctrl_ALU     = 5'b01010  ;         
-            sel_ALU      = 3'b110    ;         
-            sel_REGS     = 4'b1000   ;         
-            sel_PC       = 2'b00     ;
-            ctrl_MEM     = 4'b0000   ;
-            sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ;
-            ctrl_CSRS    = 2'b10     ;         
-        end     
-        32'b0000000_00000_00000_000_00000_1110011: begin //ecall
-            imm          = immI(inst); 
-            sel_CMP      = 2'b00     ;
-            ctrl_CMP     = 1'b0      ;    
-            ctrl_ALU     = 5'b00000  ;         
-            sel_ALU      = 3'b000    ;         
-            sel_REGS     = 4'b0000   ;         
-            sel_PC       = 2'b11     ;
-            ctrl_MEM     = 4'b0000   ;
-            sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ;
-            ctrl_CSRS    = 2'b11     ;         
-        end     
 
-    //Type-S
-        32'bxxxxxxx_xxxxx_xxxxx_011_xxxxx_0100011: begin //sd
-            imm          = immS(inst); 
-            sel_CMP      = 2'b00     ;
-            ctrl_CMP     = 1'b0      ;    
-            ctrl_ALU     = 5'b00001  ;         
-            sel_ALU      = 3'b001    ;         
-            sel_REGS     = 4'b0000   ;         
-            sel_PC       = 2'b00     ;
-            ctrl_MEM     = 4'b1000   ;
-            sel_MEM_addr = 3'b001    ;
-            sel_MEM_data = 3'b010    ;
-            ctrl_CSRS    = 2'b00     ;                        
-        end
-        32'bxxxxxxx_xxxxx_xxxxx_001_xxxxx_0100011: begin //sh
-            imm          = immS(inst); 
-            sel_CMP      = 2'b00     ;
-            ctrl_CMP     = 1'b0      ;    
-            ctrl_ALU     = 5'b00001  ;         
-            sel_ALU      = 3'b001    ;         
-            sel_REGS     = 4'b0000   ;         
-            sel_PC       = 2'b00     ;
-            ctrl_MEM     = 4'b1010   ;
-            sel_MEM_addr = 3'b001    ;
-            sel_MEM_data = 3'b010    ;
-            ctrl_CSRS    = 2'b00     ;                        
-        end
-        32'bxxxxxxx_xxxxx_xxxxx_000_xxxxx_0100011: begin //sb
-            imm          = immS(inst); 
-            sel_CMP      = 2'b00     ;
-            ctrl_CMP     = 1'b0      ;    
-            ctrl_ALU     = 5'b00001  ;         
-            sel_ALU      = 3'b001    ;         
-            sel_REGS     = 4'b0000   ;         
-            sel_PC       = 2'b00     ;
-            ctrl_MEM     = 4'b1011   ;
-            sel_MEM_addr = 3'b001    ;
-            sel_MEM_data = 3'b010    ;
-            ctrl_CSRS    = 2'b00     ;                        
-        end
-        32'bxxxxxxx_xxxxx_xxxxx_010_xxxxx_0100011: begin //sw
-            imm          = immS(inst); 
-            sel_CMP      = 2'b00     ;
-            ctrl_CMP     = 1'b0      ;    
-            ctrl_ALU     = 5'b00001  ;         
-            sel_ALU      = 3'b001    ;         
-            sel_REGS     = 4'b0000   ;         
-            sel_PC       = 2'b00     ;
-            ctrl_MEM     = 4'b1001   ;
-            sel_MEM_addr = 3'b001    ;
-            sel_MEM_data = 3'b010    ;
-            ctrl_CSRS    = 2'b00     ;                        
-        end
-
-    //Type-B
-        32'bxxxxxxx_xxxxx_xxxxx_000_xxxxx_1100011: begin //beq      
-            imm          = immB(inst);
-            sel_CMP      = 2'b00     ;
-            ctrl_CMP     = 1'b0      ;     
-            ctrl_ALU     = 5'b00001  ;         
-            sel_ALU      = 3'b100    ;         
-            sel_REGS     = 4'b0000   ; 
-            if(CMP_out == 2'b00) begin         
-                sel_PC   = 2'b01;
+//指令译码
+always@(*) begin  
+    if(ID_valid_in == 1'b0) begin
+        ID_next_pc  = 64'b0;
+        ID_valid_out = 1'b0;
+        ID_PC_ctrl  = 1'b0;
+        ID_CD_ctrl  = `CD_NOP;
+        ID_EXE_ctrl = `EXE_NOP;
+        ID_EXE_src  = `EXE_src_NOP;
+        ID_MEM_ctrl = `MEM_NOP;
+        ID_WB_ctrl  = `WB_NOP;
+    end
+    else begin
+        ID_next_pc  = 64'b0;
+        ID_valid_out = 1'b1;
+        ID_PC_ctrl  = 1'b0;
+        ID_CD_ctrl  = `CD_NOP;
+        ID_EXE_ctrl = `EXE_NOP;
+        ID_EXE_src  = `EXE_src_NOP;
+        ID_MEM_ctrl = `MEM_NOP;
+        ID_WB_ctrl  = `WB_NOP;
+        case(opcode)
+            `RV32_R: begin
+                ID_imm = ID_imm;
+                ID_EXE_src = `EXE_R_R;
+                ID_WB_ctrl = `WB_EXE;
+                case({funct7, funct3})
+                    `SLL: begin
+                        ID_EXE_ctrl = `EXE_SLL;
+                    end
+                    `SRL: begin
+                        ID_EXE_ctrl = `EXE_SRL;
+                    end
+                    `SRA: begin
+                        ID_EXE_ctrl = `EXE_SRA;
+                    end
+                    `ADD: begin
+                        ID_EXE_ctrl = `EXE_ADD;
+                    end
+                    `SUB: begin
+                        ID_EXE_ctrl = `EXE_SUB;
+                    end
+                    `XOR: begin
+                        ID_EXE_ctrl = `EXE_XOR;
+                    end
+                    `OR: begin
+                        ID_EXE_ctrl = `EXE_OR;
+                    end
+                    `AND: begin
+                        ID_EXE_ctrl = `EXE_AND;
+                    end
+                    `SLT: begin
+                        ID_EXE_ctrl = `EXE_SLT;
+                    end
+                    `SLTU: begin
+                        ID_EXE_ctrl = `EXE_SLTU;
+                    end
+                    `MUL: begin
+                        ID_EXE_ctrl = `EXE_MUL;
+                    end
+                    `MULH: begin
+                        ID_EXE_ctrl = `EXE_MULH;
+                    end
+                    `MULHSU: begin
+                        ID_EXE_ctrl = `EXE_MULHSU;
+                    end
+                    `MULHU: begin
+                        ID_EXE_ctrl = `EXE_MULHU;
+                    end
+                    `DIV: begin
+                        ID_EXE_ctrl = `EXE_DIV;
+                    end
+                    `DIVU: begin
+                        ID_EXE_ctrl = `EXE_DIVU;
+                    end
+                    `REM: begin
+                        ID_EXE_ctrl = `EXE_REM;
+                    end
+                    `REMU: begin
+                        ID_EXE_ctrl = `EXE_REMU;
+                    end
+                    default: begin
+                        ID_valid_out = 1'b0;
+                        invalid_inst();
+                    end
+                endcase
             end
-            else begin
-                sel_PC   = 2'b00;
-            end 
-            ctrl_MEM     = 4'b0000   ;
-            sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ;
-            ctrl_CSRS    = 2'b00     ;                 
-        end 
-        32'bxxxxxxx_xxxxx_xxxxx_001_xxxxx_1100011: begin //bne      
-            imm          = immB(inst);
-            sel_CMP      = 2'b00     ;
-            ctrl_CMP     = 1'b0      ;     
-            ctrl_ALU     = 5'b00001  ;         
-            sel_ALU      = 3'b100    ;         
-            sel_REGS     = 4'b0000   ;
-            if(CMP_out != 2'b00) begin         
-                sel_PC   = 2'b01;
+            `RV64_R: begin
+                ID_imm = ID_imm;
+                ID_EXE_src = `EXE_R_R;
+                ID_WB_ctrl = `WB_EXE;
+                case({funct7, funct3})
+                    `SLLW: begin
+                        ID_EXE_ctrl = `EXE_SLLW;
+                    end
+                    `SRLW: begin
+                        ID_EXE_ctrl = `EXE_SRLW;
+                    end
+                    `SRAW: begin
+                        ID_EXE_ctrl = `EXE_SRAW;
+                    end
+                    `ADDW: begin
+                        ID_EXE_ctrl = `EXE_ADDW;
+                    end
+                    `SUBW: begin
+                        ID_EXE_ctrl = `EXE_SUBW;
+                    end
+                    `MULW: begin
+                        ID_EXE_ctrl = `EXE_MULW;
+                    end
+                    `DIVW: begin
+                        ID_EXE_ctrl = `EXE_DIVW;
+                    end
+                    `DIVUW: begin
+                        ID_EXE_ctrl = `EXE_DIVUW;
+                    end
+                    `REMW: begin
+                        ID_EXE_ctrl = `EXE_REMW;
+                    end
+                    `REMUW: begin
+                        ID_EXE_ctrl = `EXE_REMUW;
+                    end
+                    default: begin
+                        ID_valid_out = 1'b0;
+                        invalid_inst();
+                    end
+                endcase
             end
-            else begin
-                sel_PC   = 2'b00;
-            end 
-            ctrl_MEM     = 4'b0000   ;
-            sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ;
-            ctrl_CSRS    = 2'b00     ;                 
-        end
-        32'bxxxxxxx_xxxxx_xxxxx_101_xxxxx_1100011: begin //bge      
-            imm          = immB(inst);
-            sel_CMP      = 2'b00     ;
-            ctrl_CMP     = 1'b1      ;     
-            ctrl_ALU     = 5'b00001  ;         
-            sel_ALU      = 3'b100    ;         
-            sel_REGS     = 4'b0000   ;
-            if(CMP_out == 2'b00 || CMP_out == 2'b10) begin         
-                sel_PC   = 2'b01;
+            `RV32_I: begin
+                ID_imm = immI(ID_inst);
+                ID_EXE_src = `EXE_R_I;
+                ID_WB_ctrl = `WB_EXE;
+                case(funct3)
+                    `FUN3_SLLI: begin
+                        case(funct6)
+                            `FUN6_SLLI: begin
+                                ID_EXE_ctrl = `EXE_SLL;
+                            end
+                            default: begin
+                                ID_valid_out = 1'b0;
+                                invalid_inst();
+                            end
+                        endcase
+                    end
+                    `FUN3_SRI: begin
+                        case(funct6)
+                            `FUN6_SRLI: begin
+                                ID_EXE_ctrl = `EXE_SRL;
+                            end
+                            `FUN6_SRAI: begin
+                                ID_EXE_ctrl = `EXE_SRA;
+                            end
+                            default: begin
+                                invalid_inst();
+                            end
+                        endcase
+                    end
+                    `ADDI: begin
+                        ID_EXE_ctrl = `EXE_ADD;
+                    end
+                    `XORI: begin
+                        ID_EXE_ctrl = `EXE_XOR;
+                    end
+                    `ORI: begin
+                        ID_EXE_ctrl = `EXE_OR;
+                    end
+                    `ANDI: begin
+                        ID_EXE_ctrl = `EXE_AND;
+                    end
+                    `SLTI: begin
+                        ID_EXE_ctrl = `EXE_SLT;
+                    end
+                    `SLTIU: begin
+                        ID_EXE_ctrl = `EXE_SLTU;
+                    end
+                endcase
             end
-            else begin
-                sel_PC   = 2'b00;
-            end 
-            ctrl_MEM     = 4'b0000   ;
-            sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ;
-            ctrl_CSRS    = 2'b00     ;                 
-        end 
-        32'bxxxxxxx_xxxxx_xxxxx_111_xxxxx_1100011: begin //bgeu      
-            imm          = immB(inst);
-            sel_CMP      = 2'b00     ;
-            ctrl_CMP     = 1'b0      ;     
-            ctrl_ALU     = 5'b00001  ;         
-            sel_ALU      = 3'b100    ;         
-            sel_REGS     = 4'b0000   ;
-            if(CMP_out == 2'b00 || CMP_out == 2'b10) begin         
-                sel_PC   = 2'b01;
+            `RV64_I: begin
+                ID_imm = immI(ID_inst);
+                ID_EXE_src = `EXE_R_I;
+                ID_WB_ctrl = `WB_EXE;
+                case(funct3)
+                    `FUN3_SLLIW: begin
+                        case(funct6)
+                            `FUN6_SLLIW: begin
+                                ID_EXE_ctrl = `EXE_SLLW;
+                                case(shamt[5:5])
+                                    1'b0: begin
+                                        ID_valid_out = 1'b0;
+                                    end
+                                    default: begin
+                                        ID_valid_out = 1'b1;
+                                    end
+                                endcase
+                            end
+                            default: begin
+                                ID_valid_out = 1'b0;
+                                invalid_inst();
+                            end
+                        endcase
+                    end
+                    `FUN3_SRIW: begin
+                        case(funct6)
+                            `FUN6_SRLIW: begin
+                                ID_EXE_ctrl = `EXE_SRLW;
+                                case(shamt[5:5])
+                                    1'b0: begin
+                                        ID_valid_out = 1'b0;
+                                    end
+                                    default: begin
+                                        ID_valid_out = 1'b1;
+                                    end
+                                endcase
+                            end
+                            `FUN6_SRAIW: begin
+                                ID_EXE_ctrl = `EXE_SRAW;
+                                case(shamt[5:5])
+                                    1'b0: begin
+                                        ID_valid_out = 1'b0;
+                                    end
+                                    default: begin
+                                        ID_valid_out = 1'b1;
+                                    end
+                                endcase
+                            end
+                            default: begin
+                                ID_valid_out = 1'b0;
+                                invalid_inst();
+                            end
+                        endcase
+                    end
+                    `ADDIW: begin
+                        ID_EXE_ctrl = `EXE_ADDW;
+                    end
+                    default: begin
+                        ID_valid_out = 1'b0;
+                        invalid_inst();
+                    end
+                endcase
             end
-            else begin
-                sel_PC   = 2'b00;
-            end 
-            ctrl_MEM     = 4'b0000   ;
-            sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ;
-            ctrl_CSRS    = 2'b00     ;                 
-        end 
-        32'bxxxxxxx_xxxxx_xxxxx_110_xxxxx_1100011: begin //bltu      
-            imm          = immB(inst);
-            sel_CMP      = 2'b00     ;
-            ctrl_CMP     = 1'b0      ;     
-            ctrl_ALU     = 5'b00001  ;         
-            sel_ALU      = 3'b100    ;         
-            sel_REGS     = 4'b0000   ;
-            if(CMP_out == 2'b01) begin         
-                sel_PC   = 2'b01;
+            `Stores: begin
+                ID_imm = immS(ID_inst);
+                ID_EXE_ctrl = `EXE_ADD;
+                ID_EXE_src = `EXE_R_I;
+                case(funct3)
+                    `SB: begin
+                        ID_MEM_ctrl = `MEM_SB;
+                    end
+                    `SH: begin
+                        ID_MEM_ctrl = `MEM_SH;
+                    end
+                    `SW: begin
+                        ID_MEM_ctrl = `MEM_SW;
+                    end
+                    `SD: begin
+                        ID_MEM_ctrl = `MEM_SD;
+                    end
+                    default: begin
+                        ID_valid_out = 1'b0;
+                        invalid_inst();
+                    end
+                endcase
             end
-            else begin
-                sel_PC   = 2'b00;
-            end 
-            ctrl_MEM     = 4'b0000   ;
-            sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ;
-            ctrl_CSRS    = 2'b00     ;                 
-        end 
-        32'bxxxxxxx_xxxxx_xxxxx_100_xxxxx_1100011: begin //blt     
-            imm          = immB(inst);
-            sel_CMP      = 2'b00     ;
-            ctrl_CMP     = 1'b1      ;     
-            ctrl_ALU     = 5'b00001  ;         
-            sel_ALU      = 3'b100    ;         
-            sel_REGS     = 4'b0000   ; 
-            if(CMP_out == 2'b01) begin         
-                sel_PC   = 2'b01;
+            `Loads: begin
+                ID_imm = immI(ID_inst);
+                ID_EXE_ctrl = `EXE_ADD;
+                ID_EXE_src = `EXE_R_I;
+                ID_WB_ctrl = `WB_MEM;
+                case(funct3)
+                    `LB: begin
+                        ID_MEM_ctrl = `MEM_LB;
+                    end
+                    `LH: begin
+                        ID_MEM_ctrl = `MEM_LH;
+                    end
+                    `LBU: begin
+                        ID_MEM_ctrl = `MEM_LBU;
+                    end
+                    `LHU: begin
+                        ID_MEM_ctrl = `MEM_LHU;
+                    end
+                    `LW: begin
+                        ID_MEM_ctrl = `MEM_LW;
+                    end
+                    `LWU: begin
+                        ID_MEM_ctrl = `MEM_LWU;
+                    end
+                    `LD: begin
+                        ID_MEM_ctrl = `MEM_LD;
+                    end
+                    default: begin
+                        ID_valid_out = 1'b0;
+                        invalid_inst();
+                    end
+                endcase
             end
-            else begin
-                sel_PC   = 2'b00;
-            end 
-            ctrl_MEM     = 4'b0000   ;
-            sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ;
-            ctrl_CSRS    = 2'b00     ;                 
-        end 
-        
-
-    //Type-U  
-        32'bxxxxxxx_xxxxx_xxxxx_xxx_xxxxx_0010111: begin //auipc      
-            imm          = immU(inst);
-            sel_CMP      = 2'b00     ;
-            ctrl_CMP     = 1'b0      ;     
-            ctrl_ALU     = 5'b00001  ;         
-            sel_ALU      = 3'b100    ;         
-            sel_REGS     = 4'b0001   ;         
-            sel_PC       = 2'b00     ;
-            ctrl_MEM     = 4'b0000   ;
-            sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ;
-            ctrl_CSRS    = 2'b00     ;               
-        end
-        32'bxxxxxxx_xxxxx_xxxxx_xxx_xxxxx_0110111: begin //lui
-            imm          = immU(inst);
-            sel_CMP      = 2'b00     ;
-            ctrl_CMP     = 1'b0      ;     
-            ctrl_ALU     = 5'b00000  ;         
-            sel_ALU      = 3'b000    ;         
-            sel_REGS     = 4'b0100   ;         
-            sel_PC       = 2'b00     ;
-            ctrl_MEM     = 4'b0000   ;
-            sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ;
-            ctrl_CSRS    = 2'b00     ;         
-        end
-
-    //Type-J
-        32'bxxxxxxx_xxxxx_xxxxx_xxx_xxxxx_1101111: begin //jal
-            imm          = immJ(inst); 
-            sel_CMP      = 2'b00     ;
-            ctrl_CMP     = 1'b0      ;    
-            ctrl_ALU     = 5'b00001  ;         
-            sel_ALU      = 3'b100    ;         
-            sel_REGS     = 4'b0011   ;         
-            sel_PC       = 2'b01     ;
-            ctrl_MEM     = 4'b0000   ;
-            sel_MEM_addr = 3'b000    ;
-            sel_MEM_data = 3'b000    ;
-            ctrl_CSRS    = 2'b00     ;   
-        end 
-
-        32'b0000000_00001_00000_000_00000_1110011: begin //ebreak
-            ebreak();          
-        end
-        default: begin
-            invalid_inst();
-        end
-    endcase
+            `Branches: begin
+                ID_imm = immB(ID_inst);
+                ID_PC_ctrl = 1'b1;
+                ID_CD_ctrl = `CD_BRANCHES;
+                case(funct3)
+                    `BEQ: begin
+                        if(ID_rs1_data == ID_rs2_data) begin
+                            ID_next_pc = ID_pc + ID_imm;
+                        end
+                        else begin
+                            ID_PC_ctrl = 1'b0;
+                        end
+                    end
+                    `BNE: begin
+                        if(ID_rs1_data != ID_rs2_data) begin
+                            ID_next_pc = ID_pc + ID_imm;
+                        end
+                        else begin
+                            ID_PC_ctrl = 1'b0;
+                        end
+                    end
+                    `BLT: begin
+                        if($signed(ID_rs1_data) < $signed(ID_rs2_data)) begin
+                            ID_next_pc = ID_pc + ID_imm;
+                        end
+                        else begin
+                            ID_PC_ctrl = 1'b0;
+                        end
+                    end
+                    `BGE: begin
+                        if($signed(ID_rs1_data) >= $signed(ID_rs2_data)) begin
+                            ID_next_pc = ID_pc + ID_imm;
+                        end
+                        else begin
+                            ID_PC_ctrl = 1'b0;
+                        end
+                    end
+                    `BLTU: begin
+                        if(ID_rs1_data < ID_rs2_data) begin
+                            ID_next_pc = ID_pc + ID_imm;
+                        end
+                        else begin
+                            ID_PC_ctrl = 1'b0;
+                        end
+                    end
+                    `BGEU: begin
+                        if(ID_rs1_data >= ID_rs2_data) begin
+                            ID_next_pc = ID_pc + ID_imm;
+                        end
+                        else begin
+                            ID_PC_ctrl = 1'b0;
+                        end
+                    end
+                    default: begin
+                        ID_CD_ctrl = `CD_NOP;
+                        ID_PC_ctrl = 1'b0;
+                        invalid_inst();
+                    end
+                endcase
+            end
+            `Jal: begin
+                ID_imm = immJ(ID_inst);
+                ID_next_pc = ID_pc + ID_imm;
+                ID_PC_ctrl = 1'b1;
+                ID_CD_ctrl = `CD_JAL;
+                ID_WB_ctrl = `WB_SNPC;
+            end
+            `Jalr: begin
+                ID_imm = immI(ID_inst);
+                case(funct3)
+                    `JALR: begin
+                        ID_next_pc = ID_rs1_data + ID_imm;
+                        ID_PC_ctrl = 1'b1;
+                        ID_CD_ctrl = `CD_JALR;
+                        ID_WB_ctrl = `WB_SNPC;
+                    end
+                    default: begin
+                        ID_valid_out = 1'b0;
+                        invalid_inst();
+                    end
+                endcase
+            end
+            `Lui: begin
+                ID_imm = immU(ID_inst);
+                ID_WB_ctrl = `WB_IMM;
+            end
+            `Auipc: begin
+                ID_imm = immU(ID_inst);
+                ID_EXE_ctrl = `EXE_ADD;
+                ID_EXE_src = `EXE_PC_I;
+                ID_WB_ctrl = `WB_EXE;
+            end
+            `Privileged: begin
+                ID_imm = ID_imm;
+                case(ID_inst[31:7])
+                    `ECALL: begin
+                        ID_next_pc = ID_csr_mtvec;
+                        ID_PC_ctrl = 1'b1;
+                        ID_CD_ctrl = `CD_ECALL;
+                        ID_WB_ctrl = `WB_ECALL;
+                    end
+                    `MRET: begin
+                        ID_next_pc = ID_csr_mepc;
+                        ID_PC_ctrl = 1'b1;
+                        ID_CD_ctrl = `CD_MRET;
+                    end
+                    `EBREAK: begin
+                        ID_CD_ctrl = `CD_EBREAK;
+                    end
+                    default: begin
+                        case(funct3)
+                            `CSRRW: begin
+                                ID_WB_ctrl = `WB_CSRRW;
+                            end
+                            `CSRRS: begin
+                                ID_EXE_ctrl = `EXE_OR;
+                                ID_EXE_src = `EXE_R_CSR;
+                                ID_WB_ctrl = `WB_CSRRS;
+                            end
+                            `CSRRC: begin
+                                ID_EXE_ctrl = `EXE_ADD;
+                                ID_EXE_src = `EXE_NOTR_CSR;
+                                ID_WB_ctrl = `WB_CSRRC;
+                            end
+                            `CSRRWI: begin
+                                ID_WB_ctrl = `WB_CSRRWI;
+                            end
+                            `CSRRSI: begin
+                                ID_EXE_ctrl = `EXE_OR;
+                                ID_EXE_src = `EXE_CSR_ZIMM;
+                                ID_WB_ctrl = `WB_CSRRSI;
+                            end
+                            `CSRRCI: begin
+                                ID_EXE_ctrl = `EXE_AND;
+                                ID_EXE_src = `EXE_CSR_NOTZIMM;
+                                ID_WB_ctrl = `WB_CSRRCI;
+                            end
+                            default: begin
+                                ID_valid_out = 1'b0;
+                                invalid_inst();
+                            end
+                        endcase
+                    end
+                endcase
+            end
+            default: begin
+                ID_valid_out = 1'b0;
+                invalid_inst();
+            end
+        endcase
+    end
 end
-/* verilator lint_on CASEX */
+
 
 endmodule
