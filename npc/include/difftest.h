@@ -5,6 +5,8 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+//#define DIFFTEST
+
 typedef uint32_t paddr_t;
 
 extern "C" void difftest_memcpy(paddr_t addr, uint8_t *buf, size_t n, bool direction);

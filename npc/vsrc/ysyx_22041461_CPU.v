@@ -5,18 +5,19 @@ module ysyx_22041461_CPU(
     input   wire [0:0]  rst ,
     output  wire [63:0] pc  ,
     output  wire [31:0] inst
-);
+); 
 
 
-wire [0:0]  CD_IF_valid   ; 
-wire [0:0]  CD_IF_enable  ; 
-wire [0:0]  CD_ID_valid   ; 
-wire [0:0]  CD_ID_enable  ; 
-wire [0:0]  CD_EXE_valid  ; 
-wire [0:0]  CD_EXE_enable ; 
-wire [0:0]  CD_MEM_valid  ; 
-wire [0:0]  CD_MEM_enable ; 
-wire [0:0]  CD_WB_valid   ; 
+wire [0:0]  CD_IFreg_valid   ; 
+wire [0:0]  CD_IFreg_enable  ; 
+wire [0:0]  CD_IDreg_valid   ; 
+wire [0:0]  CD_IDreg_enable  ; 
+wire [0:0]  CD_EXEreg_valid  ; 
+wire [0:0]  CD_EXEreg_enable ; 
+wire [0:0]  CD_MEMreg_valid  ; 
+wire [0:0]  CD_MEM_valid     ; 
+wire [0:0]  CD_MEMreg_enable ; 
+wire [0:0]  CD_WBreg_valid   ; 
 
 wire [63:0] IFreg_pc       ;
 wire [0:0]  IFreg_valid_out;
@@ -102,8 +103,8 @@ ysyx_22041461_IF_reg IF_reg(
 
     .clk                (clk),
     .flush              (rst),
-    .IFreg_valid_fromCD (CD_IF_valid),
-    .IFreg_enable       (CD_IF_enable),
+    .IFreg_valid_fromCD (CD_IFreg_valid),
+    .IFreg_enable       (CD_IFreg_enable),
     .IFreg_ctrl         (ID_PC_ctrl),
     .IFreg_next_pc      (ID_next_pc),
 
@@ -126,10 +127,10 @@ ysyx_22041461_ID_reg ID_reg(
 
     .clk                (clk),
     .flush              (rst),
-    .IDreg_enable       (CD_ID_enable),
+    .IDreg_enable       (CD_IDreg_enable),
 
     .IDreg_valid_fromIF (IF_valid_out),
-    .IDreg_valid_fromCD (CD_ID_valid),
+    .IDreg_valid_fromCD (CD_IDreg_valid),
     .IDreg_inst_in      (IF_inst),
     .IDreg_pc_in        (IFreg_pc),
 
@@ -169,9 +170,9 @@ ysyx_22041461_EXE_reg EXE_reg(
 
     .clk                 (clk),
     .flush               (rst),
-    .EXEreg_enable       (CD_EXE_enable),
+    .EXEreg_enable       (CD_EXEreg_enable),
 
-    .EXEreg_valid_fromCD (CD_EXE_valid) ,
+    .EXEreg_valid_fromCD (CD_EXEreg_valid) ,
     .EXEreg_valid_fromID (ID_valid_out),
 
     .EXEreg_rd_in        (ID_rd),
@@ -221,10 +222,10 @@ ysyx_22041461_MEM_reg MEM_reg(
 
     .clk                  (clk),
     .flush                (rst),
-    .MEMreg_enable        (CD_MEM_enable),
+    .MEMreg_enable        (CD_MEMreg_enable),
 
     .MEMreg_valid_fromEXE (EXE_valid_out),
-    .MEMreg_valid_fromCD  (CD_MEM_valid),
+    .MEMreg_valid_fromCD  (CD_MEMreg_valid),
 
     .MEMreg_EXE_in        (EXE_out),
     .MEMreg_rd_in         (EXEreg_rd_out ),
@@ -252,13 +253,14 @@ ysyx_22041461_MEM_reg MEM_reg(
 
 ysyx_22041461_MEM MEM(
 
-    .MEM_valid_in  (MEMreg_valid_out),
-    .MEM_EXE_in    (MEMreg_EXE_out),
-    .MEM_rs2_data  (WB_MEM_rs2_data),
-    .MEM_ctrl      (MEMreg_MEM_ctrl_out),
+    .MEM_valid_in       (MEMreg_valid_out),
+    .MEM_write_valid    (CD_MEM_valid),
+    .MEM_EXE_in         (MEMreg_EXE_out),
+    .MEM_rs2_data       (WB_MEM_rs2_data),
+    .MEM_ctrl           (MEMreg_MEM_ctrl_out),
 
-    .MEM_valid_out (MEM_valid_out),
-    .MEM_out       (MEM_out) 
+    .MEM_valid_out      (MEM_valid_out),
+    .MEM_out            (MEM_out) 
 );
 
 ysyx_22041461_WB_reg WB_reg(
@@ -268,7 +270,7 @@ ysyx_22041461_WB_reg WB_reg(
     .WBreg_enable        (1'b1),
 
     .WBreg_valid_fromMEM (MEM_valid_out),
-    .WBreg_valid_fromCD  (CD_WB_valid),
+    .WBreg_valid_fromCD  (CD_WBreg_valid),
 
     .WBreg_EXE_in        (MEMreg_EXE_out),
     .WBreg_MEM_in        (MEM_out),
@@ -297,7 +299,7 @@ ysyx_22041461_WB WB(
 
     .clk             (clk),
     .flush           (rst),
-    .WB_valid        (CD_WB_valid),
+    .WB_valid        (WBreg_valid_out),
 
     .WB_ID_rs1       (ID_rs1),
     .WB_ID_rs2       (ID_rs2),
@@ -336,6 +338,8 @@ ysyx_22041461_CD CD(
     
     .CD_ctrl         (ID_CD_ctrl),
 
+    .CD_IF_ctrl      (ID_PC_ctrl),
+
     .CD_ID_valid_in  (IDreg_valid_out),
     .CD_ID_rs1       (ID_rs1),
     .CD_ID_rs2       (ID_rs2),
@@ -361,15 +365,16 @@ ysyx_22041461_CD CD(
     .CD_WB_rd        (WBreg_rd_out),
     .CD_WB_csr       (WBreg_csr_out),
 
-    .CD_IF_valid     (CD_IF_valid  ),
-    .CD_IF_enable    (CD_IF_enable ),
-    .CD_ID_valid     (CD_ID_valid  ),
-    .CD_ID_enable    (CD_ID_enable ),
-    .CD_EXE_valid    (CD_EXE_valid ),
-    .CD_EXE_enable   (CD_EXE_enable),
-    .CD_MEM_valid    (CD_MEM_valid ),
-    .CD_MEM_enable   (CD_MEM_enable),
-    .CD_WB_valid     (CD_WB_valid  )
+    .CD_IFreg_valid     (CD_IFreg_valid  ),
+    .CD_IFreg_enable    (CD_IFreg_enable ),
+    .CD_IDreg_valid     (CD_IDreg_valid  ),
+    .CD_IDreg_enable    (CD_IDreg_enable ),
+    .CD_EXEreg_valid    (CD_EXEreg_valid ),
+    .CD_EXEreg_enable   (CD_EXEreg_enable),
+    .CD_MEMreg_valid    (CD_MEMreg_valid ),
+    .CD_MEM_valid       (CD_MEM_valid),
+    .CD_MEMreg_enable   (CD_MEMreg_enable),
+    .CD_WBreg_valid     (CD_WBreg_valid  )
 );
 
 endmodule

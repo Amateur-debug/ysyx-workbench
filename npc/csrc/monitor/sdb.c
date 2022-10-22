@@ -13,7 +13,7 @@
 // calculate the length of an array
 #define ARRLEN(arr) (int)(sizeof(arr) / sizeof(arr[0]))
 
-static int is_batch_mode = false;
+static int is_batch_mode = true;
 static int wp_number = 0;
 WP *HEAD = NULL;
 

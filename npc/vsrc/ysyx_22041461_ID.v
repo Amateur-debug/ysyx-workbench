@@ -270,10 +270,10 @@ always@(*) begin
                                 ID_EXE_ctrl = `EXE_SLLW;
                                 case(shamt[5:5])
                                     1'b0: begin
-                                        ID_valid_out = 1'b0;
+                                        ID_valid_out = 1'b1;
                                     end
                                     default: begin
-                                        ID_valid_out = 1'b1;
+                                        ID_valid_out = 1'b0;
                                     end
                                 endcase
                             end
@@ -289,10 +289,10 @@ always@(*) begin
                                 ID_EXE_ctrl = `EXE_SRLW;
                                 case(shamt[5:5])
                                     1'b0: begin
-                                        ID_valid_out = 1'b0;
+                                        ID_valid_out = 1'b1;
                                     end
                                     default: begin
-                                        ID_valid_out = 1'b1;
+                                        ID_valid_out = 1'b0;
                                     end
                                 endcase
                             end
@@ -300,10 +300,10 @@ always@(*) begin
                                 ID_EXE_ctrl = `EXE_SRAW;
                                 case(shamt[5:5])
                                     1'b0: begin
-                                        ID_valid_out = 1'b0;
+                                        ID_valid_out = 1'b1;
                                     end
                                     default: begin
-                                        ID_valid_out = 1'b1;
+                                        ID_valid_out = 1'b0;
                                     end
                                 endcase
                             end
@@ -449,7 +449,7 @@ always@(*) begin
                 ID_imm = immI(ID_inst);
                 case(funct3)
                     `JALR: begin
-                        ID_next_pc = ID_rs1_data + ID_imm;
+                        ID_next_pc = (ID_rs1_data + ID_imm) & ~64'b1;
                         ID_PC_ctrl = 1'b1;
                         ID_CD_ctrl = `CD_JALR;
                         ID_WB_ctrl = `WB_SNPC;
