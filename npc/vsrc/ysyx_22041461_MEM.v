@@ -3,6 +3,7 @@
 module ysyx_22041461_MEM(
 
     input  wire  [0:0]   MEM_valid_in   ,
+    input  wire  [0:0]   MEM_write_valid,
     input  wire  [63:0]  MEM_EXE_in     ,
     input  wire  [63:0]  MEM_rs2_data   ,
     input  wire  [3:0]   MEM_ctrl,  
@@ -31,7 +32,7 @@ reg [7:0]   wmask2;
 assign MEM_valid_out = MEM_valid_in;
 
 always@(*) begin
-    if(MEM_valid_in == 1'b0) begin
+    if(MEM_valid_in == 1'b0)begin
         read_data1 = 64'd0;
         read_data2 = 64'd0; 
     end
@@ -210,7 +211,7 @@ always@(*) begin
 end
 
 always@(*) begin
-    if(MEM_valid_in == 1'b1) begin
+    if(MEM_valid_in == 1'b1 && MEM_write_valid == 1'b1) begin
         if(MEM_ctrl == `MEM_SB || MEM_ctrl == `MEM_SH || MEM_ctrl == `MEM_SW || MEM_ctrl == `MEM_SD) begin
             pmem_write(MEM_EXE_in, write_data1, wmask1);
             pmem_write((MEM_EXE_in + 64'd8), write_data2, wmask2);
