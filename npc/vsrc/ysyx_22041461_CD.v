@@ -3,7 +3,9 @@
 //conflict detector
 module ysyx_22041461_CD(  
     
-    input   wire  [2:0]  CD_ctrl     ,
+    input   wire  [2:0]  CD_ctrl        ,
+
+    input   wire  [0:0]  CD_IF_ctrl     ,
 
     input   wire  [0:0]  CD_ID_valid_in ,
     input   wire  [4:0]  CD_ID_rs1      ,
@@ -442,7 +444,7 @@ end
 
 always@(*) begin
     CD_IF_enable = 1'b1;
-    if(ID_rs1_read == 1'b1) begin
+     if(ID_rs1_read == 1'b1) begin
         if(EXE_rd_write == 1'b1) begin
             if(CD_ID_rs1 == CD_EXE_rd) begin
                 CD_IF_enable = 1'b0;
@@ -572,26 +574,14 @@ always@(*) begin
             end
         end
     end
-    if(CD_ID_valid_in == 1'b1) begin
-        if(CD_ctrl == `CD_EBREAK) begin
-            CD_IF_enable = 1'b0;
-        end
-    end
 end
 
 always@(*) begin
     CD_ID_valid = 1'b1;
-    if(ID_rs1_read == 1'b1) begin
-        CD_ID_valid = 1'b0;
-    end
-    if(ID_rs2_read == 1'b1) begin
-        CD_ID_valid = 1'b0;
-    end
-    if(ID_mtvec_read == 1'b1) begin
-        CD_ID_valid = 1'b0;
-    end
-    if(ID_mepc_read == 1'b1) begin
-        CD_ID_valid = 1'b0;
+    if(CD_ID_valid_in == 1'b1) begin
+        if(CD_IF_ctrl == 1'b1) begin
+            CD_ID_valid = 1'b0;
+        end
     end
 end
 

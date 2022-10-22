@@ -22,7 +22,8 @@ int is_difftest_next = 1;
 
 
 void ebreak(){      //结束指令
-  set_npc_state(NPC_END, top->pc, 1);
+  extern uint64_t *cpu_gpr;
+  set_npc_state(NPC_END, top->pc, cpu_gpr[10]);
 }
 
 void invalid_inst(){  
@@ -154,8 +155,14 @@ void cpu_exec(uint64_t n){
     #ifdef DIFFTEST 
       difftest_exec(1); 
     #endif
-    out = (char *)"HIT GOOD TRAP"; 
-      printf("npc: %s at pc = 0x%016x\n", out, npc_state.halt_pc ); break;
+    extern uint64_t *cpu_gpr;
+    if(cpu_gpr[10] == 0){
+      out = (char *)"HIT GOOD TRAP"; 
+    }
+    else{
+      out = (char *)"ABORT";
+    }
+      printf("npc: %s at pc = 0x%016x\n", out, npc_state.halt_pc); break;
     case NPC_ABORT: out = (char *)"ABORT"; 
       printf("npc: %s at pc = 0x%016x\n", out, npc_state.halt_pc); break;
     default: out = (char *)"HIT BAD TRAP"; 

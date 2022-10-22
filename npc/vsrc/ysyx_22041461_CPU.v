@@ -336,6 +336,8 @@ ysyx_22041461_CD CD(
     
     .CD_ctrl         (ID_CD_ctrl),
 
+    .CD_IF_ctrl      (ID_PC_ctrl),
+
     .CD_ID_valid_in  (IDreg_valid_out),
     .CD_ID_rs1       (ID_rs1),
     .CD_ID_rs2       (ID_rs2),
