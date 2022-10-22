@@ -22,9 +22,11 @@ VerilatedVcdC* tfp = new VerilatedVcdC; //导出vcd波形需要加此语句
 
 int main(int argc, char **argv){
   Verilated::commandArgs(argc, argv); 
+  #ifdef WAVE
   Verilated::traceEverOn(true); //导出vcd波形需要加此语句
   top->trace(tfp, 0);   
   tfp->open("wave.vcd"); //打开vcd
+  #endif
 
   set_npc_state(NPC_STOP, 0x80000000, 0);
   init_mem();
@@ -37,7 +39,9 @@ int main(int argc, char **argv){
   sdb_mainloop();
 
   top->final();
+  #ifdef WAVE
   tfp->close();
+  #endif
   delete top;
  
   return 0;
