@@ -113,6 +113,7 @@ extern "C" void pmem_read(long long raddr, long long *rdata) {
   else{
     printf("read越界地址为: 0x%016llx\n", raddr);
     npc_state.state = NPC_ABORT;
+    *rdata = 0;
     is_difftest_next = 1;
   }
 }

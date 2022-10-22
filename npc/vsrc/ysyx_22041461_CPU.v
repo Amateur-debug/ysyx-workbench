@@ -5,7 +5,7 @@ module ysyx_22041461_CPU(
     input   wire [0:0]  rst ,
     output  wire [63:0] pc  ,
     output  wire [31:0] inst
-);
+); 
 
 
 wire [0:0]  CD_IF_valid   ; 

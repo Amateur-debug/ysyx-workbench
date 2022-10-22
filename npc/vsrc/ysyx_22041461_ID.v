@@ -270,10 +270,10 @@ always@(*) begin
                                 ID_EXE_ctrl = `EXE_SLLW;
                                 case(shamt[5:5])
                                     1'b0: begin
-                                        ID_valid_out = 1'b0;
+                                        ID_valid_out = 1'b1;
                                     end
                                     default: begin
-                                        ID_valid_out = 1'b1;
+                                        ID_valid_out = 1'b0;
                                     end
                                 endcase
                             end
@@ -289,10 +289,10 @@ always@(*) begin
                                 ID_EXE_ctrl = `EXE_SRLW;
                                 case(shamt[5:5])
                                     1'b0: begin
-                                        ID_valid_out = 1'b0;
+                                        ID_valid_out = 1'b1;
                                     end
                                     default: begin
-                                        ID_valid_out = 1'b1;
+                                        ID_valid_out = 1'b0;
                                     end
                                 endcase
                             end
@@ -300,10 +300,10 @@ always@(*) begin
                                 ID_EXE_ctrl = `EXE_SRAW;
                                 case(shamt[5:5])
                                     1'b0: begin
-                                        ID_valid_out = 1'b0;
+                                        ID_valid_out = 1'b1;
                                     end
                                     default: begin
-                                        ID_valid_out = 1'b1;
+                                        ID_valid_out = 1'b0;
                                     end
                                 endcase
                             end
