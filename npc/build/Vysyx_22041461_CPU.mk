@@ -40,7 +40,7 @@ VM_USER_CFLAGS = \
 	-fPIC \
 	-I \
 	/home/cxy/ysyx-workbench/npc/include \
-	-DIMG=/home/cxy/ysyx-workbench/am-kernels/tests/cpu-tests/build/shift-riscv64-npc.bin \
+	-DIMG=/home/cxy/ysyx-workbench/am-kernels/tests/cpu-tests/build/recursion-riscv64-npc.bin \
 
 # User LDLIBS (from -LDFLAGS on Verilator command line)
 VM_USER_LDLIBS = \

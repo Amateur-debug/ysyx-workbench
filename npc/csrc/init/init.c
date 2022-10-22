@@ -72,7 +72,7 @@ void init_sdb() {
   init_mtrace();
 #endif
 }
-
+#ifdef DIFFTEST
 void init_difftest(){
   extern uint64_t *cpu_gpr;
   extern uint64_t *cpu_pc;
@@ -81,6 +81,7 @@ void init_difftest(){
   difftest_memcpy(0x80000000, pmem, sizeof(img), DIFFTEST_TO_REF);
   difftest_regcpy(cpu_gpr, cpu_pc, DIFFTEST_TO_REF);
 }
+#endif
 
 void init_device() {
   init_map();

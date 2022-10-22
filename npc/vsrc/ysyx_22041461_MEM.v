@@ -13,8 +13,6 @@ module ysyx_22041461_MEM(
 
 import "DPI-C" function void ebreak();
 
-import "DPI-C" function void pmem_read_pc(input longint rMEM_EXE_in, output longint rdata);
-
 import "DPI-C" function void pmem_read(input longint rMEM_EXE_in, output longint rdata);
 
 import "DPI-C" function void pmem_write(input longint wMEM_EXE_in, input longint wdata, input byte wmask);

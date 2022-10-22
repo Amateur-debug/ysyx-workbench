@@ -56,7 +56,7 @@ extern "C" void pmem_read_pc(long long raddr, long long *rdata){
     *rdata = host_read(guest_to_host(raddr & ~0x7ull), 8);
   }
   else{
-    printf("read越界地址为: 0x%016llx\n", raddr);
+    printf("read越界pc为: 0x%016llx\n", raddr);
     npc_state.state = NPC_ABORT;
   }
 }
