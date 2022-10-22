@@ -171,7 +171,7 @@ always@(*) begin
                 EXE_out = {{32{middle[31:31]}}, middle[31:0]};
             end
             `EXE_SRAW: begin
-                middle[31:0] = $signed(src1[31:0]) >>> $signed(src2[4:0]);
+                middle[31:0] = $signed(src1[31:0]) >>> src2[4:0];
                 EXE_out = {{32{middle[31:31]}}, middle[31:0]};
             end
             `EXE_ADDW: begin
