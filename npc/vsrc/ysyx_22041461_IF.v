@@ -1,8 +1,11 @@
+`include "/home/cxy/ysyx-workbench/npc/vsrc/ysyx_22041461_macro.v"
+
 module ysyx_22041461_IF(
+
     input  wire [0:0]  IF_valid_in ,
     input  wire [63:0] IF_pc       ,
 
-    input  wire [0:0]  IF_valid_out,
+    output reg  [0:0]  IF_valid_out,
     output reg  [31:0] IF_inst
 );
 
@@ -12,7 +15,7 @@ reg [63:0] rinst;
 
 always@(*) begin
     if(IF_valid_in == 1'b1) begin
-        pmem_read_pc(pc, rinst);
+        pmem_read_pc(IF_pc, rinst);
         IF_valid_out = 1'b1;
     end
     else begin
@@ -32,3 +35,5 @@ always@(*) begin
         IF_inst = 32'b0;
     end
 end
+
+endmodule

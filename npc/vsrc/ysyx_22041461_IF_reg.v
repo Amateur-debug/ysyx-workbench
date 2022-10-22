@@ -1,3 +1,5 @@
+`include "/home/cxy/ysyx-workbench/npc/vsrc/ysyx_22041461_macro.v"
+
 module ysyx_22041461_IF_reg(
 
     input   wire [0:0]   clk               ,
@@ -37,20 +39,19 @@ end
 always@(posedge clk or negedge rst) begin
     if(rst == 1'b0) begin
         IFreg_pc <= 64'h0000_0000_8000_0000;
-        IFreg_valid_out <= 1'b0;
+        IFreg_valid_out <= 1'b1;
     end
     else if(IFreg_enable == 1'b0) begin
         IFreg_pc <= IFreg_pc;
-        IFreg_valid_out <= PC_valid_out;
+        IFreg_valid_out <= IFreg_valid_out;
     end
     else if(IFreg_ctrl == 1'b0) begin
-        
         IFreg_pc <= IFreg_pc + 4;
         IFreg_valid_out <= IFreg_valid_fromCD;
     end
     else begin
         IFreg_pc <= IFreg_next_pc;
-        IFreg_valid_out <= PC_CD_valid_in;
+        IFreg_valid_out <= IFreg_valid_fromCD;
     end
 end
 

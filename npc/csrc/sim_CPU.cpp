@@ -23,17 +23,15 @@ int main(int argc, char **argv){
   Verilated::commandArgs(argc, argv); 
   Verilated::traceEverOn(true); //导出vcd波形需要加此语句
   top->trace(tfp, 0);   
-  //tfp->open("wave.vcd"); //打开vcd
-  top->clk = 1;
-  top->rst = 0;
-  top->pc  = 0x80000000;
+  tfp->open("wave.vcd"); //打开vcd
 
+  set_npc_state(NPC_STOP, 0x80000000, 0);
   init_mem();
   init_sdb();
   init_device();
-  exec_once();      //先执行一个周期，让寄存器的值能够被读出
+  init_npc_cpu();    //先执行一个周期，让寄存器的值能够被读出
   init_difftest();
-
+  
   sdb_mainloop();
 
   top->final();

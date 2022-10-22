@@ -10,7 +10,7 @@
 #define MAX_MAIN_TIME 100
 #define RST_END_TIME 1  //rst拉高时间
 #define MAX_INST_TO_PRINT 10
-#define DIFFTEST
+//#define DIFFTEST
 
 extern Vysyx_22041461_CPU *top; 
 extern VerilatedVcdC* tfp;
@@ -23,6 +23,7 @@ int is_difftest_next = 1;
 
 
 void ebreak(){      //结束指令
+  printf("aaaa\n");
   set_npc_state(NPC_END, top->pc, 1);
 }
 
@@ -36,21 +37,66 @@ double sc_time_stamp(){
   return main_time;
 }
 
+void init_npc_cpu(){
+  top->clk = 1;
+  top->rst = 1;
+  top->eval(); 
+  tfp->dump(main_time); //dump wave
+  main_time++; //推动仿真时间
+
+  top->clk = !top->clk;
+  top->rst = 1;
+  top->eval(); 
+  tfp->dump(main_time); //dump wave
+  main_time++; //推动仿真时间
+
+  top->clk = !top->clk;
+  top->rst = 1;
+  top->eval(); 
+  tfp->dump(main_time); //dump wave
+  main_time++; //推动仿真时间
+
+  top->clk = !top->clk;
+  top->rst = 1;
+  top->eval(); 
+  tfp->dump(main_time); //dump wave
+  main_time++; //推动仿真时间
+
+  top->clk = !top->clk;
+  top->rst = 1;
+  top->eval(); 
+  tfp->dump(main_time); //dump wave
+  main_time++; //推动仿真时间
+
+  top->clk = !top->clk;
+  top->rst = 0;
+  top->eval(); 
+  tfp->dump(main_time); //dump wave
+  main_time++; //推动仿真时间
+
+  top->clk = !top->clk;
+  top->rst = 1;
+  top->eval(); 
+  tfp->dump(main_time); //dump wave
+  main_time++; //推动仿真时间
+
+  top->clk = !top->clk;
+  top->rst = 1;
+  top->eval(); 
+  tfp->dump(main_time); //dump wave
+  main_time++; //推动仿真时间
+  
+}
+
 void exec_once(){
   npc_state.halt_pc = top->pc;
   //negedge
-  if (main_time > RST_END_TIME){
-    top->rst = 1;
-  }
   top->clk = !top->clk;
   top->eval(); 
   tfp->dump(main_time); //dump wave
   main_time++; //推动仿真时间
 
   //posedge
-  if (main_time > RST_END_TIME){
-    top->rst = 1;
-  }
   top->clk = !top->clk;
   top->eval(); 
   tfp->dump(main_time); //dump wave
@@ -96,6 +142,7 @@ void cpu_exec(uint64_t n){
   switch (npc_state.state){
     case NPC_END: case NPC_ABORT:
       printf("Program execution has ended. To restart the program, exit NPC and run again.\n");
+      printf("halt_pc = 0x%x halt_ret = %d\n", npc_state.halt_pc, npc_state.halt_ret);
       return;
     default: npc_state.state = NPC_RUNNING;
   }

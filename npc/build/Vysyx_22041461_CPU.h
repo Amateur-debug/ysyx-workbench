@@ -31,7 +31,6 @@ class Vysyx_22041461_CPU VL_NOT_FINAL {
     VL_IN8(&clk,0,0);
     VL_IN8(&rst,0,0);
     VL_OUT64(&pc,63,0);
-    VL_OUT8(&flag,0,0);
     VL_OUT(&inst,31,0);
 
     // CELLS

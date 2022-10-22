@@ -4,6 +4,6 @@
 #include<stdint.h>
 
 void cpu_exec(uint64_t n);
-void exec_once();
+void init_npc_cpu();
 
 #endif

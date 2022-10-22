@@ -8,6 +8,7 @@ Vmodule_name := $(addprefix Vysyx_22041461_,$(module))
 
 V_TOP := $(V_PATH)/$(module_name).v
 V_SOURCE := $(shell find $(V_PATH) -name "*.v")
+V_SOURCE += $(shell find $(V_PATH) -name "*.vh")
 CC_SOURCE := $(shell find $(C_PATH) -name "*.cpp")
 C_SOURCE := $(shell find $(C_PATH) -name "*.c")
 
@@ -24,6 +25,7 @@ VFLAGS += -CFLAGS -fPIC
 VFLAGS += -CFLAGS -I
 VFLAGS += -CFLAGS /home/cxy/ysyx-workbench/npc/include
 
+
 ifdef IMG
 VFLAGS += -CFLAGS -DIMG=$(IMG)
 endif
@@ -32,8 +34,8 @@ run:$(V_TOP) $(V_SOURCE) $(C_SOURCE) $(CC_SOURCE)
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 	verilator $(VFLAGS) $^
 	make -j -C $(BUILD) -f $(Vmodule_name).mk
-	cd $(BUILD)&&./$(Vmodule_name)
-	gtkwave ./$(BUILD)/wave.vcd
+	-cd $(BUILD)&&./$(Vmodule_name)
+#*gtkwave ./$(BUILD)/wave.vcd
 	-make clean
 
 .PHONY: clean run

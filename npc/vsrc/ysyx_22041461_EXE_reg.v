@@ -1,38 +1,38 @@
-`include "ysyx_22041461_macro"
+`include "/home/cxy/ysyx-workbench/npc/vsrc/ysyx_22041461_macro.v"
 
 module  ysyx_22041461_EXE_reg(
 
-  input   wire  [0:0]  clk         ,
-  input   wire  [0:0]  flush       ,
-  input   wire  [0:0]  EXEreg_enable      ,
-  
-  input   wire  [0:0]  EXEreg_valid_fromCD ,
-  input   wire  [0:0]  EXEreg_valid_fromID,
-  
-  input   wire  [4:0]  EXEreg_rd_in       ,
-  input   wire  [4:0]  EXEreg_rs1_in      ,
-  input   wire  [4:0]  EXEreg_rs2_in      ,
-  input   wire  [11:0] EXEreg_csr_in      ,
-  input   wire  [63:0] EXEreg_imm_in      ,
-  input   wire  [63:0] EXEreg_zimm_in     ,
-  input   wire  [63:0] EXEreg_pc_in       ,
-  input   wire  [4:0]  EXEreg_EXE_ctrl_in ,
-  input   wire  [2:0]  EXEreg_EXE_src_in  ,
-  input   wire  [3:0]  EXEreg_MEM_ctrl_in ,
-  input   wire  [3:0]  EXEreg_WB_ctrl_in  ,
+    input   wire  [0:0]  clk                ,
+    input   wire  [0:0]  flush              ,
+    input   wire  [0:0]  EXEreg_enable      ,
+    
+    input   wire  [0:0]  EXEreg_valid_fromCD ,
+    input   wire  [0:0]  EXEreg_valid_fromID,
+    
+    input   wire  [4:0]  EXEreg_rd_in       ,
+    input   wire  [4:0]  EXEreg_rs1_in      ,
+    input   wire  [4:0]  EXEreg_rs2_in      ,
+    input   wire  [11:0] EXEreg_csr_in      ,
+    input   wire  [63:0] EXEreg_imm_in      ,
+    input   wire  [63:0] EXEreg_zimm_in     ,
+    input   wire  [63:0] EXEreg_pc_in       ,
+    input   wire  [4:0]  EXEreg_EXE_ctrl_in ,
+    input   wire  [2:0]  EXEreg_EXE_src_in  ,
+    input   wire  [3:0]  EXEreg_MEM_ctrl_in ,
+    input   wire  [3:0]  EXEreg_WB_ctrl_in  ,
 
-  output  reg   [0:0]  EXEreg_valid_out   ,
-  output  reg   [4:0]  EXEreg_rd_out      ,
-  output  reg   [4:0]  EXEreg_rs1_out     ,
-  output  reg   [4:0]  EXEreg_rs2_out     ,
-  output  reg   [11:0] EXEreg_csr_out     ,
-  output  reg   [63:0] EXEreg_imm_out     ,
-  output  reg   [63:0] EXEreg_zimm_out    ,
-  output  reg   [63:0] EXEreg_pc_out      ,
-  output  reg   [4:0]  EXEreg_EXE_ctrl_out,
-  output  reg   [2:0]  EXEreg_EXE_src_out ,
-  output  reg   [3:0]  EXEreg_MEM_ctrl_out,
-  output  reg   [3:0]  EXEreg_WB_ctrl_out
+    output  reg   [0:0]  EXEreg_valid_out   ,
+    output  reg   [4:0]  EXEreg_rd_out      ,
+    output  reg   [4:0]  EXEreg_rs1_out     ,
+    output  reg   [4:0]  EXEreg_rs2_out     ,
+    output  reg   [11:0] EXEreg_csr_out     ,
+    output  reg   [63:0] EXEreg_imm_out     ,
+    output  reg   [63:0] EXEreg_zimm_out    ,
+    output  reg   [63:0] EXEreg_pc_out      ,
+    output  reg   [4:0]  EXEreg_EXE_ctrl_out,
+    output  reg   [2:0]  EXEreg_EXE_src_out ,
+    output  reg   [3:0]  EXEreg_MEM_ctrl_out,
+    output  reg   [3:0]  EXEreg_WB_ctrl_out
 );
 
 //异步复位同步释放
@@ -59,10 +59,10 @@ always@(posedge clk or negedge rst) begin
     if(rst == 1'b0) begin
         EXEreg_valid_out <= 1'b0;
     end
-    else if(enable == 1'b0) begin
+    else if(EXEreg_enable == 1'b0) begin
         EXEreg_valid_out <= EXEreg_valid_out;
     end
-    else if(EXEreg_valid_fromCD == 1'b0|| EXEreg_valid_fromIF == 1'b0) begin
+    else if(EXEreg_valid_fromCD == 1'b0 || EXEreg_valid_fromID == 1'b0) begin
         EXEreg_valid_out <= 1'b0;
     end
     else begin
@@ -79,10 +79,10 @@ always@(posedge clk or negedge rst) begin
         EXEreg_imm_out <= 64'b0;   
         EXEreg_zimm_out <= 64'b0;   
         EXEreg_pc_out <= 64'h0000_0000_8000_0000;     
-        EXEreg_EXE_ctrl_out <= EXE_NOP;
-        EXEreg_EXE_src_out <= EXE_src_NOP;
-        EXEreg_MEM_ctrl_out <= MEM_NOP;
-        EXEreg_WB_ctrl_out <= WB_NOP;                      
+        EXEreg_EXE_ctrl_out <= `EXE_NOP;
+        EXEreg_EXE_src_out <= `EXE_src_NOP;
+        EXEreg_MEM_ctrl_out <= `MEM_NOP;
+        EXEreg_WB_ctrl_out <= `WB_NOP;                      
     end
     else if(EXEreg_enable == 1'b0) begin
         EXEreg_rd_out <= EXEreg_rd_out;     
