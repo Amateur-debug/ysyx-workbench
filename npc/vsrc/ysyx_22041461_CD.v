@@ -295,7 +295,7 @@ always@(*) begin
             default: begin
                 MEM_rs2_read = 1'b0;
             end
-        endcase 
+        endcase
     end
     else begin
         MEM_rs2_read = 1'b0;
@@ -442,7 +442,6 @@ end
 
 always@(*) begin
     CD_IF_enable = 1'b1;
-    CD_ID_valid = 1'b1;
     if(ID_rs1_read == 1'b1) begin
         if(EXE_rd_write == 1'b1) begin
             if(CD_ID_rs1 == CD_EXE_rd) begin
@@ -580,6 +579,21 @@ always@(*) begin
     end
 end
 
+always@(*) begin
+    CD_ID_valid = 1'b1;
+    if(ID_rs1_read == 1'b1) begin
+        CD_ID_valid = 1'b0;
+    end
+    if(ID_rs2_read == 1'b1) begin
+        CD_ID_valid = 1'b0;
+    end
+    if(ID_mtvec_read == 1'b1) begin
+        CD_ID_valid = 1'b0;
+    end
+    if(ID_mepc_read == 1'b1) begin
+        CD_ID_valid = 1'b0;
+    end
+end
 
 always@(*) begin
     CD_ID_enable = 1'b1;

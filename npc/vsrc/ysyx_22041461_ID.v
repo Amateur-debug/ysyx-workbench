@@ -449,7 +449,7 @@ always@(*) begin
                 ID_imm = immI(ID_inst);
                 case(funct3)
                     `JALR: begin
-                        ID_next_pc = ID_rs1_data + ID_imm;
+                        ID_next_pc = (ID_rs1_data + ID_imm) & ~64'b1;
                         ID_PC_ctrl = 1'b1;
                         ID_CD_ctrl = `CD_JALR;
                         ID_WB_ctrl = `WB_SNPC;
