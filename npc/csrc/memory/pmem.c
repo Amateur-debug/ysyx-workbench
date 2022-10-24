@@ -50,10 +50,8 @@ uint64_t mmio_read(uint32_t addr, int len);
 void mmio_write(uint32_t addr, int len, uint64_t data);
 
 extern "C" void pmem_read_pc(long long raddr, long long *rdata){
-  // 总是读取地址为`raddr & ~0x7ull`的8字节返回给`rdata`
-
   if(raddr >= 0x80000000 && raddr < 0x80000000 + 128*1024*1024){
-    *rdata = host_read(guest_to_host(raddr & ~0x7ull), 8);
+    *rdata = host_read(guest_to_host(raddr), 4);
   }
   else{
     printf("read越界pc为: 0x%016llx\n", raddr);
