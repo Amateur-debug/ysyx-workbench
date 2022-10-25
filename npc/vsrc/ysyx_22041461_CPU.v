@@ -114,7 +114,8 @@ ysyx_22041461_IF_reg IF_reg(
 
 
 ysyx_22041461_IF IF(
-
+    .clk          (clk),
+    .rst          (rst),
     .IF_valid_in  (IFreg_valid_out),
     .IF_pc        (IFreg_pc),
 
@@ -339,6 +340,7 @@ ysyx_22041461_CD CD(
     .CD_ctrl         (ID_CD_ctrl),
 
     .CD_IF_ctrl      (ID_PC_ctrl),
+    .CD_IF_valid_out (IF_valid_out),
 
     .CD_ID_valid_in  (IDreg_valid_out),
     .CD_ID_rs1       (ID_rs1),
