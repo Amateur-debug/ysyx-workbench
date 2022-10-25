@@ -5,9 +5,6 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-//#define DIFFTEST
-//#define WAVE
-
 
 typedef uint32_t paddr_t;
 

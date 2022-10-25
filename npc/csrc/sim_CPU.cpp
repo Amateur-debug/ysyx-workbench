@@ -23,9 +23,9 @@ VerilatedVcdC* tfp = new VerilatedVcdC; //导出vcd波形需要加此语句
 int main(int argc, char **argv){
   Verilated::commandArgs(argc, argv); 
   #ifdef WAVE
-  Verilated::traceEverOn(true); //导出vcd波形需要加此语句
-  top->trace(tfp, 0);   
-  tfp->open("wave.vcd"); //打开vcd
+    Verilated::traceEverOn(true); //导出vcd波形需要加此语句
+    top->trace(tfp, 0);   
+    tfp->open("wave.vcd"); //打开vcd
   #endif
 
   set_npc_state(NPC_STOP, 0x80000000, 0);
@@ -40,7 +40,7 @@ int main(int argc, char **argv){
 
   top->final();
   #ifdef WAVE
-  tfp->close();
+    tfp->close();
   #endif
   delete top;
  
