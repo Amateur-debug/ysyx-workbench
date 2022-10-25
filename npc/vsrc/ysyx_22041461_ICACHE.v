@@ -2,7 +2,7 @@ module  ysyx_22041461_ICACHE(
 
     input   wire [0:0]   clk             ,
     input   wire [0:0]   flush           ,
-    input   wire [0:0]   ICACHE_valid_in ,
+    input   wire [0:0]   ICACHE_valid    ,
 
     input   wire [63:0]  ICACHE_pc       ,
 
@@ -78,7 +78,7 @@ always@(posedge clk or posedge rst) begin
         num <= 1'b0;
     end
     else begin
-        if(ICACHE_valid_in == 1'b1) begin
+        if(ICACHE_valid == 1'b1) begin
             if(hit1 == 1'b1 || hit2 == 1'b1) begin
                 num <= ~num;
             end
@@ -86,15 +86,13 @@ always@(posedge clk or posedge rst) begin
                 num <= num;
             end
         end
-        else begin
-            num <= num;
-        end
     end
 end
 
+
 always@(*) begin
     ICACHE_valid_out =1'b0;
-    if(ICACHE_valid_in == 1'b1) begin
+    if(ICACHE_valid == 1'b1) begin
         if(num == 1'b1) begin
             if(hit1 == 1'b1 || hit2 == 1'b1) begin
                 ICACHE_valid_out =1'b1;
@@ -103,38 +101,34 @@ always@(*) begin
     end
 end
 
+
 always@(*) begin
-    if(ICACHE_valid_in == 1'b1) begin
-        if(num == 1'b1) begin
-            if(hit1 == 1'b1) begin
-                case(offset)
-                    3'b000: begin
-                        ICACHE_inst = CacheLine1_data[31:0];
-                    end
-                    3'b100: begin
-                        ICACHE_inst = CacheLine1_data[63:32];
-                    end
-                    default: begin
-                        ICACHE_inst = 32'b0000000_00001_00000_000_00000_1110011;
-                    end
-                endcase
-            end
-            if(hit2 == 1'b1) begin
-                case(offset)
-                    3'b000: begin
-                        ICACHE_inst = CacheLine2_data[31:0];
-                    end
-                    3'b100: begin
-                        ICACHE_inst = CacheLine2_data[63:32];
-                    end
-                    default: begin
-                        ICACHE_inst = 32'b0000000_00001_00000_000_00000_1110011;
-                    end
-                endcase
-            end
+    if(num == 1'b1) begin
+        if(hit1 == 1'b1) begin
+            case(offset)
+                3'b000: begin
+                    ICACHE_inst = CacheLine1_data[31:0];
+                end
+                3'b100: begin
+                    ICACHE_inst = CacheLine1_data[63:32];
+                end
+                default: begin
+                    ICACHE_inst = 32'b0000000_00001_00000_000_00000_1110011;
+                end
+            endcase
         end
-        else begin
-            ICACHE_inst = 32'b0;
+        if(hit2 == 1'b1) begin
+            case(offset)
+                3'b000: begin
+                    ICACHE_inst = CacheLine2_data[31:0];
+                end
+                3'b100: begin
+                    ICACHE_inst = CacheLine2_data[63:32];
+                end
+                default: begin
+                    ICACHE_inst = 32'b0000000_00001_00000_000_00000_1110011;
+                end
+            endcase
         end
     end
     else begin
@@ -143,9 +137,14 @@ always@(*) begin
 end
 
 always@(*) begin
-    if(ICACHE_valid_in == 1'b1) begin
-        if(hit1 == 1'b0 && hit2 == 1'b0) begin
-            pmem_read(ICACHE_pc, AXI_rdata);
+    if(ICACHE_valid == 1'b1) begin
+        if(rst != 1'b0) begin
+            if(hit1 == 1'b0 && hit2 == 1'b0) begin
+                pmem_read(ICACHE_pc, AXI_rdata);
+            end
+            else begin
+                AXI_rdata = 64'b0;
+            end
         end
         else begin
             AXI_rdata = 64'b0;
@@ -166,7 +165,7 @@ always@(*) begin
     end
     SRAM_BWEN = 128'hffff_ffff_ffff_ffff_ffff_ffff_ffff_ffff;
     SRAM_data_in = 128'b0;
-    if(ICACHE_valid_in == 1'b1) begin
+    if(ICACHE_valid == 1'b1) begin
         if(hit1 == 1'b0 && hit2 == 1'b0) begin
             if(V1[index] == 1'b0) begin
                 V1_next[index] = 1'b1;
@@ -191,7 +190,7 @@ always@(*) begin
 end
 
 always@(*) begin
-    if(ICACHE_valid_in == 1'b1) begin
+    if(ICACHE_valid == 1'b1) begin
         if(hit1 == 1'b0 && hit2 == 1'b0) begin
             SRAM_WEN = 1'b0;
         end

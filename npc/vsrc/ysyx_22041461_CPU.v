@@ -8,8 +8,8 @@ module ysyx_22041461_CPU(
 ); 
 
 
-wire [0:0]  CD_IFreg_valid   ; 
 wire [0:0]  CD_IFreg_enable  ; 
+wire [0:0]  CD_IF_valid      ; 
 wire [0:0]  CD_IDreg_valid   ; 
 wire [0:0]  CD_IDreg_enable  ; 
 wire [0:0]  CD_EXEreg_valid  ; 
@@ -103,21 +103,19 @@ ysyx_22041461_IF_reg IF_reg(
 
     .clk                (clk),
     .flush              (rst),
-    .IFreg_valid_fromCD (CD_IFreg_valid),
     .IFreg_enable       (CD_IFreg_enable),
     .IFreg_ctrl         (ID_PC_ctrl),
     .IFreg_next_pc      (ID_next_pc),
 
-    .IFreg_pc           (IFreg_pc),
-    .IFreg_valid_out    (IFreg_valid_out)
+    .IFreg_pc           (IFreg_pc)
 );
 
 
 ysyx_22041461_IF IF(
     .clk          (clk),
     .rst          (rst),
-    .IF_valid_in  (IFreg_valid_out),
     .IF_pc        (IFreg_pc),
+    .IF_valid     (CD_IF_valid),
 
     .IF_valid_out (IF_valid_out),
     .IF_inst      (IF_inst)
@@ -367,8 +365,8 @@ ysyx_22041461_CD CD(
     .CD_WB_rd        (WBreg_rd_out),
     .CD_WB_csr       (WBreg_csr_out),
 
-    .CD_IFreg_valid     (CD_IFreg_valid  ),
     .CD_IFreg_enable    (CD_IFreg_enable ),
+    .CD_IF_valid        (CD_IF_valid     ),
     .CD_IDreg_valid     (CD_IDreg_valid  ),
     .CD_IDreg_enable    (CD_IDreg_enable ),
     .CD_EXEreg_valid    (CD_EXEreg_valid ),
