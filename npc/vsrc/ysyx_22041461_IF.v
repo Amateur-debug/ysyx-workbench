@@ -1,5 +1,3 @@
-`include "/home/cxy/ysyx-workbench/npc/vsrc/ysyx_22041461_macro.v"
-
 module ysyx_22041461_IF(
 
     input  wire [0:0]  clk         ,
@@ -21,7 +19,7 @@ ysyx_22041461_ICACHE ICACHE(
    .ICACHE_pc        (IF_pc),
 
    .ICACHE_valid_out (IF_valid_out),
-   .ICACHE_inst      (IF_inst),
+   .ICACHE_inst      (IF_inst)
 );
 
 endmodule

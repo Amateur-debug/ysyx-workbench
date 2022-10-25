@@ -7,30 +7,10 @@ module  ysyx_22041461_ICACHE(
     input   wire [63:0]  ICACHE_pc       ,
 
     output  reg  [0:0]   ICACHE_valid_out,
-    output  reg  [31:0]  ICACHE_inst,
+    output  reg  [31:0]  ICACHE_inst
 );
 
 import "DPI-C" function void pmem_read(input longint raddr, output longint rdata);
-
-`define EBREAK 32'b0000000_00001_00000_000_00000_1110011
-
-//异步复位同步释放
-reg  [0:0]   rst_r1;
-reg  [0:0]   rst_r2;
-wire [0:0]   rst;
-
-assign rst = rst_r2;
-
-always@(posedge clk or negedge flush) begin
-    if(flush == 1'b0) begin
-        rst_r1 <= 1'b0;
-        rst_r2 <= 1'b0;
-    end
-    else begin
-        rst_r1 <= 1'b1;
-        rst_r2 <= rst_r1;
-    end
-end
 
 
 wire [5:0]  index;
@@ -58,7 +38,7 @@ reg  [63:0]  AXI_rdata;
 
 reg  [127:0] SRAM_data_in;
 wire [127:0] SRAM_data_out;
-reg  [127:0] SRAM_WEN;
+reg  [0:0]   SRAM_WEN;
 reg  [127:0] SRAM_BWEN;
 wire [63:0]  CacheLine1_data;
 wire [63:0]  CacheLine2_data;
@@ -93,17 +73,22 @@ always@(*) begin
     end
 end
 
-always@(posedge clk) begin
-    if(ICACHE_valid_in == 1'b1) begin
-        if(hit1 == 1'b1 || hit2 == 1'b1) begin
-            num <= ~num;
+always@(posedge clk or posedge rst) begin
+    if(rst == 1'b0) begin
+        num <= 1'b0;
+    end
+    else begin
+        if(ICACHE_valid_in == 1'b1) begin
+            if(hit1 == 1'b1 || hit2 == 1'b1) begin
+                num <= ~num;
+            end
+            else begin
+                num <= num;
+            end
         end
         else begin
             num <= num;
         end
-    end
-    else begin
-        num <= num;
     end
 end
 
@@ -116,6 +101,7 @@ always@(*) begin
             end
         end
     end
+end
 
 always@(*) begin
     if(ICACHE_valid_in == 1'b1) begin
@@ -129,7 +115,7 @@ always@(*) begin
                         ICACHE_inst = CacheLine1_data[63:32];
                     end
                     default: begin
-                        ICACHE_inst = `EBREAK;
+                        ICACHE_inst = 32'b0000000_00001_00000_000_00000_1110011;
                     end
                 endcase
             end
@@ -142,7 +128,7 @@ always@(*) begin
                         ICACHE_inst = CacheLine2_data[63:32];
                     end
                     default: begin
-                        ICACHE_inst = `EBREAK;
+                        ICACHE_inst = 32'b0000000_00001_00000_000_00000_1110011;
                     end
                 endcase
             end
@@ -178,26 +164,26 @@ always@(*) begin
         tag1_next[i] = tag1[i];
         tag2_next[i] = tag2[i];
     end
-    BWEN = 128'b0;
+    SRAM_BWEN = 128'hffff_ffff_ffff_ffff_ffff_ffff_ffff_ffff;
     SRAM_data_in = 128'b0;
     if(ICACHE_valid_in == 1'b1) begin
         if(hit1 == 1'b0 && hit2 == 1'b0) begin
             if(V1[index] == 1'b0) begin
                 V1_next[index] = 1'b1;
                 tag1_next[index] = tag;
-                BWEN = 128'h0000_0000_0000_0000_ffff_ffff_ffff_ffff;
+                SRAM_BWEN = 128'hffff_ffff_ffff_ffff_0000_0000_0000_0000;
                 SRAM_data_in = {64'b0, AXI_rdata};
             end
             else if(V2[index] == 1'b0) begin 
                 V2_next[index] = 1'b1;
                 tag2_next[index] = tag;
-                BWEN = 128'hffff_ffff_ffff_ffff_0000_0000_0000_0000;
+                SRAM_BWEN = 128'h0000_0000_0000_0000_ffff_ffff_ffff_ffff;
                 SRAM_data_in = {AXI_rdata, 64'b0};
             end
             else begin
                 V1_next[index] = 1'b1;
                 tag1_next[index] = tag;
-                BWEN = 128'h0000_0000_0000_0000_ffff_ffff_ffff_ffff;
+                SRAM_BWEN = 128'hffff_ffff_ffff_ffff_0000_0000_0000_0000;
                 SRAM_data_in = {64'b0, AXI_rdata};
             end
         end
@@ -207,14 +193,14 @@ end
 always@(*) begin
     if(ICACHE_valid_in == 1'b1) begin
         if(hit1 == 1'b0 && hit2 == 1'b0) begin
-            WEN = 1'b1;
+            SRAM_WEN = 1'b0;
         end
         else begin
-            WEN = 1'b0;
+            SRAM_WEN = 1'b1;
         end
     end
     else begin
-        WEN = 1'b0;
+        SRAM_WEN = 1'b1;
     end
 end
 
@@ -240,29 +226,39 @@ integer k;
 always@(posedge clk or negedge rst) begin
     if(rst == 1'b0) begin
         for(k = 0; k < 64; k = k + 1) begin
-            V1[k] = 1'b0;
-            V2[k] = 1'b0;
-            tag1[k] = 55'b0;
-            tag2[k] = 55'b0;
+            V1[k] <= 1'b0;
+            V2[k] <= 1'b0;
+            tag1[k] <= 55'b0;
+            tag2[k] <= 55'b0;
         end
     end
     else begin
         for(k = 0; k < 64; k = k + 1) begin
-            V1[k] = V1_next[k];
-            V2[k] = V2_next[k]
-            tag1[k] = tag1_next[k];
-            tag2[k] = tag2_next[k];
+            V1[k] <= V1_next[k];
+            V2[k] <= V2_next[k];
+            tag1[k] <= tag1_next[k];
+            tag2[k] <= tag2_next[k];
         end
     end
+end
 
-ysyx_22041461_SRAM SRAM
+
+ysyx_22041461_SRAM #(
+    .Bits       (128),
+    .Word_Depth (64),
+    .Add_Width  (6),
+    .Wen_Width  (128)
+)
+SRAM
 (
     .CLK   (clk),
-    .CEN   (1'b1),
-    .WEN   (WEN),
-    .BWEN  (BWEN),
+    .CEN   (1'b0),
+    .WEN   (SRAM_WEN),
+    .BWEN  (SRAM_BWEN),
     .A     (index),
     .D     (SRAM_data_in),
 
     .Q     (SRAM_data_out)
 );
+
+endmodule
