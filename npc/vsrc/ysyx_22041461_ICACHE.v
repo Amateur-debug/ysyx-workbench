@@ -83,8 +83,11 @@ always@(posedge clk or posedge rst) begin
                 num <= ~num;
             end
             else begin
-                num <= num;
+                num <= 1'b0;
             end
+        end
+        else begin
+            num <= 1'b0;
         end
     end
 end
