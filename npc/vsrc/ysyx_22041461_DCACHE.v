@@ -308,10 +308,30 @@ always@(*) begin
         if(DCACHE_wen == 1'b0) begin
             if(inmemory == 1'b1) begin
                 if(hit1 == 1'b1) begin
-                    DCACHE_rdata = CacheLine1_data;
+                    case(offset)
+                        3'b000: begin
+                            DCACHE_rdata = CacheLine1_data;
+                        end
+                        3'b100: begin
+                            DCACHE_rdata = {32'b0, CacheLine1_data[63:32]};
+                        end
+                        default: begin
+                            DCACHE_rdata = 64'b0;
+                        end
+                    endcase
                 end
                 else if(hit2 == 1'b1) begin
-                    DCACHE_rdata = CacheLine2_data;
+                    case(offset)
+                        3'b000: begin
+                            DCACHE_rdata = CacheLine2_data;
+                        end
+                        3'b100: begin
+                            DCACHE_rdata = {32'b0, CacheLine2_data[63:32]};
+                        end
+                        default: begin
+                            DCACHE_rdata = 64'b0;
+                        end
+                    endcase
                 end
                 else begin
                     DCACHE_rdata = 64'b0;

@@ -6617,16 +6617,36 @@ VL_INLINE_OPT void Vysyx_22041461_CPU___024root___multiclk__TOP__28(Vysyx_220414
             ? ((IData)(vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__DCACHE_wen)
                 ? 0ULL : ((IData)(vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__DCACHE__DOT__inmemory)
                            ? ((IData)(vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__DCACHE__DOT__hit1)
-                               ? (((QData)((IData)(
-                                                   vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__DCACHE__DOT__SRAM_data_out[1U])) 
-                                   << 0x20U) | (QData)((IData)(
-                                                               vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__DCACHE__DOT__SRAM_data_out[0U])))
-                               : ((IData)(vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__DCACHE__DOT__hit2)
+                               ? ((0U == (7U & (IData)(vlSelf->ysyx_22041461_CPU__DOT__MEMreg_EXE_out)))
                                    ? (((QData)((IData)(
-                                                       vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__DCACHE__DOT__SRAM_data_out[3U])) 
+                                                       vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__DCACHE__DOT__SRAM_data_out[1U])) 
                                        << 0x20U) | (QData)((IData)(
-                                                                   vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__DCACHE__DOT__SRAM_data_out[2U])))
-                                   : 0ULL)) : vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__DCACHE__DOT__AXI_rdata))
+                                                                   vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__DCACHE__DOT__SRAM_data_out[0U])))
+                                   : ((4U == (7U & (IData)(vlSelf->ysyx_22041461_CPU__DOT__MEMreg_EXE_out)))
+                                       ? (QData)((IData)(
+                                                         vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__DCACHE__DOT__SRAM_data_out[1U]))
+                                       : 0ULL)) : ((IData)(vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__DCACHE__DOT__hit2)
+                                                    ? 
+                                                   ((0U 
+                                                     == 
+                                                     (7U 
+                                                      & (IData)(vlSelf->ysyx_22041461_CPU__DOT__MEMreg_EXE_out)))
+                                                     ? 
+                                                    (((QData)((IData)(
+                                                                      vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__DCACHE__DOT__SRAM_data_out[3U])) 
+                                                      << 0x20U) 
+                                                     | (QData)((IData)(
+                                                                       vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__DCACHE__DOT__SRAM_data_out[2U])))
+                                                     : 
+                                                    ((4U 
+                                                      == 
+                                                      (7U 
+                                                       & (IData)(vlSelf->ysyx_22041461_CPU__DOT__MEMreg_EXE_out)))
+                                                      ? (QData)((IData)(
+                                                                        vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__DCACHE__DOT__SRAM_data_out[3U]))
+                                                      : 0ULL))
+                                                    : 0ULL))
+                           : vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__DCACHE__DOT__AXI_rdata))
             : 0ULL);
     vlSelf->ysyx_22041461_CPU__DOT__CD_MEMreg_enable = 1U;
     if ((1U & (~ (IData)(vlSelf->ysyx_22041461_CPU__DOT__MEM_ok)))) {
