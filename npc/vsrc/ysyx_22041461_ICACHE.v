@@ -120,7 +120,7 @@ always@(*) begin
                 end
             endcase
         end
-        if(hit2 == 1'b1) begin
+        else if(hit2 == 1'b1) begin
             case(offset)
                 3'b000: begin
                     ICACHE_inst = CacheLine2_data[31:0];
@@ -132,6 +132,9 @@ always@(*) begin
                     ICACHE_inst = 32'b0000000_00001_00000_000_00000_1110011;
                 end
             endcase
+        end
+        else begin
+            ICACHE_inst = 32'b0;
         end
     end
     else begin

@@ -195,7 +195,7 @@ always@(*) begin
                     end
                 endcase
             end
-            if(hit2 == 1'b1) begin
+            else if(hit2 == 1'b1) begin
                 SRAM_WEN = 1'b0;
                 SRAM_data_in = {DCACHE_wdata, 64'b0};
                 case(DCACHE_mask)
@@ -310,7 +310,7 @@ always@(*) begin
                 if(hit1 == 1'b1) begin
                     DCACHE_rdata = CacheLine1_data;
                 end
-                if(hit2 == 1'b1) begin
+                else if(hit2 == 1'b1) begin
                     DCACHE_rdata = CacheLine2_data;
                 end
                 else begin
