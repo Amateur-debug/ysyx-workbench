@@ -3,7 +3,7 @@ module ysyx_22041461_IF(
     input  wire [0:0]  clk         ,
     input  wire [0:0]  rst         ,
     input  wire [63:0] IF_pc       ,
-    input  wire [0:0] IF_valid    ,
+    input  wire [0:0]  IF_valid    ,
 
     output wire [0:0]  IF_valid_out,
     output wire [31:0] IF_inst

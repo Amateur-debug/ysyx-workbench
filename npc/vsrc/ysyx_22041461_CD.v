@@ -22,6 +22,7 @@ module ysyx_22041461_CD(
     input   wire  [11:0] CD_EXE_csr     ,
 
     input   wire  [0:0]  CD_MEM_valid_in,
+    input   wire  [0:0]  CD_MEM_ok      ,
     input   wire  [3:0]  CD_MEM_ctrl    ,   
     input   wire  [3:0]  CD_MEM_WB_ctrl ,
     input   wire  [4:0]  CD_MEM_rd      ,
@@ -357,6 +358,9 @@ always@(*) begin
     if(CD_IF_valid_out == 1'b0 && CD_IF_ctrl == 1'b0) begin
         CD_IFreg_enable = 1'b0;
     end
+    if(CD_MEM_ok == 1'b0) begin
+        CD_IFreg_enable = 1'b0;
+    end
     if(ID_rs1_read == 1'b1) begin
         if(EXE_rd_write == 1'b1) begin
             if(CD_ID_rs1 == CD_EXE_rd) begin
@@ -509,6 +513,9 @@ end
 
 always@(*) begin
     CD_IDreg_enable = 1'b1;
+    if(CD_MEM_ok == 1'b0) begin
+        CD_IDreg_enable = 1'b0;
+    end
     if(ID_rs1_read == 1'b1) begin
         if(EXE_rd_write == 1'b1) begin
             if(CD_ID_rs1 == CD_EXE_rd) begin
@@ -734,6 +741,9 @@ end
 
 always@(*) begin
     CD_EXEreg_enable = 1'b1;
+    if(CD_MEM_ok == 1'b0) begin
+        CD_EXEreg_enable = 1'b0;
+    end
     if(EXE_rs1_read == 1'b1) begin
         if(MEM_rd_write == 1'b1) begin
             if(CD_EXE_rs1 == CD_MEM_rd) begin
@@ -853,6 +863,9 @@ end
 
 always@(*) begin
     CD_MEMreg_enable = 1'b1;
+    if(CD_MEM_ok == 1'b0) begin
+        CD_MEMreg_enable = 1'b0;
+    end
     if(MEM_rs2_read == 1'b1) begin
         if(WB_rd_write == 1'b1) begin
             if(CD_MEM_rs2 == CD_WB_rd) begin
