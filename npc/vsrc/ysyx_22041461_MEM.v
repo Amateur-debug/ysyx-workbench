@@ -9,7 +9,7 @@ module ysyx_22041461_MEM(
     input  wire  [0:0]   MEM_valid_fromCD,
     input  wire  [63:0]  MEM_EXE_in     ,
     input  wire  [63:0]  MEM_rs2_data   ,
-    input  wire  [3:0]   MEM_ctrl,  
+    input  wire  [3:0]   MEM_ctrl       ,  
 
     output reg   [0:0]   MEM_valid_out  ,
     output reg   [0:0]   MEM_ok         ,
