@@ -281,7 +281,7 @@ always@(posedge clk or negedge rst) begin
         end
         else begin
             if(inmemory == 1'b0) begin
-                DCACHE_valid_out <= ~DCACHE_valid_out;
+                DCACHE_valid_out <= 1'b1;
             end
             else begin
                 if(DCACHE_wen == 1'b0) begin
