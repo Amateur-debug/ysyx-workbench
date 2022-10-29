@@ -19,8 +19,8 @@ extern "C" {
     extern void invalid_inst();
     // DPI import at vsrc/ysyx_22041461_ICACHE.v:13:30
     extern void pmem_read(long long raddr, long long* rdata);
-    // DPI import at vsrc/ysyx_22041461_MEM.v:23:30
-    extern void pmem_write(long long waddr, long long wdata, char wmask);
+    // DPI import at vsrc/ysyx_22041461_MEM.v:22:30
+    extern void pmem_write(long long waddr, long long wdata, char AXI_wmask);
     // DPI import at vsrc/ysyx_22041461_WB.v:41:30
     extern void set_gpr_ptr(const svOpenArrayHandle a);
     // DPI import at vsrc/ysyx_22041461_IF_reg.v:14:30

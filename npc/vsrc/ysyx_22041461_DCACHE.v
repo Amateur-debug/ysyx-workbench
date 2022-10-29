@@ -177,110 +177,12 @@ always@(*) begin
             if(hit1 == 1'b1) begin
                 SRAM_WEN = 1'b0;
                 SRAM_data_in = {64'b0, DCACHE_wdata};
-                case(DCACHE_mask)                   
-                    8'b0000_0001: begin
-                        SRAM_BWEN = 128'hffff_ffff_ffff_ffff_ffff_ffff_ffff_ff00;
-                    end
-                    8'b0000_0011: begin
-                        SRAM_BWEN = 128'hffff_ffff_ffff_ffff_ffff_ffff_ffff_0000;
-                    end
-                    8'b0000_0111: begin
-                        SRAM_BWEN = 128'hffff_ffff_ffff_ffff_ffff_ffff_ff00_0000;
-                    end
-                    8'b0000_1111: begin
-                        SRAM_BWEN = 128'hffff_ffff_ffff_ffff_ffff_ffff_0000_0000;
-                    end
-                    8'b0001_1111: begin
-                        SRAM_BWEN = 128'hffff_ffff_ffff_ffff_ffff_ff00_0000_0000;
-                    end
-                    8'b0011_1111: begin
-                        SRAM_BWEN = 128'hffff_ffff_ffff_ffff_ffff_0000_0000_0000;
-                    end
-                    8'b0111_1111: begin
-                        SRAM_BWEN = 128'hffff_ffff_ffff_ffff_ff00_0000_0000_0000;
-                    end
-                    8'b1000_0000: begin
-                        SRAM_BWEN = 128'hffff_ffff_ffff_ffff_00ff_ffff_ffff_ffff;
-                    end
-                    8'b1100_0000: begin
-                        SRAM_BWEN = 128'hffff_ffff_ffff_ffff_0000_ffff_ffff_ffff;
-                    end
-                    8'b1110_0000: begin
-                        SRAM_BWEN = 128'hffff_ffff_ffff_ffff_0000_00ff_ffff_ffff;
-                    end
-                    8'b1111_0000: begin
-                        SRAM_BWEN = 128'hffff_ffff_ffff_ffff_0000_0000_ffff_ffff;
-                    end
-                    8'b1111_1000: begin
-                        SRAM_BWEN = 128'hffff_ffff_ffff_ffff_0000_0000_00ff_ffff;
-                    end
-                    8'b1111_1100: begin
-                        SRAM_BWEN = 128'hffff_ffff_ffff_ffff_0000_0000_0000_ffff;
-                    end
-                    8'b1111_1110: begin
-                        SRAM_BWEN = 128'hffff_ffff_ffff_ffff_0000_0000_0000_00ff;
-                    end
-                    8'b1111_1111: begin
-                        SRAM_BWEN = 128'hffff_ffff_ffff_ffff_0000_0000_0000_0000;
-                    end
-                    default: begin
-                        SRAM_BWEN = 128'hffff_ffff_ffff_ffff_ffff_ffff_ffff_ffff;
-                    end
-                endcase
+                SRAM_BWEN = {64'hffff_ffff_ffff_ffff, ~{{8{DCACHE_mask[7:7]}}, {8{DCACHE_mask[6:6]}}, {8{DCACHE_mask[5:5]}}, {8{DCACHE_mask[4:4]}}, {8{DCACHE_mask[3:3]}}, {8{DCACHE_mask[2:2]}}, {8{DCACHE_mask[1:1]}}, {8{DCACHE_mask[0:0]}}}};
             end
             else if(hit2 == 1'b1) begin
                 SRAM_WEN = 1'b0;
                 SRAM_data_in = {DCACHE_wdata, 64'b0};
-                case(DCACHE_mask)                   
-                    8'b0000_0001: begin
-                        SRAM_BWEN = 128'hffff_ffff_ffff_ff00_ffff_ffff_ffff_ffff;
-                    end
-                    8'b0000_0011: begin
-                        SRAM_BWEN = 128'hffff_ffff_ffff_0000_ffff_ffff_ffff_ffff;
-                    end
-                    8'b0000_0111: begin
-                        SRAM_BWEN = 128'hffff_ffff_ff00_0000_ffff_ffff_ffff_ffff;
-                    end
-                    8'b0000_1111: begin
-                        SRAM_BWEN = 128'hffff_ffff_0000_0000_ffff_ffff_ffff_ffff;
-                    end
-                    8'b0001_1111: begin
-                        SRAM_BWEN = 128'hffff_ff00_0000_0000_ffff_ffff_ffff_ffff;
-                    end
-                    8'b0011_1111: begin
-                        SRAM_BWEN = 128'hffff_0000_0000_0000_ffff_ffff_ffff_ffff;
-                    end
-                    8'b0111_1111: begin
-                        SRAM_BWEN = 128'hff00_0000_0000_0000_ffff_ffff_ffff_ffff;
-                    end
-                    8'b1000_0000: begin
-                        SRAM_BWEN = 128'h00ff_ffff_ffff_ffff_ffff_ffff_ffff_ffff;
-                    end
-                    8'b1100_0000: begin
-                        SRAM_BWEN = 128'h0000_ffff_ffff_ffff_ffff_ffff_ffff_ffff;
-                    end
-                    8'b1110_0000: begin
-                        SRAM_BWEN = 128'h0000_00ff_ffff_ffff_ffff_ffff_ffff_ffff;
-                    end
-                    8'b1111_0000: begin
-                        SRAM_BWEN = 128'h0000_0000_ffff_ffff_ffff_ffff_ffff_ffff;
-                    end
-                    8'b1111_1000: begin
-                        SRAM_BWEN = 128'h0000_0000_00ff_ffff_ffff_ffff_ffff_ffff;
-                    end
-                    8'b1111_1100: begin
-                        SRAM_BWEN = 128'h0000_0000_0000_ffff_ffff_ffff_ffff_ffff;
-                    end
-                    8'b1111_1110: begin
-                        SRAM_BWEN = 128'h0000_0000_0000_00ff_ffff_ffff_ffff_ffff;
-                    end
-                    8'b1111_1111: begin
-                        SRAM_BWEN = 128'h0000_0000_0000_0000_ffff_ffff_ffff_ffff;
-                    end
-                    default: begin
-                        SRAM_BWEN = 128'hffff_ffff_ffff_ffff_ffff_ffff_ffff_ffff;
-                    end
-                endcase
+                SRAM_BWEN = {~{{8{DCACHE_mask[7:7]}}, {8{DCACHE_mask[6:6]}}, {8{DCACHE_mask[5:5]}}, {8{DCACHE_mask[4:4]}}, {8{DCACHE_mask[3:3]}}, {8{DCACHE_mask[2:2]}}, {8{DCACHE_mask[1:1]}}, {8{DCACHE_mask[0:0]}}}, 64'hffff_ffff_ffff_ffff};
             end
             else begin
                 SRAM_WEN = 1'b1;
@@ -297,54 +199,17 @@ always@(*) begin
 end
 
 
-integer k;
-always@(posedge clk or negedge rst) begin
-    if(rst == 1'b0) begin
-        for(k = 0; k < 64; k = k + 1) begin
-            V1[k] <= 1'b0;
-            V2[k] <= 1'b0;
-            tag1[k] <= 55'b0;
-            tag2[k] <= 55'b0;
-        end
-    end
-    else begin
-        for(k = 0; k < 64; k = k + 1) begin
-            V1[k] <= V1_next[k];
-            V2[k] <= V2_next[k];
-            tag1[k] <= tag1_next[k];
-            tag2[k] <= tag2_next[k];
-        end
-    end
-end
-
-
-
-always@(posedge clk or negedge rst) begin
-    if(rst == 1'b0) begin
-        DCACHE_valid_out <= 1'b0;
-    end
-    else begin
-        if(DCACHE_valid == 1'b0) begin
-            DCACHE_valid_out <= 1'b0;
+always@(*) begin
+    if(DCACHE_wen == 1'b0) begin
+        if(hit1 == 1'b1 || hit2 == 1'b1) begin
+            DCACHE_valid_out = 1'b1;
         end
         else begin
-            if(inmemory == 1'b0) begin
-                DCACHE_valid_out <= 1'b1;
-            end
-            else begin
-                if(DCACHE_wen == 1'b0) begin
-                    if(hit1 == 1'b1 || hit2 == 1'b1) begin
-                        DCACHE_valid_out <= ~DCACHE_valid_out;
-                    end
-                    else begin
-                        DCACHE_valid_out <= 1'b0;
-                    end
-                end
-                else begin
-                    DCACHE_valid_out <= ~DCACHE_valid_out;
-                end
-            end
+            DCACHE_valid_out = 1'b0;
         end
+    end
+    else begin
+        DCACHE_valid_out = 1'b1;
     end
 end
 
@@ -375,6 +240,25 @@ always@(*) begin
     end
 end
 
+integer k;
+always@(posedge clk or negedge rst) begin
+    if(rst == 1'b0) begin
+        for(k = 0; k < 64; k = k + 1) begin
+            V1[k] <= 1'b0;
+            V2[k] <= 1'b0;
+            tag1[k] <= 55'b0;
+            tag2[k] <= 55'b0;
+        end
+    end
+    else begin
+        for(k = 0; k < 64; k = k + 1) begin
+            V1[k] <= V1_next[k];
+            V2[k] <= V2_next[k];
+            tag1[k] <= tag1_next[k];
+            tag2[k] <= tag2_next[k];
+        end
+    end
+end
 
 
 

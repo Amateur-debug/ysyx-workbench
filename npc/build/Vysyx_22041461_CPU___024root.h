@@ -82,17 +82,18 @@ VL_MODULE(Vysyx_22041461_CPU___024root) {
         CData/*0:0*/ ysyx_22041461_CPU__DOT__ID_reg__DOT__rst_r1;
         CData/*0:0*/ ysyx_22041461_CPU__DOT__EXE_reg__DOT__rst_r1;
         CData/*0:0*/ ysyx_22041461_CPU__DOT__MEM_reg__DOT__rst_r1;
+        CData/*0:0*/ ysyx_22041461_CPU__DOT__MEM__DOT__busy;
+        CData/*1:0*/ ysyx_22041461_CPU__DOT__MEM__DOT__state;
         CData/*7:0*/ ysyx_22041461_CPU__DOT__MEM__DOT__wmask1;
         CData/*7:0*/ ysyx_22041461_CPU__DOT__MEM__DOT__wmask2;
         CData/*0:0*/ ysyx_22041461_CPU__DOT__MEM__DOT__DCACHE_valid;
         CData/*7:0*/ ysyx_22041461_CPU__DOT__MEM__DOT__DCACHE_mask;
         CData/*0:0*/ ysyx_22041461_CPU__DOT__MEM__DOT__DCACHE_wen;
         CData/*0:0*/ ysyx_22041461_CPU__DOT__MEM__DOT__DCACHE_valid_out;
-        CData/*1:0*/ ysyx_22041461_CPU__DOT__MEM__DOT__state;
         CData/*0:0*/ ysyx_22041461_CPU__DOT__MEM__DOT__rst_r1;
-        CData/*0:0*/ ysyx_22041461_CPU__DOT__MEM__DOT__DCACHE__DOT__hit1;
     };
     struct {
+        CData/*0:0*/ ysyx_22041461_CPU__DOT__MEM__DOT__DCACHE__DOT__hit1;
         CData/*0:0*/ ysyx_22041461_CPU__DOT__MEM__DOT__DCACHE__DOT__hit2;
         CData/*0:0*/ ysyx_22041461_CPU__DOT__MEM__DOT__DCACHE__DOT__inmemory;
         CData/*0:0*/ ysyx_22041461_CPU__DOT__WB_reg__DOT__rst_r1;
@@ -154,13 +155,13 @@ VL_MODULE(Vysyx_22041461_CPU___024root) {
         QData/*63:0*/ ysyx_22041461_CPU__DOT__IF__DOT__ICACHE__DOT__AXI_rdata;
         QData/*63:0*/ ysyx_22041461_CPU__DOT__EXE__DOT__src1;
         QData/*63:0*/ ysyx_22041461_CPU__DOT__EXE__DOT__src2;
-        QData/*63:0*/ ysyx_22041461_CPU__DOT__MEM__DOT__read_data1;
-        QData/*63:0*/ ysyx_22041461_CPU__DOT__MEM__DOT__read_data2;
-        QData/*63:0*/ ysyx_22041461_CPU__DOT__MEM__DOT__read_data;
+        QData/*63:0*/ ysyx_22041461_CPU__DOT__MEM__DOT__rdata1;
+        QData/*63:0*/ ysyx_22041461_CPU__DOT__MEM__DOT__rdata2;
     };
     struct {
-        QData/*63:0*/ ysyx_22041461_CPU__DOT__MEM__DOT__write_data1;
-        QData/*63:0*/ ysyx_22041461_CPU__DOT__MEM__DOT__write_data2;
+        QData/*63:0*/ ysyx_22041461_CPU__DOT__MEM__DOT__rdata;
+        QData/*63:0*/ ysyx_22041461_CPU__DOT__MEM__DOT__wdata1;
+        QData/*63:0*/ ysyx_22041461_CPU__DOT__MEM__DOT__wdata2;
         QData/*63:0*/ ysyx_22041461_CPU__DOT__MEM__DOT__DCACHE_addr;
         QData/*63:0*/ ysyx_22041461_CPU__DOT__MEM__DOT__DCACHE_wdata;
         QData/*63:0*/ ysyx_22041461_CPU__DOT__MEM__DOT__DCACHE_rdata;
@@ -208,9 +209,9 @@ VL_MODULE(Vysyx_22041461_CPU___024root) {
     CData/*0:0*/ __VinpClk__TOP__ysyx_22041461_CPU__DOT__WB__DOT__rst_r2;
     CData/*0:0*/ __VinpClk__TOP__ysyx_22041461_CPU__DOT__IF__DOT__ICACHE__DOT__rst_r2;
     CData/*0:0*/ __VinpClk__TOP__ysyx_22041461_CPU__DOT__EXE_reg__DOT__rst_r2;
-    CData/*0:0*/ __VinpClk__TOP__ysyx_22041461_CPU__DOT__MEM__DOT__rst_r2;
     CData/*0:0*/ __VinpClk__TOP__ysyx_22041461_CPU__DOT__IF_reg__DOT__rst_r2;
     CData/*0:0*/ __VinpClk__TOP__ysyx_22041461_CPU__DOT__ID_reg__DOT__rst_r2;
+    CData/*0:0*/ __VinpClk__TOP__ysyx_22041461_CPU__DOT__MEM__DOT__rst_r2;
     CData/*0:0*/ __Vclklast__TOP__clk;
     CData/*0:0*/ __Vclklast__TOP__rst;
     CData/*0:0*/ __Vclklast__TOP____VinpClk__TOP__ysyx_22041461_CPU__DOT__MEM_reg__DOT__rst_r2;
@@ -218,9 +219,9 @@ VL_MODULE(Vysyx_22041461_CPU___024root) {
     CData/*0:0*/ __Vclklast__TOP____VinpClk__TOP__ysyx_22041461_CPU__DOT__WB__DOT__rst_r2;
     CData/*0:0*/ __Vclklast__TOP____VinpClk__TOP__ysyx_22041461_CPU__DOT__IF__DOT__ICACHE__DOT__rst_r2;
     CData/*0:0*/ __Vclklast__TOP____VinpClk__TOP__ysyx_22041461_CPU__DOT__EXE_reg__DOT__rst_r2;
-    CData/*0:0*/ __Vclklast__TOP____VinpClk__TOP__ysyx_22041461_CPU__DOT__MEM__DOT__rst_r2;
     CData/*0:0*/ __Vclklast__TOP____VinpClk__TOP__ysyx_22041461_CPU__DOT__IF_reg__DOT__rst_r2;
     CData/*0:0*/ __Vclklast__TOP____VinpClk__TOP__ysyx_22041461_CPU__DOT__ID_reg__DOT__rst_r2;
+    CData/*0:0*/ __Vclklast__TOP____VinpClk__TOP__ysyx_22041461_CPU__DOT__MEM__DOT__rst_r2;
     CData/*0:0*/ __Vchglast__TOP__ysyx_22041461_CPU__DOT__IF_reg__DOT__rst_r2;
     CData/*0:0*/ __Vchglast__TOP__ysyx_22041461_CPU__DOT__IF__DOT__ICACHE__DOT__rst_r2;
     CData/*0:0*/ __Vchglast__TOP__ysyx_22041461_CPU__DOT__ID_reg__DOT__rst_r2;
