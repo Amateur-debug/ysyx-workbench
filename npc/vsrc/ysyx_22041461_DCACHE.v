@@ -1,7 +1,7 @@
 module  ysyx_22041461_DCACHE(
 
     input   wire [0:0]   clk             ,
-    input   wire [0:0]   flush           ,
+    input   wire [0:0]   rst             ,
     input   wire [0:0]   DCACHE_valid    ,
 
     input   wire [63:0]  DCACHE_addr     ,
@@ -231,24 +231,6 @@ always@(*) begin
 end
 
 
-//异步复位同步释放
-reg  [0:0]   rst_r1;
-reg  [0:0]   rst_r2;
-wire [0:0]   rst;
-
-assign rst = rst_r2;
-
-always@(posedge clk or negedge flush) begin
-    if(flush == 1'b0) begin
-        rst_r1 <= 1'b0;
-        rst_r2 <= 1'b0;
-    end
-    else begin
-        rst_r1 <= 1'b1;
-        rst_r2 <= rst_r1;
-    end
-end
-
 integer k;
 always@(posedge clk or negedge rst) begin
     if(rst == 1'b0) begin
@@ -308,30 +290,10 @@ always@(*) begin
         if(DCACHE_wen == 1'b0) begin
             if(inmemory == 1'b1) begin
                 if(hit1 == 1'b1) begin
-                    case(offset)
-                        3'b000: begin
-                            DCACHE_rdata = CacheLine1_data;
-                        end
-                        3'b100: begin
-                            DCACHE_rdata = {32'b0, CacheLine1_data[63:32]};
-                        end
-                        default: begin
-                            DCACHE_rdata = 64'b0;
-                        end
-                    endcase
+                    DCACHE_rdata = CacheLine1_data;
                 end
                 else if(hit2 == 1'b1) begin
-                    case(offset)
-                        3'b000: begin
-                            DCACHE_rdata = CacheLine2_data;
-                        end
-                        3'b100: begin
-                            DCACHE_rdata = {32'b0, CacheLine2_data[63:32]};
-                        end
-                        default: begin
-                            DCACHE_rdata = 64'b0;
-                        end
-                    endcase
+                    DCACHE_rdata = CacheLine2_data;
                 end
                 else begin
                     DCACHE_rdata = 64'b0;

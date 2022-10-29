@@ -253,7 +253,7 @@ ysyx_22041461_MEM_reg MEM_reg(
 
 ysyx_22041461_MEM MEM(
     .clk                (clk),
-    .rst                (rst),
+    .flush              (rst),
 
     .MEM_valid_in       (MEMreg_valid_out),
     .MEM_valid_fromCD   (CD_MEM_valid),
