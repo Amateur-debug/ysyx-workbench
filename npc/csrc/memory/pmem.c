@@ -60,7 +60,10 @@ extern "C" void pmem_read_pc(long long raddr, long long *rdata){
 }
 
 extern "C" void pmem_read(long long raddr, long long *rdata) {
-  
+  if(raddr % 4 != 0){
+    printf("raddr = %x\n", raddr);
+    npc_state.state = NPC_ABORT;
+  }
   if(raddr == CONFIG_RTC_MMIO || raddr == CONFIG_RTC_MMIO + 4){
     *rdata = mmio_read(raddr, 4);
     is_difftest_next = 0;
@@ -124,6 +127,10 @@ extern "C" void pmem_write(long long waddr, long long wdata, char wmask){
   // `wmask`中每比特表示`wdata`中1个字节的掩码,
   // 如`wmask = 0x3`代表只写入最低2个字节, 内存中的其它字节保持不变
 
+  if(waddr % 8 != 0){
+    printf("waddr = %x\n", waddr);
+    npc_state.state = NPC_ABORT;
+  }
   int i;
   if((waddr >= CONFIG_VGA_CTL_MMIO && waddr < CONFIG_VGA_CTL_MMIO + 8 + 8) ||
   (waddr >= CONFIG_FB_ADDR && waddr < CONFIG_FB_ADDR + 300 * 400 * 4 + 8) ||
