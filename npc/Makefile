@@ -25,7 +25,6 @@ VFLAGS += -CFLAGS -fPIC
 VFLAGS += -CFLAGS -I
 VFLAGS += -CFLAGS /home/cxy/ysyx-workbench/npc/include
 
-
 ifdef IMG
 VFLAGS += -CFLAGS -DIMG=$(IMG)
 endif
@@ -35,7 +34,7 @@ run:$(V_TOP) $(V_SOURCE) $(C_SOURCE) $(CC_SOURCE)
 	verilator $(VFLAGS) $^
 	make -j -C $(BUILD) -f $(Vmodule_name).mk
 	-cd $(BUILD)&&./$(Vmodule_name)
-#gtkwave ./$(BUILD)/wave.vcd
+	-gtkwave ./$(BUILD)/wave.vcd
 	-make clean
 
 .PHONY: clean run

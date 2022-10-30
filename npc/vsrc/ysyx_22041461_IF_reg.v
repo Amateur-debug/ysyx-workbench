@@ -4,13 +4,11 @@ module ysyx_22041461_IF_reg(
 
     input   wire [0:0]   clk               ,
     input   wire [0:0]   flush             ,
-    input   wire [0:0]   IFreg_valid_fromCD,
     input   wire [0:0]   IFreg_enable      ,
     input   wire [0:0]   IFreg_ctrl        ,
     input   wire [63:0]  IFreg_next_pc     ,
  
-    output  reg  [63:0]  IFreg_pc          ,
-    output  reg  [0:0]   IFreg_valid_out  
+    output  reg  [63:0]  IFreg_pc          
 );
 
 import "DPI-C" function void set_pc_ptr(input logic [63:0] a []);
@@ -39,19 +37,15 @@ end
 always@(posedge clk or negedge rst) begin
     if(rst == 1'b0) begin
         IFreg_pc <= 64'h0000_0000_8000_0000;
-        IFreg_valid_out <= 1'b1;
     end
     else if(IFreg_enable == 1'b0) begin
         IFreg_pc <= IFreg_pc;
-        IFreg_valid_out <= IFreg_valid_out;
     end
     else if(IFreg_ctrl == 1'b0) begin
         IFreg_pc <= IFreg_pc + 4;
-        IFreg_valid_out <= IFreg_valid_fromCD;
     end
     else begin
         IFreg_pc <= IFreg_next_pc;
-        IFreg_valid_out <= IFreg_valid_fromCD;
     end
 end
 

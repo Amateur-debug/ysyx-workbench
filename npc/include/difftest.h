@@ -5,7 +5,6 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-//#define DIFFTEST
 
 typedef uint32_t paddr_t;
 

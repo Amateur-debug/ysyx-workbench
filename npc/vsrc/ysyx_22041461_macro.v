@@ -192,3 +192,11 @@
 `define MEPC 12'h341
 `define MCAUSE 12'h342
 `define MSTATUS 12'h300
+
+//dcache state
+`define START 3'b000
+`define RCACHE 3'b001
+`define RAXI 3'b010
+`define WCACHE 3'b011
+`define WAXI 3'b100
+`define FINISH 3'b101

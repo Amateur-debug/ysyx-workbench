@@ -6,6 +6,7 @@ module ysyx_22041461_CD(
     input   wire  [2:0]  CD_ctrl        ,
 
     input   wire  [0:0]  CD_IF_ctrl     ,
+    input   wire  [0:0]  CD_IF_valid_out,
 
     input   wire  [0:0]  CD_ID_valid_in ,
     input   wire  [4:0]  CD_ID_rs1      ,
@@ -21,6 +22,7 @@ module ysyx_22041461_CD(
     input   wire  [11:0] CD_EXE_csr     ,
 
     input   wire  [0:0]  CD_MEM_valid_in,
+    input   wire  [0:0]  CD_MEM_ok      ,
     input   wire  [3:0]  CD_MEM_ctrl    ,   
     input   wire  [3:0]  CD_MEM_WB_ctrl ,
     input   wire  [4:0]  CD_MEM_rd      ,
@@ -32,8 +34,8 @@ module ysyx_22041461_CD(
     input   wire  [4:0]  CD_WB_rd       ,
     input   wire  [11:0] CD_WB_csr      ,
 
-    output  reg   [0:0]  CD_IFreg_valid    ,
     output  reg   [0:0]  CD_IFreg_enable   ,
+    output  reg   [0:0]  CD_IF_valid       ,
     output  reg   [0:0]  CD_IDreg_valid    ,
     output  reg   [0:0]  CD_IDreg_enable   ,
     output  reg   [0:0]  CD_EXEreg_valid   ,
@@ -351,101 +353,15 @@ always@(*) begin
     end
 end
 
-
-always@(*) begin
-    CD_IFreg_valid = 1'b1;
-    if(ID_rs1_read == 1'b1) begin
-        if(EXE_rd_write == 1'b1) begin
-            if(CD_ID_rs1 == CD_EXE_rd) begin
-                CD_IFreg_valid = 1'b0;
-            end
-        end
-        if(MEM_rd_write == 1'b1) begin
-            if(CD_ID_rs1 == CD_MEM_rd) begin
-                CD_IFreg_valid = 1'b0;
-            end
-        end
-        if(WB_rd_write == 1'b1) begin
-            if(CD_ID_rs1 == CD_WB_rd) begin
-                CD_IFreg_valid = 1'b0;
-            end
-        end
-    end
-    if(ID_rs2_read == 1'b1) begin
-        if(EXE_rd_write == 1'b1) begin
-            if(CD_ID_rs2 == CD_EXE_rd) begin
-                CD_IFreg_valid = 1'b0;
-            end
-        end
-        if(MEM_rd_write == 1'b1) begin
-            if(CD_ID_rs2 == CD_MEM_rd) begin
-                CD_IFreg_valid = 1'b0;
-            end
-        end
-        if(WB_rd_write == 1'b1) begin
-            if(CD_ID_rs2 == CD_WB_rd) begin
-                CD_IFreg_valid = 1'b0;
-            end
-        end
-    end
-    if(ID_mtvec_read == 1'b1) begin
-        if(EXE_csr_write == 1'b1) begin
-            if(CD_EXE_csr == `MTVEC) begin
-                CD_IFreg_valid = 1'b0;
-            end
-        end
-        if(MEM_csr_write == 1'b1) begin
-            if(CD_MEM_csr == `MTVEC) begin
-                CD_IFreg_valid = 1'b0;
-            end
-        end
-        if(WB_csr_write == 1'b1) begin
-            if(CD_WB_csr == `MTVEC) begin
-                CD_IFreg_valid = 1'b0;
-            end
-        end
-    end
-    if(ID_mepc_read == 1'b1) begin
-        if(EXE_csr_write == 1'b1) begin
-            if(CD_EXE_csr == `MEPC) begin
-                CD_IFreg_valid = 1'b0;
-            end
-        end
-        if(EXE_ecall_write == 1'b1) begin
-            CD_IFreg_valid = 1'b0;
-        end
-        if(MEM_csr_write == 1'b1) begin
-            if(CD_MEM_csr == `MEPC) begin
-                CD_IFreg_valid = 1'b0;
-            end
-        end
-        if(MEM_ecall_write == 1'b1) begin
-            CD_IFreg_valid = 1'b0;
-        end
-        if(WB_csr_write == 1'b1) begin
-            if(CD_WB_csr == `MEPC) begin
-                CD_IFreg_valid = 1'b0;
-            end
-        end
-        if(WB_ecall_write == 1'b1) begin
-            CD_IFreg_valid = 1'b0;
-        end
-    end
-    if(CD_ctrl == `CD_FENCE_I && CD_MEM_ctrl != `MEM_FENCE_I) begin
-        CD_IFreg_valid = 1'b0;
-    end
-    if(CD_ID_valid_in == 1'b1) begin
-        if(CD_ctrl == `CD_EBREAK) begin
-            CD_IFreg_valid = 1'b0;
-        end
-    end
-end
-
-
-
 always@(*) begin
     CD_IFreg_enable = 1'b1;
-     if(ID_rs1_read == 1'b1) begin
+    if(CD_IF_valid_out == 1'b0 && CD_IF_ctrl == 1'b0) begin
+        CD_IFreg_enable = 1'b0;
+    end
+    if(CD_MEM_ok == 1'b0) begin
+        CD_IFreg_enable = 1'b0;
+    end
+    if(ID_rs1_read == 1'b1) begin
         if(EXE_rd_write == 1'b1) begin
             if(CD_ID_rs1 == CD_EXE_rd) begin
                 CD_IFreg_enable = 1'b0;
@@ -578,6 +494,15 @@ always@(*) begin
 end
 
 always@(*) begin
+    CD_IF_valid = 1'b1;
+    if(CD_ID_valid_in == 1'b1) begin
+        if(CD_IF_ctrl == 1'b1) begin
+            CD_IF_valid = 1'b0;
+        end
+    end
+end
+
+always@(*) begin
     CD_IDreg_valid = 1'b1;
     if(CD_ID_valid_in == 1'b1) begin
         if(CD_IF_ctrl == 1'b1) begin
@@ -588,6 +513,9 @@ end
 
 always@(*) begin
     CD_IDreg_enable = 1'b1;
+    if(CD_MEM_ok == 1'b0) begin
+        CD_IDreg_enable = 1'b0;
+    end
     if(ID_rs1_read == 1'b1) begin
         if(EXE_rd_write == 1'b1) begin
             if(CD_ID_rs1 == CD_EXE_rd) begin
@@ -813,6 +741,9 @@ end
 
 always@(*) begin
     CD_EXEreg_enable = 1'b1;
+    if(CD_MEM_ok == 1'b0) begin
+        CD_EXEreg_enable = 1'b0;
+    end
     if(EXE_rs1_read == 1'b1) begin
         if(MEM_rd_write == 1'b1) begin
             if(CD_EXE_rs1 == CD_MEM_rd) begin
@@ -932,6 +863,9 @@ end
 
 always@(*) begin
     CD_MEMreg_enable = 1'b1;
+    if(CD_MEM_ok == 1'b0) begin
+        CD_MEMreg_enable = 1'b0;
+    end
     if(MEM_rs2_read == 1'b1) begin
         if(WB_rd_write == 1'b1) begin
             if(CD_MEM_rs2 == CD_WB_rd) begin

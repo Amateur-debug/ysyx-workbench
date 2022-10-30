@@ -8,8 +8,8 @@ module ysyx_22041461_CPU(
 ); 
 
 
-wire [0:0]  CD_IFreg_valid   ; 
 wire [0:0]  CD_IFreg_enable  ; 
+wire [0:0]  CD_IF_valid      ; 
 wire [0:0]  CD_IDreg_valid   ; 
 wire [0:0]  CD_IDreg_enable  ; 
 wire [0:0]  CD_EXEreg_valid  ; 
@@ -73,6 +73,7 @@ wire [3:0]  MEMreg_MEM_ctrl_out;
 wire [3:0]  MEMreg_WB_ctrl_out ;
 
 wire [0:0]  MEM_valid_out;
+wire [0:0]  MEM_ok       ;
 wire [63:0] MEM_out      ;
 
 wire [0:0]  WBreg_valid_out  ;
@@ -103,20 +104,19 @@ ysyx_22041461_IF_reg IF_reg(
 
     .clk                (clk),
     .flush              (rst),
-    .IFreg_valid_fromCD (CD_IFreg_valid),
     .IFreg_enable       (CD_IFreg_enable),
     .IFreg_ctrl         (ID_PC_ctrl),
     .IFreg_next_pc      (ID_next_pc),
 
-    .IFreg_pc           (IFreg_pc),
-    .IFreg_valid_out    (IFreg_valid_out)
+    .IFreg_pc           (IFreg_pc)
 );
 
 
 ysyx_22041461_IF IF(
-
-    .IF_valid_in  (IFreg_valid_out),
+    .clk          (clk),
+    .rst          (rst),
     .IF_pc        (IFreg_pc),
+    .IF_valid     (CD_IF_valid),
 
     .IF_valid_out (IF_valid_out),
     .IF_inst      (IF_inst)
@@ -252,14 +252,17 @@ ysyx_22041461_MEM_reg MEM_reg(
 );
 
 ysyx_22041461_MEM MEM(
+    .clk                (clk),
+    .flush              (rst),
 
     .MEM_valid_in       (MEMreg_valid_out),
-    .MEM_write_valid    (CD_MEM_valid),
+    .MEM_valid_fromCD   (CD_MEM_valid),
     .MEM_EXE_in         (MEMreg_EXE_out),
     .MEM_rs2_data       (WB_MEM_rs2_data),
     .MEM_ctrl           (MEMreg_MEM_ctrl_out),
 
     .MEM_valid_out      (MEM_valid_out),
+    .MEM_ok             (MEM_ok ),
     .MEM_out            (MEM_out) 
 );
 
@@ -339,6 +342,7 @@ ysyx_22041461_CD CD(
     .CD_ctrl         (ID_CD_ctrl),
 
     .CD_IF_ctrl      (ID_PC_ctrl),
+    .CD_IF_valid_out (IF_valid_out),
 
     .CD_ID_valid_in  (IDreg_valid_out),
     .CD_ID_rs1       (ID_rs1),
@@ -354,6 +358,7 @@ ysyx_22041461_CD CD(
     .CD_EXE_csr      (EXEreg_csr_out),
 
     .CD_MEM_valid_in (MEMreg_valid_out),
+    .CD_MEM_ok       (MEM_ok),
     .CD_MEM_ctrl     (MEMreg_MEM_ctrl_out),   
     .CD_MEM_WB_ctrl  (MEMreg_WB_ctrl_out),
     .CD_MEM_rd       (MEMreg_rd_out),
@@ -365,8 +370,8 @@ ysyx_22041461_CD CD(
     .CD_WB_rd        (WBreg_rd_out),
     .CD_WB_csr       (WBreg_csr_out),
 
-    .CD_IFreg_valid     (CD_IFreg_valid  ),
     .CD_IFreg_enable    (CD_IFreg_enable ),
+    .CD_IF_valid        (CD_IF_valid     ),
     .CD_IDreg_valid     (CD_IDreg_valid  ),
     .CD_IDreg_enable    (CD_IDreg_enable ),
     .CD_EXEreg_valid    (CD_EXEreg_valid ),
