@@ -25,7 +25,6 @@ VFLAGS += -CFLAGS -fPIC
 VFLAGS += -CFLAGS -I
 VFLAGS += -CFLAGS /home/cxy/ysyx-workbench/npc/include
 
-
 ifdef IMG
 VFLAGS += -CFLAGS -DIMG=$(IMG)
 endif

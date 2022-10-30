@@ -47,6 +47,8 @@ reg  [127:0] SRAM_BWEN;
 wire [63:0]  CacheLine1_data;
 wire [63:0]  CacheLine2_data;
 
+reg [2:0] state;
+
 
 assign {CacheLine2_data, CacheLine1_data} = SRAM_data_out;
 
@@ -87,132 +89,6 @@ always@(*) begin
     end
 end
 
-
-always@(*) begin
-    if(DCACHE_valid == 1'b1) begin
-        if(DCACHE_wen == 1'b0) begin
-            if(inmemory == 1'b0) begin
-                pmem_read(DCACHE_addr, AXI_rdata);
-            end
-            else begin
-                if(hit1 == 1'b0 && hit2 == 1'b0) begin
-                    pmem_read(DCACHE_addr, AXI_rdata);
-                end
-                else begin
-                    AXI_rdata = 64'b0;
-                end
-            end
-        end
-        else begin
-            AXI_rdata = 64'b0;
-        end
-    end
-    else begin
-        AXI_rdata = 64'b0;
-    end
-end
-
-always@(*) begin
-    if(DCACHE_valid == 1'b1) begin
-        if(DCACHE_wen == 1'b1) begin
-            pmem_write(DCACHE_addr, DCACHE_wdata, DCACHE_mask);
-        end
-    end
-end
-
-
-integer i;
-always@(*) begin
-    for(i = 0; i < 64; i = i + 1) begin
-        V1_next[i] = V1[i];
-        V2_next[i] = V2[i];
-        tag1_next[i] = tag1[i];
-        tag2_next[i] = tag2[i];
-    end
-    if(DCACHE_valid == 1'b1 && DCACHE_wen == 1'b0 && inmemory == 1'b1) begin
-        if(hit1 == 1'b0 && hit2 == 1'b0) begin
-            if(V1[index] == 1'b0) begin
-                V1_next[index] = 1'b1;
-                tag1_next[index] = tag;
-            end
-            else if(V2[index] == 1'b0) begin 
-                V2_next[index] = 1'b1;
-                tag2_next[index] = tag;
-            end
-            else begin
-                V1_next[index] = 1'b1;
-                tag1_next[index] = tag;
-            end
-        end
-    end
-end
-
-always@(*) begin
-    if(DCACHE_valid == 1'b1 && inmemory == 1'b1) begin
-        if(DCACHE_wen == 1'b0) begin
-            if(hit1 == 1'b0 && hit2 == 1'b0) begin
-                if(V1[index] == 1'b0) begin
-                    SRAM_WEN = 1'b0;
-                    SRAM_BWEN = 128'hffff_ffff_ffff_ffff_0000_0000_0000_0000;
-                    SRAM_data_in = {64'b0, AXI_rdata};
-                end
-                else if(V2[index] == 1'b0) begin 
-                    SRAM_WEN = 1'b0;
-                    SRAM_BWEN = 128'h0000_0000_0000_0000_ffff_ffff_ffff_ffff;
-                    SRAM_data_in = {AXI_rdata, 64'b0};
-                end
-                else begin
-                    SRAM_WEN = 1'b0;
-                    SRAM_BWEN = 128'hffff_ffff_ffff_ffff_0000_0000_0000_0000;
-                    SRAM_data_in = {64'b0, AXI_rdata};
-                end
-            end
-            else begin
-                SRAM_WEN = 1'b1;
-                SRAM_BWEN = 128'hffff_ffff_ffff_ffff_ffff_ffff_ffff_ffff;
-                SRAM_data_in = 128'b0;
-            end
-        end
-        else begin
-            if(hit1 == 1'b1) begin
-                SRAM_WEN = 1'b0;
-                SRAM_data_in = {64'b0, DCACHE_wdata};
-                SRAM_BWEN = {64'hffff_ffff_ffff_ffff, ~{{8{DCACHE_mask[7:7]}}, {8{DCACHE_mask[6:6]}}, {8{DCACHE_mask[5:5]}}, {8{DCACHE_mask[4:4]}}, {8{DCACHE_mask[3:3]}}, {8{DCACHE_mask[2:2]}}, {8{DCACHE_mask[1:1]}}, {8{DCACHE_mask[0:0]}}}};
-            end
-            else if(hit2 == 1'b1) begin
-                SRAM_WEN = 1'b0;
-                SRAM_data_in = {DCACHE_wdata, 64'b0};
-                SRAM_BWEN = {~{{8{DCACHE_mask[7:7]}}, {8{DCACHE_mask[6:6]}}, {8{DCACHE_mask[5:5]}}, {8{DCACHE_mask[4:4]}}, {8{DCACHE_mask[3:3]}}, {8{DCACHE_mask[2:2]}}, {8{DCACHE_mask[1:1]}}, {8{DCACHE_mask[0:0]}}}, 64'hffff_ffff_ffff_ffff};
-            end
-            else begin
-                SRAM_WEN = 1'b1;
-                SRAM_data_in = 128'b0;
-                SRAM_BWEN = 128'hffff_ffff_ffff_ffff_ffff_ffff_ffff_ffff;
-            end
-        end
-    end
-    else begin
-        SRAM_WEN = 1'b1;
-        SRAM_BWEN = 128'hffff_ffff_ffff_ffff_ffff_ffff_ffff_ffff;
-        SRAM_data_in = 128'b0;
-    end
-end
-
-
-always@(*) begin
-    if(DCACHE_wen == 1'b0) begin
-        if(hit1 == 1'b1 || hit2 == 1'b1) begin
-            DCACHE_valid_out = 1'b1;
-        end
-        else begin
-            DCACHE_valid_out = 1'b0;
-        end
-    end
-    else begin
-        DCACHE_valid_out = 1'b1;
-    end
-end
-
 always@(*) begin
     if(DCACHE_valid == 1'b0) begin
         DCACHE_rdata = 64'b0;
@@ -239,6 +115,169 @@ always@(*) begin
         end
     end
 end
+
+always@(posedge clk or negedge rst) begin
+    if(rst == 1'b0) begin
+        state <= `START;
+    end
+    else begin
+        case(state)
+            `START: begin
+                if(DCACHE_valid ==1'b1) begin
+                    if(DCACHE_wen == 1'b0) begin
+                        if((hit1 == 1'b1 || hit2 == 1'b1) && inmemory == 1'b1) begin
+                            state <= `RCACHE;
+                        end
+                        else begin
+                            state <= `RAXI;
+                        end
+                    end
+                    else begin
+                        state <= `WAXI;
+                    end
+                end
+                else begin
+                    state <= `START;
+                end
+            end
+            `RCACHE: begin
+                state <= `FINISH;
+            end
+            `RAXI: begin
+                if(inmemory == 1'b1) begin
+                    state <= `WCACHE;
+                end
+                else begin
+                    state <= `FINISH;
+                end
+            end
+            `WCACHE: begin
+                if(DCACHE_wen == 1'b0) begin
+                    state <= `RCACHE;
+                end
+                else begin
+                    state <= `FINISH;
+                end
+            end
+            `WAXI: begin
+                if((hit1 == 1'b1 || hit2 == 1'b1) && inmemory == 1'b1) begin
+                    state <= `WCACHE;
+                end
+                else begin
+                    state <= `FINISH;
+                end
+            end
+            `FINISH: begin
+                state <= `START;
+            end
+            default: begin
+                state <= `START;
+            end
+        endcase
+    end
+end
+
+
+
+always@(*) begin
+    if(state == `RAXI) begin
+        pmem_read(DCACHE_addr, AXI_rdata);
+    end
+    else if(state == `START) begin
+        AXI_rdata = 64'b0;
+    end
+    else begin
+        AXI_rdata = AXI_rdata;
+    end
+end
+
+always@(*) begin
+    if(state == `WAXI) begin
+        pmem_write(DCACHE_addr, DCACHE_wdata, DCACHE_mask);
+    end
+end
+
+
+integer i;
+always@(*) begin
+    for(i = 0; i < 64; i = i + 1) begin
+        V1_next[i] = V1[i];
+        V2_next[i] = V2[i];
+        tag1_next[i] = tag1[i];
+        tag2_next[i] = tag2[i];
+    end
+    if(state == `WCACHE) begin
+        if(hit1 == 1'b0 && hit2 == 1'b0) begin
+            if(V1[index] == 1'b0) begin
+                V1_next[index] = 1'b1;
+                tag1_next[index] = tag;
+            end
+            else if(V2[index] == 1'b0) begin 
+                V2_next[index] = 1'b1;
+                tag2_next[index] = tag;
+            end
+            else begin
+                V1_next[index] = 1'b1;
+                tag1_next[index] = tag;
+            end
+        end
+    end
+end
+
+always@(*) begin
+    if(state == `WCACHE) begin
+        if(DCACHE_wen == 1'b0) begin
+            if(V1[index] == 1'b0) begin
+                SRAM_WEN = 1'b0;
+                SRAM_BWEN = 128'hffff_ffff_ffff_ffff_0000_0000_0000_0000;
+                SRAM_data_in = {64'b0, AXI_rdata};
+            end
+            else if(V2[index] == 1'b0) begin 
+                SRAM_WEN = 1'b0;
+                SRAM_BWEN = 128'h0000_0000_0000_0000_ffff_ffff_ffff_ffff;
+                SRAM_data_in = {AXI_rdata, 64'b0};
+            end
+            else begin
+                SRAM_WEN = 1'b0;
+                SRAM_BWEN = 128'hffff_ffff_ffff_ffff_0000_0000_0000_0000;
+                SRAM_data_in = {64'b0, AXI_rdata};
+            end
+        end
+        else begin
+            if(hit1 == 1'b1) begin
+                SRAM_WEN = 1'b0;
+                SRAM_data_in = {64'b0, DCACHE_wdata};
+                SRAM_BWEN = {64'hffff_ffff_ffff_ffff, ~{{8{DCACHE_mask[7:7]}}, {8{DCACHE_mask[6:6]}}, {8{DCACHE_mask[5:5]}}, {8{DCACHE_mask[4:4]}}, {8{DCACHE_mask[3:3]}}, {8{DCACHE_mask[2:2]}}, {8{DCACHE_mask[1:1]}}, {8{DCACHE_mask[0:0]}}}};
+            end
+            else if(hit2 == 1'b1) begin
+                SRAM_WEN = 1'b0;
+                SRAM_data_in = {DCACHE_wdata, 64'b0};
+                SRAM_BWEN = {~{{8{DCACHE_mask[7:7]}}, {8{DCACHE_mask[6:6]}}, {8{DCACHE_mask[5:5]}}, {8{DCACHE_mask[4:4]}}, {8{DCACHE_mask[3:3]}}, {8{DCACHE_mask[2:2]}}, {8{DCACHE_mask[1:1]}}, {8{DCACHE_mask[0:0]}}}, 64'hffff_ffff_ffff_ffff};
+            end
+            else begin
+                SRAM_WEN = 1'b1;
+                SRAM_data_in = 128'b0;
+                SRAM_BWEN = 128'hffff_ffff_ffff_ffff_ffff_ffff_ffff_ffff;
+            end
+        end
+    end
+    else begin
+        SRAM_WEN = 1'b1;
+        SRAM_data_in = 128'b0;
+        SRAM_BWEN = 128'hffff_ffff_ffff_ffff_ffff_ffff_ffff_ffff;
+    end
+end
+
+
+always@(*) begin
+    if(state == `FINISH) begin
+        DCACHE_valid_out = 1'b1;
+    end
+    else begin
+        DCACHE_valid_out = 1'b0;
+    end
+end
+
 
 integer k;
 always@(posedge clk or negedge rst) begin
