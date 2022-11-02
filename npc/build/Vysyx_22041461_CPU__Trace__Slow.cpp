@@ -22,28 +22,28 @@ void Vysyx_22041461_CPU___024root__traceInitSub0(Vysyx_22041461_CPU___024root* v
     if (false && tracep && c) {}  // Prevent unused
     // Body
     {
-        tracep->declBus(c+357,"clk", false,-1, 0,0);
-        tracep->declBus(c+358,"rst", false,-1, 0,0);
-        tracep->declQuad(c+359,"pc", false,-1, 63,0);
-        tracep->declBus(c+361,"inst", false,-1, 31,0);
-        tracep->declBus(c+357,"ysyx_22041461_CPU clk", false,-1, 0,0);
-        tracep->declBus(c+358,"ysyx_22041461_CPU rst", false,-1, 0,0);
-        tracep->declQuad(c+359,"ysyx_22041461_CPU pc", false,-1, 63,0);
-        tracep->declBus(c+361,"ysyx_22041461_CPU inst", false,-1, 31,0);
-        tracep->declBus(c+362,"ysyx_22041461_CPU CD_IFreg_enable", false,-1, 0,0);
+        tracep->declBus(c+354,"clk", false,-1, 0,0);
+        tracep->declBus(c+355,"rst", false,-1, 0,0);
+        tracep->declQuad(c+356,"pc", false,-1, 63,0);
+        tracep->declBus(c+358,"inst", false,-1, 31,0);
+        tracep->declBus(c+354,"ysyx_22041461_CPU clk", false,-1, 0,0);
+        tracep->declBus(c+355,"ysyx_22041461_CPU rst", false,-1, 0,0);
+        tracep->declQuad(c+356,"ysyx_22041461_CPU pc", false,-1, 63,0);
+        tracep->declBus(c+358,"ysyx_22041461_CPU inst", false,-1, 31,0);
+        tracep->declBus(c+359,"ysyx_22041461_CPU CD_IFreg_enable", false,-1, 0,0);
         tracep->declBus(c+282,"ysyx_22041461_CPU CD_IF_valid", false,-1, 0,0);
         tracep->declBus(c+283,"ysyx_22041461_CPU CD_IDreg_valid", false,-1, 0,0);
-        tracep->declBus(c+363,"ysyx_22041461_CPU CD_IDreg_enable", false,-1, 0,0);
-        tracep->declBus(c+364,"ysyx_22041461_CPU CD_EXEreg_valid", false,-1, 0,0);
-        tracep->declBus(c+365,"ysyx_22041461_CPU CD_EXEreg_enable", false,-1, 0,0);
-        tracep->declBus(c+366,"ysyx_22041461_CPU CD_MEMreg_valid", false,-1, 0,0);
-        tracep->declBus(c+323,"ysyx_22041461_CPU CD_MEM_valid", false,-1, 0,0);
-        tracep->declBus(c+332,"ysyx_22041461_CPU CD_MEMreg_enable", false,-1, 0,0);
-        tracep->declBus(c+324,"ysyx_22041461_CPU CD_WBreg_valid", false,-1, 0,0);
-        tracep->declQuad(c+326,"ysyx_22041461_CPU IFreg_pc", false,-1, 63,0);
+        tracep->declBus(c+360,"ysyx_22041461_CPU CD_IDreg_enable", false,-1, 0,0);
+        tracep->declBus(c+361,"ysyx_22041461_CPU CD_EXEreg_valid", false,-1, 0,0);
+        tracep->declBus(c+362,"ysyx_22041461_CPU CD_EXEreg_enable", false,-1, 0,0);
+        tracep->declBus(c+363,"ysyx_22041461_CPU CD_MEMreg_valid", false,-1, 0,0);
+        tracep->declBus(c+331,"ysyx_22041461_CPU CD_MEM_valid", false,-1, 0,0);
+        tracep->declBus(c+364,"ysyx_22041461_CPU CD_MEMreg_enable", false,-1, 0,0);
+        tracep->declBus(c+332,"ysyx_22041461_CPU CD_WBreg_valid", false,-1, 0,0);
+        tracep->declQuad(c+334,"ysyx_22041461_CPU IFreg_pc", false,-1, 63,0);
         tracep->declBus(c+389,"ysyx_22041461_CPU IFreg_valid_out", false,-1, 0,0);
-        tracep->declBus(c+367,"ysyx_22041461_CPU IF_valid_out", false,-1, 0,0);
-        tracep->declBus(c+368,"ysyx_22041461_CPU IF_inst", false,-1, 31,0);
+        tracep->declBus(c+365,"ysyx_22041461_CPU IF_valid_out", false,-1, 0,0);
+        tracep->declBus(c+366,"ysyx_22041461_CPU IF_inst", false,-1, 31,0);
         tracep->declBus(c+125,"ysyx_22041461_CPU IDreg_valid_out", false,-1, 0,0);
         tracep->declBus(c+126,"ysyx_22041461_CPU IDreg_inst_out", false,-1, 31,0);
         tracep->declQuad(c+127,"ysyx_22041461_CPU IDreg_pc_out", false,-1, 63,0);
@@ -79,16 +79,16 @@ void Vysyx_22041461_CPU___024root__traceInitSub0(Vysyx_22041461_CPU___024root* v
         tracep->declQuad(c+157,"ysyx_22041461_CPU MEMreg_EXE_out", false,-1, 63,0);
         tracep->declBus(c+159,"ysyx_22041461_CPU MEMreg_rd_out", false,-1, 4,0);
         tracep->declBus(c+160,"ysyx_22041461_CPU MEMreg_rs1_out", false,-1, 4,0);
-        tracep->declBus(c+369,"ysyx_22041461_CPU MEMreg_rs2_out", false,-1, 4,0);
+        tracep->declBus(c+367,"ysyx_22041461_CPU MEMreg_rs2_out", false,-1, 4,0);
         tracep->declBus(c+161,"ysyx_22041461_CPU MEMreg_csr_out", false,-1, 11,0);
         tracep->declQuad(c+162,"ysyx_22041461_CPU MEMreg_imm_out", false,-1, 63,0);
         tracep->declQuad(c+164,"ysyx_22041461_CPU MEMreg_zimm_out", false,-1, 63,0);
         tracep->declQuad(c+166,"ysyx_22041461_CPU MEMreg_pc_out", false,-1, 63,0);
         tracep->declBus(c+168,"ysyx_22041461_CPU MEMreg_MEM_ctrl_out", false,-1, 3,0);
         tracep->declBus(c+169,"ysyx_22041461_CPU MEMreg_WB_ctrl_out", false,-1, 3,0);
-        tracep->declBus(c+370,"ysyx_22041461_CPU MEM_valid_out", false,-1, 0,0);
-        tracep->declBus(c+333,"ysyx_22041461_CPU MEM_ok", false,-1, 0,0);
-        tracep->declQuad(c+371,"ysyx_22041461_CPU MEM_out", false,-1, 63,0);
+        tracep->declBus(c+368,"ysyx_22041461_CPU MEM_valid_out", false,-1, 0,0);
+        tracep->declBus(c+369,"ysyx_22041461_CPU MEM_ok", false,-1, 0,0);
+        tracep->declQuad(c+370,"ysyx_22041461_CPU MEM_out", false,-1, 63,0);
         tracep->declBus(c+1,"ysyx_22041461_CPU WBreg_valid_out", false,-1, 0,0);
         tracep->declQuad(c+2,"ysyx_22041461_CPU WBreg_EXE_out", false,-1, 63,0);
         tracep->declQuad(c+4,"ysyx_22041461_CPU WBreg_MEM_out", false,-1, 63,0);
@@ -104,69 +104,69 @@ void Vysyx_22041461_CPU___024root__traceInitSub0(Vysyx_22041461_CPU___024root* v
         tracep->declQuad(c+19,"ysyx_22041461_CPU WB_ID_csr_mtvec", false,-1, 63,0);
         tracep->declQuad(c+21,"ysyx_22041461_CPU WB_ID_csr_mepc", false,-1, 63,0);
         tracep->declQuad(c+262,"ysyx_22041461_CPU WB_EXE_rs1_data", false,-1, 63,0);
-        tracep->declQuad(c+373,"ysyx_22041461_CPU WB_EXE_rs2_data", false,-1, 63,0);
+        tracep->declQuad(c+372,"ysyx_22041461_CPU WB_EXE_rs2_data", false,-1, 63,0);
         tracep->declQuad(c+264,"ysyx_22041461_CPU WB_EXE_csr_data", false,-1, 63,0);
         tracep->declQuad(c+254,"ysyx_22041461_CPU WB_MEM_rs2_data", false,-1, 63,0);
-        tracep->declBus(c+357,"ysyx_22041461_CPU IF_reg clk", false,-1, 0,0);
-        tracep->declBus(c+358,"ysyx_22041461_CPU IF_reg flush", false,-1, 0,0);
-        tracep->declBus(c+362,"ysyx_22041461_CPU IF_reg IFreg_enable", false,-1, 0,0);
+        tracep->declBus(c+354,"ysyx_22041461_CPU IF_reg clk", false,-1, 0,0);
+        tracep->declBus(c+355,"ysyx_22041461_CPU IF_reg flush", false,-1, 0,0);
+        tracep->declBus(c+359,"ysyx_22041461_CPU IF_reg IFreg_enable", false,-1, 0,0);
         tracep->declBus(c+289,"ysyx_22041461_CPU IF_reg IFreg_ctrl", false,-1, 0,0);
         tracep->declQuad(c+286,"ysyx_22041461_CPU IF_reg IFreg_next_pc", false,-1, 63,0);
-        tracep->declQuad(c+326,"ysyx_22041461_CPU IF_reg IFreg_pc", false,-1, 63,0);
+        tracep->declQuad(c+334,"ysyx_22041461_CPU IF_reg IFreg_pc", false,-1, 63,0);
         tracep->declBus(c+140,"ysyx_22041461_CPU IF_reg rst_r1", false,-1, 0,0);
         tracep->declBus(c+141,"ysyx_22041461_CPU IF_reg rst_r2", false,-1, 0,0);
         tracep->declBus(c+141,"ysyx_22041461_CPU IF_reg rst", false,-1, 0,0);
-        tracep->declBus(c+357,"ysyx_22041461_CPU IF clk", false,-1, 0,0);
-        tracep->declBus(c+358,"ysyx_22041461_CPU IF rst", false,-1, 0,0);
-        tracep->declQuad(c+326,"ysyx_22041461_CPU IF IF_pc", false,-1, 63,0);
+        tracep->declBus(c+354,"ysyx_22041461_CPU IF clk", false,-1, 0,0);
+        tracep->declBus(c+355,"ysyx_22041461_CPU IF rst", false,-1, 0,0);
+        tracep->declQuad(c+334,"ysyx_22041461_CPU IF IF_pc", false,-1, 63,0);
         tracep->declBus(c+282,"ysyx_22041461_CPU IF IF_valid", false,-1, 0,0);
-        tracep->declBus(c+367,"ysyx_22041461_CPU IF IF_valid_out", false,-1, 0,0);
-        tracep->declBus(c+368,"ysyx_22041461_CPU IF IF_inst", false,-1, 31,0);
-        tracep->declBus(c+357,"ysyx_22041461_CPU IF ICACHE clk", false,-1, 0,0);
-        tracep->declBus(c+358,"ysyx_22041461_CPU IF ICACHE flush", false,-1, 0,0);
+        tracep->declBus(c+365,"ysyx_22041461_CPU IF IF_valid_out", false,-1, 0,0);
+        tracep->declBus(c+366,"ysyx_22041461_CPU IF IF_inst", false,-1, 31,0);
+        tracep->declBus(c+354,"ysyx_22041461_CPU IF ICACHE clk", false,-1, 0,0);
+        tracep->declBus(c+355,"ysyx_22041461_CPU IF ICACHE flush", false,-1, 0,0);
         tracep->declBus(c+282,"ysyx_22041461_CPU IF ICACHE ICACHE_valid", false,-1, 0,0);
-        tracep->declQuad(c+326,"ysyx_22041461_CPU IF ICACHE ICACHE_pc", false,-1, 63,0);
-        tracep->declBus(c+367,"ysyx_22041461_CPU IF ICACHE ICACHE_valid_out", false,-1, 0,0);
-        tracep->declBus(c+368,"ysyx_22041461_CPU IF ICACHE ICACHE_inst", false,-1, 31,0);
-        tracep->declBus(c+328,"ysyx_22041461_CPU IF ICACHE index", false,-1, 5,0);
-        tracep->declBus(c+329,"ysyx_22041461_CPU IF ICACHE offset", false,-1, 2,0);
-        tracep->declQuad(c+330,"ysyx_22041461_CPU IF ICACHE tag", false,-1, 54,0);
-        tracep->declBus(c+375,"ysyx_22041461_CPU IF ICACHE hit1", false,-1, 0,0);
-        tracep->declBus(c+376,"ysyx_22041461_CPU IF ICACHE hit2", false,-1, 0,0);
-        tracep->declBus(c+377,"ysyx_22041461_CPU IF ICACHE num", false,-1, 0,0);
-        tracep->declQuad(c+351,"ysyx_22041461_CPU IF ICACHE AXI_rdata", false,-1, 63,0);
-        tracep->declArray(c+353,"ysyx_22041461_CPU IF ICACHE SRAM_data_in", false,-1, 127,0);
+        tracep->declQuad(c+334,"ysyx_22041461_CPU IF ICACHE ICACHE_pc", false,-1, 63,0);
+        tracep->declBus(c+365,"ysyx_22041461_CPU IF ICACHE ICACHE_valid_out", false,-1, 0,0);
+        tracep->declBus(c+366,"ysyx_22041461_CPU IF ICACHE ICACHE_inst", false,-1, 31,0);
+        tracep->declBus(c+336,"ysyx_22041461_CPU IF ICACHE index", false,-1, 5,0);
+        tracep->declBus(c+337,"ysyx_22041461_CPU IF ICACHE offset", false,-1, 2,0);
+        tracep->declQuad(c+338,"ysyx_22041461_CPU IF ICACHE tag", false,-1, 54,0);
+        tracep->declBus(c+374,"ysyx_22041461_CPU IF ICACHE hit1", false,-1, 0,0);
+        tracep->declBus(c+375,"ysyx_22041461_CPU IF ICACHE hit2", false,-1, 0,0);
+        tracep->declBus(c+376,"ysyx_22041461_CPU IF ICACHE num", false,-1, 0,0);
+        tracep->declQuad(c+348,"ysyx_22041461_CPU IF ICACHE AXI_rdata", false,-1, 63,0);
+        tracep->declArray(c+350,"ysyx_22041461_CPU IF ICACHE SRAM_data_in", false,-1, 127,0);
         tracep->declArray(c+274,"ysyx_22041461_CPU IF ICACHE SRAM_data_out", false,-1, 127,0);
-        tracep->declBus(c+378,"ysyx_22041461_CPU IF ICACHE SRAM_WEN", false,-1, 0,0);
-        tracep->declArray(c+343,"ysyx_22041461_CPU IF ICACHE SRAM_BWEN", false,-1, 127,0);
+        tracep->declBus(c+377,"ysyx_22041461_CPU IF ICACHE SRAM_WEN", false,-1, 0,0);
+        tracep->declArray(c+340,"ysyx_22041461_CPU IF ICACHE SRAM_BWEN", false,-1, 127,0);
         tracep->declQuad(c+278,"ysyx_22041461_CPU IF ICACHE CacheLine1_data", false,-1, 63,0);
         tracep->declQuad(c+280,"ysyx_22041461_CPU IF ICACHE CacheLine2_data", false,-1, 63,0);
         tracep->declBus(c+390,"ysyx_22041461_CPU IF ICACHE i", false,-1, 31,0);
         tracep->declBus(c+142,"ysyx_22041461_CPU IF ICACHE rst_r1", false,-1, 0,0);
         tracep->declBus(c+143,"ysyx_22041461_CPU IF ICACHE rst_r2", false,-1, 0,0);
         tracep->declBus(c+143,"ysyx_22041461_CPU IF ICACHE rst", false,-1, 0,0);
-        tracep->declBus(c+379,"ysyx_22041461_CPU IF ICACHE k", false,-1, 31,0);
+        tracep->declBus(c+378,"ysyx_22041461_CPU IF ICACHE k", false,-1, 31,0);
         tracep->declBus(c+391,"ysyx_22041461_CPU IF ICACHE SRAM Bits", false,-1, 31,0);
         tracep->declBus(c+392,"ysyx_22041461_CPU IF ICACHE SRAM Word_Depth", false,-1, 31,0);
         tracep->declBus(c+393,"ysyx_22041461_CPU IF ICACHE SRAM Add_Width", false,-1, 31,0);
         tracep->declBus(c+391,"ysyx_22041461_CPU IF ICACHE SRAM Wen_Width", false,-1, 31,0);
-        tracep->declBit(c+357,"ysyx_22041461_CPU IF ICACHE SRAM CLK", false,-1);
+        tracep->declBit(c+354,"ysyx_22041461_CPU IF ICACHE SRAM CLK", false,-1);
         tracep->declBit(c+394,"ysyx_22041461_CPU IF ICACHE SRAM CEN", false,-1);
-        tracep->declBit(c+378,"ysyx_22041461_CPU IF ICACHE SRAM WEN", false,-1);
-        tracep->declArray(c+343,"ysyx_22041461_CPU IF ICACHE SRAM BWEN", false,-1, 127,0);
-        tracep->declBus(c+328,"ysyx_22041461_CPU IF ICACHE SRAM A", false,-1, 5,0);
-        tracep->declArray(c+353,"ysyx_22041461_CPU IF ICACHE SRAM D", false,-1, 127,0);
+        tracep->declBit(c+377,"ysyx_22041461_CPU IF ICACHE SRAM WEN", false,-1);
+        tracep->declArray(c+340,"ysyx_22041461_CPU IF ICACHE SRAM BWEN", false,-1, 127,0);
+        tracep->declBus(c+336,"ysyx_22041461_CPU IF ICACHE SRAM A", false,-1, 5,0);
+        tracep->declArray(c+350,"ysyx_22041461_CPU IF ICACHE SRAM D", false,-1, 127,0);
         tracep->declArray(c+274,"ysyx_22041461_CPU IF ICACHE SRAM Q", false,-1, 127,0);
         tracep->declBit(c+395,"ysyx_22041461_CPU IF ICACHE SRAM cen", false,-1);
-        tracep->declBit(c+380,"ysyx_22041461_CPU IF ICACHE SRAM wen", false,-1);
-        tracep->declArray(c+347,"ysyx_22041461_CPU IF ICACHE SRAM bwen", false,-1, 127,0);
-        tracep->declBus(c+357,"ysyx_22041461_CPU ID_reg clk", false,-1, 0,0);
-        tracep->declBus(c+358,"ysyx_22041461_CPU ID_reg flush", false,-1, 0,0);
-        tracep->declBus(c+363,"ysyx_22041461_CPU ID_reg IDreg_enable", false,-1, 0,0);
-        tracep->declBus(c+367,"ysyx_22041461_CPU ID_reg IDreg_valid_fromIF", false,-1, 0,0);
+        tracep->declBit(c+379,"ysyx_22041461_CPU IF ICACHE SRAM wen", false,-1);
+        tracep->declArray(c+344,"ysyx_22041461_CPU IF ICACHE SRAM bwen", false,-1, 127,0);
+        tracep->declBus(c+354,"ysyx_22041461_CPU ID_reg clk", false,-1, 0,0);
+        tracep->declBus(c+355,"ysyx_22041461_CPU ID_reg flush", false,-1, 0,0);
+        tracep->declBus(c+360,"ysyx_22041461_CPU ID_reg IDreg_enable", false,-1, 0,0);
+        tracep->declBus(c+365,"ysyx_22041461_CPU ID_reg IDreg_valid_fromIF", false,-1, 0,0);
         tracep->declBus(c+283,"ysyx_22041461_CPU ID_reg IDreg_valid_fromCD", false,-1, 0,0);
-        tracep->declBus(c+368,"ysyx_22041461_CPU ID_reg IDreg_inst_in", false,-1, 31,0);
-        tracep->declQuad(c+326,"ysyx_22041461_CPU ID_reg IDreg_pc_in", false,-1, 63,0);
+        tracep->declBus(c+366,"ysyx_22041461_CPU ID_reg IDreg_inst_in", false,-1, 31,0);
+        tracep->declQuad(c+334,"ysyx_22041461_CPU ID_reg IDreg_pc_in", false,-1, 63,0);
         tracep->declBus(c+125,"ysyx_22041461_CPU ID_reg IDreg_valid_out", false,-1, 0,0);
         tracep->declBus(c+126,"ysyx_22041461_CPU ID_reg IDreg_inst_out", false,-1, 31,0);
         tracep->declQuad(c+127,"ysyx_22041461_CPU ID_reg IDreg_pc_out", false,-1, 63,0);
@@ -199,10 +199,10 @@ void Vysyx_22041461_CPU___024root__traceInitSub0(Vysyx_22041461_CPU___024root* v
         tracep->declBus(c+137,"ysyx_22041461_CPU ID funct6", false,-1, 5,0);
         tracep->declBus(c+138,"ysyx_22041461_CPU ID funct7", false,-1, 6,0);
         tracep->declBus(c+139,"ysyx_22041461_CPU ID shamt", false,-1, 5,0);
-        tracep->declBus(c+357,"ysyx_22041461_CPU EXE_reg clk", false,-1, 0,0);
-        tracep->declBus(c+358,"ysyx_22041461_CPU EXE_reg flush", false,-1, 0,0);
-        tracep->declBus(c+365,"ysyx_22041461_CPU EXE_reg EXEreg_enable", false,-1, 0,0);
-        tracep->declBus(c+364,"ysyx_22041461_CPU EXE_reg EXEreg_valid_fromCD", false,-1, 0,0);
+        tracep->declBus(c+354,"ysyx_22041461_CPU EXE_reg clk", false,-1, 0,0);
+        tracep->declBus(c+355,"ysyx_22041461_CPU EXE_reg flush", false,-1, 0,0);
+        tracep->declBus(c+362,"ysyx_22041461_CPU EXE_reg EXEreg_enable", false,-1, 0,0);
+        tracep->declBus(c+361,"ysyx_22041461_CPU EXE_reg EXEreg_valid_fromCD", false,-1, 0,0);
         tracep->declBus(c+288,"ysyx_22041461_CPU EXE_reg EXEreg_valid_fromID", false,-1, 0,0);
         tracep->declBus(c+129,"ysyx_22041461_CPU EXE_reg EXEreg_rd_in", false,-1, 4,0);
         tracep->declBus(c+130,"ysyx_22041461_CPU EXE_reg EXEreg_rs1_in", false,-1, 4,0);
@@ -232,7 +232,7 @@ void Vysyx_22041461_CPU___024root__traceInitSub0(Vysyx_22041461_CPU___024root* v
         tracep->declBus(c+147,"ysyx_22041461_CPU EXE_reg rst", false,-1, 0,0);
         tracep->declBus(c+100,"ysyx_22041461_CPU EXE EXE_valid_in", false,-1, 0,0);
         tracep->declQuad(c+262,"ysyx_22041461_CPU EXE EXE_rs1_data", false,-1, 63,0);
-        tracep->declQuad(c+373,"ysyx_22041461_CPU EXE EXE_rs2_data", false,-1, 63,0);
+        tracep->declQuad(c+372,"ysyx_22041461_CPU EXE EXE_rs2_data", false,-1, 63,0);
         tracep->declQuad(c+264,"ysyx_22041461_CPU EXE EXE_csr_data", false,-1, 63,0);
         tracep->declQuad(c+105,"ysyx_22041461_CPU EXE EXE_imm", false,-1, 63,0);
         tracep->declQuad(c+107,"ysyx_22041461_CPU EXE EXE_zimm", false,-1, 63,0);
@@ -244,11 +244,11 @@ void Vysyx_22041461_CPU___024root__traceInitSub0(Vysyx_22041461_CPU___024root* v
         tracep->declQuad(c+266,"ysyx_22041461_CPU EXE src1", false,-1, 63,0);
         tracep->declQuad(c+268,"ysyx_22041461_CPU EXE src2", false,-1, 63,0);
         tracep->declArray(c+270,"ysyx_22041461_CPU EXE middle", false,-1, 127,0);
-        tracep->declBus(c+357,"ysyx_22041461_CPU MEM_reg clk", false,-1, 0,0);
-        tracep->declBus(c+358,"ysyx_22041461_CPU MEM_reg flush", false,-1, 0,0);
-        tracep->declBus(c+332,"ysyx_22041461_CPU MEM_reg MEMreg_enable", false,-1, 0,0);
+        tracep->declBus(c+354,"ysyx_22041461_CPU MEM_reg clk", false,-1, 0,0);
+        tracep->declBus(c+355,"ysyx_22041461_CPU MEM_reg flush", false,-1, 0,0);
+        tracep->declBus(c+364,"ysyx_22041461_CPU MEM_reg MEMreg_enable", false,-1, 0,0);
         tracep->declBus(c+100,"ysyx_22041461_CPU MEM_reg MEMreg_valid_fromEXE", false,-1, 0,0);
-        tracep->declBus(c+366,"ysyx_22041461_CPU MEM_reg MEMreg_valid_fromCD", false,-1, 0,0);
+        tracep->declBus(c+363,"ysyx_22041461_CPU MEM_reg MEMreg_valid_fromCD", false,-1, 0,0);
         tracep->declQuad(c+260,"ysyx_22041461_CPU MEM_reg MEMreg_EXE_in", false,-1, 63,0);
         tracep->declBus(c+101,"ysyx_22041461_CPU MEM_reg MEMreg_rd_in", false,-1, 4,0);
         tracep->declBus(c+102,"ysyx_22041461_CPU MEM_reg MEMreg_rs1_in", false,-1, 4,0);
@@ -263,7 +263,7 @@ void Vysyx_22041461_CPU___024root__traceInitSub0(Vysyx_22041461_CPU___024root* v
         tracep->declQuad(c+157,"ysyx_22041461_CPU MEM_reg MEMreg_EXE_out", false,-1, 63,0);
         tracep->declBus(c+159,"ysyx_22041461_CPU MEM_reg MEMreg_rd_out", false,-1, 4,0);
         tracep->declBus(c+160,"ysyx_22041461_CPU MEM_reg MEMreg_rs1_out", false,-1, 4,0);
-        tracep->declBus(c+369,"ysyx_22041461_CPU MEM_reg MEMreg_rs2_out", false,-1, 4,0);
+        tracep->declBus(c+367,"ysyx_22041461_CPU MEM_reg MEMreg_rs2_out", false,-1, 4,0);
         tracep->declBus(c+161,"ysyx_22041461_CPU MEM_reg MEMreg_csr_out", false,-1, 11,0);
         tracep->declQuad(c+162,"ysyx_22041461_CPU MEM_reg MEMreg_imm_out", false,-1, 63,0);
         tracep->declQuad(c+164,"ysyx_22041461_CPU MEM_reg MEMreg_zimm_out", false,-1, 63,0);
@@ -273,22 +273,22 @@ void Vysyx_22041461_CPU___024root__traceInitSub0(Vysyx_22041461_CPU___024root* v
         tracep->declBus(c+148,"ysyx_22041461_CPU MEM_reg rst_r1", false,-1, 0,0);
         tracep->declBus(c+149,"ysyx_22041461_CPU MEM_reg rst_r2", false,-1, 0,0);
         tracep->declBus(c+149,"ysyx_22041461_CPU MEM_reg rst", false,-1, 0,0);
-        tracep->declBus(c+357,"ysyx_22041461_CPU MEM clk", false,-1, 0,0);
-        tracep->declBus(c+358,"ysyx_22041461_CPU MEM flush", false,-1, 0,0);
+        tracep->declBus(c+354,"ysyx_22041461_CPU MEM clk", false,-1, 0,0);
+        tracep->declBus(c+355,"ysyx_22041461_CPU MEM flush", false,-1, 0,0);
         tracep->declBus(c+156,"ysyx_22041461_CPU MEM MEM_valid_in", false,-1, 0,0);
-        tracep->declBus(c+323,"ysyx_22041461_CPU MEM MEM_valid_fromCD", false,-1, 0,0);
+        tracep->declBus(c+331,"ysyx_22041461_CPU MEM MEM_valid_fromCD", false,-1, 0,0);
         tracep->declQuad(c+157,"ysyx_22041461_CPU MEM MEM_EXE_in", false,-1, 63,0);
         tracep->declQuad(c+254,"ysyx_22041461_CPU MEM MEM_rs2_data", false,-1, 63,0);
         tracep->declBus(c+168,"ysyx_22041461_CPU MEM MEM_ctrl", false,-1, 3,0);
-        tracep->declBus(c+370,"ysyx_22041461_CPU MEM MEM_valid_out", false,-1, 0,0);
-        tracep->declBus(c+333,"ysyx_22041461_CPU MEM MEM_ok", false,-1, 0,0);
-        tracep->declQuad(c+371,"ysyx_22041461_CPU MEM MEM_out", false,-1, 63,0);
-        tracep->declBus(c+325,"ysyx_22041461_CPU MEM busy", false,-1, 0,0);
+        tracep->declBus(c+368,"ysyx_22041461_CPU MEM MEM_valid_out", false,-1, 0,0);
+        tracep->declBus(c+369,"ysyx_22041461_CPU MEM MEM_ok", false,-1, 0,0);
+        tracep->declQuad(c+370,"ysyx_22041461_CPU MEM MEM_out", false,-1, 63,0);
+        tracep->declBus(c+333,"ysyx_22041461_CPU MEM busy", false,-1, 0,0);
         tracep->declBus(c+170,"ysyx_22041461_CPU MEM align", false,-1, 0,0);
         tracep->declBus(c+121,"ysyx_22041461_CPU MEM state", false,-1, 1,0);
-        tracep->declQuad(c+334,"ysyx_22041461_CPU MEM rdata1", false,-1, 63,0);
-        tracep->declQuad(c+336,"ysyx_22041461_CPU MEM rdata2", false,-1, 63,0);
-        tracep->declQuad(c+338,"ysyx_22041461_CPU MEM rdata", false,-1, 63,0);
+        tracep->declQuad(c+303,"ysyx_22041461_CPU MEM rdata1", false,-1, 63,0);
+        tracep->declQuad(c+305,"ysyx_22041461_CPU MEM rdata2", false,-1, 63,0);
+        tracep->declQuad(c+307,"ysyx_22041461_CPU MEM rdata", false,-1, 63,0);
         tracep->declQuad(c+157,"ysyx_22041461_CPU MEM addr1", false,-1, 63,0);
         tracep->declQuad(c+171,"ysyx_22041461_CPU MEM addr2", false,-1, 63,0);
         tracep->declQuad(c+256,"ysyx_22041461_CPU MEM wdata1", false,-1, 63,0);
@@ -296,36 +296,36 @@ void Vysyx_22041461_CPU___024root__traceInitSub0(Vysyx_22041461_CPU___024root* v
         tracep->declBus(c+173,"ysyx_22041461_CPU MEM wmask", false,-1, 15,0);
         tracep->declBus(c+174,"ysyx_22041461_CPU MEM wmask1", false,-1, 7,0);
         tracep->declBus(c+175,"ysyx_22041461_CPU MEM wmask2", false,-1, 7,0);
-        tracep->declBus(c+340,"ysyx_22041461_CPU MEM DCACHE_valid", false,-1, 0,0);
-        tracep->declQuad(c+303,"ysyx_22041461_CPU MEM DCACHE_addr", false,-1, 63,0);
+        tracep->declBus(c+380,"ysyx_22041461_CPU MEM DCACHE_valid", false,-1, 0,0);
+        tracep->declQuad(c+309,"ysyx_22041461_CPU MEM DCACHE_addr", false,-1, 63,0);
         tracep->declQuad(c+381,"ysyx_22041461_CPU MEM DCACHE_wdata", false,-1, 63,0);
-        tracep->declBus(c+305,"ysyx_22041461_CPU MEM DCACHE_mask", false,-1, 7,0);
+        tracep->declBus(c+311,"ysyx_22041461_CPU MEM DCACHE_mask", false,-1, 7,0);
         tracep->declBus(c+176,"ysyx_22041461_CPU MEM DCACHE_wen", false,-1, 0,0);
         tracep->declBus(c+122,"ysyx_22041461_CPU MEM DCACHE_valid_out", false,-1, 0,0);
-        tracep->declQuad(c+341,"ysyx_22041461_CPU MEM DCACHE_rdata", false,-1, 63,0);
+        tracep->declQuad(c+312,"ysyx_22041461_CPU MEM DCACHE_rdata", false,-1, 63,0);
         tracep->declBus(c+150,"ysyx_22041461_CPU MEM rst_r1", false,-1, 0,0);
         tracep->declBus(c+151,"ysyx_22041461_CPU MEM rst_r2", false,-1, 0,0);
         tracep->declBus(c+151,"ysyx_22041461_CPU MEM rst", false,-1, 0,0);
-        tracep->declBus(c+357,"ysyx_22041461_CPU MEM DCACHE clk", false,-1, 0,0);
+        tracep->declBus(c+354,"ysyx_22041461_CPU MEM DCACHE clk", false,-1, 0,0);
         tracep->declBus(c+151,"ysyx_22041461_CPU MEM DCACHE rst", false,-1, 0,0);
-        tracep->declBus(c+340,"ysyx_22041461_CPU MEM DCACHE DCACHE_valid", false,-1, 0,0);
-        tracep->declQuad(c+303,"ysyx_22041461_CPU MEM DCACHE DCACHE_addr", false,-1, 63,0);
+        tracep->declBus(c+380,"ysyx_22041461_CPU MEM DCACHE DCACHE_valid", false,-1, 0,0);
+        tracep->declQuad(c+309,"ysyx_22041461_CPU MEM DCACHE DCACHE_addr", false,-1, 63,0);
         tracep->declQuad(c+381,"ysyx_22041461_CPU MEM DCACHE DCACHE_wdata", false,-1, 63,0);
-        tracep->declBus(c+305,"ysyx_22041461_CPU MEM DCACHE DCACHE_mask", false,-1, 7,0);
+        tracep->declBus(c+311,"ysyx_22041461_CPU MEM DCACHE DCACHE_mask", false,-1, 7,0);
         tracep->declBus(c+176,"ysyx_22041461_CPU MEM DCACHE DCACHE_wen", false,-1, 0,0);
         tracep->declBus(c+122,"ysyx_22041461_CPU MEM DCACHE DCACHE_valid_out", false,-1, 0,0);
-        tracep->declQuad(c+341,"ysyx_22041461_CPU MEM DCACHE DCACHE_rdata", false,-1, 63,0);
-        tracep->declBus(c+306,"ysyx_22041461_CPU MEM DCACHE index", false,-1, 5,0);
-        tracep->declBus(c+307,"ysyx_22041461_CPU MEM DCACHE offset", false,-1, 2,0);
-        tracep->declQuad(c+308,"ysyx_22041461_CPU MEM DCACHE tag", false,-1, 54,0);
-        tracep->declBus(c+310,"ysyx_22041461_CPU MEM DCACHE hit1", false,-1, 0,0);
-        tracep->declBus(c+311,"ysyx_22041461_CPU MEM DCACHE hit2", false,-1, 0,0);
-        tracep->declBus(c+312,"ysyx_22041461_CPU MEM DCACHE inmemory", false,-1, 0,0);
-        tracep->declQuad(c+313,"ysyx_22041461_CPU MEM DCACHE AXI_rdata", false,-1, 63,0);
+        tracep->declQuad(c+312,"ysyx_22041461_CPU MEM DCACHE DCACHE_rdata", false,-1, 63,0);
+        tracep->declBus(c+314,"ysyx_22041461_CPU MEM DCACHE index", false,-1, 5,0);
+        tracep->declBus(c+315,"ysyx_22041461_CPU MEM DCACHE offset", false,-1, 2,0);
+        tracep->declQuad(c+316,"ysyx_22041461_CPU MEM DCACHE tag", false,-1, 54,0);
+        tracep->declBus(c+318,"ysyx_22041461_CPU MEM DCACHE hit1", false,-1, 0,0);
+        tracep->declBus(c+319,"ysyx_22041461_CPU MEM DCACHE hit2", false,-1, 0,0);
+        tracep->declBus(c+320,"ysyx_22041461_CPU MEM DCACHE inmemory", false,-1, 0,0);
+        tracep->declQuad(c+321,"ysyx_22041461_CPU MEM DCACHE AXI_rdata", false,-1, 63,0);
         tracep->declArray(c+383,"ysyx_22041461_CPU MEM DCACHE SRAM_data_in", false,-1, 127,0);
         tracep->declArray(c+92,"ysyx_22041461_CPU MEM DCACHE SRAM_data_out", false,-1, 127,0);
         tracep->declBus(c+387,"ysyx_22041461_CPU MEM DCACHE SRAM_WEN", false,-1, 0,0);
-        tracep->declArray(c+315,"ysyx_22041461_CPU MEM DCACHE SRAM_BWEN", false,-1, 127,0);
+        tracep->declArray(c+323,"ysyx_22041461_CPU MEM DCACHE SRAM_BWEN", false,-1, 127,0);
         tracep->declQuad(c+96,"ysyx_22041461_CPU MEM DCACHE CacheLine1_data", false,-1, 63,0);
         tracep->declQuad(c+98,"ysyx_22041461_CPU MEM DCACHE CacheLine2_data", false,-1, 63,0);
         tracep->declBus(c+123,"ysyx_22041461_CPU MEM DCACHE state", false,-1, 2,0);
@@ -335,23 +335,23 @@ void Vysyx_22041461_CPU___024root__traceInitSub0(Vysyx_22041461_CPU___024root* v
         tracep->declBus(c+392,"ysyx_22041461_CPU MEM DCACHE SRAM Word_Depth", false,-1, 31,0);
         tracep->declBus(c+393,"ysyx_22041461_CPU MEM DCACHE SRAM Add_Width", false,-1, 31,0);
         tracep->declBus(c+391,"ysyx_22041461_CPU MEM DCACHE SRAM Wen_Width", false,-1, 31,0);
-        tracep->declBit(c+357,"ysyx_22041461_CPU MEM DCACHE SRAM CLK", false,-1);
+        tracep->declBit(c+354,"ysyx_22041461_CPU MEM DCACHE SRAM CLK", false,-1);
         tracep->declBit(c+394,"ysyx_22041461_CPU MEM DCACHE SRAM CEN", false,-1);
         tracep->declBit(c+387,"ysyx_22041461_CPU MEM DCACHE SRAM WEN", false,-1);
-        tracep->declArray(c+315,"ysyx_22041461_CPU MEM DCACHE SRAM BWEN", false,-1, 127,0);
-        tracep->declBus(c+306,"ysyx_22041461_CPU MEM DCACHE SRAM A", false,-1, 5,0);
+        tracep->declArray(c+323,"ysyx_22041461_CPU MEM DCACHE SRAM BWEN", false,-1, 127,0);
+        tracep->declBus(c+314,"ysyx_22041461_CPU MEM DCACHE SRAM A", false,-1, 5,0);
         tracep->declArray(c+383,"ysyx_22041461_CPU MEM DCACHE SRAM D", false,-1, 127,0);
         tracep->declArray(c+92,"ysyx_22041461_CPU MEM DCACHE SRAM Q", false,-1, 127,0);
         tracep->declBit(c+395,"ysyx_22041461_CPU MEM DCACHE SRAM cen", false,-1);
         tracep->declBit(c+388,"ysyx_22041461_CPU MEM DCACHE SRAM wen", false,-1);
-        tracep->declArray(c+319,"ysyx_22041461_CPU MEM DCACHE SRAM bwen", false,-1, 127,0);
-        tracep->declBus(c+357,"ysyx_22041461_CPU WB_reg clk", false,-1, 0,0);
-        tracep->declBus(c+358,"ysyx_22041461_CPU WB_reg flush", false,-1, 0,0);
+        tracep->declArray(c+327,"ysyx_22041461_CPU MEM DCACHE SRAM bwen", false,-1, 127,0);
+        tracep->declBus(c+354,"ysyx_22041461_CPU WB_reg clk", false,-1, 0,0);
+        tracep->declBus(c+355,"ysyx_22041461_CPU WB_reg flush", false,-1, 0,0);
         tracep->declBus(c+395,"ysyx_22041461_CPU WB_reg WBreg_enable", false,-1, 0,0);
-        tracep->declBus(c+370,"ysyx_22041461_CPU WB_reg WBreg_valid_fromMEM", false,-1, 0,0);
-        tracep->declBus(c+324,"ysyx_22041461_CPU WB_reg WBreg_valid_fromCD", false,-1, 0,0);
+        tracep->declBus(c+368,"ysyx_22041461_CPU WB_reg WBreg_valid_fromMEM", false,-1, 0,0);
+        tracep->declBus(c+332,"ysyx_22041461_CPU WB_reg WBreg_valid_fromCD", false,-1, 0,0);
         tracep->declQuad(c+157,"ysyx_22041461_CPU WB_reg WBreg_EXE_in", false,-1, 63,0);
-        tracep->declQuad(c+371,"ysyx_22041461_CPU WB_reg WBreg_MEM_in", false,-1, 63,0);
+        tracep->declQuad(c+370,"ysyx_22041461_CPU WB_reg WBreg_MEM_in", false,-1, 63,0);
         tracep->declBus(c+159,"ysyx_22041461_CPU WB_reg WBreg_rd_in", false,-1, 4,0);
         tracep->declBus(c+160,"ysyx_22041461_CPU WB_reg WBreg_rs1_in", false,-1, 4,0);
         tracep->declBus(c+161,"ysyx_22041461_CPU WB_reg WBreg_csr_in", false,-1, 11,0);
@@ -372,15 +372,15 @@ void Vysyx_22041461_CPU___024root__traceInitSub0(Vysyx_22041461_CPU___024root* v
         tracep->declBus(c+152,"ysyx_22041461_CPU WB_reg rst_r1", false,-1, 0,0);
         tracep->declBus(c+153,"ysyx_22041461_CPU WB_reg rst_r2", false,-1, 0,0);
         tracep->declBus(c+153,"ysyx_22041461_CPU WB_reg rst", false,-1, 0,0);
-        tracep->declBus(c+357,"ysyx_22041461_CPU WB clk", false,-1, 0,0);
-        tracep->declBus(c+358,"ysyx_22041461_CPU WB flush", false,-1, 0,0);
+        tracep->declBus(c+354,"ysyx_22041461_CPU WB clk", false,-1, 0,0);
+        tracep->declBus(c+355,"ysyx_22041461_CPU WB flush", false,-1, 0,0);
         tracep->declBus(c+1,"ysyx_22041461_CPU WB WB_valid", false,-1, 0,0);
         tracep->declBus(c+130,"ysyx_22041461_CPU WB WB_ID_rs1", false,-1, 4,0);
         tracep->declBus(c+131,"ysyx_22041461_CPU WB WB_ID_rs2", false,-1, 4,0);
         tracep->declBus(c+102,"ysyx_22041461_CPU WB WB_EXE_rs1", false,-1, 4,0);
         tracep->declBus(c+103,"ysyx_22041461_CPU WB WB_EXE_rs2", false,-1, 4,0);
         tracep->declBus(c+104,"ysyx_22041461_CPU WB WB_EXE_csr", false,-1, 11,0);
-        tracep->declBus(c+369,"ysyx_22041461_CPU WB WB_MEM_rs2", false,-1, 4,0);
+        tracep->declBus(c+367,"ysyx_22041461_CPU WB WB_MEM_rs2", false,-1, 4,0);
         tracep->declQuad(c+2,"ysyx_22041461_CPU WB WB_EXE_in", false,-1, 63,0);
         tracep->declQuad(c+4,"ysyx_22041461_CPU WB WB_MEM_in", false,-1, 63,0);
         tracep->declBus(c+6,"ysyx_22041461_CPU WB WB_rd", false,-1, 4,0);
@@ -395,7 +395,7 @@ void Vysyx_22041461_CPU___024root__traceInitSub0(Vysyx_22041461_CPU___024root* v
         tracep->declQuad(c+19,"ysyx_22041461_CPU WB WB_ID_csr_mtvec", false,-1, 63,0);
         tracep->declQuad(c+21,"ysyx_22041461_CPU WB WB_ID_csr_mepc", false,-1, 63,0);
         tracep->declQuad(c+262,"ysyx_22041461_CPU WB WB_EXE_rs1_data", false,-1, 63,0);
-        tracep->declQuad(c+373,"ysyx_22041461_CPU WB WB_EXE_rs2_data", false,-1, 63,0);
+        tracep->declQuad(c+372,"ysyx_22041461_CPU WB WB_EXE_rs2_data", false,-1, 63,0);
         tracep->declQuad(c+264,"ysyx_22041461_CPU WB WB_EXE_csr_data", false,-1, 63,0);
         tracep->declQuad(c+254,"ysyx_22041461_CPU WB WB_MEM_rs2_data", false,-1, 63,0);
         {int i; for (i=0; i<32; i++) {
@@ -417,7 +417,7 @@ void Vysyx_22041461_CPU___024root__traceInitSub0(Vysyx_22041461_CPU___024root* v
         tracep->declBus(c+155,"ysyx_22041461_CPU WB rst", false,-1, 0,0);
         tracep->declBus(c+290,"ysyx_22041461_CPU CD CD_ctrl", false,-1, 2,0);
         tracep->declBus(c+289,"ysyx_22041461_CPU CD CD_IF_ctrl", false,-1, 0,0);
-        tracep->declBus(c+367,"ysyx_22041461_CPU CD CD_IF_valid_out", false,-1, 0,0);
+        tracep->declBus(c+365,"ysyx_22041461_CPU CD CD_IF_valid_out", false,-1, 0,0);
         tracep->declBus(c+125,"ysyx_22041461_CPU CD CD_ID_valid_in", false,-1, 0,0);
         tracep->declBus(c+130,"ysyx_22041461_CPU CD CD_ID_rs1", false,-1, 4,0);
         tracep->declBus(c+131,"ysyx_22041461_CPU CD CD_ID_rs2", false,-1, 4,0);
@@ -430,26 +430,26 @@ void Vysyx_22041461_CPU___024root__traceInitSub0(Vysyx_22041461_CPU___024root* v
         tracep->declBus(c+103,"ysyx_22041461_CPU CD CD_EXE_rs2", false,-1, 4,0);
         tracep->declBus(c+104,"ysyx_22041461_CPU CD CD_EXE_csr", false,-1, 11,0);
         tracep->declBus(c+156,"ysyx_22041461_CPU CD CD_MEM_valid_in", false,-1, 0,0);
-        tracep->declBus(c+333,"ysyx_22041461_CPU CD CD_MEM_ok", false,-1, 0,0);
+        tracep->declBus(c+369,"ysyx_22041461_CPU CD CD_MEM_ok", false,-1, 0,0);
         tracep->declBus(c+168,"ysyx_22041461_CPU CD CD_MEM_ctrl", false,-1, 3,0);
         tracep->declBus(c+169,"ysyx_22041461_CPU CD CD_MEM_WB_ctrl", false,-1, 3,0);
         tracep->declBus(c+159,"ysyx_22041461_CPU CD CD_MEM_rd", false,-1, 4,0);
-        tracep->declBus(c+369,"ysyx_22041461_CPU CD CD_MEM_rs2", false,-1, 4,0);
+        tracep->declBus(c+367,"ysyx_22041461_CPU CD CD_MEM_rs2", false,-1, 4,0);
         tracep->declBus(c+161,"ysyx_22041461_CPU CD CD_MEM_csr", false,-1, 11,0);
         tracep->declBus(c+1,"ysyx_22041461_CPU CD CD_WB_valid_in", false,-1, 0,0);
         tracep->declBus(c+15,"ysyx_22041461_CPU CD CD_WB_ctrl", false,-1, 3,0);
         tracep->declBus(c+6,"ysyx_22041461_CPU CD CD_WB_rd", false,-1, 4,0);
         tracep->declBus(c+8,"ysyx_22041461_CPU CD CD_WB_csr", false,-1, 11,0);
-        tracep->declBus(c+362,"ysyx_22041461_CPU CD CD_IFreg_enable", false,-1, 0,0);
+        tracep->declBus(c+359,"ysyx_22041461_CPU CD CD_IFreg_enable", false,-1, 0,0);
         tracep->declBus(c+282,"ysyx_22041461_CPU CD CD_IF_valid", false,-1, 0,0);
         tracep->declBus(c+283,"ysyx_22041461_CPU CD CD_IDreg_valid", false,-1, 0,0);
-        tracep->declBus(c+363,"ysyx_22041461_CPU CD CD_IDreg_enable", false,-1, 0,0);
-        tracep->declBus(c+364,"ysyx_22041461_CPU CD CD_EXEreg_valid", false,-1, 0,0);
-        tracep->declBus(c+365,"ysyx_22041461_CPU CD CD_EXEreg_enable", false,-1, 0,0);
-        tracep->declBus(c+366,"ysyx_22041461_CPU CD CD_MEMreg_valid", false,-1, 0,0);
-        tracep->declBus(c+323,"ysyx_22041461_CPU CD CD_MEM_valid", false,-1, 0,0);
-        tracep->declBus(c+332,"ysyx_22041461_CPU CD CD_MEMreg_enable", false,-1, 0,0);
-        tracep->declBus(c+324,"ysyx_22041461_CPU CD CD_WBreg_valid", false,-1, 0,0);
+        tracep->declBus(c+360,"ysyx_22041461_CPU CD CD_IDreg_enable", false,-1, 0,0);
+        tracep->declBus(c+361,"ysyx_22041461_CPU CD CD_EXEreg_valid", false,-1, 0,0);
+        tracep->declBus(c+362,"ysyx_22041461_CPU CD CD_EXEreg_enable", false,-1, 0,0);
+        tracep->declBus(c+363,"ysyx_22041461_CPU CD CD_MEMreg_valid", false,-1, 0,0);
+        tracep->declBus(c+331,"ysyx_22041461_CPU CD CD_MEM_valid", false,-1, 0,0);
+        tracep->declBus(c+364,"ysyx_22041461_CPU CD CD_MEMreg_enable", false,-1, 0,0);
+        tracep->declBus(c+332,"ysyx_22041461_CPU CD CD_WBreg_valid", false,-1, 0,0);
         tracep->declBus(c+299,"ysyx_22041461_CPU CD ID_rs1_read", false,-1, 0,0);
         tracep->declBus(c+300,"ysyx_22041461_CPU CD ID_rs2_read", false,-1, 0,0);
         tracep->declBus(c+301,"ysyx_22041461_CPU CD ID_mtvec_read", false,-1, 0,0);
@@ -722,60 +722,58 @@ void Vysyx_22041461_CPU___024root__traceFullSub0(Vysyx_22041461_CPU___024root* v
         tracep->fullBit(oldp+300,(vlSelf->ysyx_22041461_CPU__DOT__CD__DOT__ID_rs2_read));
         tracep->fullBit(oldp+301,(vlSelf->ysyx_22041461_CPU__DOT__CD__DOT__ID_mtvec_read));
         tracep->fullBit(oldp+302,(vlSelf->ysyx_22041461_CPU__DOT__CD__DOT__ID_mepc_read));
-        tracep->fullQData(oldp+303,(vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__DCACHE_addr),64);
-        tracep->fullCData(oldp+305,(vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__DCACHE_mask),8);
-        tracep->fullCData(oldp+306,((0x3fU & (IData)(
+        tracep->fullQData(oldp+303,(vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__rdata1),64);
+        tracep->fullQData(oldp+305,(vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__rdata2),64);
+        tracep->fullQData(oldp+307,(vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__rdata),64);
+        tracep->fullQData(oldp+309,(vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__DCACHE_addr),64);
+        tracep->fullCData(oldp+311,(vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__DCACHE_mask),8);
+        tracep->fullQData(oldp+312,(vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__DCACHE_rdata),64);
+        tracep->fullCData(oldp+314,((0x3fU & (IData)(
                                                      (vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__DCACHE_addr 
                                                       >> 3U)))),6);
-        tracep->fullCData(oldp+307,((7U & (IData)(vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__DCACHE_addr))),3);
-        tracep->fullQData(oldp+308,((vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__DCACHE_addr 
+        tracep->fullCData(oldp+315,((7U & (IData)(vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__DCACHE_addr))),3);
+        tracep->fullQData(oldp+316,((vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__DCACHE_addr 
                                      >> 9U)),55);
-        tracep->fullBit(oldp+310,(vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__DCACHE__DOT__hit1));
-        tracep->fullBit(oldp+311,(vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__DCACHE__DOT__hit2));
-        tracep->fullBit(oldp+312,(vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__DCACHE__DOT__inmemory));
-        tracep->fullQData(oldp+313,(vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__DCACHE__DOT__AXI_rdata),64);
-        tracep->fullWData(oldp+315,(vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__DCACHE__DOT__SRAM_BWEN),128);
+        tracep->fullBit(oldp+318,(vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__DCACHE__DOT__hit1));
+        tracep->fullBit(oldp+319,(vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__DCACHE__DOT__hit2));
+        tracep->fullBit(oldp+320,(vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__DCACHE__DOT__inmemory));
+        tracep->fullQData(oldp+321,(vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__DCACHE__DOT__AXI_rdata),64);
+        tracep->fullWData(oldp+323,(vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__DCACHE__DOT__SRAM_BWEN),128);
         __Vtemp131[0U] = (~ vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__DCACHE__DOT__SRAM_BWEN[0U]);
         __Vtemp131[1U] = (~ vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__DCACHE__DOT__SRAM_BWEN[1U]);
         __Vtemp131[2U] = (~ vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__DCACHE__DOT__SRAM_BWEN[2U]);
         __Vtemp131[3U] = (~ vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__DCACHE__DOT__SRAM_BWEN[3U]);
-        tracep->fullWData(oldp+319,(__Vtemp131),128);
-        tracep->fullBit(oldp+323,(vlSelf->ysyx_22041461_CPU__DOT__CD_MEM_valid));
-        tracep->fullBit(oldp+324,(vlSelf->ysyx_22041461_CPU__DOT__CD_WBreg_valid));
-        tracep->fullBit(oldp+325,(vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__busy));
-        tracep->fullQData(oldp+326,(vlSelf->ysyx_22041461_CPU__DOT__IFreg_pc),64);
-        tracep->fullCData(oldp+328,((0x3fU & (IData)(
+        tracep->fullWData(oldp+327,(__Vtemp131),128);
+        tracep->fullBit(oldp+331,(vlSelf->ysyx_22041461_CPU__DOT__CD_MEM_valid));
+        tracep->fullBit(oldp+332,(vlSelf->ysyx_22041461_CPU__DOT__CD_WBreg_valid));
+        tracep->fullBit(oldp+333,(vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__busy));
+        tracep->fullQData(oldp+334,(vlSelf->ysyx_22041461_CPU__DOT__IFreg_pc),64);
+        tracep->fullCData(oldp+336,((0x3fU & (IData)(
                                                      (vlSelf->ysyx_22041461_CPU__DOT__IFreg_pc 
                                                       >> 3U)))),6);
-        tracep->fullCData(oldp+329,((7U & (IData)(vlSelf->ysyx_22041461_CPU__DOT__IFreg_pc))),3);
-        tracep->fullQData(oldp+330,((vlSelf->ysyx_22041461_CPU__DOT__IFreg_pc 
+        tracep->fullCData(oldp+337,((7U & (IData)(vlSelf->ysyx_22041461_CPU__DOT__IFreg_pc))),3);
+        tracep->fullQData(oldp+338,((vlSelf->ysyx_22041461_CPU__DOT__IFreg_pc 
                                      >> 9U)),55);
-        tracep->fullBit(oldp+332,(vlSelf->ysyx_22041461_CPU__DOT__CD_MEMreg_enable));
-        tracep->fullBit(oldp+333,(vlSelf->ysyx_22041461_CPU__DOT__MEM_ok));
-        tracep->fullQData(oldp+334,(vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__rdata1),64);
-        tracep->fullQData(oldp+336,(vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__rdata2),64);
-        tracep->fullQData(oldp+338,(vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__rdata),64);
-        tracep->fullBit(oldp+340,(vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__DCACHE_valid));
-        tracep->fullQData(oldp+341,(vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__DCACHE_rdata),64);
-        tracep->fullWData(oldp+343,(vlSelf->ysyx_22041461_CPU__DOT__IF__DOT__ICACHE__DOT__SRAM_BWEN),128);
+        tracep->fullWData(oldp+340,(vlSelf->ysyx_22041461_CPU__DOT__IF__DOT__ICACHE__DOT__SRAM_BWEN),128);
         __Vtemp132[0U] = (~ vlSelf->ysyx_22041461_CPU__DOT__IF__DOT__ICACHE__DOT__SRAM_BWEN[0U]);
         __Vtemp132[1U] = (~ vlSelf->ysyx_22041461_CPU__DOT__IF__DOT__ICACHE__DOT__SRAM_BWEN[1U]);
         __Vtemp132[2U] = (~ vlSelf->ysyx_22041461_CPU__DOT__IF__DOT__ICACHE__DOT__SRAM_BWEN[2U]);
         __Vtemp132[3U] = (~ vlSelf->ysyx_22041461_CPU__DOT__IF__DOT__ICACHE__DOT__SRAM_BWEN[3U]);
-        tracep->fullWData(oldp+347,(__Vtemp132),128);
-        tracep->fullQData(oldp+351,(vlSelf->ysyx_22041461_CPU__DOT__IF__DOT__ICACHE__DOT__AXI_rdata),64);
-        tracep->fullWData(oldp+353,(vlSelf->ysyx_22041461_CPU__DOT__IF__DOT__ICACHE__DOT__SRAM_data_in),128);
-        tracep->fullBit(oldp+357,(vlSelf->clk));
-        tracep->fullBit(oldp+358,(vlSelf->rst));
-        tracep->fullQData(oldp+359,(vlSelf->pc),64);
-        tracep->fullIData(oldp+361,(vlSelf->inst),32);
-        tracep->fullBit(oldp+362,(vlSelf->ysyx_22041461_CPU__DOT__CD_IFreg_enable));
-        tracep->fullBit(oldp+363,(vlSelf->ysyx_22041461_CPU__DOT__CD_IDreg_enable));
-        tracep->fullBit(oldp+364,(vlSelf->ysyx_22041461_CPU__DOT__CD_EXEreg_valid));
-        tracep->fullBit(oldp+365,(vlSelf->ysyx_22041461_CPU__DOT__CD_EXEreg_enable));
-        tracep->fullBit(oldp+366,(vlSelf->ysyx_22041461_CPU__DOT__CD_MEMreg_valid));
-        tracep->fullBit(oldp+367,(vlSelf->ysyx_22041461_CPU__DOT__IF_valid_out));
-        tracep->fullIData(oldp+368,(((IData)(vlSelf->ysyx_22041461_CPU__DOT__IF__DOT__ICACHE__DOT__num)
+        tracep->fullWData(oldp+344,(__Vtemp132),128);
+        tracep->fullQData(oldp+348,(vlSelf->ysyx_22041461_CPU__DOT__IF__DOT__ICACHE__DOT__AXI_rdata),64);
+        tracep->fullWData(oldp+350,(vlSelf->ysyx_22041461_CPU__DOT__IF__DOT__ICACHE__DOT__SRAM_data_in),128);
+        tracep->fullBit(oldp+354,(vlSelf->clk));
+        tracep->fullBit(oldp+355,(vlSelf->rst));
+        tracep->fullQData(oldp+356,(vlSelf->pc),64);
+        tracep->fullIData(oldp+358,(vlSelf->inst),32);
+        tracep->fullBit(oldp+359,(vlSelf->ysyx_22041461_CPU__DOT__CD_IFreg_enable));
+        tracep->fullBit(oldp+360,(vlSelf->ysyx_22041461_CPU__DOT__CD_IDreg_enable));
+        tracep->fullBit(oldp+361,(vlSelf->ysyx_22041461_CPU__DOT__CD_EXEreg_valid));
+        tracep->fullBit(oldp+362,(vlSelf->ysyx_22041461_CPU__DOT__CD_EXEreg_enable));
+        tracep->fullBit(oldp+363,(vlSelf->ysyx_22041461_CPU__DOT__CD_MEMreg_valid));
+        tracep->fullBit(oldp+364,(vlSelf->ysyx_22041461_CPU__DOT__CD_MEMreg_enable));
+        tracep->fullBit(oldp+365,(vlSelf->ysyx_22041461_CPU__DOT__IF_valid_out));
+        tracep->fullIData(oldp+366,(((IData)(vlSelf->ysyx_22041461_CPU__DOT__IF__DOT__ICACHE__DOT__num)
                                       ? ((IData)(vlSelf->ysyx_22041461_CPU__DOT__IF__DOT__ICACHE__DOT__hit1)
                                           ? ((0U == 
                                               (7U & (IData)(vlSelf->ysyx_22041461_CPU__DOT__IFreg_pc)))
@@ -804,8 +802,8 @@ void Vysyx_22041461_CPU___024root__traceFullSub0(Vysyx_22041461_CPU___024root* v
                                                    : 0x100073U))
                                               : 0U))
                                       : 0U)),32);
-        tracep->fullCData(oldp+369,(vlSelf->ysyx_22041461_CPU__DOT__MEMreg_rs2_out),5);
-        tracep->fullBit(oldp+370,(((~ ((IData)(vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__state) 
+        tracep->fullCData(oldp+367,(vlSelf->ysyx_22041461_CPU__DOT__MEMreg_rs2_out),5);
+        tracep->fullBit(oldp+368,(((~ ((IData)(vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__state) 
                                        >> 1U)) & ((1U 
                                                    & (IData)(vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__state))
                                                    ? 
@@ -816,7 +814,8 @@ void Vysyx_22041461_CPU___024root__traceFullSub0(Vysyx_22041461_CPU___024root* v
                                                     & (IData)(vlSelf->ysyx_22041461_CPU__DOT__CD_MEM_valid)) 
                                                    & (0U 
                                                       == (IData)(vlSelf->ysyx_22041461_CPU__DOT__MEMreg_MEM_ctrl_out)))))));
-        tracep->fullQData(oldp+371,(((8U & (IData)(vlSelf->ysyx_22041461_CPU__DOT__MEMreg_MEM_ctrl_out))
+        tracep->fullBit(oldp+369,(vlSelf->ysyx_22041461_CPU__DOT__MEM_ok));
+        tracep->fullQData(oldp+370,(((8U & (IData)(vlSelf->ysyx_22041461_CPU__DOT__MEMreg_MEM_ctrl_out))
                                       ? 0ULL : ((4U 
                                                  & (IData)(vlSelf->ysyx_22041461_CPU__DOT__MEMreg_MEM_ctrl_out))
                                                  ? 
@@ -875,18 +874,24 @@ void Vysyx_22041461_CPU___024root__traceFullSub0(Vysyx_22041461_CPU___024root* v
                                                                      (0xffU 
                                                                       & (IData)(vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__rdata)))))
                                                    : 0ULL))))),64);
-        tracep->fullQData(oldp+373,(vlSelf->ysyx_22041461_CPU__DOT__WB__DOT__x
+        tracep->fullQData(oldp+372,(vlSelf->ysyx_22041461_CPU__DOT__WB__DOT__x
                                     [vlSelf->ysyx_22041461_CPU__DOT__EXEreg_rs2_out]),64);
-        tracep->fullBit(oldp+375,(vlSelf->ysyx_22041461_CPU__DOT__IF__DOT__ICACHE__DOT__hit1));
-        tracep->fullBit(oldp+376,(vlSelf->ysyx_22041461_CPU__DOT__IF__DOT__ICACHE__DOT__hit2));
-        tracep->fullBit(oldp+377,(vlSelf->ysyx_22041461_CPU__DOT__IF__DOT__ICACHE__DOT__num));
-        tracep->fullBit(oldp+378,((1U & ((~ (IData)(vlSelf->ysyx_22041461_CPU__DOT__CD_IF_valid)) 
+        tracep->fullBit(oldp+374,(vlSelf->ysyx_22041461_CPU__DOT__IF__DOT__ICACHE__DOT__hit1));
+        tracep->fullBit(oldp+375,(vlSelf->ysyx_22041461_CPU__DOT__IF__DOT__ICACHE__DOT__hit2));
+        tracep->fullBit(oldp+376,(vlSelf->ysyx_22041461_CPU__DOT__IF__DOT__ICACHE__DOT__num));
+        tracep->fullBit(oldp+377,((1U & ((~ (IData)(vlSelf->ysyx_22041461_CPU__DOT__CD_IF_valid)) 
                                          | (~ ((~ (IData)(vlSelf->ysyx_22041461_CPU__DOT__IF__DOT__ICACHE__DOT__hit1)) 
                                                & (~ (IData)(vlSelf->ysyx_22041461_CPU__DOT__IF__DOT__ICACHE__DOT__hit2))))))));
-        tracep->fullIData(oldp+379,(vlSelf->ysyx_22041461_CPU__DOT__IF__DOT__ICACHE__DOT__k),32);
-        tracep->fullBit(oldp+380,((1U & (~ ((~ (IData)(vlSelf->ysyx_22041461_CPU__DOT__CD_IF_valid)) 
+        tracep->fullIData(oldp+378,(vlSelf->ysyx_22041461_CPU__DOT__IF__DOT__ICACHE__DOT__k),32);
+        tracep->fullBit(oldp+379,((1U & (~ ((~ (IData)(vlSelf->ysyx_22041461_CPU__DOT__CD_IF_valid)) 
                                             | (~ ((~ (IData)(vlSelf->ysyx_22041461_CPU__DOT__IF__DOT__ICACHE__DOT__hit1)) 
                                                   & (~ (IData)(vlSelf->ysyx_22041461_CPU__DOT__IF__DOT__ICACHE__DOT__hit2)))))))));
+        tracep->fullBit(oldp+380,((1U & ((2U & (IData)(vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__state))
+                                          ? (~ (IData)(vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__state))
+                                          : ((1U & (IData)(vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__state))
+                                              ? (5U 
+                                                 != (IData)(vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__DCACHE__DOT__state))
+                                              : (IData)(vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__busy))))));
         tracep->fullQData(oldp+381,(vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__DCACHE_wdata),64);
         VL_EXTEND_WQ(128,64, __Vtemp133, vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__DCACHE_wdata);
         VL_EXTEND_WQ(128,64, __Vtemp138, vlSelf->ysyx_22041461_CPU__DOT__MEM__DOT__DCACHE__DOT__AXI_rdata);

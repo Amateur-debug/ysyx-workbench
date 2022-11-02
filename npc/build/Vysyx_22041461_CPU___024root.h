@@ -256,7 +256,7 @@ VL_MODULE(Vysyx_22041461_CPU___024root) {
     QData/*63:0*/ __Vdly__ysyx_22041461_CPU__DOT__MEMreg_EXE_out;
     QData/*63:0*/ __Vdly__ysyx_22041461_CPU__DOT__MEMreg_imm_out;
     QData/*63:0*/ __Vdly__ysyx_22041461_CPU__DOT__MEMreg_pc_out;
-    VlUnpacked<CData/*0:0*/, 20> __Vm_traceActivity;
+    VlUnpacked<CData/*0:0*/, 19> __Vm_traceActivity;
 
     // INTERNAL VARIABLES
     Vysyx_22041461_CPU__Syms* vlSymsp;  // Symbol table

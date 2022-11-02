@@ -90,31 +90,27 @@ always@(*) begin
 end
 
 always@(*) begin
-    if(DCACHE_valid == 1'b0) begin
-        DCACHE_rdata = 64'b0;
-    end
-    else begin
-        if(DCACHE_wen == 1'b0) begin
-            if(inmemory == 1'b1) begin
-                if(hit1 == 1'b1) begin
-                    DCACHE_rdata = CacheLine1_data;
-                end
-                else if(hit2 == 1'b1) begin
-                    DCACHE_rdata = CacheLine2_data;
-                end
-                else begin
-                    DCACHE_rdata = 64'b0;
-                end
+    if(DCACHE_wen == 1'b0) begin
+        if(inmemory == 1'b1) begin
+            if(hit1 == 1'b1) begin
+                DCACHE_rdata = CacheLine1_data;
+            end
+            else if(hit2 == 1'b1) begin
+                DCACHE_rdata = CacheLine2_data;
             end
             else begin
-                DCACHE_rdata = AXI_rdata;
+                DCACHE_rdata = 64'b0;
             end
         end
         else begin
-            DCACHE_rdata = 64'b0;
+            DCACHE_rdata = AXI_rdata;
         end
     end
+    else begin
+        DCACHE_rdata = 64'b0;
+    end
 end
+
 
 always@(posedge clk or negedge rst) begin
     if(rst == 1'b0) begin
