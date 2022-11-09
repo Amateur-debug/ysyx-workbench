@@ -62,40 +62,56 @@ parameter INCR = 2'b01;
 parameter WRAP = 2'b10;
 parameter Rserved = 2'b11;
 
-reg [0:0]  state;
+reg [1:0]  state;
 
 
 always@(posedge clk or posedge rst) begin
     if(rst == 1'b1) begin
-        state <= 1'b0;
+        state <= 2'b00;
     end
     else begin
-        if(state == 1'b0) begin
-            if(AXI_Crossbar_IF_rready == 1'b1 && AXI_Crossbar_rvalid == 1'b1 &&  AXI_Crossbar_rresp == OKAY && AXI_Crossbar_rlast == 1'b1 && AXI_Crossbar_rid == IF_AXI_id) begin
-                if(AXI_Crossbar_MEM_arvalid == 1'b1) begin
-                    state <= 1'b1;
+        case(state)
+            2'b00: begin
+                if(AXI_Crossbar_IF_arvalid == 1'b1) begin
+                    state <= 2'b01;
+                end
+                else if(AXI_Crossbar_MEM_arvalid == 1'b1) begin
+                    state <= 2'b10;
                 end
                 else begin
                     state <= state;
                 end
             end
-            else begin
-                state <= state;
+            2'b01: begin
+                if(AXI_Crossbar_rvalid == 1'b1 && AXI_Crossbar_rresp == OKAY && AXI_Crossbar_rlast == 1'b1 && AXI_Crossbar_rid == IF_AXI_id) begin
+                    if(AXI_Crossbar_MEM_arvalid == 1'b1) begin
+                        state <= 2'b10;
+                    end
+                    else begin
+                        state <= 2'b00;
+                    end
+                end
+                else begin
+                    state <= state;
+                end
             end
-        end
-        else begin
-            if(AXI_Crossbar_MEM_rready == 1'b1 && AXI_Crossbar_rvalid == 1'b1 &&  AXI_Crossbar_rresp == OKAY && AXI_Crossbar_rlast == 1'b1 && AXI_Crossbar_rid == MEM_AXI_id) begin
-                state <= 1'b0;
+            2'b10: begin
+                if(AXI_Crossbar_rvalid == 1'b1 && AXI_Crossbar_rresp == OKAY && AXI_Crossbar_rlast == 1'b1 && AXI_Crossbar_rid == MEM_AXI_id) begin
+                    state <= 2'b00;
+                end
+                else begin
+                    state <= state;
+                end
             end
-            else begin
-                state <= state;
+            2'b11: begin
+                state <= 2'b00;
             end
-        end
+        endcase
     end
 end
 
 always@(*) begin
-    if(state == 1'b0) begin
+    if(state == 2'b00 || state == 2'b01 || state == 2'b11) begin
         AXI_Crossbar_arvalid = AXI_Crossbar_IF_arvalid;
         AXI_Crossbar_araddr  = AXI_Crossbar_IF_araddr ;
         AXI_Crossbar_arid    = AXI_Crossbar_IF_arid   ;
@@ -128,7 +144,7 @@ assign AXI_Crossbar_MEM_rlast  = AXI_Crossbar_rlast ;
 assign AXI_Crossbar_MEM_rid    = AXI_Crossbar_rid   ;
 
 always@(*) begin
-    if(state == 1'b0) begin
+    if(state == 2'b00 || state == 2'b01 || state == 2'b11) begin
         AXI_Crossbar_IF_arready = AXI_Crossbar_arready;
     end
     else begin
@@ -137,11 +153,11 @@ always@(*) begin
 end
 
 always@(*) begin
-    if(state == 1'b0) begin
-        AXI_Crossbar_MEM_arready = 1'b0;
+    if(state == 2'b10) begin
+        AXI_Crossbar_MEM_arready = AXI_Crossbar_arready;
     end
     else begin
-        AXI_Crossbar_MEM_arready = AXI_Crossbar_arready;
+        AXI_Crossbar_MEM_arready = 1'b0;
     end
 end
 

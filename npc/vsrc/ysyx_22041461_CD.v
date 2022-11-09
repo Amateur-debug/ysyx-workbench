@@ -499,6 +499,11 @@ always@(*) begin
             CD_IF_valid = 1'b0;
         end
     end
+    if(CD_ctrl == `ysyx_041461_CD_FENCE_I) begin
+        if(CD_EXE_valid_in == 1'b1 || CD_MEM_valid_in == 1'b1) begin
+            CD_IF_valid = 1'b0;
+        end
+    end
 end
 
 always@(*) begin
