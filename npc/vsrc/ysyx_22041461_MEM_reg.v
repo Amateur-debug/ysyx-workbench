@@ -1,9 +1,7 @@
-`include "/home/cxy/ysyx-workbench/npc/vsrc/ysyx_22041461_macro.v"
-
-module ysyx_22041461_MEM_reg(
+module ysyx_041461_MEM_reg(
 
     input   wire [0:0]   clk                 ,
-    input   wire [0:0]   flush               ,
+    input   wire [0:0]   rst                 ,
     input   wire [0:0]   MEMreg_enable       ,
 
     input   wire [0:0]   MEMreg_valid_fromEXE,
@@ -33,27 +31,10 @@ module ysyx_22041461_MEM_reg(
     output  reg  [3:0]   MEMreg_WB_ctrl_out  
 );
 
-//异步复位同步释放
-reg  [0:0]   rst_r1;
-reg  [0:0]   rst_r2;
-wire [0:0]   rst;
-
-assign rst = rst_r2;
-
-always@(posedge clk or negedge flush) begin
-    if(flush == 1'b0) begin
-        rst_r1 <= 1'b0;
-        rst_r2 <= 1'b0;
-    end
-    else begin
-        rst_r1 <= 1'b1;
-        rst_r2 <= rst_r1;
-    end
-end
 
 //流水线寄存器功能实现
-always@(posedge clk or negedge rst) begin
-    if(rst == 1'b0) begin
+always@(posedge clk or posedge rst) begin
+    if(rst == 1'b1) begin
         MEMreg_valid_out <= 1'b0;
     end
     else if(MEMreg_enable == 1'b0) begin
@@ -67,8 +48,8 @@ always@(posedge clk or negedge rst) begin
     end
 end
 
-always@(posedge clk or negedge rst) begin
-    if(rst == 1'b0) begin  
+always@(posedge clk or posedge rst) begin
+    if(rst == 1'b1) begin  
         MEMreg_EXE_out <= 64'b0;   
         MEMreg_rd_out <= 5'b0;   
         MEMreg_rs1_out <= 5'b0;  
@@ -77,8 +58,8 @@ always@(posedge clk or negedge rst) begin
         MEMreg_imm_out <= 64'b0;    
         MEMreg_zimm_out <= 64'b0;   
         MEMreg_pc_out <= 64'h0000_0000_8000_0000;     
-        MEMreg_MEM_ctrl_out <= `MEM_NOP;
-        MEMreg_WB_ctrl_out <= `WB_NOP;           
+        MEMreg_MEM_ctrl_out <= `ysyx_041461_MEM_NOP;
+        MEMreg_WB_ctrl_out <= `ysyx_041461_WB_NOP;           
     end
     else if(MEMreg_enable == 1'b0) begin
         MEMreg_EXE_out <= MEMreg_EXE_out;   

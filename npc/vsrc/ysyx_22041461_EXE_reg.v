@@ -1,9 +1,7 @@
-`include "/home/cxy/ysyx-workbench/npc/vsrc/ysyx_22041461_macro.v"
-
-module  ysyx_22041461_EXE_reg(
+module  ysyx_041461_EXE_reg(
 
     input   wire  [0:0]  clk                ,
-    input   wire  [0:0]  flush              ,
+    input   wire  [0:0]  rst                ,
     input   wire  [0:0]  EXEreg_enable      ,
     
     input   wire  [0:0]  EXEreg_valid_fromCD ,
@@ -35,28 +33,10 @@ module  ysyx_22041461_EXE_reg(
     output  reg   [3:0]  EXEreg_WB_ctrl_out
 );
 
-//异步复位同步释放
-reg  [0:0]   rst_r1;
-reg  [0:0]   rst_r2;
-wire [0:0]   rst;
-
-assign rst = rst_r2;
-
-always@(posedge clk or negedge flush) begin
-    if(flush == 1'b0) begin
-        rst_r1 <= 1'b0;
-        rst_r2 <= 1'b0;
-    end
-    else begin
-        rst_r1 <= 1'b1;
-        rst_r2 <= rst_r1;
-    end
-end
-
 
 //流水线寄存器功能实现
-always@(posedge clk or negedge rst) begin
-    if(rst == 1'b0) begin
+always@(posedge clk or posedge rst) begin
+    if(rst == 1'b1) begin
         EXEreg_valid_out <= 1'b0;
     end
     else if(EXEreg_enable == 1'b0) begin
@@ -70,19 +50,19 @@ always@(posedge clk or negedge rst) begin
     end
 end
 
-always@(posedge clk or negedge rst) begin
-    if(rst == 1'b0) begin  
+always@(posedge clk or posedge rst) begin
+    if(rst == 1'b1) begin  
         EXEreg_rd_out <= 5'b0;     
         EXEreg_rs1_out <= 5'b0;     
         EXEreg_rs2_out <= 5'b0;    
         EXEreg_csr_out <= 12'b0;     
         EXEreg_imm_out <= 64'b0;   
         EXEreg_zimm_out <= 64'b0;   
-        EXEreg_pc_out <= 64'h0000_0000_8000_0000;     
-        EXEreg_EXE_ctrl_out <= `EXE_NOP;
-        EXEreg_EXE_src_out <= `EXE_src_NOP;
-        EXEreg_MEM_ctrl_out <= `MEM_NOP;
-        EXEreg_WB_ctrl_out <= `WB_NOP;                      
+        EXEreg_pc_out <= 64'h0000_0000_3000_0000;     
+        EXEreg_EXE_ctrl_out <= `ysyx_041461_EXE_NOP;
+        EXEreg_EXE_src_out <= `ysyx_041461_EXE_src_NOP;
+        EXEreg_MEM_ctrl_out <= `ysyx_041461_MEM_NOP;
+        EXEreg_WB_ctrl_out <= `ysyx_041461_WB_NOP;                      
     end
     else if(EXEreg_enable == 1'b0) begin
         EXEreg_rd_out <= EXEreg_rd_out;     

@@ -1,6 +1,4 @@
-`include "/home/cxy/ysyx-workbench/npc/vsrc/ysyx_22041461_macro.v"
-
-module ysyx_22041461_ID( 
+module ysyx_041461_ID( 
     
     input   wire [31:0] ID_inst     ,
     input   wire [0:0]  ID_valid_in ,
@@ -18,16 +16,14 @@ module ysyx_22041461_ID(
     output  wire [63:0] ID_zimm     ,
     output  wire [63:0] ID_next_pc  ,
     output  wire [0:0]  ID_valid_out,
-    output  reg  [0:0]  ID_PC_ctrl  ,
-    output  reg  [2:0]  ID_CD_ctrl  ,
+    output  reg  [0:0]  ID_IFreg_ctrl,
+    output  reg  [0:0]  ID_FENCE_I   ,
+    output  reg  [3:0]  ID_CD_ctrl  ,
     output  reg  [4:0]  ID_EXE_ctrl ,
     output  reg  [2:0]  ID_EXE_src  ,
     output  reg  [3:0]  ID_MEM_ctrl ,   
     output  reg  [3:0]  ID_WB_ctrl      
 ); 
-
-import "DPI-C" function void ebreak();
-import "DPI-C" function void invalid_inst();
 
 function [63:0] immI(
     input  [31:0] INST
@@ -87,445 +83,496 @@ always@(*) begin
     if(ID_valid_in == 1'b0) begin
         ID_next_pc  = 64'b0;
         ID_valid_out = 1'b0;
-        ID_PC_ctrl  = 1'b0;
-        ID_CD_ctrl  = `CD_NOP;
-        ID_EXE_ctrl = `EXE_NOP;
-        ID_EXE_src  = `EXE_src_NOP;
-        ID_MEM_ctrl = `MEM_NOP;
-        ID_WB_ctrl  = `WB_NOP;
+        ID_IFreg_ctrl  = 1'b0;
+        ID_CD_ctrl  = `ysyx_041461_CD_NOP;
+        ID_EXE_ctrl = `ysyx_041461_EXE_NOP;
+        ID_EXE_src  = `ysyx_041461_EXE_src_NOP;
+        ID_MEM_ctrl = `ysyx_041461_MEM_NOP;
+        ID_WB_ctrl  = `ysyx_041461_WB_NOP;
+        ID_FENCE_I = 1'b0;
     end
     else begin
         ID_next_pc  = 64'b0;
         ID_valid_out = 1'b1;
-        ID_PC_ctrl  = 1'b0;
-        ID_CD_ctrl  = `CD_NOP;
-        ID_EXE_ctrl = `EXE_NOP;
-        ID_EXE_src  = `EXE_src_NOP;
-        ID_MEM_ctrl = `MEM_NOP;
-        ID_WB_ctrl  = `WB_NOP;
+        ID_IFreg_ctrl  = 1'b0;
+        ID_CD_ctrl  = `ysyx_041461_CD_NOP;
+        ID_EXE_ctrl = `ysyx_041461_EXE_NOP;
+        ID_EXE_src  = `ysyx_041461_EXE_src_NOP;
+        ID_MEM_ctrl = `ysyx_041461_MEM_NOP;
+        ID_WB_ctrl  = `ysyx_041461_WB_NOP;
+        ID_FENCE_I = 1'b0;
         case(opcode)
-            `RV32_R: begin
+            `ysyx_041461_RV32_R: begin
                 ID_imm = ID_imm;
-                ID_EXE_src = `EXE_R_R;
-                ID_WB_ctrl = `WB_EXE;
+                ID_EXE_src = `ysyx_041461_EXE_R_R;
+                ID_WB_ctrl = `ysyx_041461_WB_EXE;
                 case({funct7, funct3})
-                    `SLL: begin
-                        ID_EXE_ctrl = `EXE_SLL;
+                    `ysyx_041461_SLL: begin
+                        ID_EXE_ctrl = `ysyx_041461_EXE_SLL;
                     end
-                    `SRL: begin
-                        ID_EXE_ctrl = `EXE_SRL;
+                    `ysyx_041461_SRL: begin
+                        ID_EXE_ctrl = `ysyx_041461_EXE_SRL;
                     end
-                    `SRA: begin
-                        ID_EXE_ctrl = `EXE_SRA;
+                    `ysyx_041461_SRA: begin
+                        ID_EXE_ctrl = `ysyx_041461_EXE_SRA;
                     end
-                    `ADD: begin
-                        ID_EXE_ctrl = `EXE_ADD;
+                    `ysyx_041461_ADD: begin
+                        ID_EXE_ctrl = `ysyx_041461_EXE_ADD;
                     end
-                    `SUB: begin
-                        ID_EXE_ctrl = `EXE_SUB;
+                    `ysyx_041461_SUB: begin
+                        ID_EXE_ctrl = `ysyx_041461_EXE_SUB;
                     end
-                    `XOR: begin
-                        ID_EXE_ctrl = `EXE_XOR;
+                    `ysyx_041461_XOR: begin
+                        ID_EXE_ctrl = `ysyx_041461_EXE_XOR;
                     end
-                    `OR: begin
-                        ID_EXE_ctrl = `EXE_OR;
+                    `ysyx_041461_OR: begin
+                        ID_EXE_ctrl = `ysyx_041461_EXE_OR;
                     end
-                    `AND: begin
-                        ID_EXE_ctrl = `EXE_AND;
+                    `ysyx_041461_AND: begin
+                        ID_EXE_ctrl = `ysyx_041461_EXE_AND;
                     end
-                    `SLT: begin
-                        ID_EXE_ctrl = `EXE_SLT;
+                    `ysyx_041461_SLT: begin
+                        ID_EXE_ctrl = `ysyx_041461_EXE_SLT;
                     end
-                    `SLTU: begin
-                        ID_EXE_ctrl = `EXE_SLTU;
+                    `ysyx_041461_SLTU: begin
+                        ID_EXE_ctrl = `ysyx_041461_EXE_SLTU;
                     end
-                    `MUL: begin
-                        ID_EXE_ctrl = `EXE_MUL;
+                    `ysyx_041461_MUL: begin
+                        ID_EXE_ctrl = `ysyx_041461_EXE_MUL;
                     end
-                    `MULH: begin
-                        ID_EXE_ctrl = `EXE_MULH;
+                    `ysyx_041461_MULH: begin
+                        ID_EXE_ctrl = `ysyx_041461_EXE_MULH;
                     end
-                    `MULHSU: begin
-                        ID_EXE_ctrl = `EXE_MULHSU;
+                    `ysyx_041461_MULHSU: begin
+                        ID_EXE_ctrl = `ysyx_041461_EXE_MULHSU;
                     end
-                    `MULHU: begin
-                        ID_EXE_ctrl = `EXE_MULHU;
+                    `ysyx_041461_MULHU: begin
+                        ID_EXE_ctrl = `ysyx_041461_EXE_MULHU;
                     end
-                    `DIV: begin
-                        ID_EXE_ctrl = `EXE_DIV;
+                    `ysyx_041461_DIV: begin
+                        ID_EXE_ctrl = `ysyx_041461_EXE_DIV;
                     end
-                    `DIVU: begin
-                        ID_EXE_ctrl = `EXE_DIVU;
+                    `ysyx_041461_DIVU: begin
+                        ID_EXE_ctrl = `ysyx_041461_EXE_DIVU;
                     end
-                    `REM: begin
-                        ID_EXE_ctrl = `EXE_REM;
+                    `ysyx_041461_REM: begin
+                        ID_EXE_ctrl = `ysyx_041461_EXE_REM;
                     end
-                    `REMU: begin
-                        ID_EXE_ctrl = `EXE_REMU;
+                    `ysyx_041461_REMU: begin
+                        ID_EXE_ctrl = `ysyx_041461_EXE_REMU;
                     end
                     default: begin
-                        ID_valid_out = 1'b0;
-                        invalid_inst();
+                        ID_EXE_src = `ysyx_041461_EXE_src_NOP;
+                        ID_next_pc = ID_csr_mtvec;
+                        ID_IFreg_ctrl = 1'b1;
+                        ID_CD_ctrl = `ysyx_041461_CD_ILLEGAL_INST;
+                        ID_WB_ctrl = `ysyx_041461_WB_ILLEGAL_INST;
                     end
                 endcase
             end
-            `RV64_R: begin
+            `ysyx_041461_RV64_R: begin
                 ID_imm = ID_imm;
-                ID_EXE_src = `EXE_R_R;
-                ID_WB_ctrl = `WB_EXE;
+                ID_EXE_src = `ysyx_041461_EXE_R_R;
+                ID_WB_ctrl = `ysyx_041461_WB_EXE;
                 case({funct7, funct3})
-                    `SLLW: begin
-                        ID_EXE_ctrl = `EXE_SLLW;
+                    `ysyx_041461_SLLW: begin
+                        ID_EXE_ctrl = `ysyx_041461_EXE_SLLW;
                     end
-                    `SRLW: begin
-                        ID_EXE_ctrl = `EXE_SRLW;
+                    `ysyx_041461_SRLW: begin
+                        ID_EXE_ctrl = `ysyx_041461_EXE_SRLW;
                     end
-                    `SRAW: begin
-                        ID_EXE_ctrl = `EXE_SRAW;
+                    `ysyx_041461_SRAW: begin
+                        ID_EXE_ctrl = `ysyx_041461_EXE_SRAW;
                     end
-                    `ADDW: begin
-                        ID_EXE_ctrl = `EXE_ADDW;
+                    `ysyx_041461_ADDW: begin
+                        ID_EXE_ctrl = `ysyx_041461_EXE_ADDW;
                     end
-                    `SUBW: begin
-                        ID_EXE_ctrl = `EXE_SUBW;
+                    `ysyx_041461_SUBW: begin
+                        ID_EXE_ctrl = `ysyx_041461_EXE_SUBW;
                     end
-                    `MULW: begin
-                        ID_EXE_ctrl = `EXE_MULW;
+                    `ysyx_041461_MULW: begin
+                        ID_EXE_ctrl = `ysyx_041461_EXE_MULW;
                     end
-                    `DIVW: begin
-                        ID_EXE_ctrl = `EXE_DIVW;
+                    `ysyx_041461_DIVW: begin
+                        ID_EXE_ctrl = `ysyx_041461_EXE_DIVW;
                     end
-                    `DIVUW: begin
-                        ID_EXE_ctrl = `EXE_DIVUW;
+                    `ysyx_041461_DIVUW: begin
+                        ID_EXE_ctrl = `ysyx_041461_EXE_DIVUW;
                     end
-                    `REMW: begin
-                        ID_EXE_ctrl = `EXE_REMW;
+                    `ysyx_041461_REMW: begin
+                        ID_EXE_ctrl = `ysyx_041461_EXE_REMW;
                     end
-                    `REMUW: begin
-                        ID_EXE_ctrl = `EXE_REMUW;
-                    end
-                    default: begin
-                        ID_valid_out = 1'b0;
-                        invalid_inst();
-                    end
-                endcase
-            end
-            `RV32_I: begin
-                ID_imm = immI(ID_inst);
-                ID_EXE_src = `EXE_R_I;
-                ID_WB_ctrl = `WB_EXE;
-                case(funct3)
-                    `FUN3_SLLI: begin
-                        case(funct6)
-                            `FUN6_SLLI: begin
-                                ID_EXE_ctrl = `EXE_SLL;
-                            end
-                            default: begin
-                                ID_valid_out = 1'b0;
-                                invalid_inst();
-                            end
-                        endcase
-                    end
-                    `FUN3_SRI: begin
-                        case(funct6)
-                            `FUN6_SRLI: begin
-                                ID_EXE_ctrl = `EXE_SRL;
-                            end
-                            `FUN6_SRAI: begin
-                                ID_EXE_ctrl = `EXE_SRA;
-                            end
-                            default: begin
-                                invalid_inst();
-                            end
-                        endcase
-                    end
-                    `ADDI: begin
-                        ID_EXE_ctrl = `EXE_ADD;
-                    end
-                    `XORI: begin
-                        ID_EXE_ctrl = `EXE_XOR;
-                    end
-                    `ORI: begin
-                        ID_EXE_ctrl = `EXE_OR;
-                    end
-                    `ANDI: begin
-                        ID_EXE_ctrl = `EXE_AND;
-                    end
-                    `SLTI: begin
-                        ID_EXE_ctrl = `EXE_SLT;
-                    end
-                    `SLTIU: begin
-                        ID_EXE_ctrl = `EXE_SLTU;
-                    end
-                endcase
-            end
-            `RV64_I: begin
-                ID_imm = immI(ID_inst);
-                ID_EXE_src = `EXE_R_I;
-                ID_WB_ctrl = `WB_EXE;
-                case(funct3)
-                    `FUN3_SLLIW: begin
-                        case(funct6)
-                            `FUN6_SLLIW: begin
-                                ID_EXE_ctrl = `EXE_SLLW;
-                                case(shamt[5:5])
-                                    1'b0: begin
-                                        ID_valid_out = 1'b1;
-                                    end
-                                    default: begin
-                                        ID_valid_out = 1'b0;
-                                    end
-                                endcase
-                            end
-                            default: begin
-                                ID_valid_out = 1'b0;
-                                invalid_inst();
-                            end
-                        endcase
-                    end
-                    `FUN3_SRIW: begin
-                        case(funct6)
-                            `FUN6_SRLIW: begin
-                                ID_EXE_ctrl = `EXE_SRLW;
-                                case(shamt[5:5])
-                                    1'b0: begin
-                                        ID_valid_out = 1'b1;
-                                    end
-                                    default: begin
-                                        ID_valid_out = 1'b0;
-                                    end
-                                endcase
-                            end
-                            `FUN6_SRAIW: begin
-                                ID_EXE_ctrl = `EXE_SRAW;
-                                case(shamt[5:5])
-                                    1'b0: begin
-                                        ID_valid_out = 1'b1;
-                                    end
-                                    default: begin
-                                        ID_valid_out = 1'b0;
-                                    end
-                                endcase
-                            end
-                            default: begin
-                                ID_valid_out = 1'b0;
-                                invalid_inst();
-                            end
-                        endcase
-                    end
-                    `ADDIW: begin
-                        ID_EXE_ctrl = `EXE_ADDW;
+                    `ysyx_041461_REMUW: begin
+                        ID_EXE_ctrl = `ysyx_041461_EXE_REMUW;
                     end
                     default: begin
-                        ID_valid_out = 1'b0;
-                        invalid_inst();
+                        ID_EXE_src = `ysyx_041461_EXE_src_NOP;
+                        ID_next_pc = ID_csr_mtvec;
+                        ID_IFreg_ctrl = 1'b1;
+                        ID_CD_ctrl = `ysyx_041461_CD_ILLEGAL_INST;
+                        ID_WB_ctrl = `ysyx_041461_WB_ILLEGAL_INST;
                     end
                 endcase
             end
-            `Stores: begin
+            `ysyx_041461_RV32_I: begin
+                ID_imm = immI(ID_inst);
+                ID_EXE_src = `ysyx_041461_EXE_R_I;
+                ID_WB_ctrl = `ysyx_041461_WB_EXE;
+                case(funct3)
+                    `ysyx_041461_FUN3_SLLI: begin
+                        case(funct6)
+                            `ysyx_041461_FUN6_SLLI: begin
+                                ID_EXE_ctrl = `ysyx_041461_EXE_SLL;
+                            end
+                            default: begin
+                                ID_EXE_src = `ysyx_041461_EXE_src_NOP;
+                                ID_next_pc = ID_csr_mtvec;
+                                ID_IFreg_ctrl = 1'b1;
+                                ID_CD_ctrl = `ysyx_041461_CD_ILLEGAL_INST;
+                                ID_WB_ctrl = `ysyx_041461_WB_ILLEGAL_INST;
+                            end
+                        endcase
+                    end
+                    `ysyx_041461_FUN3_SRI: begin
+                        case(funct6)
+                            `ysyx_041461_FUN6_SRLI: begin
+                                ID_EXE_ctrl = `ysyx_041461_EXE_SRL;
+                            end
+                            `ysyx_041461_FUN6_SRAI: begin
+                                ID_EXE_ctrl = `ysyx_041461_EXE_SRA;
+                            end
+                            default: begin
+                                ID_EXE_src = `ysyx_041461_EXE_src_NOP;
+                                ID_next_pc = ID_csr_mtvec;
+                                ID_IFreg_ctrl = 1'b1;
+                                ID_CD_ctrl = `ysyx_041461_CD_ILLEGAL_INST;
+                                ID_WB_ctrl = `ysyx_041461_WB_ILLEGAL_INST;
+                            end
+                        endcase
+                    end
+                    `ysyx_041461_ADDI: begin
+                        ID_EXE_ctrl = `ysyx_041461_EXE_ADD;
+                    end
+                    `ysyx_041461_XORI: begin
+                        ID_EXE_ctrl = `ysyx_041461_EXE_XOR;
+                    end
+                    `ysyx_041461_ORI: begin
+                        ID_EXE_ctrl = `ysyx_041461_EXE_OR;
+                    end
+                    `ysyx_041461_ANDI: begin
+                        ID_EXE_ctrl = `ysyx_041461_EXE_AND;
+                    end
+                    `ysyx_041461_SLTI: begin
+                        ID_EXE_ctrl = `ysyx_041461_EXE_SLT;
+                    end
+                    `ysyx_041461_SLTIU: begin
+                        ID_EXE_ctrl = `ysyx_041461_EXE_SLTU;
+                    end
+                endcase
+            end
+            `ysyx_041461_RV64_I: begin
+                ID_imm = immI(ID_inst);
+                ID_EXE_src = `ysyx_041461_EXE_R_I;
+                ID_WB_ctrl = `ysyx_041461_WB_EXE;
+                case(funct3)
+                    `ysyx_041461_FUN3_SLLIW: begin
+                        case(funct6)
+                            `ysyx_041461_FUN6_SLLIW: begin
+                                ID_EXE_ctrl = `ysyx_041461_EXE_SLLW;
+                                case(shamt[5:5])
+                                    1'b0: begin
+                                        ID_valid_out = 1'b1;
+                                    end
+                                    default: begin
+                                        ID_valid_out = 1'b0;
+                                    end
+                                endcase
+                            end
+                            default: begin
+                                ID_EXE_src = `ysyx_041461_EXE_src_NOP;
+                                ID_next_pc = ID_csr_mtvec;
+                                ID_IFreg_ctrl = 1'b1;
+                                ID_CD_ctrl = `ysyx_041461_CD_ILLEGAL_INST;
+                                ID_WB_ctrl = `ysyx_041461_WB_ILLEGAL_INST;
+                            end
+                        endcase
+                    end
+                    `ysyx_041461_FUN3_SRIW: begin
+                        case(funct6)
+                            `ysyx_041461_FUN6_SRLIW: begin
+                                ID_EXE_ctrl = `ysyx_041461_EXE_SRLW;
+                                case(shamt[5:5])
+                                    1'b0: begin
+                                        ID_valid_out = 1'b1;
+                                    end
+                                    default: begin
+                                        ID_valid_out = 1'b0;
+                                    end
+                                endcase
+                            end
+                            `ysyx_041461_FUN6_SRAIW: begin
+                                ID_EXE_ctrl = `ysyx_041461_EXE_SRAW;
+                                case(shamt[5:5])
+                                    1'b0: begin
+                                        ID_valid_out = 1'b1;
+                                    end
+                                    default: begin
+                                        ID_valid_out = 1'b0;
+                                    end
+                                endcase
+                            end
+                            default: begin
+                                ID_EXE_src = `ysyx_041461_EXE_src_NOP;
+                                ID_next_pc = ID_csr_mtvec;
+                                ID_IFreg_ctrl = 1'b1;
+                                ID_CD_ctrl = `ysyx_041461_CD_ILLEGAL_INST;
+                                ID_WB_ctrl = `ysyx_041461_WB_ILLEGAL_INST;
+                            end
+                        endcase
+                    end
+                    `ysyx_041461_ADDIW: begin
+                        ID_EXE_ctrl = `ysyx_041461_EXE_ADDW;
+                    end
+                    default: begin
+                        ID_EXE_src = `ysyx_041461_EXE_src_NOP;
+                        ID_next_pc = ID_csr_mtvec;
+                        ID_IFreg_ctrl = 1'b1;
+                        ID_CD_ctrl = `ysyx_041461_CD_ILLEGAL_INST;
+                        ID_WB_ctrl = `ysyx_041461_WB_ILLEGAL_INST;
+                    end
+                endcase
+            end
+            `ysyx_041461_Stores: begin
                 ID_imm = immS(ID_inst);
-                ID_EXE_ctrl = `EXE_ADD;
-                ID_EXE_src = `EXE_R_I;
+                ID_EXE_ctrl = `ysyx_041461_EXE_ADD;
+                ID_EXE_src = `ysyx_041461_EXE_R_I;
                 case(funct3)
-                    `SB: begin
-                        ID_MEM_ctrl = `MEM_SB;
+                    `ysyx_041461_SB: begin
+                        ID_MEM_ctrl = `ysyx_041461_MEM_SB;
                     end
-                    `SH: begin
-                        ID_MEM_ctrl = `MEM_SH;
+                    `ysyx_041461_SH: begin
+                        ID_MEM_ctrl = `ysyx_041461_MEM_SH;
                     end
-                    `SW: begin
-                        ID_MEM_ctrl = `MEM_SW;
+                    `ysyx_041461_SW: begin
+                        ID_MEM_ctrl = `ysyx_041461_MEM_SW;
                     end
-                    `SD: begin
-                        ID_MEM_ctrl = `MEM_SD;
+                    `ysyx_041461_SD: begin
+                        ID_MEM_ctrl = `ysyx_041461_MEM_SD;
                     end
                     default: begin
-                        ID_valid_out = 1'b0;
-                        invalid_inst();
+                        ID_EXE_ctrl = `ysyx_041461_EXE_NOP;
+                        ID_EXE_src = `ysyx_041461_EXE_src_NOP;
+                        ID_next_pc = ID_csr_mtvec;
+                        ID_IFreg_ctrl = 1'b1;
+                        ID_CD_ctrl = `ysyx_041461_CD_ILLEGAL_INST;
+                        ID_WB_ctrl = `ysyx_041461_WB_ILLEGAL_INST;
                     end
                 endcase
             end
-            `Loads: begin
+            `ysyx_041461_Loads: begin
                 ID_imm = immI(ID_inst);
-                ID_EXE_ctrl = `EXE_ADD;
-                ID_EXE_src = `EXE_R_I;
-                ID_WB_ctrl = `WB_MEM;
+                ID_EXE_ctrl = `ysyx_041461_EXE_ADD;
+                ID_EXE_src = `ysyx_041461_EXE_R_I;
+                ID_WB_ctrl = `ysyx_041461_WB_MEM;
                 case(funct3)
-                    `LB: begin
-                        ID_MEM_ctrl = `MEM_LB;
+                    `ysyx_041461_LB: begin
+                        ID_MEM_ctrl = `ysyx_041461_MEM_LB;
                     end
-                    `LH: begin
-                        ID_MEM_ctrl = `MEM_LH;
+                    `ysyx_041461_LH: begin
+                        ID_MEM_ctrl = `ysyx_041461_MEM_LH;
                     end
-                    `LBU: begin
-                        ID_MEM_ctrl = `MEM_LBU;
+                    `ysyx_041461_LBU: begin
+                        ID_MEM_ctrl = `ysyx_041461_MEM_LBU;
                     end
-                    `LHU: begin
-                        ID_MEM_ctrl = `MEM_LHU;
+                    `ysyx_041461_LHU: begin
+                        ID_MEM_ctrl = `ysyx_041461_MEM_LHU;
                     end
-                    `LW: begin
-                        ID_MEM_ctrl = `MEM_LW;
+                    `ysyx_041461_LW: begin
+                        ID_MEM_ctrl = `ysyx_041461_MEM_LW;
                     end
-                    `LWU: begin
-                        ID_MEM_ctrl = `MEM_LWU;
+                    `ysyx_041461_LWU: begin
+                        ID_MEM_ctrl = `ysyx_041461_MEM_LWU;
                     end
-                    `LD: begin
-                        ID_MEM_ctrl = `MEM_LD;
+                    `ysyx_041461_LD: begin
+                        ID_MEM_ctrl = `ysyx_041461_MEM_LD;
                     end
                     default: begin
-                        ID_valid_out = 1'b0;
-                        invalid_inst();
+                        ID_EXE_ctrl = `ysyx_041461_EXE_NOP;
+                        ID_EXE_src = `ysyx_041461_EXE_src_NOP;
+                        ID_next_pc = ID_csr_mtvec;
+                        ID_IFreg_ctrl = 1'b1;
+                        ID_CD_ctrl = `ysyx_041461_CD_ILLEGAL_INST;
+                        ID_WB_ctrl = `ysyx_041461_WB_ILLEGAL_INST;
                     end
                 endcase
             end
-            `Branches: begin
+            `ysyx_041461_Branches: begin
                 ID_imm = immB(ID_inst);
-                ID_PC_ctrl = 1'b1;
-                ID_CD_ctrl = `CD_BRANCHES;
+                ID_IFreg_ctrl = 1'b1;
+                ID_CD_ctrl = `ysyx_041461_CD_BRANCHES;
                 case(funct3)
-                    `BEQ: begin
+                    `ysyx_041461_BEQ: begin
                         if(ID_rs1_data == ID_rs2_data) begin
                             ID_next_pc = ID_pc + ID_imm;
                         end
                         else begin
-                            ID_PC_ctrl = 1'b0;
+                            ID_IFreg_ctrl = 1'b0;
                         end
                     end
-                    `BNE: begin
+                    `ysyx_041461_BNE: begin
                         if(ID_rs1_data != ID_rs2_data) begin
                             ID_next_pc = ID_pc + ID_imm;
                         end
                         else begin
-                            ID_PC_ctrl = 1'b0;
+                            ID_IFreg_ctrl = 1'b0;
                         end
                     end
-                    `BLT: begin
+                    `ysyx_041461_BLT: begin
                         if($signed(ID_rs1_data) < $signed(ID_rs2_data)) begin
                             ID_next_pc = ID_pc + ID_imm;
                         end
                         else begin
-                            ID_PC_ctrl = 1'b0;
+                            ID_IFreg_ctrl = 1'b0;
                         end
                     end
-                    `BGE: begin
+                    `ysyx_041461_BGE: begin
                         if($signed(ID_rs1_data) >= $signed(ID_rs2_data)) begin
                             ID_next_pc = ID_pc + ID_imm;
                         end
                         else begin
-                            ID_PC_ctrl = 1'b0;
+                            ID_IFreg_ctrl = 1'b0;
                         end
                     end
-                    `BLTU: begin
+                    `ysyx_041461_BLTU: begin
                         if(ID_rs1_data < ID_rs2_data) begin
                             ID_next_pc = ID_pc + ID_imm;
                         end
                         else begin
-                            ID_PC_ctrl = 1'b0;
+                            ID_IFreg_ctrl = 1'b0;
                         end
                     end
-                    `BGEU: begin
+                    `ysyx_041461_BGEU: begin
                         if(ID_rs1_data >= ID_rs2_data) begin
                             ID_next_pc = ID_pc + ID_imm;
                         end
                         else begin
-                            ID_PC_ctrl = 1'b0;
+                            ID_IFreg_ctrl = 1'b0;
                         end
                     end
                     default: begin
-                        ID_CD_ctrl = `CD_NOP;
-                        ID_PC_ctrl = 1'b0;
-                        invalid_inst();
+                        ID_next_pc = ID_csr_mtvec;
+                        ID_IFreg_ctrl = 1'b1;
+                        ID_CD_ctrl = `ysyx_041461_CD_ILLEGAL_INST;
+                        ID_WB_ctrl = `ysyx_041461_WB_ILLEGAL_INST;
                     end
                 endcase
             end
-            `Jal: begin
+            `ysyx_041461_Jal: begin
                 ID_imm = immJ(ID_inst);
                 ID_next_pc = ID_pc + ID_imm;
-                ID_PC_ctrl = 1'b1;
-                ID_CD_ctrl = `CD_JAL;
-                ID_WB_ctrl = `WB_SNPC;
+                ID_IFreg_ctrl = 1'b1;
+                ID_CD_ctrl = `ysyx_041461_CD_JAL;
+                ID_WB_ctrl = `ysyx_041461_WB_SNPC;
             end
-            `Jalr: begin
+            `ysyx_041461_Jalr: begin
                 ID_imm = immI(ID_inst);
                 case(funct3)
-                    `JALR: begin
+                    `ysyx_041461_JALR: begin
                         ID_next_pc = (ID_rs1_data + ID_imm) & ~64'b1;
-                        ID_PC_ctrl = 1'b1;
-                        ID_CD_ctrl = `CD_JALR;
-                        ID_WB_ctrl = `WB_SNPC;
+                        ID_IFreg_ctrl = 1'b1;
+                        ID_CD_ctrl = `ysyx_041461_CD_JALR;
+                        ID_WB_ctrl = `ysyx_041461_WB_SNPC;
                     end
                     default: begin
-                        ID_valid_out = 1'b0;
-                        invalid_inst();
+                        ID_next_pc = ID_csr_mtvec;
+                        ID_IFreg_ctrl = 1'b1;
+                        ID_CD_ctrl = `ysyx_041461_CD_ILLEGAL_INST;
+                        ID_WB_ctrl = `ysyx_041461_WB_ILLEGAL_INST;
                     end
                 endcase
             end
-            `Lui: begin
+            `ysyx_041461_Lui: begin
                 ID_imm = immU(ID_inst);
-                ID_WB_ctrl = `WB_IMM;
+                ID_WB_ctrl = `ysyx_041461_WB_IMM;
             end
-            `Auipc: begin
+            `ysyx_041461_Auipc: begin
                 ID_imm = immU(ID_inst);
-                ID_EXE_ctrl = `EXE_ADD;
-                ID_EXE_src = `EXE_PC_I;
-                ID_WB_ctrl = `WB_EXE;
+                ID_EXE_ctrl = `ysyx_041461_EXE_ADD;
+                ID_EXE_src = `ysyx_041461_EXE_PC_I;
+                ID_WB_ctrl = `ysyx_041461_WB_EXE;
             end
-            `Privileged: begin
+            `ysyx_041461_Privileged: begin
                 ID_imm = ID_imm;
                 case(ID_inst[31:7])
-                    `ECALL: begin
+                    `ysyx_041461_ECALL: begin
                         ID_next_pc = ID_csr_mtvec;
-                        ID_PC_ctrl = 1'b1;
-                        ID_CD_ctrl = `CD_ECALL;
-                        ID_WB_ctrl = `WB_ECALL;
+                        ID_IFreg_ctrl = 1'b1;
+                        ID_CD_ctrl = `ysyx_041461_CD_ECALL;
+                        ID_WB_ctrl = `ysyx_041461_WB_ECALL;
                     end
-                    `MRET: begin
+                    `ysyx_041461_MRET: begin
                         ID_next_pc = ID_csr_mepc;
-                        ID_PC_ctrl = 1'b1;
-                        ID_CD_ctrl = `CD_MRET;
+                        ID_IFreg_ctrl = 1'b1;
+                        ID_CD_ctrl = `ysyx_041461_CD_MRET;
                     end
-                    `EBREAK: begin
-                        ID_CD_ctrl = `CD_EBREAK;
+                    `ysyx_041461_EBREAK: begin
+                        ID_CD_ctrl = `ysyx_041461_CD_EBREAK;
                     end
                     default: begin
                         case(funct3)
-                            `CSRRW: begin
-                                ID_WB_ctrl = `WB_CSRRW;
+                            `ysyx_041461_CSRRW: begin
+                                ID_WB_ctrl = `ysyx_041461_WB_CSRRW;
                             end
-                            `CSRRS: begin
-                                ID_EXE_ctrl = `EXE_OR;
-                                ID_EXE_src = `EXE_R_CSR;
-                                ID_WB_ctrl = `WB_CSRRS;
+                            `ysyx_041461_CSRRS: begin
+                                ID_EXE_ctrl = `ysyx_041461_EXE_OR;
+                                ID_EXE_src = `ysyx_041461_EXE_R_CSR;
+                                ID_WB_ctrl = `ysyx_041461_WB_CSRRS;
                             end
-                            `CSRRC: begin
-                                ID_EXE_ctrl = `EXE_ADD;
-                                ID_EXE_src = `EXE_NOTR_CSR;
-                                ID_WB_ctrl = `WB_CSRRC;
+                            `ysyx_041461_CSRRC: begin
+                                ID_EXE_ctrl = `ysyx_041461_EXE_ADD;
+                                ID_EXE_src = `ysyx_041461_EXE_NOTR_CSR;
+                                ID_WB_ctrl = `ysyx_041461_WB_CSRRC;
                             end
-                            `CSRRWI: begin
-                                ID_WB_ctrl = `WB_CSRRWI;
+                            `ysyx_041461_CSRRWI: begin
+                                ID_WB_ctrl = `ysyx_041461_WB_CSRRWI;
                             end
-                            `CSRRSI: begin
-                                ID_EXE_ctrl = `EXE_OR;
-                                ID_EXE_src = `EXE_CSR_ZIMM;
-                                ID_WB_ctrl = `WB_CSRRSI;
+                            `ysyx_041461_CSRRSI: begin
+                                ID_EXE_ctrl = `ysyx_041461_EXE_OR;
+                                ID_EXE_src = `ysyx_041461_EXE_CSR_ZIMM;
+                                ID_WB_ctrl = `ysyx_041461_WB_CSRRSI;
                             end
-                            `CSRRCI: begin
-                                ID_EXE_ctrl = `EXE_AND;
-                                ID_EXE_src = `EXE_CSR_NOTZIMM;
-                                ID_WB_ctrl = `WB_CSRRCI;
+                            `ysyx_041461_CSRRCI: begin
+                                ID_EXE_ctrl = `ysyx_041461_EXE_AND;
+                                ID_EXE_src = `ysyx_041461_EXE_CSR_NOTZIMM;
+                                ID_WB_ctrl = `ysyx_041461_WB_CSRRCI;
                             end
                             default: begin
-                                ID_valid_out = 1'b0;
-                                invalid_inst();
+                                ID_next_pc = ID_csr_mtvec;
+                                ID_IFreg_ctrl = 1'b1;
+                                ID_CD_ctrl = `ysyx_041461_CD_ILLEGAL_INST;
+                                ID_WB_ctrl = `ysyx_041461_WB_ILLEGAL_INST;
                             end
                         endcase
                     end
                 endcase
             end
+            `ysyx_041461_FENCE: begin
+                case(ID_inst[31:7])
+                    `ysyx_041461_FENCE_I: begin
+                        ID_FENCE_I = 1'b1;
+                        ID_CD_ctrl = `ysyx_041461_CD_FENCE_I;
+                    end
+                    default: begin
+                        ID_next_pc = ID_csr_mtvec;
+                        ID_IFreg_ctrl = 1'b1;
+                        ID_CD_ctrl = `ysyx_041461_CD_ILLEGAL_INST;
+                        ID_WB_ctrl = `ysyx_041461_WB_ILLEGAL_INST;
+                    end
             default: begin
-                ID_valid_out = 1'b0;
-                invalid_inst();
+                ID_next_pc = ID_csr_mtvec;
+                ID_IFreg_ctrl = 1'b1;
+                ID_CD_ctrl = `ysyx_041461_CD_ILLEGAL_INST;
+                ID_WB_ctrl = `ysyx_041461_WB_ILLEGAL_INST;
             end
         endcase
     end

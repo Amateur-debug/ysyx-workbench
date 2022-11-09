@@ -1,9 +1,7 @@
-`include "/home/cxy/ysyx-workbench/npc/vsrc/ysyx_22041461_macro.v"
-
-module ysyx_22041461_WB(
+module ysyx_041461_WB(
 
     input   wire [0:0]   clk            ,
-    input   wire [0:0]   flush          ,
+    input   wire [0:0]   rst            ,
     input   wire [0:0]   WB_valid       ,
        
     input   wire [4:0]   WB_ID_rs1      ,
@@ -37,12 +35,6 @@ module ysyx_22041461_WB(
     output  wire [63:0]  WB_MEM_rs2_data
 );
 
-import "DPI-C" function void ebreak();
-import "DPI-C" function void set_gpr_ptr(input logic [63:0] a []);
-
-initial set_gpr_ptr(x);  // rf为通用寄存器的二维数组变量
-
-
 reg [63:0] x [31:0];    //寄存器现态的值
 reg [63:0] d [31:0];    //寄存器次态的值
 
@@ -58,24 +50,6 @@ reg [63:0] mstatus_next;
 integer i;
 integer j;
 
-//异步复位同步释放
-reg  [0:0]   rst_r1;
-reg  [0:0]   rst_r2;
-wire [0:0]   rst;
-
-assign rst = rst_r2;
-
-always@(posedge clk or negedge flush) begin
-    if(flush == 1'b0) begin
-        rst_r1 <= 1'b0;
-        rst_r2 <= 1'b0;
-    end
-    else begin
-        rst_r1 <= 1'b1;
-        rst_r2 <= rst_r1;
-    end
-end
-
 assign WB_ID_rs1_data = x[WB_ID_rs1];
 assign WB_ID_rs2_data = x[WB_ID_rs2];
 assign WB_ID_csr_mtvec = mtvec;
@@ -89,16 +63,16 @@ assign WB_MEM_rs2_data = x[WB_MEM_rs2];
 
 always@(*) begin
     case(WB_EXE_csr)
-        `MTVEC: begin
+        `ysyx_041461_MTVEC: begin
             WB_EXE_csr_data = mtvec;
         end
-        `MEPC: begin
+        `ysyx_041461_MEPC: begin
             WB_EXE_csr_data = mepc;
         end
-        `MCAUSE: begin
+        `ysyx_041461_MCAUSE: begin
             WB_EXE_csr_data = mcause;
         end
-        `MSTATUS: begin
+        `ysyx_041461_MSTATUS: begin
             WB_EXE_csr_data = mstatus;
         end
         default: begin
@@ -126,93 +100,101 @@ always@(*) begin
         mcause_next = mcause;
         mstatus_next = mstatus;
         case(WB_ctrl)
-            `WB_NOP: begin
+            `ysyx_041461_WB_NOP: begin
                 
             end
-            `WB_EXE: begin
+            `ysyx_041461_WB_EXE: begin
                 d[WB_rd] = WB_EXE_in;
             end
-            `WB_MEM: begin
+            `ysyx_041461_WB_MEM: begin
                 d[WB_rd] = WB_MEM_in;
             end
-            `WB_IMM: begin
+            `ysyx_041461_WB_IMM: begin
                 d[WB_rd] = WB_imm;
             end        
-            `WB_SNPC: begin
+            `ysyx_041461_WB_SNPC: begin
                 d[WB_rd] = WB_pc + 4;
             end
-            `WB_CSRRW: begin
+            `ysyx_041461_WB_CSRRW: begin
                 case(WB_csr)
-                    `MTVEC: begin
+                    `ysyx_041461_MTVEC: begin
                         d[WB_rd] = mtvec;
                         mtvec_next = x[WB_rs1];
                     end
-                    `MEPC: begin
+                    `ysyx_041461_MEPC: begin
                         d[WB_rd] = mepc;
                         mepc_next = x[WB_rs1];
                     end
-                    `MCAUSE: begin
+                    `ysyx_041461_MCAUSE: begin
                         d[WB_rd] = mcause;
                         mcause_next = x[WB_rs1];
                     end
-                    `MSTATUS: begin
+                    `ysyx_041461_MSTATUS: begin
                         d[WB_rd] = mstatus;
                         mstatus_next = x[WB_rs1];
                     end
                     default: begin
-                        ebreak();
+
                     end
                 endcase
             end
             4'b0110: begin
                 case(WB_csr)
-                    `MTVEC: begin
+                    `ysyx_041461_MTVEC: begin
                         d[WB_rd] = mtvec;
                         mtvec_next = WB_EXE_in;
                     end
-                    `MEPC: begin
+                    `ysyx_041461_MEPC: begin
                         d[WB_rd] = mepc;
                         mepc_next = WB_EXE_in;
                     end
-                    `MCAUSE: begin
+                    `ysyx_041461_MCAUSE: begin
                         d[WB_rd] = mcause;
                         mcause_next = WB_EXE_in;
                     end
-                    `MSTATUS: begin
+                    `ysyx_041461_MSTATUS: begin
                         d[WB_rd] = mstatus;
                         mstatus_next = WB_EXE_in;
                     end
                     default: begin
-                        ebreak();
+
                     end
                 endcase
             end
-            `WB_CSRRWI: begin
+            `ysyx_041461_WB_CSRRWI: begin
                 case(WB_csr)
-                    `MTVEC: begin
+                    `ysyx_041461_MTVEC: begin
                         d[WB_rd] = mtvec;
                         mtvec_next = WB_zimm;
                     end
-                    `MEPC: begin
+                    `ysyx_041461_MEPC: begin
                         d[WB_rd] = mepc;
                         mepc_next = WB_zimm;
                     end
-                    `MCAUSE: begin
+                    `ysyx_041461_MCAUSE: begin
                         d[WB_rd] = mcause;
                         mcause_next = WB_zimm;
                     end
-                    `MSTATUS: begin
+                    `ysyx_041461_MSTATUS: begin
                         d[WB_rd] = mstatus;
                         mstatus_next = WB_zimm;
                     end
                     default: begin
-                        ebreak();
+
                     end
                 endcase
             end
-            `WB_ECALL: begin
+            `ysyx_041461_WB_ECALL: begin
                 mepc_next = WB_pc;
                 mcause_next = 64'd11;
+            end
+            `ysyx_041461_CD_EBREAK: begin
+                mepc_next = WB_pc;
+                mcause_next = 64'd3;
+            end
+            `ysyx_041461_CD_ILLEGAL_INST: begin
+                mepc_next = WB_pc;
+                mcause_next = 64'd2;
             end
             default: begin
                 
@@ -222,8 +204,8 @@ always@(*) begin
     d[0] = 64'b0;
 end
 
-always@(posedge clk or negedge rst) begin
-    if(rst == 1'b0) begin
+always@(posedge clk or posedge rst) begin
+    if(rst == 1'b1) begin
         for(j = 0; j < 32; j = j + 1) begin
             x[j] <= 64'd0;
         end

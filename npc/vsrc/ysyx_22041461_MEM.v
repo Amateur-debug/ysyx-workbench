@@ -1,385 +1,1008 @@
-`include "/home/cxy/ysyx-workbench/npc/vsrc/ysyx_22041461_macro.v"
+module ysyx_041461_MEM(
 
-module ysyx_22041461_MEM(
+    input  wire  [0:0]    clk             ,
+    input  wire  [0:0]    rst             ,
+ 
+    input  wire  [0:0]    MEM_valid_in    ,
+    input  wire  [0:0]    MEM_valid_fromCD,
+    input  wire  [63:0]   MEM_EXE_in      ,
+    input  wire  [63:0]   MEM_rs2_data    ,
+    input  wire  [3:0]    MEM_ctrl        ,  
 
-    input  wire  [0:0]   clk            ,
-    input  wire  [0:0]   flush          ,
+    output  reg  [0:0]    MEM_valid_out   ,
+    output  reg  [0:0]    MEM_ok          ,
+    output  reg  [63:0]   MEM_out         ,
 
-    input  wire  [0:0]   MEM_valid_in   ,
-    input  wire  [0:0]   MEM_valid_fromCD,
-    input  wire  [63:0]  MEM_EXE_in     ,
-    input  wire  [63:0]  MEM_rs2_data   ,
-    input  wire  [3:0]   MEM_ctrl       ,  
-
-    output reg   [0:0]   MEM_valid_out  ,
-    output reg   [0:0]   MEM_ok         ,
-    output reg   [63:0]  MEM_out        
+    input   wire [0:0]    MEM_awready     ,
+    output  wire [0:0]    MEM_awvalid     ,
+    output  reg  [31:0]   MEM_awaddr      ,
+    output  wire [3:0]    MEM_awid        ,
+    output  wire [7:0]    MEM_awlen       ,
+    output  wire [2:0]    MEM_awsize      ,
+    output  wire [1:0]    MEM_awburst     ,
+       
+    input   wire [0:0]    MEM_wready      ,
+    output  wire [0:0]    MEM_wvalid      ,
+    output  wire [63:0]   MEM_wdata       ,
+    output  wire [7:0]    MEM_wstrb       ,
+    output  wire [0:0]    MEM_wlast       ,
+       
+    output  wire [0:0]    MEM_bready      ,
+    input   wire [0:0]    MEM_bvalid      ,
+    input   wire [1:0]    MEM_bresp       ,
+    input   wire [3:0]    MEM_bid         ,
+      
+    input   wire [0:0]    MEM_arready     ,
+    output  wire [0:0]    MEM_arvalid     ,
+    output  wire [31:0]   MEM_araddr      ,
+    output  wire [3:0]    MEM_arid        ,
+    output  wire [7:0]    MEM_arlen       ,
+    output  wire [2:0]    MEM_arsize      ,
+    output  wire [1:0]    MEM_arburst     ,
+       
+    output  wire [0:0]    MEM_rready      ,
+    input   wire [0:0]    MEM_rvalid      ,
+    input   wire [1:0]    MEM_rresp       ,
+    input   wire [63:0]   MEM_rdata       ,
+    input   wire [0:0]    MEM_rlast       ,
+    input   wire [3:0]    MEM_rid         ,
+ 
+    output  wire [5:0]    MEM_sram4_addr  , 
+    output  wire [0:0]    MEM_sram4_cen   , 
+    output  wire [0:0]    MEM_sram4_wen   , 
+    output  wire [127:0]  MEM_sram4_wmask , 
+    output  wire [127:0]  MEM_sram4_wdata , 
+    input   wire [127:0]  MEM_sram4_rdata ,
+ 
+    output  wire [5:0]    MEM_sram5_addr  , 
+    output  wire [0:0]    MEM_sram5_cen   , 
+    output  wire [0:0]    MEM_sram5_wen   , 
+    output  wire [127:0]  MEM_sram5_wmask , 
+    output  wire [127:0]  MEM_sram5_wdata , 
+    input   wire [127:0]  MEM_sram5_rdata ,
+ 
+    output  wire [5:0]    MEM_sram6_addr  , 
+    output  wire [0:0]    MEM_sram6_cen   , 
+    output  wire [0:0]    MEM_sram6_wen   , 
+    output  wire [127:0]  MEM_sram6_wmask , 
+    output  wire [127:0]  MEM_sram6_wdata , 
+    input   wire [127:0]  MEM_sram6_rdata ,
+ 
+    output  wire [5:0]    MEM_sram7_addr  , 
+    output  wire [0:0]    MEM_sram7_cen   , 
+    output  wire [0:0]    MEM_sram7_wen   , 
+    output  wire [127:0]  MEM_sram7_wmask , 
+    output  wire [127:0]  MEM_sram7_wdata , 
+    input   wire [127:0]  MEM_sram7_rdata 
 );
 
+parameter MEM_AXI_id = 4'b0001;
 
-import "DPI-C" function void pmem_read(input longint raddr, output longint rdata);
+parameter OKAY = 2'b00;
+parameter EXOKAY = 2'b01;
+parameter SLVERR = 2'b10;
+parameter DECERR = 2'b11;
 
-import "DPI-C" function void pmem_write(input longint waddr, input longint wdata, input byte AXI_wmask);
-
-reg  [0:0]  busy;
-reg  [0:0]  align;
-reg  [1:0]  state;
-
-reg  [63:0]  rdata1;
-reg  [63:0]  rdata2;
-reg  [63:0]  rdata;
-wire [63:0]  addr1;
-wire [63:0]  addr2;
-reg  [63:0]  wdata1;
-reg  [63:0]  wdata2;
-reg  [15:0]  wmask;
-reg  [7:0]   wmask1;
-reg  [7:0]   wmask2;
+parameter FIXED = 2'b00;
+parameter INCR = 2'b01;
+parameter WRAP = 2'b10;
+parameter Rserved = 2'b11;
 
 
-reg   [0:0]   DCACHE_valid     ;
-reg   [63:0]  DCACHE_addr      ;
-reg   [63:0]  DCACHE_wdata     ;
-reg   [7:0]   DCACHE_mask      ;
-reg   [0:0]   DCACHE_wen       ;
-wire  [0:0]   DCACHE_valid_out;
-wire  [63:0]  DCACHE_rdata    ;
+wire [0:0]   load;
+wire [0:0]   store;
+reg  [0:0]   uncached;
+reg  [2:0]   state;
 
+reg  [63:0]  AXI_rdata;
+reg  [63:0]  AXI_rdata_next;
 
+reg  [0:0]   V1        [63:0];
+reg  [0:0]   V1_next   [63:0];
+reg  [54:0]  tag1      [63:0];
+reg  [54:0]  tag1_next [63:0];
+reg  [0:0]   V2        [63:0];
+reg  [0:0]   V2_next   [63:0];
+reg  [54:0]  tag2      [63:0];
+reg  [54:0]  tag2_next [63:0];
+reg  [0:0]   V3        [63:0];
+reg  [0:0]   V3_next   [63:0];
+reg  [54:0]  tag3      [63:0];
+reg  [54:0]  tag3_next [63:0];
+reg  [0:0]   V4        [63:0];
+reg  [0:0]   V4_next   [63:0];
+reg  [54:0]  tag4      [63:0];
+reg  [54:0]  tag4_next [63:0];
+reg  [0:0]   V5        [63:0];
+reg  [0:0]   V5_next   [63:0];
+reg  [54:0]  tag5      [63:0];
+reg  [54:0]  tag5_next [63:0];
+reg  [0:0]   V6        [63:0];
+reg  [0:0]   V6_next   [63:0];
+reg  [54:0]  tag6      [63:0];
+reg  [54:0]  tag6_next [63:0];
+reg  [0:0]   V7        [63:0];
+reg  [0:0]   V7_next   [63:0];
+reg  [54:0]  tag7      [63:0];
+reg  [54:0]  tag7_next [63:0];
+reg  [0:0]   V8        [63:0];
+reg  [0:0]   V8_next   [63:0];
+reg  [54:0]  tag8      [63:0];
+reg  [54:0]  tag8_next [63:0];
+
+reg  [0:0]   hit1;
+reg  [0:0]   hit2;
+reg  [0:0]   hit3;
+reg  [0:0]   hit4;
+reg  [0:0]   hit5;
+reg  [0:0]   hit6;
+reg  [0:0]   hit7;
+reg  [0:0]   hit8;
+
+wire [0:0]   hit;
+
+wire [5:0]   index;
+wire [2:0]   offset;
+wire [54:0]  tag;
+
+assign index = MEM_EXE_in[8:3];
+assign offset = MEM_EXE_in[2:0];
+assign tag = MEM_EXE_in[63:9];
+
+assign hit = hit1 || hit2 || hit3 || hit4 || hit5 || hit6 || hit7 || hit8;
+
+assign load = MEM_ctrl == `ysyx_041461_MEM_LB || MEM_ctrl == `ysyx_041461_MEM_LH || MEM_ctrl == `ysyx_041461_MEM_LBU || MEM_ctrl == `ysyx_041461_MEM_LHU || MEM_ctrl == `ysyx_041461_MEM_LW || MEM_ctrl == `ysyx_041461_MEM_LWU || MEM_ctrl == `ysyx_041461_MEM_LD;
+assign store = MEM_ctrl == `ysyx_041461_MEM_SB || MEM_ctrl == `ysyx_041461_MEM_SH || MEM_ctrl == `ysyx_041461_MEM_SW || MEM_ctrl == `ysyx_041461_MEM_SD;
 
 always@(*) begin
-    if(MEM_valid_in == 1'b1 && MEM_valid_fromCD == 1'b1 && MEM_ctrl != `MEM_NOP) begin
-        busy = 1'b1;
+    if(MEM_EXE_in[31:31] == 1'b1) begin
+        uncached = 1'b0;
     end
     else begin
-        busy = 1'b0;
+        uncached = 1'b1;
     end
 end
 
 always@(*) begin
-    if(MEM_EXE_in[2:0] == 3'b000) begin
-        align = 1'b1;
+    if(V1[index] == 1'b1) begin
+        if(tag1[index] == tag) begin
+            hit1 = 1'b1;
+        end
+        else begin
+            hit1 = 1'b0;
+        end
     end
     else begin
-        align = 1'b0;
+        hit1 = 1'b0;
     end
 end
 
-assign addr1 = MEM_EXE_in;
-assign addr2 = MEM_EXE_in + 64'd8;
+always@(*) begin
+    if(V2[index] == 1'b1) begin
+        if(tag2[index] == tag) begin
+            hit2 = 1'b1;
+        end
+        else begin
+            hit2 = 1'b0;
+        end
+    end
+    else begin
+        hit2 = 1'b0;
+    end
+end
 
+always@(*) begin
+    if(V3[index] == 1'b1) begin
+        if(tag3[index] == tag) begin
+            hit3 = 1'b1;
+        end
+        else begin
+            hit3 = 1'b0;
+        end
+    end
+    else begin
+        hit3 = 1'b0;
+    end
+end
+
+always@(*) begin
+    if(V4[index] == 1'b1) begin
+        if(tag4[index] == tag) begin
+            hit4 = 1'b1;
+        end
+        else begin
+            hit4 = 1'b0;
+        end
+    end
+    else begin
+        hit4 = 1'b0;
+    end
+end
+
+always@(*) begin
+    if(V5[index] == 1'b1) begin
+        if(tag5[index] == tag) begin
+            hit5 = 1'b1;
+        end
+        else begin
+            hit5 = 1'b0;
+        end
+    end
+    else begin
+        hit5 = 1'b0;
+    end
+end
+
+always@(*) begin
+    if(V6[index] == 1'b1) begin
+        if(tag6[index] == tag) begin
+            hit6 = 1'b1;
+        end
+        else begin
+            hit6 = 1'b0;
+        end
+    end
+    else begin
+        hit6 = 1'b0;
+    end
+end
+
+always@(*) begin
+    if(V7[index] == 1'b1) begin
+        if(tag7[index] == tag) begin
+            hit7 = 1'b1;
+        end
+        else begin
+            hit7 = 1'b0;
+        end
+    end
+    else begin
+        hit7 = 1'b0;
+    end
+end
+
+always@(*) begin
+    if(V8[index] == 1'b1) begin
+        if(tag8[index] == tag) begin
+            hit8 = 1'b1;
+        end
+        else begin
+            hit8 = 1'b0;
+        end
+    end
+    else begin
+        hit8 = 1'b0;
+    end
+end
+
+always@(*) begin
+    if(uncached == 1'b1) begin
+        MEM_araddr = MEM_EXE_in[31:0];
+    end
+    else begin
+        MEM_araddr = {MEM_EXE_in[31:3], 3'b000};
+    end
+end
+
+always@(*) begin
+    if(uncached == 1'b1) begin
+        MEM_awaddr = MEM_EXE_in[31:0];
+    end
+    else begin
+        MEM_awaddr = {MEM_EXE_in[31:3], 3'b000};
+    end
+end
+
+always@(*) begin
+    if(uncached == 1'b1) begin
+        case(MEM_ctrl)
+            `ysyx_041461_MEM_LB: begin
+                MEM_arsize = 3'b000;
+            end
+            `ysyx_041461_MEM_LH: begin
+                MEM_arsize = 3'b001;
+            end
+            `ysyx_041461_MEM_LBU: begin
+                MEM_arsize = 3'b000;
+            end
+            `ysyx_041461_MEM_LHU: begin
+                MEM_arsize = 3'b001;
+            end
+            `ysyx_041461_MEM_LW: begin
+                MEM_arsize = 3'b010;
+            end
+            `ysyx_041461_MEM_LWU: begin
+                MEM_arsize = 3'b010;
+            end
+            `ysyx_041461_MEM_LD: begin
+                MEM_arsize = 3'b011;
+            end
+            default: begin
+                MEM_arsize = 3'b000;
+            end
+        endcase
+    end
+    else begin
+        MEM_arsize = 3'b011;
+    end
+end
+
+always@(*) begin
+    if(uncached == 1'b1) begin
+        case(MEM_ctrl)
+            `ysyx_041461_MEM_SD: begin
+                MEM_awsize = 3'b011;
+            end
+            `ysyx_041461_MEM_SW: begin
+                MEM_awsize = 3'b010;
+            end
+            `ysyx_041461_MEM_SH: begin
+                MEM_awsize = 3'b001;
+            end
+            `ysyx_041461_MEM_SB: begin
+                MEM_awsize = 3'b000;
+            end
+            default: begin
+                MEM_awsize = 3'b000;
+            end
+        endcase
+    end
+    else begin
+        MEM_awsize = 3'b011;
+    end
+end
+
+assign MEM_arid = MEM_AXI_id;
+assign MEM_arlen = 8'd0;
+assign MEM_arburst = FIXED;
+
+assign MEM_awid = MEM_AXI_id;
+assign MEM_awlen = 8'd0;
+assign MEM_awburst = FIXED;
 
 always@(*) begin
     case(MEM_ctrl)
-        `MEM_SD: begin
-            DCACHE_wen = 1'b1;
+        `ysyx_041461_MEM_SD: begin
+            MEM_wstrb = 8'b1111_1111;
+            MEM_wdata = MEM_rs2_data;
         end
-        `MEM_SW: begin
-            DCACHE_wen = 1'b1;
+        `ysyx_041461_MEM_SW: begin
+            case(MEM_EXE_in[2:0])
+                3'b000: begin
+                    MEM_wstrb = 8'b0000_1111;
+                    MEM_wdata = MEM_rs2_data;
+                end
+                3'b100: begin
+                    MEM_wstrb = 8'b1111_0000;
+                    MEM_wdata = MEM_rs2_data << 6'd32;
+                end
+                default: begin
+                    MEM_wstrb = 8'b0000_0000;
+                    MEM_wdata = MEM_rs2_data;
+                end
+            endcase
         end
-        `MEM_SH: begin
-            DCACHE_wen = 1'b1;
+        `ysyx_041461_MEM_SH: begin
+            case(MEM_EXE_in[2:0])
+                3'b000: begin
+                    MEM_wstrb = 8'b0000_0011;
+                    MEM_wdata = MEM_rs2_data;
+                end
+                3'b010: begin
+                    MEM_wstrb = 8'b0000_1100;
+                    MEM_wdata = MEM_rs2_data << 6'd16;
+                end
+                3'b100: begin
+                    MEM_wstrb = 8'b0011_0000;
+                    MEM_wdata = MEM_rs2_data << 6'd32;
+                end
+                3'b110: begin
+                    MEM_wstrb = 8'b1100_0000;
+                    MEM_wdata = MEM_rs2_data << 6'd48;
+                end
+                default: begin
+                    MEM_wstrb = 8'b0000_0000;
+                    MEM_wdata = MEM_rs2_data;
+                end
+            endcase
         end
-        `MEM_SB: begin
-            DCACHE_wen = 1'b1;
+        `ysyx_041461_MEM_SB: begin
+            case(MEM_EXE_in[2:0])
+                3'b000: begin
+                    MEM_wstrb = 8'b0000_0001;
+                    MEM_wdata = MEM_rs2_data;
+                end
+                3'b001: begin
+                    MEM_wstrb = 8'b0000_0010;
+                    MEM_wdata = MEM_rs2_data << 6'd8;
+                end
+                3'b010: begin
+                    MEM_wstrb = 8'b0000_0100;
+                    MEM_wdata = MEM_rs2_data << 6'd16;
+                end
+                3'b011: begin
+                    MEM_wstrb = 8'b0000_1000;
+                    MEM_wdata = MEM_rs2_data << 6'd24;
+                end
+                3'b100: begin
+                    MEM_wstrb = 8'b0001_0000;
+                    MEM_wdata = MEM_rs2_data << 6'd32;
+                end
+                3'b101: begin
+                    MEM_wstrb = 8'b0010_0000;
+                    MEM_wdata = MEM_rs2_data << 6'd40;
+                end
+                3'b110: begin
+                    MEM_wstrb = 8'b0100_0000;
+                    MEM_wdata = MEM_rs2_data << 6'd48;
+                end
+                3'b111: begin
+                    MEM_wstrb = 8'b1000_0000;
+                    MEM_wdata = MEM_rs2_data << 6'd56;
+                end
+            endcase
         end
         default: begin
-            DCACHE_wen = 1'b0;
+            MEM_wstrb = 8'b0000_0000;
+            MEM_wdata = MEM_rs2_data;
         end
     endcase
 end
 
+
+always@(*) begin
+    if(state == `ysyx_041461_RAXI_AR) begin
+        MEM_arvalid = 1'b1;
+    end
+    else begin
+        MEM_arvalid = 1'b0;
+    end
+end
+
+always@(*) begin
+    if(state == `ysyx_041461_RAXI_R) begin
+        MEM_rready = 1'b1;
+    end
+    else begin
+        MEM_rready = 1'b0;
+    end
+end
+
+always@(*) begin
+    if(state == `ysyx_041461_RAXI_R) begin
+        AXI_rdata_next = MEM_rdata;
+    end
+    else begin
+        AXI_rdata_next = AXI_rdata;
+    end 
+end
+
+always@(posedge clk or posedge rst) begin
+    if(rst == 1'b1) begin
+        AXI_rdata <= 64'b0;
+    end
+    else begin
+        AXI_rdata <= AXI_rdata_next;
+    end
+end
+
+always@(*) begin
+    if(state == `ysyx_041461_WAXI_AW) begin
+        MEM_awvalid = 1'b1;
+    end
+    else begin
+        MEM_awvalid = 1'b0;
+    end
+end
+
+always@(*) begin
+    if(state == `ysyx_041461_WAXI_W || state == `ysyx_041461_WAXI_AW) begin
+        MEM_wvalid = 1'b1;
+        MEM_wlast = 1'b1;
+        MEM_bready = 1'b1;
+    end
+    else begin
+        MEM_wvalid = 1'b0;
+        MEM_wlast = 1'b0;
+        MEM_bready = 1'b0;
+    end
+end
+
+
+integer i;
+always@(*) begin
+    for(i = 0; i < 64; i = i + 1) begin
+        V1_next[i] = V1[i];
+        V2_next[i] = V2[i];
+        V3_next[i] = V3[i];
+        V4_next[i] = V4[i];
+        V5_next[i] = V5[i];
+        V6_next[i] = V6[i];
+        V7_next[i] = V7[i];
+        V8_next[i] = V8[i];
+        tag1_next[i] = tag1[i];
+        tag2_next[i] = tag2[i];
+        tag3_next[i] = tag3[i];
+        tag4_next[i] = tag4[i];
+        tag5_next[i] = tag5[i];
+        tag6_next[i] = tag6[i];
+        tag7_next[i] = tag7[i];
+        tag8_next[i] = tag8[i];
+    end
+    if(state == `ysyx_041461_WCACHE) begin
+        if(load == 1'b1 && uncached == 1'b0) begin
+            if(V1[index] == 1'b0) begin
+                V1_next[index] = 1'b1;
+                tag1_next[index] = tag;
+            end
+            else if(V2[index] == 1'b0) begin
+                V2_next[index] = 1'b1;
+                tag2_next[index] = tag;
+            end
+            else if(V3[index] == 1'b0) begin
+                V3_next[index] = 1'b1;
+                tag3_next[index] = tag;
+            end
+            else if(V4[index] == 1'b0) begin
+                V4_next[index] = 1'b1;
+                tag4_next[index] = tag;
+            end
+            else if(V5[index] == 1'b0) begin
+                V5_next[index] = 1'b1;
+                tag5_next[index] = tag;
+            end
+            else if(V6[index] == 1'b0) begin
+                V6_next[index] = 1'b1;
+                tag6_next[index] = tag;
+            end
+            else if(V7[index] == 1'b0) begin
+                V7_next[index] = 1'b1;
+                tag7_next[index] = tag;
+            end
+            else if(V8[index] == 1'b0) begin
+                V8_next[index] = 1'b1;
+                tag8_next[index] = tag;
+            end
+            else begin
+                V1_next[index] = 1'b1;
+                tag1_next[index] = tag;
+            end
+        end
+    end
+end
+
+integer k;
+always@(posedge clk or posedge rst) begin
+    if(rst == 1'b1) begin
+        for(k = 0; k < 64; k = k + 1) begin
+            V1[k] <= 1'b0;
+            V2[k] <= 1'b0;
+            V3[k] <= 1'b0;
+            V4[k] <= 1'b0;
+            V5[k] <= 1'b0;
+            V6[k] <= 1'b0;
+            V7[k] <= 1'b0;
+            V8[k] <= 1'b0;
+            tag1[k] <= 55'b0;
+            tag2[k] <= 55'b0;
+            tag3[k] <= 55'b0;
+            tag4[k] <= 55'b0;
+            tag5[k] <= 55'b0;
+            tag6[k] <= 55'b0;
+            tag7[k] <= 55'b0;
+            tag8[k] <= 55'b0;
+        end
+    end
+    else begin
+        for(k = 0; k < 64; k = k + 1) begin
+           V1[k] <= V1_next[k];
+           V2[k] <= V2_next[k];
+           V3[k] <= V3_next[k];
+           V4[k] <= V4_next[k];
+           V5[k] <= V5_next[k];
+           V6[k] <= V6_next[k];
+           V7[k] <= V7_next[k];
+           V8[k] <= V8_next[k];
+           tag1[k] <= tag1_next[k];
+           tag2[k] <= tag2_next[k];
+           tag3[k] <= tag3_next[k];
+           tag4[k] <= tag4_next[k];
+           tag5[k] <= tag5_next[k];
+           tag6[k] <= tag6_next[k];
+           tag7[k] <= tag7_next[k];
+           tag8[k] <= tag8_next[k];
+        end
+    end
+end
+
+assign MEM_sram4_addr = index;
+assign MEM_sram5_addr = index;
+assign MEM_sram6_addr = index;
+assign MEM_sram7_addr = index;
+
+assign MEM_sram4_cen = 1'b0;
+assign MEM_sram5_cen = 1'b0;
+assign MEM_sram6_cen = 1'b0;
+assign MEM_sram7_cen = 1'b0;
+
+reg [63:0]  cache_wmask;
+
 always@(*) begin
     case(MEM_ctrl)
-        `MEM_SD: begin
-            wmask = 16'b0000_0000_1111_1111;
+        `ysyx_041461_MEM_SD: begin
+            cache_wmask = 64'h0000_0000_0000_0000;
         end
-        `MEM_SW: begin
-            wmask = 16'b0000_0000_0000_1111;
+        `ysyx_041461_MEM_SW: begin
+            case(MEM_EXE_in[2:0])
+                3'b000: begin
+                    cache_wmask = 64'hffff_ffff_0000_0000;
+                end
+                3'b100: begin
+                    cache_wmask = 64'h0000_0000_ffff_ffff;
+                end
+                default: begin
+                    cache_wmask = 64'hffff_ffff_ffff_ffff;
+                end
+            endcase
         end
-        `MEM_SH: begin
-            wmask = 16'b0000_0000_0000_0011;
+        `ysyx_041461_MEM_SH: begin
+            case(MEM_EXE_in[2:0])
+                3'b000: begin
+                    cache_wmask = 64'hffff_ffff_ffff_0000;
+                end
+                3'b010: begin
+                    cache_wmask = 64'hffff_ffff_0000_ffff;
+                end
+                3'b100: begin
+                    cache_wmask = 64'hffff_0000_ffff_ffff;
+                end
+                3'b110: begin
+                    cache_wmask = 64'h0000_ffff_ffff_ffff;
+                end
+                default: begin
+                    cache_wmask = 64'hffff_ffff_ffff_ffff;
+                end
+            endcase
         end
-        `MEM_SB: begin
-            wmask = 16'b0000_0000_0000_0001;
+        `ysyx_041461_MEM_SB: begin
+            case(MEM_EXE_in[2:0])
+                3'b000: begin
+                    cache_wmask = 64'hffff_ffff_ffff_ff00;
+                end
+                3'b001: begin
+                    cache_wmask = 64'hffff_ffff_ffff_00ff;
+                end
+                3'b010: begin
+                    cache_wmask = 64'hffff_ffff_ff00_ffff;
+                end
+                3'b011: begin
+                    cache_wmask = 64'hffff_ffff_00ff_ffff;
+                end
+                3'b100: begin
+                    cache_wmask = 64'hffff_ff00_ffff_ffff;
+                end
+                3'b101: begin
+                    cache_wmask = 64'hffff_00ff_ffff_ffff;
+                end
+                3'b110: begin
+                    cache_wmask = 64'hff00_ffff_ffff_ffff;
+                end
+                3'b111: begin
+                    cache_wmask = 64'h00ff_ffff_ffff_ffff;
+                end
+            endcase
         end
         default: begin
-            wmask = 16'b0000_0000_0000_0000;
+            cache_wmask = 64'hffff_ffff_ffff_ffff;
         end
     endcase
+end
+
+reg [63:0]  cache_wdata;
+
+always@(*) begin
+    if(load == 1'b1) begin
+        cache_wdata = AXI_rdata;
+    end
+    else if(store == 1'b1) begin
+        case(MEM_ctrl)
+            `ysyx_041461_MEM_SD: begin
+                cache_wdata = MEM_rs2_data;
+            end
+            `ysyx_041461_MEM_SW: begin
+                case(MEM_EXE_in[2:0])
+                    3'b000: begin
+                        cache_wdata = MEM_rs2_data;
+                    end
+                    3'b100: begin
+                        cache_wdata = MEM_rs2_data << 6'd32;
+                    end
+                    default: begin
+                        cache_wdata = MEM_rs2_data;
+                    end
+                endcase
+            end
+            `ysyx_041461_MEM_SH: begin
+                case(MEM_EXE_in[2:0])
+                    3'b000: begin
+                        cache_wdata = MEM_rs2_data;
+                    end
+                    3'b010: begin
+                        cache_wdata = MEM_rs2_data << 6'd16;
+                    end
+                    3'b100: begin
+                        cache_wdata = MEM_rs2_data << 6'd32;
+                    end
+                    3'b110: begin
+                        cache_wdata = MEM_rs2_data << 6'd48;
+                    end
+                    default: begin
+                        cache_wdata = MEM_rs2_data;
+                    end
+                endcase
+            end
+            `ysyx_041461_MEM_SB: begin
+                case(MEM_EXE_in[2:0])
+                    3'b000: begin
+                        cache_wdata = MEM_rs2_data;
+                    end
+                    3'b001: begin
+                        cache_wdata = MEM_rs2_data << 6'd8;
+                    end
+                    3'b010: begin
+                        cache_wdata = MEM_rs2_data << 6'd16;
+                    end
+                    3'b011: begin
+                        cache_wdata = MEM_rs2_data << 6'd24;
+                    end
+                    3'b100: begin
+                        cache_wdata = MEM_rs2_data << 6'd32;
+                    end
+                    3'b101: begin
+                        cache_wdata = MEM_rs2_data << 6'd40;
+                    end
+                    3'b110: begin
+                        cache_wdata = MEM_rs2_data << 6'd48;
+                    end
+                    3'b111: begin
+                        cache_wdata = MEM_rs2_data << 6'd56;
+                    end
+                endcase
+            end
+            default: begin
+                cache_wdata = MEM_rs2_data;
+            end
+        endcase
+    end
+    else begin
+        cache_wdata = 64'b0;
+    end
+end
+
+
+always@(*) begin
+    MEM_sram4_wen = 1'b1;
+    MEM_sram4_wmask = 128'hffff_ffff_ffff_ffff_ffff_ffff_ffff_ffff;
+    MEM_sram4_wdata = 128'b0;
+    MEM_sram5_wen = 1'b1;
+    MEM_sram5_wmask = 128'hffff_ffff_ffff_ffff_ffff_ffff_ffff_ffff;
+    MEM_sram5_wdata = 128'b0;
+    MEM_sram6_wen = 1'b1;
+    MEM_sram6_wmask = 128'hffff_ffff_ffff_ffff_ffff_ffff_ffff_ffff;
+    MEM_sram6_wdata = 128'b0;
+    MEM_sram7_wen = 1'b1;
+    MEM_sram7_wmask = 128'hffff_ffff_ffff_ffff_ffff_ffff_ffff_ffff;
+    MEM_sram7_wdata = 128'b0;
+    if(state == `ysyx_041461_WCACHE) begin
+        if(load == 1'b1 && uncached == 1'b0) begin
+            if(V1[index] == 1'b0) begin
+                MEM_sram4_wen = 1'b0;
+                MEM_sram4_wmask = 128'hffff_ffff_ffff_ffff_0000_0000_0000_0000;
+                MEM_sram4_wdata = {64'b0, cache_wdata};
+            end
+            else if(V2[index] == 1'b0) begin
+                MEM_sram4_wen = 1'b0;
+                MEM_sram4_wmask = 128'h0000_0000_0000_0000_ffff_ffff_ffff_ffff;
+                MEM_sram4_wdata = {cache_wdata, 64'b0};
+            end
+            else if(V3[index] == 1'b0) begin
+                MEM_sram5_wen = 1'b0;
+                MEM_sram5_wmask = 128'hffff_ffff_ffff_ffff_0000_0000_0000_0000;
+                MEM_sram5_wdata = {64'b0, cache_wdata};
+            end
+            else if(V4[index] == 1'b0) begin
+                MEM_sram5_wen = 1'b0;
+                MEM_sram5_wmask = 128'h0000_0000_0000_0000_ffff_ffff_ffff_ffff;
+                MEM_sram5_wdata = {cache_wdata, 64'b0};
+            end
+            else if(V5[index] == 1'b0) begin
+                MEM_sram6_wen = 1'b0;
+                MEM_sram6_wmask = 128'hffff_ffff_ffff_ffff_0000_0000_0000_0000;
+                MEM_sram6_wdata = {64'b0, cache_wdata};
+            end
+            else if(V6[index] == 1'b0) begin
+                MEM_sram6_wen = 1'b0;
+                MEM_sram6_wmask = 128'h0000_0000_0000_0000_ffff_ffff_ffff_ffff;
+                MEM_sram6_wdata = {cache_wdata, 64'b0};
+            end
+            else if(V7[index] == 1'b0) begin
+                MEM_sram7_wen = 1'b0;
+                MEM_sram7_wmask = 128'hffff_ffff_ffff_ffff_0000_0000_0000_0000;
+                MEM_sram7_wdata = {64'b0, cache_wdata};
+            end
+            else if(V8[index] == 1'b0) begin
+                MEM_sram7_wen = 1'b0;
+                MEM_sram7_wmask = 128'h0000_0000_0000_0000_ffff_ffff_ffff_ffff;
+                MEM_sram7_wdata = {cache_wdata, 64'b0};
+            end
+            else begin
+                MEM_sram4_wen = 1'b0;
+                MEM_sram4_wmask = 128'hffff_ffff_ffff_ffff_0000_0000_0000_0000;
+                MEM_sram4_wdata = {64'b0, cache_wdata};
+            end
+        end
+        else if(store == 1'b1 && uncached == 1'b0) begin
+            if(hit1 == 1'b1) begin
+                MEM_sram4_wen = 1'b0;
+                MEM_sram4_wmask = {64'hffff_ffff_ffff_ffff, cache_wmask};
+                MEM_sram4_wdata = {64'b0, cache_wdata};
+            end
+            else if(hit2 == 1'b1) begin
+                MEM_sram4_wen = 1'b0;
+                MEM_sram4_wmask = {cache_wmask, 64'hffff_ffff_ffff_ffff};
+                MEM_sram4_wdata = {cache_wdata, 64'b0};
+            end
+            else if(hit3 == 1'b1) begin
+                MEM_sram5_wen = 1'b0;
+                MEM_sram5_wmask = {64'hffff_ffff_ffff_ffff, cache_wmask};
+                MEM_sram5_wdata = {64'b0, cache_wdata};
+            end
+            else if(hit4 == 1'b1) begin
+                MEM_sram5_wen = 1'b0;
+                MEM_sram5_wmask = {cache_wmask, 64'hffff_ffff_ffff_ffff};
+                MEM_sram5_wdata = {cache_wdata, 64'b0};
+            end
+            else if(hit5 == 1'b1) begin
+                MEM_sram6_wen = 1'b0;
+                MEM_sram6_wmask = {64'hffff_ffff_ffff_ffff, cache_wmask};
+                MEM_sram6_wdata = {64'b0, cache_wdata};
+            end
+            else if(hit6 == 1'b1) begin
+                MEM_sram6_wen = 1'b0;
+                MEM_sram6_wmask = {cache_wmask, 64'hffff_ffff_ffff_ffff};
+                MEM_sram6_wdata = {cache_wdata, 64'b0};
+            end
+            else if(hit7 == 1'b1) begin
+                MEM_sram7_wen = 1'b0;
+                MEM_sram7_wmask = {64'hffff_ffff_ffff_ffff, cache_wmask};
+                MEM_sram7_wdata = {64'b0, cache_wdata};
+            end
+            else if(hit8 == 1'b1) begin
+                MEM_sram7_wen = 1'b0;
+                MEM_sram7_wmask = {cache_wmask, 64'hffff_ffff_ffff_ffff};
+                MEM_sram7_wdata = {cache_wdata, 64'b0};
+            end
+        end
+    end
+end
+
+always@(*) begin
+    if(MEM_valid_in == 1'b0 || MEM_valid_fromCD == 1'b0 || MEM_ctrl == `ysyx_041461_MEM_NOP) begin
+        MEM_ok = 1'b1;
+    end
+    else if(state == `ysyx_041461_FINISH) begin
+        MEM_ok = 1'b1;
+    end
+    else begin
+        MEM_ok = 1'b0;
+    end
+end
+
+always@(*) begin
+    if(MEM_valid_in == 1'b0 || MEM_valid_fromCD == 1'b0) begin
+        MEM_valid_out = 1'b0;
+    end
+    else if(MEM_ctrl == `ysyx_041461_MEM_NOP) begin
+        MEM_valid_out = 1'b1;
+    end
+    else if(state == `ysyx_041461_FINISH) begin
+        MEM_valid_out = 1'b1;
+    end
+    else begin
+        MEM_valid_out = 1'b0;
+    end
+end
+
+reg [63:0]  rdata;
+reg [63:0]  rrdata;
+
+always@(*) begin
+    if(uncached == 1'b1) begin
+        rdata = AXI_rdata;
+    end
+    else begin
+        if(hit1 == 1'b1) begin
+            rdata = MEM_sram4_rdata[63:0];
+        end
+        else if(hit2 == 1'b1) begin
+            rdata = MEM_sram4_rdata[127:64];
+        end
+        else if(hit3 == 1'b1) begin
+            rdata = MEM_sram5_rdata[63:0];
+        end
+        else if(hit4 == 1'b1) begin
+            rdata = MEM_sram5_rdata[127:64];
+        end
+        else if(hit5 == 1'b1) begin
+            rdata = MEM_sram6_rdata[63:0];
+        end
+        else if(hit6 == 1'b1) begin
+            rdata = MEM_sram6_rdata[127:64];
+        end
+        else if(hit7 == 1'b1) begin
+            rdata = MEM_sram7_rdata[63:0];
+        end
+        else if(hit8 == 1'b1) begin
+            rdata = MEM_sram7_rdata[127:64];
+        end
+        else begin
+            rdata = 64'd0;
+        end
+    end
 end
 
 always@(*) begin
     case(MEM_EXE_in[2:0])
         3'b000: begin
-            {wmask2, wmask1} = wmask            ;
-            wdata1 = MEM_rs2_data               ;
-            wdata2 = 64'd0                      ;
+            rrdata = rdata;
         end
         3'b001: begin
-            {wmask2, wmask1} = wmask << 1        ;
-            wdata1 = {MEM_rs2_data[55:0], 8'd0}  ;
-            wdata2 = {56'd0, MEM_rs2_data[63:56]};
+            rrdata = rdata >> 6'd8;
         end
         3'b010: begin
-            {wmask2, wmask1} = wmask << 2        ;
-            wdata1 = {MEM_rs2_data[47:0], 16'd0} ;
-            wdata2 = {48'd0, MEM_rs2_data[63:48]};
+            rrdata = rdata >> 6'd16;
         end
         3'b011: begin
-            {wmask2, wmask1} = wmask << 3        ;
-            wdata1 = {MEM_rs2_data[39:0], 24'd0} ;
-            wdata2 = {40'd0, MEM_rs2_data[63:40]};
+            rrdata = rdata >> 6'd24;
         end
         3'b100: begin
-            {wmask2, wmask1} = wmask << 4        ;
-            wdata1 = {MEM_rs2_data[31:0], 32'd0} ;
-            wdata2 = {32'd0, MEM_rs2_data[63:32]};
+            rrdata = rdata >> 6'd32;
         end
         3'b101: begin
-            {wmask2, wmask1} = wmask << 5        ;
-            wdata1 = {MEM_rs2_data[23:0], 40'd0} ;
-            wdata2 = {24'd0, MEM_rs2_data[63:24]};
+            rrdata = rdata >> 6'd40;
         end
         3'b110: begin
-            {wmask2, wmask1} = wmask << 6        ;
-            wdata1 = {MEM_rs2_data[15:0], 48'd0} ;
-            wdata2 = {16'd0, MEM_rs2_data[63:16]};
+            rrdata = rdata >> 6'd48;
         end
         3'b111: begin
-            {wmask2, wmask1} = wmask << 7        ;
-            wdata1 = {MEM_rs2_data[7:0], 56'd0}  ;
-            wdata2 = {8'd0, MEM_rs2_data[63:8]}  ;
+            rrdata = rdata >> 6'd56;
         end
     endcase
 end
 
-
-//异步复位同步释放
-reg  [0:0]   rst_r1;
-reg  [0:0]   rst_r2;
-wire [0:0]   rst;
-
-assign rst = rst_r2;
-
-always@(posedge clk or negedge flush) begin
-    if(flush == 1'b0) begin
-        rst_r1 <= 1'b0;
-        rst_r2 <= 1'b0;
-    end
-    else begin
-        rst_r1 <= 1'b1;
-        rst_r2 <= rst_r1;
-    end
-end
-
+ 
 always@(*) begin
-    case(MEM_EXE_in[2:0]) 
-        3'b000: begin
-            rdata = rdata1;
-        end
-        3'b001: begin
-            rdata = {rdata2[7:0], rdata1[63:8]};
-        end
-        3'b010: begin
-            rdata = {rdata2[15:0], rdata1[63:16]};
-        end
-        3'b011: begin
-            rdata = {rdata2[23:0], rdata1[63:24]};
-        end
-        3'b100: begin
-            rdata = {rdata2[31:0], rdata1[63:32]};
-        end
-        3'b101: begin
-            rdata = {rdata2[39:0], rdata1[63:40]};
-        end
-        3'b110: begin
-            rdata = {rdata2[47:0], rdata1[63:48]};
-        end
-        3'b111: begin
-            rdata = {rdata2[55:0], rdata1[63:56]};
-        end
-    endcase 
-end
-
-
-always@(*) begin
-    case(state)
-        2'b00: begin
-            if(MEM_valid_in == 1'b1 && MEM_valid_fromCD == 1'b1 && MEM_ctrl == `MEM_NOP) begin
-                MEM_valid_out = 1'b1;
-            end
-            else begin
-                MEM_valid_out = 1'b0;
-            end
-        end
-        2'b01: begin
-            if(DCACHE_valid_out == 1'b1) begin
-                MEM_valid_out = 1'b1;
-            end
-            else begin
-                MEM_valid_out = 1'b0;
-            end
-        end
-        2'b10: begin
-            MEM_valid_out = 1'b0;
-        end
-        2'b11: begin
-            MEM_valid_out = 1'b0;
-        end
-    endcase
-end
-
-always@(*) begin
-    case(state)
-        2'b00: begin
-            if(busy == 1'b1) begin
-                MEM_ok = 1'b0;
-            end
-            else begin
-                MEM_ok = 1'b1;
-            end
-        end
-        2'b01: begin
-            if(DCACHE_valid_out == 1'b1) begin
-                MEM_ok = 1'b1;
-            end
-            else begin
-                MEM_ok = 1'b0;
-            end
-        end
-        2'b10: begin
-            MEM_ok = 1'b0;
-        end
-        2'b11: begin
-            MEM_ok = 1'b1;
-        end
-    endcase
-end
-
-always@(*) begin
-    case(state)
-        2'b00: begin
-            if(busy == 1'b1) begin
-                DCACHE_valid = 1'b1;
-            end
-            else begin
-                DCACHE_valid = 1'b0;
-            end
-        end
-        2'b01: begin
-            if(DCACHE_valid_out == 1'b1) begin
-                DCACHE_valid = 1'b0;
-            end
-            else begin
-                DCACHE_valid = 1'b1;
-            end
-        end
-        2'b10: begin
-            DCACHE_valid = 1'b1;
-        end
-        2'b11: begin
-            DCACHE_valid = 1'b0;
-        end
-    endcase
-end
-
-always@(*) begin
-    case(state)
-        2'b00: begin
-            DCACHE_addr = addr1;
-        end
-        2'b01: begin
-            DCACHE_addr = addr1;
-        end
-        2'b10: begin
-            DCACHE_addr = addr2;
-        end
-        2'b11: begin
-            DCACHE_addr = 64'b0;
-        end
-    endcase
-end
-
-always@(*) begin
-    case(state)
-        2'b00: begin
-            DCACHE_wdata = wdata1;
-        end
-        2'b01: begin
-            DCACHE_wdata = wdata1;
-        end
-        2'b10: begin
-            DCACHE_wdata = wdata2;
-        end
-        2'b11: begin
-            DCACHE_wdata = 64'b0;
-        end
-    endcase
-end
-
-always@(*) begin
-    case(state)
-        2'b00: begin
-            DCACHE_mask = wmask1;
-        end
-        2'b01: begin
-            DCACHE_mask = wmask1;
-        end
-        2'b10: begin
-            DCACHE_mask = wmask2;
-        end
-        2'b11: begin
-            DCACHE_mask = 8'b0;
-        end
-    endcase
-end
-
-/* verilator lint_off LATCH */
-always@(*) begin
-    case(state)
-        2'b00: begin
-            rdata1 = 64'b0;
-            rdata2 = 64'b0;
-        end
-        2'b01: begin
-            rdata1 = DCACHE_rdata;
-            rdata2 = rdata2;
-        end
-        2'b10: begin
-            rdata1 = rdata1;
-            rdata2 = DCACHE_rdata;
-        end
-        2'b11: begin
-            rdata1 = 64'b0;
-            rdata2 = 64'b0;
-        end
-    endcase
-end
-/* verilator lint_on LATCH */
-
-always@(*) begin        
     case(MEM_ctrl)
-        `MEM_LB: begin            
-            MEM_out = {{56{rdata[7:7]}}, rdata[7:0]};
+        `ysyx_041461_MEM_LB: begin
+            MEM_out = {{56{rrdata[7:7]}}, rrdata[7:0]};
         end
-        `MEM_LH: begin            
-            MEM_out = {{48{rdata[15:15]}}, rdata[15:0]};
+        `ysyx_041461_MEM_LH: begin
+            MEM_out = {{48{rrdata[15:15]}}, rrdata[15:0]};
         end
-        `MEM_LW: begin        
-            MEM_out = {{32{rdata[31:31]}}, rdata[31:0]};
+        `ysyx_041461_MEM_LBU: begin
+            MEM_out = {56'b0, rrdata[7:0]};
         end
-        `MEM_LD: begin         
-            MEM_out = rdata;
+        `ysyx_041461_MEM_LHU: begin
+            MEM_out = {48'b0, rrdata[15:0]};
         end
-        `MEM_LBU: begin      
-            MEM_out = {56'd0, rdata[7:0]};
+        `ysyx_041461_MEM_LW: begin
+            MEM_out = {{32{rrdata[31:31]}}, rrdata[31:0]};
         end
-        `MEM_LHU: begin  
-            MEM_out = {48'd0, rdata[15:0]};
+        `ysyx_041461_MEM_LWU: begin
+            MEM_out = {32'b0, rrdata[31:0]};
         end
-        `MEM_LWU: begin  
-            MEM_out = {32'd0, rdata[31:0]};
+        `ysyx_041461_MEM_LD: begin
+            MEM_out = rrdata;
         end
         default: begin
             MEM_out = 64'b0;
@@ -387,64 +1010,99 @@ always@(*) begin
     endcase
 end
 
-always@(posedge clk or negedge rst) begin
-    if(rst == 1'b0) begin
-        state <= 2'b00;
+
+
+
+always@(posedge clk or posedge rst) begin
+    if(rst == 1'b1) begin
+        state <= `ysyx_041461_START;
     end
     else begin
         case(state)
-            2'b00: begin
-                if(busy == 1'b1) begin
-                    if(align == 1'b1) begin
-                        state <= 2'b01;
+            `ysyx_041461_START: begin
+                if(MEM_valid_in == 1'b1 && MEM_valid_fromCD == 1'b1) begin
+                    if(load == 1'b1) begin
+                        if(uncached == 1'b1) begin
+                            state <= `ysyx_041461_RAXI_AR;
+                        end
+                        else begin
+                            if(hit == 1'b1) begin
+                                state <= `ysyx_041461_RCACHE;
+                            end
+                            else begin
+                                state <= `ysyx_041461_RAXI_AR;
+                            end
+                        end
+                    end
+                    else if(store == 1'b1) begin
+                        state <= `ysyx_041461_WAXI_AW;
                     end
                     else begin
-                        state <= 2'b10;
+                        state <= state;
+                    end
+                end
+            end
+            `ysyx_041461_RCACHE: begin
+                state <= `ysyx_041461_FINISH;
+            end
+            `ysyx_041461_RAXI_AR: begin
+                if(MEM_arready == 1'b1) begin
+                    state <= `ysyx_041461_RAXI_R;
+                end
+                else begin
+                    state <= state;
+                end
+            end
+            `ysyx_041461_RAXI_R: begin
+                if(MEM_rvalid == 1'b1 && MEM_rid == MEM_AXI_id && MEM_rlast == 1'b1 && MEM_rresp == OKAY) begin
+                    if(uncached == 1'b1) begin
+                        state <= `ysyx_041461_FINISH;
+                    end
+                    else begin
+                        state <= `ysyx_041461_WCACHE;
                     end
                 end
                 else begin
-                    state <= 2'b00;
+                    state <= state;
                 end
             end
-            2'b01: begin
-                if(DCACHE_valid_out == 1'b1) begin
-                    state <= 2'b00;
+            `ysyx_041461_WCACHE: begin
+                if(store == 1'b1) begin
+                    state <= `ysyx_041461_FINISH;
+                end
+                else if(load == 1'b1) begin
+                    state <= `ysyx_041461_RCACHE;
                 end
                 else begin
-                    state <= 2'b01;
+                    state <= state;
                 end
             end
-            2'b10: begin
-                if(DCACHE_valid_out == 1'b1) begin
-                    state <= 2'b01;
+            `ysyx_041461_WAXI_AW: begin
+                if(MEM_awready == 1'b1) begin
+                    state <= `ysyx_041461_WAXI_W;
                 end
                 else begin
-                    state <= 2'b10;
+                    state <= state;
                 end
             end
-            default: begin
-                state <= 2'b00;
+            `ysyx_041461_WAXI_W: begin
+                if(MEM_bvalid == 1'b1 && MEM_bresp == OKAY && MEM_bid == MEM_AXI_id) begin
+                    if(hit == 1'b1 && uncached == 1'b0) begin
+                        state <= `ysyx_041461_WCACHE;
+                    end
+                    else begin
+                        state <= `ysyx_041461_FINISH;
+                    end
+                end
+                else begin
+                    state <= state;
+                end
+            end
+            `ysyx_041461_FINISH: begin
+                state <= `ysyx_041461_START;
             end
         endcase
     end      
 end
 
-ysyx_22041461_DCACHE DCACHE(
-
-    .clk              (clk),
-    .rst              (rst),
-    .DCACHE_valid     (DCACHE_valid),
-
-    .DCACHE_addr      (DCACHE_addr),
-    .DCACHE_wdata     (DCACHE_wdata),
-    .DCACHE_mask      (DCACHE_mask ),
-    .DCACHE_wen       (DCACHE_wen  ),
-
-    .DCACHE_valid_out (DCACHE_valid_out),
-    .DCACHE_rdata     (DCACHE_rdata)
-);
-
-
-
 endmodule
-
