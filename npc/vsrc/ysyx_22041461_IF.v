@@ -379,7 +379,7 @@ always@(*) begin
             tag1_next[index] = tag;
         end
     end
-    if(IF_FENCE_I == 1'b1) begin
+    else if(IF_FENCE_I == 1'b1) begin
         for(i = 0; i < 64; i = i + 1) begin
             V1_next[i] = 1'b0;
             V2_next[i] = 1'b0;

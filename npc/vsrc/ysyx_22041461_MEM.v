@@ -145,6 +145,8 @@ wire [5:0]   index;
 wire [2:0]   offset;
 wire [54:0]  tag;
 
+reg [0:0]  align;
+
 assign index = MEM_EXE_in[8:3];
 assign offset = MEM_EXE_in[2:0];
 assign tag = MEM_EXE_in[63:9];
@@ -273,6 +275,139 @@ always@(*) begin
     else begin
         hit8 = 1'b0;
     end
+end
+
+always@(*) begin
+    case(MEM_ctrl)
+        `ysyx_041461_MEM_SD: begin
+            case(MEM_EXE_in[2:0])
+                3'b000: begin
+                    align = 1'b1;
+                end
+                default: begin
+                    align = 1'b0;
+                end
+            endcase
+        end
+        `ysyx_041461_MEM_SW: begin
+            case(MEM_EXE_in[2:0])
+                3'b000: begin
+                    align = 1'b1;
+                end
+                3'b100: begin
+                    align = 1'b1;
+                end
+                default: begin
+                    align = 1'b0;
+                end
+            endcase
+        end
+        `ysyx_041461_MEM_SH: begin
+            case(MEM_EXE_in[2:0])
+                3'b000: begin
+                    align = 1'b1;
+                end
+                3'b010: begin
+                    align = 1'b1;
+                end
+                3'b100: begin
+                    align = 1'b1;
+                end
+                3'b110: begin
+                    align = 1'b1;
+                end
+                default: begin
+                    align = 1'b0;
+                end
+            endcase
+        end
+        `ysyx_041461_MEM_SB: begin
+            align = 1'b1;
+        end
+        `ysyx_041461_MEM_LB: begin
+            align = 1'b1;
+        end
+        `ysyx_041461_MEM_LH: begin
+            case(MEM_EXE_in[2:0])
+                3'b000: begin
+                    align = 1'b1;
+                end
+                3'b010: begin
+                    align = 1'b1;
+                end
+                3'b100: begin
+                    align = 1'b1;
+                end
+                3'b110: begin
+                    align = 1'b1;
+                end
+                default: begin
+                    align = 1'b0;
+                end
+            endcase
+        end
+        `ysyx_041461_MEM_LBU: begin
+            align = 1'b1;
+        end
+        `ysyx_041461_MEM_LHU: begin
+            case(MEM_EXE_in[2:0])
+                3'b000: begin
+                    align = 1'b1;
+                end
+                3'b010: begin
+                    align = 1'b1;
+                end
+                3'b100: begin
+                    align = 1'b1;
+                end
+                3'b110: begin
+                    align = 1'b1;
+                end
+                default: begin
+                    align = 1'b0;
+                end
+            endcase
+        end
+        `ysyx_041461_MEM_LW: begin
+            case(MEM_EXE_in[2:0])
+                3'b000: begin
+                    align = 1'b1;
+                end
+                3'b100: begin
+                    align = 1'b1;
+                end
+                default: begin
+                    align = 1'b0;
+                end
+            endcase
+        end
+        `ysyx_041461_MEM_LWU: begin
+            case(MEM_EXE_in[2:0])
+                3'b000: begin
+                    align = 1'b1;
+                end
+                3'b100: begin
+                    align = 1'b1;
+                end
+                default: begin
+                    align = 1'b0;
+                end
+            endcase
+        end
+        `ysyx_041461_MEM_LD: begin
+            case(MEM_EXE_in[2:0])
+                3'b000: begin
+                    align = 1'b1;
+                end
+                default: begin
+                    align = 1'b0;
+                end
+            endcase
+        end
+        default: begin
+            align = 1'b1;
+        end
+    endcase
 end
 
 always@(*) begin
@@ -530,7 +665,7 @@ always@(*) begin
         tag8_next[i] = tag8[i];
     end
     if(state == `ysyx_041461_WCACHE) begin
-        if(load == 1'b1 && uncached == 1'b0) begin
+        if(load == 1'b1) begin
             if(V1[index] == 1'b0) begin
                 V1_next[index] = 1'b1;
                 tag1_next[index] = tag;
@@ -794,7 +929,7 @@ always@(*) begin
     MEM_sram7_wmask = 128'hffff_ffff_ffff_ffff_ffff_ffff_ffff_ffff;
     MEM_sram7_wdata = 128'b0;
     if(state == `ysyx_041461_WCACHE) begin
-        if(load == 1'b1 && uncached == 1'b0) begin
+        if(load == 1'b1) begin
             if(V1[index] == 1'b0) begin
                 MEM_sram4_wen = 1'b0;
                 MEM_sram4_wmask = 128'hffff_ffff_ffff_ffff_0000_0000_0000_0000;
@@ -841,7 +976,7 @@ always@(*) begin
                 MEM_sram4_wdata = {64'b0, cache_wdata};
             end
         end
-        else if(store == 1'b1 && uncached == 1'b0) begin
+        else if(store == 1'b1) begin
             if(hit1 == 1'b1) begin
                 MEM_sram4_wen = 1'b0;
                 MEM_sram4_wmask = {64'hffff_ffff_ffff_ffff, cache_wmask};
@@ -1087,7 +1222,7 @@ always@(posedge clk or posedge rst) begin
             end
             `ysyx_041461_WAXI_W: begin
                 if(MEM_bvalid == 1'b1 && MEM_bresp == OKAY && MEM_bid == MEM_AXI_id) begin
-                    if(hit == 1'b1 && uncached == 1'b0) begin
+                    if(hit == 1'b1) begin
                         state <= `ysyx_041461_WCACHE;
                     end
                     else begin

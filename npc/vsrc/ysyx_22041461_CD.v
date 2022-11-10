@@ -513,6 +513,9 @@ always@(*) begin
             CD_IDreg_valid = 1'b0;
         end
     end
+    if(CD_ctrl == `ysyx_041461_CD_FENCE_I) begin
+        CD_IDreg_valid = 1'b0;
+    end
 end
 
 always@(*) begin

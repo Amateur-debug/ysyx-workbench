@@ -568,6 +568,8 @@ always@(*) begin
                         ID_CD_ctrl = `ysyx_041461_CD_ILLEGAL_INST;
                         ID_WB_ctrl = `ysyx_041461_WB_ILLEGAL_INST;
                     end
+                endcase
+            end
             default: begin
                 ID_next_pc = ID_csr_mtvec;
                 ID_IFreg_ctrl = 1'b1;

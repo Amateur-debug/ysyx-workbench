@@ -97,7 +97,12 @@ always@(posedge clk or posedge rst) begin
             end
             2'b10: begin
                 if(AXI_Crossbar_rvalid == 1'b1 && AXI_Crossbar_rresp == OKAY && AXI_Crossbar_rlast == 1'b1 && AXI_Crossbar_rid == MEM_AXI_id) begin
-                    state <= 2'b00;
+                    if(AXI_Crossbar_IF_arvalid == 1'b1) begin
+                        state <= 2'b01;
+                    end
+                    else begin
+                        state <= 2'b00;
+                    end
                 end
                 else begin
                     state <= state;
@@ -111,7 +116,7 @@ always@(posedge clk or posedge rst) begin
 end
 
 always@(*) begin
-    if(state == 2'b00 || state == 2'b01 || state == 2'b11) begin
+    if(state == 2'b01) begin
         AXI_Crossbar_arvalid = AXI_Crossbar_IF_arvalid;
         AXI_Crossbar_araddr  = AXI_Crossbar_IF_araddr ;
         AXI_Crossbar_arid    = AXI_Crossbar_IF_arid   ;
@@ -120,7 +125,7 @@ always@(*) begin
         AXI_Crossbar_arburst = AXI_Crossbar_IF_arburst;
         AXI_Crossbar_rready  = AXI_Crossbar_IF_rready ;
     end
-    else begin
+    else if(state == 2'b10) begin
         AXI_Crossbar_arvalid = AXI_Crossbar_MEM_arvalid;
         AXI_Crossbar_araddr  = AXI_Crossbar_MEM_araddr ;
         AXI_Crossbar_arid    = AXI_Crossbar_MEM_arid   ;
@@ -128,6 +133,15 @@ always@(*) begin
         AXI_Crossbar_arsize  = AXI_Crossbar_MEM_arsize ;
         AXI_Crossbar_arburst = AXI_Crossbar_MEM_arburst;
         AXI_Crossbar_rready  = AXI_Crossbar_MEM_rready ;
+    end
+    else begin
+        AXI_Crossbar_arvalid = 1'b0;
+        AXI_Crossbar_araddr  = AXI_Crossbar_IF_araddr ;
+        AXI_Crossbar_arid    = AXI_Crossbar_IF_arid   ;
+        AXI_Crossbar_arlen   = AXI_Crossbar_IF_arlen  ;
+        AXI_Crossbar_arsize  = AXI_Crossbar_IF_arsize ;
+        AXI_Crossbar_arburst = AXI_Crossbar_IF_arburst;
+        AXI_Crossbar_rready  = AXI_Crossbar_IF_rready ;
     end
 end
 
@@ -144,7 +158,7 @@ assign AXI_Crossbar_MEM_rlast  = AXI_Crossbar_rlast ;
 assign AXI_Crossbar_MEM_rid    = AXI_Crossbar_rid   ;
 
 always@(*) begin
-    if(state == 2'b00 || state == 2'b01 || state == 2'b11) begin
+    if(state == 2'b01) begin
         AXI_Crossbar_IF_arready = AXI_Crossbar_arready;
     end
     else begin
