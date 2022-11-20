@@ -1,57 +1,62 @@
 module ysyx_041461_IF(
 
-    input   wire [0:0]    clk            ,
-    input   wire [0:0]    rst            ,
-    input   reg  [63:0]   IF_pc          ,
-    input   wire [0:0]    IF_valid_fromCD,
-    input   wire [0:0]    IF_FENCE_I     ,
-    input   wire [0:0]    IF_MEM_ok      ,
- 
-    output  reg  [0:0]    IF_valid_out   ,
-    output  reg  [0:0]    IF_ok          ,
-    output  reg  [31:0]   IF_inst        ,
-     
-    input   wire [0:0]    IF_arready     ,
-    output  reg  [0:0]    IF_arvalid     ,
-    output  reg  [31:0]   IF_araddr      ,
-    output  reg  [3:0]    IF_arid        ,
-    output  reg  [7:0]    IF_arlen       ,
-    output  reg  [2:0]    IF_arsize      ,
-    output  reg  [1:0]    IF_arburst     ,
+    input   wire [0:0]    clk                  ,
+    input   wire [0:0]    rst                  ,
+    input   wire [63:0]   IF_pc                ,
+    input   wire [0:0]    IF_valid_fromCD      ,
+    input   wire [0:0]    IF_FENCE_I           ,
+    input   wire [0:0]    IF_MEM_ok            ,
+    input   wire [63:0]   IF_mstatus           ,
+    input   wire [63:0]   IF_mie               ,
+    input   wire [63:0]   IF_mip               ,
+  
+    output  reg  [0:0]    IF_interrupt_ret_inst,
+    output  reg  [2:0]    IF_exception_out     ,
+    output  reg  [0:0]    IF_valid_out         ,
+    output  reg  [0:0]    IF_ok                ,
+    output  reg  [31:0]   IF_inst              ,
        
-    output  reg  [0:0]    IF_rready      ,
-    input   wire [0:0]    IF_rvalid      ,
-    input   wire [1:0]    IF_rresp       ,
-    input   wire [63:0]   IF_rdata       ,
-    input   wire [0:0]    IF_rlast       ,
-    input   wire [3:0]    IF_rid         ,
- 
-    output  wire [5:0]    IF_sram0_addr  , 
-    output  reg  [0:0]    IF_sram0_cen   , 
-    output  reg  [0:0]    IF_sram0_wen   , 
-    output  reg  [127:0]  IF_sram0_wmask , 
-    output  reg  [127:0]  IF_sram0_wdata , 
-    input   wire [127:0]  IF_sram0_rdata ,
- 
-    output  wire [5:0]    IF_sram1_addr  , 
-    output  reg  [0:0]    IF_sram1_cen   , 
-    output  reg  [0:0]    IF_sram1_wen   , 
-    output  reg  [127:0]  IF_sram1_wmask , 
-    output  reg  [127:0]  IF_sram1_wdata , 
-    input   wire [127:0]  IF_sram1_rdata ,
- 
-    output  wire [5:0]    IF_sram2_addr  , 
-    output  reg  [0:0]    IF_sram2_cen   , 
-    output  reg  [0:0]    IF_sram2_wen   , 
-    output  reg  [127:0]  IF_sram2_wmask , 
-    output  reg  [127:0]  IF_sram2_wdata , 
-    input   wire [127:0]  IF_sram2_rdata ,
- 
-    output  wire [5:0]    IF_sram3_addr  , 
-    output  reg  [0:0]    IF_sram3_cen   , 
-    output  reg  [0:0]    IF_sram3_wen   , 
-    output  reg  [127:0]  IF_sram3_wmask , 
-    output  reg  [127:0]  IF_sram3_wdata , 
+    input   wire [0:0]    IF_arready           ,
+    output  reg  [0:0]    IF_arvalid           ,
+    output  reg  [31:0]   IF_araddr            ,
+    output  reg  [3:0]    IF_arid              ,
+    output  reg  [7:0]    IF_arlen             ,
+    output  reg  [2:0]    IF_arsize            ,
+    output  reg  [1:0]    IF_arburst           ,
+         
+    output  reg  [0:0]    IF_rready            ,
+    input   wire [0:0]    IF_rvalid            ,
+    input   wire [1:0]    IF_rresp             ,
+    input   wire [63:0]   IF_rdata             ,
+    input   wire [0:0]    IF_rlast             ,
+    input   wire [3:0]    IF_rid               ,
+   
+    output  wire [5:0]    IF_sram0_addr        , 
+    output  reg  [0:0]    IF_sram0_cen         , 
+    output  reg  [0:0]    IF_sram0_wen         , 
+    output  reg  [127:0]  IF_sram0_wmask       , 
+    output  reg  [127:0]  IF_sram0_wdata       , 
+    input   wire [127:0]  IF_sram0_rdata       ,
+   
+    output  wire [5:0]    IF_sram1_addr        , 
+    output  reg  [0:0]    IF_sram1_cen         , 
+    output  reg  [0:0]    IF_sram1_wen         , 
+    output  reg  [127:0]  IF_sram1_wmask       , 
+    output  reg  [127:0]  IF_sram1_wdata       , 
+    input   wire [127:0]  IF_sram1_rdata       ,
+   
+    output  wire [5:0]    IF_sram2_addr        , 
+    output  reg  [0:0]    IF_sram2_cen         , 
+    output  reg  [0:0]    IF_sram2_wen         , 
+    output  reg  [127:0]  IF_sram2_wmask       , 
+    output  reg  [127:0]  IF_sram2_wdata       , 
+    input   wire [127:0]  IF_sram2_rdata       ,
+   
+    output  wire [5:0]    IF_sram3_addr        , 
+    output  reg  [0:0]    IF_sram3_cen         , 
+    output  reg  [0:0]    IF_sram3_wen         , 
+    output  reg  [127:0]  IF_sram3_wmask       , 
+    output  reg  [127:0]  IF_sram3_wdata       , 
     input   wire [127:0]  IF_sram3_rdata 
 );
 
@@ -136,6 +141,48 @@ assign offset = IF_pc[2:0];
 assign tag = IF_pc[63:9];
 
 assign hit = hit1 || hit2 || hit3 || hit4 || hit5 || hit6 || hit7 || hit8;
+
+wire [0:0]   mie_MTIE;
+wire [0:0]   mip_MTIP;
+wire [0:0]   mstatus_MIE;
+
+assign mie_MTIE = IF_mie[7:7];
+assign mip_MTIP = IF_mip[7:7];
+assign mstatus_MIE = IF_mstatus[3:3];
+
+always@(*) begin
+    if(IF_valid_fromCD == 1'b1) begin
+        if(IF_pc[1:0] != 2'b00) begin
+            IF_exception_out = `ysyx_041461_IF_MISALIGN;
+        end
+        else begin
+            IF_exception_out = `ysyx_041461_exception_NOP;
+        end
+    end
+    else begin
+        IF_exception_out = `ysyx_041461_exception_NOP;
+    end
+end
+
+always@(*) begin
+    if(IF_valid_fromCD == 1'b1) begin
+        if(mie_MTIE == 1'b1 && mip_MTIP == 1'b1 && mstatus_MIE == 1'b1) begin
+            if(state == `ysyx_041461_START || state == `ysyx_041461_FINISH) begin
+                IF_interrupt_ret_inst = 1'b1;
+            end
+            else begin
+                IF_interrupt_ret_inst = 1'b0;
+            end
+        end
+        else begin
+            IF_interrupt_ret_inst = 1'b0;
+        end
+    end
+    else begin
+        IF_interrupt_ret_inst = 1'b0;
+    end
+end
+
 
 always@(*) begin
     if(IF_pc[31:31] == 1'b1) begin
@@ -494,14 +541,20 @@ always@(*) begin
 end
 
 
-
-
 always@(*) begin
     if(IF_valid_fromCD == 1'b0) begin
         IF_ok = 1'b1;
     end
     else begin
-        if(state == `ysyx_041461_FINISH) begin
+        if(state == `ysyx_041461_START) begin
+            if(IF_exception_out != `ysyx_041461_exception_NOP || IF_interrupt_ret_inst == 1'b1) begin
+                IF_ok = 1'b1;
+            end
+            else begin
+                IF_ok = 1'b0;
+            end
+        end
+        else if(state == `ysyx_041461_FINISH) begin
             IF_ok = 1'b1;
         end
         else begin
@@ -515,7 +568,15 @@ always@(*) begin
         IF_valid_out = 1'b0;
     end
     else begin
-        if(state == `ysyx_041461_FINISH) begin
+        if(state == `ysyx_041461_START) begin
+            if(IF_exception_out != `ysyx_041461_exception_NOP || IF_interrupt_ret_inst == 1'b1) begin
+                IF_valid_out = 1'b1;
+            end
+            else begin
+                IF_valid_out = 1'b0;
+            end
+        end
+        else if(state == `ysyx_041461_FINISH) begin
             IF_valid_out = 1'b1;
         end
         else begin
@@ -610,7 +671,10 @@ always@(posedge clk or posedge rst) begin
     else begin
         case(state)
             `ysyx_041461_START: begin
-                if(IF_valid_fromCD == 1'b1 && IF_FENCE_I == 1'b0) begin
+                if(IF_exception_out != `ysyx_041461_exception_NOP || IF_interrupt_ret_inst == 1'b1) begin
+                    state <= state;
+                end
+                else if(IF_valid_fromCD == 1'b1 && IF_FENCE_I == 1'b0) begin
                     if(uncached == 1'b1) begin
                         state <= `ysyx_041461_RAXI_AR;
                     end
@@ -639,7 +703,7 @@ always@(posedge clk or posedge rst) begin
                 end
             end
             `ysyx_041461_RAXI_R: begin
-                if(IF_rvalid == 1'b1 && IF_rid == IF_AXI_id && IF_rlast == 1'b1 && IF_rresp == OKAY) begin
+                if(IF_rvalid == 1'b1 && IF_rid == IF_AXI_id && IF_rlast == 1'b1 && (IF_rresp == OKAY || IF_rresp == EXOKAY)) begin
                     if(uncached == 1'b1) begin
                         state <= `ysyx_041461_FINISH;
                     end

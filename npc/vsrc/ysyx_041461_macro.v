@@ -110,15 +110,12 @@
 `define ysyx_041461_FENCE_I 25'b0000000_00000_00000_001_00000
 
 //CD_ctrl
-`define ysyx_041461_CD_NOP 4'b0000
-`define ysyx_041461_CD_BRANCHES 4'b0001
-`define ysyx_041461_CD_JAL 4'b0010
-`define ysyx_041461_CD_JALR 4'b0011
-`define ysyx_041461_CD_ECALL 4'b0100
-`define ysyx_041461_CD_MRET 4'b0101
-`define ysyx_041461_CD_FENCE_I 4'b0110
-`define ysyx_041461_CD_EBREAK 4'b0111
-`define ysyx_041461_CD_ILLEGAL_INST 4'b1000
+`define ysyx_041461_CD_NOP 3'b000
+`define ysyx_041461_CD_BRANCHES 3'b001
+`define ysyx_041461_CD_JAL 3'b010
+`define ysyx_041461_CD_JALR 3'b011
+`define ysyx_041461_CD_FENCE_I 3'b100
+
 
 //EXE_ctrl
 `define ysyx_041461_EXE_NOP 5'b00000
@@ -177,26 +174,27 @@
 `define ysyx_041461_MEM_FENCE_I 4'b1100
 
 //WB_ctrl
-`define ysyx_041461_WB_NOP 4'b0000
-`define ysyx_041461_WB_EXE 4'b0001
-`define ysyx_041461_WB_MEM 4'b0010
-`define ysyx_041461_WB_IMM 4'b0011
-`define ysyx_041461_WB_SNPC 4'b0100
-`define ysyx_041461_WB_CSRRW 4'b0101
-`define ysyx_041461_WB_CSRRS 4'b0110
-`define ysyx_041461_WB_CSRRC 4'b0110
-`define ysyx_041461_WB_CSRRSI 4'b0110
-`define ysyx_041461_WB_CSRRCI 4'b0110
-`define ysyx_041461_WB_CSRRWI 4'b0111
-`define ysyx_041461_WB_ECALL 4'b1000
-`define ysyx_041461_WB_EBREAK 4'b1001
-`define ysyx_041461_WB_ILLEGAL_INST 4'b1010
+`define ysyx_041461_WB_NOP 3'b000
+`define ysyx_041461_WB_EXE 3'b001
+`define ysyx_041461_WB_MEM 3'b010
+`define ysyx_041461_WB_IMM 3'b011
+`define ysyx_041461_WB_SNPC 3'b100
+`define ysyx_041461_WB_CSRRW 3'b101
+`define ysyx_041461_WB_CSRRS 3'b110
+`define ysyx_041461_WB_CSRRC 3'b110
+`define ysyx_041461_WB_CSRRSI 3'b110
+`define ysyx_041461_WB_CSRRCI 3'b110
+`define ysyx_041461_WB_CSRRWI 3'b111
+
 
 //csr
 `define ysyx_041461_MTVEC 12'h305
 `define ysyx_041461_MEPC 12'h341
 `define ysyx_041461_MCAUSE 12'h342
 `define ysyx_041461_MSTATUS 12'h300
+`define ysyx_041461_MIE 12'h304
+`define ysyx_041461_MIP 12'h344
+`define ysyx_041461_MHARTID 12'hf14
 
 //cache state
 `define ysyx_041461_START 3'b000
@@ -207,3 +205,39 @@
 `define ysyx_041461_WAXI_AW 3'b101
 `define ysyx_041461_WAXI_W 3'b110
 `define ysyx_041461_FINISH 3'b111
+
+//AXI_Crossbar rstate
+`define ysyx_041461_AXI_Crossbar_RSTART 2'b00
+`define ysyx_041461_AXI_Crossbar_IF_RAXI 2'b01
+`define ysyx_041461_AXI_Crossbar_MEM_RAXI 2'b10
+`define ysyx_041461_AXI_Crossbar_MEM_RCLINT 2'b11
+
+`define ysyx_041461_AXI_Crossbar_WSTART 2'b00
+`define ysyx_041461_AXI_Crossbar_WAXI 2'b01
+`define ysyx_041461_AXI_Crossbar_WCLINT 2'b10
+
+//CLINT state
+`define ysyx_041461_CLINT_START 2'b00
+`define ysyx_041461_CLINT_W 2'b01
+`define ysyx_041461_CLINT_WFINISH 2'b10
+`define ysyx_041461_CLINT_R 2'b11
+
+//exception
+`define ysyx_041461_exception_NOP 3'b000
+`define ysyx_041461_IF_MISALIGN 3'b001
+`define ysyx_041461_ID_ECALL 3'b010
+`define ysyx_041461_ID_MRET 3'b011
+`define ysyx_041461_ID_EBREAK 3'b100
+`define ysyx_041461_ID_ILLEGAL_INST 3'b101
+`define ysyx_041461_MEM_LOAD_MISALIGN 3'b110
+`define ysyx_041461_MEM_STORE_MISALIGN 3'b111
+
+//ID_IFreg_ctrl
+`define ysyx_041461_ID_IFreg_ctrl_NOP 1'b0
+`define ysyx_041461_ID_IFreg_ctrl_IDpc 1'b1
+
+//WB_IFreg_ctrl
+`define ysyx_041461_WB_IFreg_ctrl_NOP 2'b00
+`define ysyx_041461_WB_IFreg_ctrl_MTVEC 2'b01
+`define ysyx_041461_WB_IFreg_ctrl_MEPC 2'b10
+
