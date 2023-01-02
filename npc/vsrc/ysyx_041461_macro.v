@@ -222,15 +222,16 @@
 `define ysyx_041461_CLINT_WFINISH 2'b10
 `define ysyx_041461_CLINT_R 2'b11
 
-//exception
-`define ysyx_041461_exception_NOP 3'b000
-`define ysyx_041461_IF_MISALIGN 3'b001
-`define ysyx_041461_ID_ECALL 3'b010
-`define ysyx_041461_ID_MRET 3'b011
-`define ysyx_041461_ID_EBREAK 3'b100
-`define ysyx_041461_ID_ILLEGAL_INST 3'b101
-`define ysyx_041461_MEM_LOAD_MISALIGN 3'b110
-`define ysyx_041461_MEM_STORE_MISALIGN 3'b111
+//trap
+`define ysyx_041461_TRAP_NOP 4'b0000
+`define ysyx_041461_IF_MISALIGN 4'b0001
+`define ysyx_041461_ID_ECALL 4'b0010
+`define ysyx_041461_ID_MRET 4'b0011
+`define ysyx_041461_ID_EBREAK 4'b0100
+`define ysyx_041461_ID_ILLEGAL_INST 4'b0101
+`define ysyx_041461_MEM_LOAD_MISALIGN 4'b0110
+`define ysyx_041461_MEM_STORE_MISALIGN 4'b0111
+`define ysyx_041461_TIMER_INTERRUPT 4'b1000
 
 //ID_IFreg_ctrl
 `define ysyx_041461_ID_IFreg_ctrl_NOP 1'b0

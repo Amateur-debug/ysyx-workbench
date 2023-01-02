@@ -1,4 +1,4 @@
-#include<stdint.h>
+#include <stdint.h>
 #include "verilated_dpi.h"
 #include "verilated_vcd_c.h" //可选，如果要导出vcd则需要加上
 #include "Vysyx_22041461_CPU.h"

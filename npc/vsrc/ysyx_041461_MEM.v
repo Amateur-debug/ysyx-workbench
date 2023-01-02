@@ -1,81 +1,80 @@
 module ysyx_041461_MEM(
 
-    input   wire [0:0]    clk                   ,
-    input   wire [0:0]    rst                   ,
+    input   wire [0:0]    clk             ,
+    input   wire [0:0]    rst             ,
       
-    input   wire [0:0]    MEM_valid_in          ,
-    input   wire [0:0]    MEM_valid_fromCD      ,
-    input   wire [63:0]   MEM_EXE_in            ,
-    input   wire [63:0]   MEM_rs2_data          ,
-    input   wire [3:0]    MEM_ctrl              ,  
-    input   wire [2:0]    MEM_exception_in      ,
-    input   wire [0:0]    MEM_interrupt_ret_inst,
+    input   wire [0:0]    MEM_valid_in    ,
+    input   wire [0:0]    MEM_valid_fromCD,
+    input   wire [63:0]   MEM_EXE_in      ,
+    input   wire [63:0]   MEM_rs2_data    ,
+    input   wire [3:0]    MEM_ctrl        ,  
+    input   wire [3:0]    MEM_trap_in     ,
 
-    output  reg  [0:0]    MEM_valid_out         ,
-    output  reg  [0:0]    MEM_ok                ,
-    output  reg  [63:0]   MEM_out               ,
-    output  reg  [2:0]    MEM_exception_out     ,
+    output  reg  [0:0]    MEM_valid_out   ,
+    output  reg  [0:0]    MEM_ok          ,
+    output  reg  [63:0]   MEM_out         ,
+    output  reg  [3:0]    MEM_trap_out    ,
       
-    input   wire [0:0]    MEM_awready           ,
-    output  wire [0:0]    MEM_awvalid           ,
-    output  reg  [31:0]   MEM_awaddr            ,
-    output  wire [3:0]    MEM_awid              ,
-    output  wire [7:0]    MEM_awlen             ,
-    output  wire [2:0]    MEM_awsize            ,
-    output  wire [1:0]    MEM_awburst           ,
+    input   wire [0:0]    MEM_awready     ,
+    output  wire [0:0]    MEM_awvalid     ,
+    output  reg  [31:0]   MEM_awaddr      ,
+    output  wire [3:0]    MEM_awid        ,
+    output  wire [7:0]    MEM_awlen       ,
+    output  wire [2:0]    MEM_awsize      ,
+    output  wire [1:0]    MEM_awburst     ,
              
-    input   wire [0:0]    MEM_wready            ,
-    output  wire [0:0]    MEM_wvalid            ,
-    output  wire [63:0]   MEM_wdata             ,
-    output  wire [7:0]    MEM_wstrb             ,
-    output  wire [0:0]    MEM_wlast             ,
+    input   wire [0:0]    MEM_wready      ,
+    output  wire [0:0]    MEM_wvalid      ,
+    output  wire [63:0]   MEM_wdata       ,
+    output  wire [7:0]    MEM_wstrb       ,
+    output  wire [0:0]    MEM_wlast       ,
              
-    output  wire [0:0]    MEM_bready            ,
-    input   wire [0:0]    MEM_bvalid            ,
-    input   wire [1:0]    MEM_bresp             ,
-    input   wire [3:0]    MEM_bid               ,
+    output  wire [0:0]    MEM_bready      ,
+    input   wire [0:0]    MEM_bvalid      ,
+    input   wire [1:0]    MEM_bresp       ,
+    input   wire [3:0]    MEM_bid         ,
             
-    input   wire [0:0]    MEM_arready           ,
-    output  wire [0:0]    MEM_arvalid           ,
-    output  wire [31:0]   MEM_araddr            ,
-    output  wire [3:0]    MEM_arid              ,
-    output  wire [7:0]    MEM_arlen             ,
-    output  wire [2:0]    MEM_arsize            ,
-    output  wire [1:0]    MEM_arburst           ,
+    input   wire [0:0]    MEM_arready     ,
+    output  wire [0:0]    MEM_arvalid     ,
+    output  wire [31:0]   MEM_araddr      ,
+    output  wire [3:0]    MEM_arid        ,
+    output  wire [7:0]    MEM_arlen       ,
+    output  wire [2:0]    MEM_arsize      ,
+    output  wire [1:0]    MEM_arburst     ,
              
-    output  wire [0:0]    MEM_rready            ,
-    input   wire [0:0]    MEM_rvalid            ,
-    input   wire [1:0]    MEM_rresp             ,
-    input   wire [63:0]   MEM_rdata             ,
-    input   wire [0:0]    MEM_rlast             ,
-    input   wire [3:0]    MEM_rid               ,
+    output  wire [0:0]    MEM_rready      ,
+    input   wire [0:0]    MEM_rvalid      ,
+    input   wire [1:0]    MEM_rresp       ,
+    input   wire [63:0]   MEM_rdata       ,
+    input   wire [0:0]    MEM_rlast       ,
+    input   wire [3:0]    MEM_rid         ,
        
-    output  wire [5:0]    MEM_sram4_addr        , 
-    output  wire [0:0]    MEM_sram4_cen         , 
-    output  wire [0:0]    MEM_sram4_wen         , 
-    output  wire [127:0]  MEM_sram4_wmask       , 
-    output  wire [127:0]  MEM_sram4_wdata       , 
-    input   wire [127:0]  MEM_sram4_rdata       ,
+    output  wire [5:0]    MEM_sram4_addr  , 
+    output  wire [0:0]    MEM_sram4_cen   , 
+    output  wire [0:0]    MEM_sram4_wen   , 
+    output  wire [127:0]  MEM_sram4_wmask , 
+    output  wire [127:0]  MEM_sram4_wdata , 
+    input   wire [127:0]  MEM_sram4_rdata ,
        
-    output  wire [5:0]    MEM_sram5_addr        , 
-    output  wire [0:0]    MEM_sram5_cen         , 
-    output  wire [0:0]    MEM_sram5_wen         , 
-    output  wire [127:0]  MEM_sram5_wmask       , 
-    output  wire [127:0]  MEM_sram5_wdata       , 
-    input   wire [127:0]  MEM_sram5_rdata       ,
+    output  wire [5:0]    MEM_sram5_addr  , 
+    output  wire [0:0]    MEM_sram5_cen   , 
+    output  wire [0:0]    MEM_sram5_wen   , 
+    output  wire [127:0]  MEM_sram5_wmask , 
+    output  wire [127:0]  MEM_sram5_wdata , 
+    input   wire [127:0]  MEM_sram5_rdata ,
        
-    output  wire [5:0]    MEM_sram6_addr        , 
-    output  wire [0:0]    MEM_sram6_cen         , 
-    output  wire [0:0]    MEM_sram6_wen         , 
-    output  wire [127:0]  MEM_sram6_wmask       , 
-    output  wire [127:0]  MEM_sram6_wdata       , 
-    input   wire [127:0]  MEM_sram6_rdata       ,
+    output  wire [5:0]    MEM_sram6_addr  , 
+    output  wire [0:0]    MEM_sram6_cen   , 
+    output  wire [0:0]    MEM_sram6_wen   , 
+    output  wire [127:0]  MEM_sram6_wmask , 
+    output  wire [127:0]  MEM_sram6_wdata , 
+    input   wire [127:0]  MEM_sram6_rdata ,
        
-    output  wire [5:0]    MEM_sram7_addr        , 
-    output  wire [0:0]    MEM_sram7_cen         , 
-    output  wire [0:0]    MEM_sram7_wen         , 
-    output  wire [127:0]  MEM_sram7_wmask       , 
-    output  wire [127:0]  MEM_sram7_wdata       , 
+    output  wire [5:0]    MEM_sram7_addr  , 
+    output  wire [0:0]    MEM_sram7_cen   , 
+    output  wire [0:0]    MEM_sram7_wen   , 
+    output  wire [127:0]  MEM_sram7_wmask , 
+    output  wire [127:0]  MEM_sram7_wdata , 
     input   wire [127:0]  MEM_sram7_rdata  
 );
 
@@ -414,29 +413,19 @@ always@(*) begin
 end
 
 always@(*) begin
-    if(MEM_valid_in == 1'b1) begin
-        if(MEM_exception_in != `ysyx_041461_exception_NOP) begin
-            MEM_exception_out = MEM_exception_in;
+    if(MEM_valid_in == 1'b1 && MEM_valid_fromCD == 1'b1 && MEM_trap_in == `ysyx_041461_TRAP_NOP && align == 1'b0) begin
+        if(load == 1'b1) begin
+            MEM_trap_out = `ysyx_041461_MEM_LOAD_MISALIGN;
+        end
+        else if(store == 1'b1) begin
+            MEM_trap_out = `ysyx_041461_MEM_STORE_MISALIGN;
         end
         else begin
-            if(align == 1'b0 && MEM_valid_fromCD == 1'b1) begin
-                if(load == 1'b1) begin
-                    MEM_exception_out = `ysyx_041461_MEM_LOAD_MISALIGN;
-                end
-                else if(store == 1'b1) begin
-                    MEM_exception_out = `ysyx_041461_MEM_STORE_MISALIGN;
-                end
-                else begin
-                    MEM_exception_out = MEM_exception_in;
-                end
-            end
-            else begin
-                MEM_exception_out = MEM_exception_in;
-            end
+            MEM_trap_out = MEM_trap_in;
         end
     end
     else begin
-        MEM_exception_out = MEM_exception_in;
+        MEM_trap_out = MEM_trap_in;
     end
 end
 
@@ -1055,39 +1044,43 @@ always@(*) begin
     if(MEM_valid_in == 1'b0 || MEM_valid_fromCD == 1'b0) begin
         MEM_ok = 1'b1;
     end
-    else if(MEM_interrupt_ret_inst == 1'b1 || MEM_exception_out != `ysyx_041461_exception_NOP) begin
-        MEM_ok = 1'b1;
-    end
-    else if(MEM_ctrl == `ysyx_041461_MEM_NOP) begin
-        MEM_ok = 1'b1;
-    end
-    else if(state == `ysyx_041461_FINISH) begin
-        MEM_ok = 1'b1;
-    end
     else begin
-        MEM_ok = 1'b0;
+        if(state == `ysyx_041461_START) begin
+            if(MEM_trap_out != `ysyx_041461_TRAP_NOP || MEM_ctrl == `ysyx_041461_MEM_NOP) begin
+                MEM_ok = 1'b1;
+            end
+            else begin
+                MEM_ok = 1'b0;
+            end
+        end
+        else if(state == `ysyx_041461_FINISH) begin
+            MEM_ok = 1'b1;
+        end
+        else begin
+            MEM_ok = 1'b0;
+        end
     end
 end
 
 always@(*) begin
-    if(MEM_valid_in == 1'b1) begin
-        if(MEM_interrupt_ret_inst == 1'b1 || MEM_exception_out != `ysyx_041461_exception_NOP || MEM_ctrl == `ysyx_041461_MEM_NOP) begin
-            MEM_valid_out = 1'b1;
-        end
-        else if(MEM_valid_fromCD == 1'b1) begin
-            if(state == `ysyx_041461_FINISH) begin
+    if(MEM_valid_in == 1'b0 || MEM_valid_fromCD == 1'b0) begin
+        MEM_valid_out = 1'b0;
+    end
+    else begin
+        if(state == `ysyx_041461_START) begin
+            if(MEM_trap_out != `ysyx_041461_TRAP_NOP || MEM_ctrl == `ysyx_041461_MEM_NOP) begin
                 MEM_valid_out = 1'b1;
             end
             else begin
                 MEM_valid_out = 1'b0;
             end
         end
+        else if(state == `ysyx_041461_FINISH) begin
+            MEM_valid_out = 1'b1;
+        end
         else begin
             MEM_valid_out = 1'b0;
         end
-    end
-    else begin
-        MEM_valid_out = 1'b0;
     end
 end
 
@@ -1199,7 +1192,7 @@ always@(posedge clk or posedge rst) begin
     else begin
         case(state)
             `ysyx_041461_START: begin
-                if(MEM_valid_in == 1'b1 && MEM_valid_fromCD == 1'b1 && MEM_exception_out == `ysyx_041461_exception_NOP && MEM_interrupt_ret_inst == 1'b0) begin
+                if(MEM_valid_in == 1'b1 && MEM_valid_fromCD == 1'b1 && MEM_trap_out == `ysyx_041461_TRAP_NOP) begin
                     if(load == 1'b1) begin
                         if(uncached == 1'b1) begin
                             state <= `ysyx_041461_RAXI_AR;

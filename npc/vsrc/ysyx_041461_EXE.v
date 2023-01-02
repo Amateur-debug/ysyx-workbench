@@ -1,17 +1,18 @@
 module ysyx_041461_EXE(
 
-input  wire   [0:0]  EXE_valid_in ,
-input  wire   [63:0] EXE_rs1_data ,
-input  wire   [63:0] EXE_rs2_data ,
-input  wire   [63:0] EXE_csr_data ,
-input  wire   [63:0] EXE_imm      ,
-input  wire   [63:0] EXE_zimm     ,
-input  wire   [63:0] EXE_pc       ,
-input  wire   [4:0]  EXE_ctrl     ,
-input  wire   [2:0]  EXE_src      ,
- 
-output reg    [63:0] EXE_out      ,
-output wire   [0:0]  EXE_valid_out
+    input  wire   [0:0]  EXE_valid_in ,
+    input  wire   [3:0]  EXE_trap_in  ,
+    input  wire   [63:0] EXE_rs1_data ,
+    input  wire   [63:0] EXE_rs2_data ,
+    input  wire   [63:0] EXE_csr_data ,
+    input  wire   [63:0] EXE_imm      ,
+    input  wire   [63:0] EXE_zimm     ,
+    input  wire   [63:0] EXE_pc       ,
+    input  wire   [4:0]  EXE_ctrl     ,
+    input  wire   [2:0]  EXE_src      ,
+    
+    output reg    [63:0] EXE_out      ,
+    output wire   [0:0]  EXE_valid_out
 
 );
 
@@ -27,7 +28,7 @@ always@(*) begin
         src1 = 64'b0;
         src2 = 64'b0;
     end
-    if(EXE_ctrl == `ysyx_041461_EXE_NOP) begin
+    else if(EXE_ctrl == `ysyx_041461_EXE_NOP) begin
         src1 = 64'b0;
         src2 = 64'b0;
     end
@@ -70,7 +71,7 @@ always@(*) begin
 end
 
 always@(*) begin
-    if(EXE_valid_in == 1'b0) begin
+    if(EXE_valid_in == 1'b0 || EXE_trap_in != `ysyx_041461_TRAP_NOP) begin
         middle = 128'b0;
         EXE_out = 64'b0;
     end

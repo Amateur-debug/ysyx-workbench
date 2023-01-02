@@ -1,20 +1,18 @@
 module ysyx_041461_ID_reg(
 
-    input   wire [0:0]   clk                         ,
-    input   wire [0:0]   rst                         ,
-    input   wire [0:0]   IDreg_enable                ,
+    input   wire [0:0]   clk               ,
+    input   wire [0:0]   rst               ,
+    input   wire [0:0]   IDreg_enable      ,
         
-    input   wire [0:0]   IDreg_valid_fromIF          ,
-    input   wire [0:0]   IDreg_valid_fromCD          ,
-    input   wire [2:0]   IDreg_exception_in          ,
-    input   wire [0:0]   IDreg_interrupt_ret_inst_in ,
-    input   wire [31:0]  IDreg_inst_in               ,
-    input   wire [63:0]  IDreg_pc_in                 ,
+    input   wire [0:0]   IDreg_valid_fromIF,
+    input   wire [0:0]   IDreg_valid_fromCD,
+    input   wire [3:0]   IDreg_trap_in     ,
+    input   wire [31:0]  IDreg_inst_in     ,
+    input   wire [63:0]  IDreg_pc_in       ,
 
-    output  reg  [2:0]   IDreg_exception_out         ,
-    output  reg  [0:0]   IDreg_interrupt_ret_inst_out,
-    output  reg  [0:0]   IDreg_valid_out             ,  
-    output  reg  [31:0]  IDreg_inst_out              ,   
+    output  reg  [0:0]   IDreg_valid_out   ,  
+    output  reg  [3:0]   IDreg_trap_out    ,
+    output  reg  [31:0]  IDreg_inst_out    ,   
     output  reg  [63:0]  IDreg_pc_out      
 );
 
@@ -37,20 +35,17 @@ end
 
 always@(posedge clk or posedge rst) begin
     if(rst == 1'b1) begin
-        IDreg_interrupt_ret_inst_out <= 1'b0;
-        IDreg_exception_out <= `ysyx_041461_exception_NOP;
+        IDreg_trap_out <= `ysyx_041461_TRAP_NOP;
         IDreg_inst_out <= 32'b0;
         IDreg_pc_out <= 64'h0000_0000_3000_0000;
     end
     else if(IDreg_enable == 1'b0) begin
-        IDreg_interrupt_ret_inst_out <= IDreg_interrupt_ret_inst_out;
-        IDreg_exception_out <= IDreg_exception_out;
+        IDreg_trap_out <= IDreg_trap_out;
         IDreg_inst_out <= IDreg_inst_out;
         IDreg_pc_out <= IDreg_pc_out;
     end
     else begin
-        IDreg_interrupt_ret_inst_out <= IDreg_interrupt_ret_inst_in;
-        IDreg_exception_out <= IDreg_exception_in;
+        IDreg_trap_out <= IDreg_trap_in;
         IDreg_inst_out <= IDreg_inst_in;
         IDreg_pc_out <= IDreg_pc_in;
     end

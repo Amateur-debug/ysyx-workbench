@@ -136,8 +136,7 @@ wire [0:0]  CD_WBreg_valid   ;
 
 wire [63:0] IFreg_pc       ;
 
-wire [0:0]  IF_interrupt_ret_inst;
-wire [2:0]  IF_exception_out     ;
+wire [3:0]  IF_trap_out     ;
 wire [0:0]  IF_ok;
 wire [0:0]  IF_valid_out;
 wire [31:0] IF_inst;
@@ -149,8 +148,7 @@ wire [2:0]  IF_arsize ;
 wire [1:0]  IF_arburst;
 wire [0:0]  IF_rready ;
 
-wire [2:0]  IDreg_exception_out         ;
-wire [0:0]  IDreg_interrupt_ret_inst_out;
+wire [3:0]  IDreg_trap_out         ;
 wire [0:0]  IDreg_valid_out ;  
 wire [31:0] IDreg_inst_out  ;  
 wire [63:0] IDreg_pc_out    ;  
@@ -170,11 +168,10 @@ wire [4:0]  ID_EXE_ctrl ;
 wire [2:0]  ID_EXE_src  ;
 wire [3:0]  ID_MEM_ctrl ;
 wire [2:0]  ID_WB_ctrl  ;
-wire [2:0]  ID_exception_out;  
+wire [3:0]  ID_trap_out;  
 
 wire [0:0]  EXEreg_valid_out   ;
-wire [0:0]  EXEreg_interrupt_ret_inst_out;
-wire [2:0]  EXEreg_exception_out         ;
+wire [3:0]  EXEreg_trap_out         ;
 wire [4:0]  EXEreg_rd_out      ;
 wire [4:0]  EXEreg_rs1_out     ;
 wire [4:0]  EXEreg_rs2_out     ;
@@ -190,8 +187,7 @@ wire [2:0]  EXEreg_WB_ctrl_out ;
 wire [63:0] EXE_out            ;
 wire [0:0]  EXE_valid_out      ;
 
-reg  [2:0]  MEMreg_exception_out         ;
-reg  [0:0]  MEMreg_interrupt_ret_inst_out;
+reg  [3:0]  MEMreg_trap_out         ;
 wire [0:0]  MEMreg_valid_out   ;
 wire [63:0] MEMreg_EXE_out     ;
 wire [4:0]  MEMreg_rd_out      ;
@@ -207,7 +203,7 @@ wire [2:0]  MEMreg_WB_ctrl_out ;
 wire [0:0]  MEM_valid_out;
 wire [0:0]  MEM_ok       ;
 wire [63:0] MEM_out      ;
-wire [2:0]  MEM_exception_out;
+wire [3:0]  MEM_trap_out;
 wire [0:0]  MEM_awvalid  ;
 wire [31:0] MEM_awaddr   ;
 wire [3:0]  MEM_awid     ;
@@ -228,8 +224,7 @@ wire [1:0]  MEM_arburst  ;
 wire [0:0]  MEM_rready   ;
 
 wire [0:0]  WBreg_valid_out  ;
-wire [2:0]  WBreg_exception_out         ;
-wire [0:0]  WBreg_interrupt_ret_inst_out;
+wire [3:0]  WBreg_trap_out         ;
 wire [63:0] WBreg_EXE_out    ;
 wire [63:0] WBreg_MEM_out    ;
 wire [4:0]  WBreg_rd_out     ;
@@ -350,8 +345,7 @@ ysyx_041461_IF IF(
     .IF_mie                (WB_IF_mie    ),
     .IF_mip                (WB_IF_mip    ),
   
-    .IF_interrupt_ret_inst (IF_interrupt_ret_inst),
-    .IF_exception_out      (IF_exception_out),
+    .IF_trap_out           (IF_trap_out),
     .IF_valid_out          (IF_valid_out),
     .IF_ok                 (IF_ok),
     .IF_inst               (IF_inst),
@@ -409,13 +403,11 @@ ysyx_041461_ID_reg ID_reg(
         
     .IDreg_valid_fromIF           (IF_valid_out   ),
     .IDreg_valid_fromCD           (CD_IDreg_valid ),
-    .IDreg_exception_in           (IF_exception_out),
-    .IDreg_interrupt_ret_inst_in  (IF_interrupt_ret_inst),
+    .IDreg_trap_in                (IF_trap_out),
     .IDreg_inst_in                (IF_inst        ),
     .IDreg_pc_in                  (IFreg_pc       ),
 
-    .IDreg_exception_out          (IDreg_exception_out),
-    .IDreg_interrupt_ret_inst_out (IDreg_interrupt_ret_inst_out),
+    .IDreg_trap_out               (IDreg_trap_out),
     .IDreg_valid_out              (IDreg_valid_out),  
     .IDreg_inst_out               (IDreg_inst_out ),   
     .IDreg_pc_out                 (IDreg_pc_out   )
@@ -428,8 +420,7 @@ ysyx_041461_ID ID(
     .ID_pc                 (IDreg_pc_out   ),
     .ID_rs1_data           (WB_ID_rs1_data ),
     .ID_rs2_data           (WB_ID_rs2_data ),
-    .ID_exception_in       (IDreg_exception_out),
-    .ID_interrupt_ret_inst (IDreg_interrupt_ret_inst_out),
+    .ID_trap_in            (IDreg_trap_out),
 
     .ID_rd                 (ID_rd          ),
     .ID_rs1                (ID_rs1         ),
@@ -446,7 +437,7 @@ ysyx_041461_ID ID(
     .ID_EXE_src            (ID_EXE_src     ),
     .ID_MEM_ctrl           (ID_MEM_ctrl    ),   
     .ID_WB_ctrl            (ID_WB_ctrl     ),
-    .ID_exception_out      (ID_exception_out)
+    .ID_trap_out           (ID_trap_out)
 );  
 
 
@@ -459,8 +450,7 @@ ysyx_041461_EXE_reg EXE_reg(
     .EXEreg_valid_fromCD           (CD_EXEreg_valid    ),
     .EXEreg_valid_fromID           (ID_valid_out       ),
 
-    .EXEreg_interrupt_ret_inst_in  (IDreg_interrupt_ret_inst_out),
-    .EXEreg_exception_in           (ID_exception_out),
+    .EXEreg_trap_in                (ID_trap_out),
     .EXEreg_rd_in                  (ID_rd              ),
     .EXEreg_rs1_in                 (ID_rs1             ),
     .EXEreg_rs2_in                 (ID_rs2             ),
@@ -474,8 +464,7 @@ ysyx_041461_EXE_reg EXE_reg(
     .EXEreg_WB_ctrl_in             (ID_WB_ctrl         ),
     
     .EXEreg_valid_out              (EXEreg_valid_out   ),
-    .EXEreg_interrupt_ret_inst_out (EXEreg_interrupt_ret_inst_out),
-    .EXEreg_exception_out          (EXEreg_exception_out),
+    .EXEreg_trap_out               (EXEreg_trap_out    ),
     .EXEreg_rd_out                 (EXEreg_rd_out      ),
     .EXEreg_rs1_out                (EXEreg_rs1_out     ),
     .EXEreg_rs2_out                (EXEreg_rs2_out     ),
@@ -492,6 +481,7 @@ ysyx_041461_EXE_reg EXE_reg(
 ysyx_041461_EXE EXE(
 
     .EXE_valid_in  (EXEreg_valid_out   ),
+    .EXE_trap_in   (EXEreg_trap_out    ),
     .EXE_rs1_data  (WB_EXE_rs1_data    ),
     .EXE_rs2_data  (WB_EXE_rs2_data    ),
     .EXE_csr_data  (WB_EXE_csr_data    ),
@@ -515,8 +505,7 @@ ysyx_041461_MEM_reg MEM_reg(
     .MEMreg_valid_fromEXE          (EXE_valid_out      ),
     .MEMreg_valid_fromCD           (CD_MEMreg_valid    ),
 
-    .MEMreg_exception_in           (EXEreg_exception_out),
-    .MEMreg_interrupt_ret_inst_in  (EXEreg_interrupt_ret_inst_out),
+    .MEMreg_trap_in                (EXEreg_trap_out    ),
     .MEMreg_EXE_in                 (EXE_out            ),
     .MEMreg_rd_in                  (EXEreg_rd_out      ),
     .MEMreg_rs1_in                 (EXEreg_rs1_out     ),
@@ -528,9 +517,8 @@ ysyx_041461_MEM_reg MEM_reg(
     .MEMreg_MEM_ctrl_in            (EXEreg_MEM_ctrl_out),
     .MEMreg_WB_ctrl_in             (EXEreg_WB_ctrl_out ),
   
-    .MEMreg_exception_out          (MEMreg_exception_out         ), 
-    .MEMreg_interrupt_ret_inst_out (MEMreg_interrupt_ret_inst_out),
-    .MEMreg_valid_out              (MEMreg_valid_out   ),  
+    .MEMreg_valid_out              (MEMreg_valid_out   ),
+    .MEMreg_trap_out               (MEMreg_trap_out    ), 
     .MEMreg_EXE_out                (MEMreg_EXE_out     ),
     .MEMreg_rd_out                 (MEMreg_rd_out      ),
     .MEMreg_rs1_out                (MEMreg_rs1_out     ),
@@ -545,165 +533,161 @@ ysyx_041461_MEM_reg MEM_reg(
 
 ysyx_041461_MEM MEM(
 
-    .clk                    (clock                         ),
-    .rst                    (rst_sync                      ),
+    .clk                    (clock                   ),
+    .rst                    (rst_sync                ),
 
-    .MEM_valid_in           (MEMreg_valid_out              ),
-    .MEM_valid_fromCD       (CD_MEM_valid                  ),
-    .MEM_EXE_in             (MEMreg_EXE_out                ),
-    .MEM_rs2_data           (WB_MEM_rs2_data               ),
-    .MEM_ctrl               (MEMreg_MEM_ctrl_out           ),  
-    .MEM_exception_in       (MEMreg_exception_out          ), 
-    .MEM_interrupt_ret_inst (MEMreg_interrupt_ret_inst_out),
+    .MEM_valid_in           (MEMreg_valid_out        ),
+    .MEM_valid_fromCD       (CD_MEM_valid            ),
+    .MEM_EXE_in             (MEMreg_EXE_out          ),
+    .MEM_rs2_data           (WB_MEM_rs2_data         ),
+    .MEM_ctrl               (MEMreg_MEM_ctrl_out     ),  
+    .MEM_trap_in            (MEMreg_trap_out         ), 
 
-    .MEM_valid_out          (MEM_valid_out),
-    .MEM_ok                 (MEM_ok),
-    .MEM_out                (MEM_out),
-    .MEM_exception_out      (MEM_exception_out),
+    .MEM_valid_out          (MEM_valid_out           ),
+    .MEM_ok                 (MEM_ok                  ),
+    .MEM_out                (MEM_out                 ),
+    .MEM_trap_out           (MEM_trap_out            ),
 
     .MEM_awready            (AXI_Crossbar_MEM_awready),
-    .MEM_awvalid            (MEM_awvalid),
-    .MEM_awaddr             (MEM_awaddr ),
-    .MEM_awid               (MEM_awid   ),
-    .MEM_awlen              (MEM_awlen  ),
-    .MEM_awsize             (MEM_awsize ),
-    .MEM_awburst            (MEM_awburst),
+    .MEM_awvalid            (MEM_awvalid             ),
+    .MEM_awaddr             (MEM_awaddr              ),
+    .MEM_awid               (MEM_awid                ),
+    .MEM_awlen              (MEM_awlen               ),
+    .MEM_awsize             (MEM_awsize              ),
+    .MEM_awburst            (MEM_awburst             ),
         
-    .MEM_wready             (AXI_Crossbar_MEM_wready),
-    .MEM_wvalid             (MEM_wvalid),
-    .MEM_wdata              (MEM_wdata ),
-    .MEM_wstrb              (MEM_wstrb ),
-    .MEM_wlast              (MEM_wlast ),
+    .MEM_wready             (AXI_Crossbar_MEM_wready ),
+    .MEM_wvalid             (MEM_wvalid              ),
+    .MEM_wdata              (MEM_wdata               ),
+    .MEM_wstrb              (MEM_wstrb               ),
+    .MEM_wlast              (MEM_wlast               ),
         
-    .MEM_bready             (MEM_bready ),
-    .MEM_bvalid             (AXI_Crossbar_MEM_bvalid),
-    .MEM_bresp              (AXI_Crossbar_MEM_bresp ),
-    .MEM_bid                (AXI_Crossbar_MEM_bid   ),
+    .MEM_bready             (MEM_bready              ),
+    .MEM_bvalid             (AXI_Crossbar_MEM_bvalid ),
+    .MEM_bresp              (AXI_Crossbar_MEM_bresp  ),
+    .MEM_bid                (AXI_Crossbar_MEM_bid    ),
         
     .MEM_arready            (AXI_Crossbar_MEM_arready),
-    .MEM_arvalid            (MEM_arvalid),
-    .MEM_araddr             (MEM_araddr ),
-    .MEM_arid               (MEM_arid   ),
-    .MEM_arlen              (MEM_arlen  ),
-    .MEM_arsize             (MEM_arsize ),
-    .MEM_arburst            (MEM_arburst),
+    .MEM_arvalid            (MEM_arvalid             ),
+    .MEM_araddr             (MEM_araddr              ),
+    .MEM_arid               (MEM_arid                ),
+    .MEM_arlen              (MEM_arlen               ),
+    .MEM_arsize             (MEM_arsize              ),
+    .MEM_arburst            (MEM_arburst             ),
         
     .MEM_rready             (MEM_rready),
-    .MEM_rvalid             (AXI_Crossbar_MEM_rvalid),
-    .MEM_rresp              (AXI_Crossbar_MEM_rresp ),
-    .MEM_rdata              (AXI_Crossbar_MEM_rdata ),
-    .MEM_rlast              (AXI_Crossbar_MEM_rlast ),
-    .MEM_rid                (AXI_Crossbar_MEM_rid   ),
+    .MEM_rvalid             (AXI_Crossbar_MEM_rvalid ),
+    .MEM_rresp              (AXI_Crossbar_MEM_rresp  ),
+    .MEM_rdata              (AXI_Crossbar_MEM_rdata  ),
+    .MEM_rlast              (AXI_Crossbar_MEM_rlast  ),
+    .MEM_rid                (AXI_Crossbar_MEM_rid    ),
         
-    .MEM_sram4_addr         (io_sram4_addr  ), 
-    .MEM_sram4_cen          (io_sram4_cen   ), 
-    .MEM_sram4_wen          (io_sram4_wen   ), 
-    .MEM_sram4_wmask        (io_sram4_wmask ), 
-    .MEM_sram4_wdata        (io_sram4_wdata ), 
-    .MEM_sram4_rdata        (io_sram4_rdata ),
+    .MEM_sram4_addr         (io_sram4_addr           ), 
+    .MEM_sram4_cen          (io_sram4_cen            ), 
+    .MEM_sram4_wen          (io_sram4_wen            ), 
+    .MEM_sram4_wmask        (io_sram4_wmask          ), 
+    .MEM_sram4_wdata        (io_sram4_wdata          ), 
+    .MEM_sram4_rdata        (io_sram4_rdata          ),
         
-    .MEM_sram5_addr         (io_sram5_addr  ), 
-    .MEM_sram5_cen          (io_sram5_cen   ), 
-    .MEM_sram5_wen          (io_sram5_wen   ), 
-    .MEM_sram5_wmask        (io_sram5_wmask ), 
-    .MEM_sram5_wdata        (io_sram5_wdata ), 
-    .MEM_sram5_rdata        (io_sram5_rdata ),
+    .MEM_sram5_addr         (io_sram5_addr           ), 
+    .MEM_sram5_cen          (io_sram5_cen            ), 
+    .MEM_sram5_wen          (io_sram5_wen            ), 
+    .MEM_sram5_wmask        (io_sram5_wmask          ), 
+    .MEM_sram5_wdata        (io_sram5_wdata          ), 
+    .MEM_sram5_rdata        (io_sram5_rdata          ),
         
-    .MEM_sram6_addr         (io_sram6_addr  ), 
-    .MEM_sram6_cen          (io_sram6_cen   ), 
-    .MEM_sram6_wen          (io_sram6_wen   ), 
-    .MEM_sram6_wmask        (io_sram6_wmask ), 
-    .MEM_sram6_wdata        (io_sram6_wdata ), 
-    .MEM_sram6_rdata        (io_sram6_rdata ),
+    .MEM_sram6_addr         (io_sram6_addr           ), 
+    .MEM_sram6_cen          (io_sram6_cen            ), 
+    .MEM_sram6_wen          (io_sram6_wen            ), 
+    .MEM_sram6_wmask        (io_sram6_wmask          ), 
+    .MEM_sram6_wdata        (io_sram6_wdata          ), 
+    .MEM_sram6_rdata        (io_sram6_rdata          ),
         
-    .MEM_sram7_addr         (io_sram7_addr  ), 
-    .MEM_sram7_cen          (io_sram7_cen   ), 
-    .MEM_sram7_wen          (io_sram7_wen   ), 
-    .MEM_sram7_wmask        (io_sram7_wmask ), 
-    .MEM_sram7_wdata        (io_sram7_wdata ), 
-    .MEM_sram7_rdata        (io_sram7_rdata )
+    .MEM_sram7_addr         (io_sram7_addr           ), 
+    .MEM_sram7_cen          (io_sram7_cen            ), 
+    .MEM_sram7_wen          (io_sram7_wen            ), 
+    .MEM_sram7_wmask        (io_sram7_wmask          ), 
+    .MEM_sram7_wdata        (io_sram7_wdata          ), 
+    .MEM_sram7_rdata        (io_sram7_rdata          )
 );
 
 ysyx_041461_WB_reg WB_reg(
 
-    .clk                           (clock                        ),
-    .rst                           (rst_sync                     ),
-    .WBreg_enable                  (1'b1                         ),
+    .clk                           (clock             ),
+    .rst                           (rst_sync          ),
+    .WBreg_enable                  (1'b1              ),
            
-    .WBreg_valid_fromMEM           (MEM_valid_out                ),
-    .WBreg_valid_fromCD            (CD_WBreg_valid               ),
+    .WBreg_valid_fromMEM           (MEM_valid_out     ),
+    .WBreg_valid_fromCD            (CD_WBreg_valid    ),
 
-    .WBreg_exception_in            (MEM_exception_out            ),
-    .WBreg_interrupt_ret_inst_in   (MEMreg_interrupt_ret_inst_out),
-    .WBreg_EXE_in                  (MEMreg_EXE_out               ),
-    .WBreg_MEM_in                  (MEM_out                      ),
-    .WBreg_rd_in                   (MEMreg_rd_out                ),
-    .WBreg_rs1_in                  (MEMreg_rs1_out               ),
-    .WBreg_csr_in                  (MEMreg_csr_out               ),
-    .WBreg_imm_in                  (MEMreg_imm_out               ),
-    .WBreg_zimm_in                 (MEMreg_zimm_out              ),
-    .WBreg_pc_in                   (MEMreg_pc_out                ),
-    .WBreg_WB_ctrl_in              (MEMreg_WB_ctrl_out           ),
+    .WBreg_trap_in                 (MEM_trap_out      ),
+    .WBreg_EXE_in                  (MEMreg_EXE_out    ),
+    .WBreg_MEM_in                  (MEM_out           ),
+    .WBreg_rd_in                   (MEMreg_rd_out     ),
+    .WBreg_rs1_in                  (MEMreg_rs1_out    ),
+    .WBreg_csr_in                  (MEMreg_csr_out    ),
+    .WBreg_imm_in                  (MEMreg_imm_out    ),
+    .WBreg_zimm_in                 (MEMreg_zimm_out   ),
+    .WBreg_pc_in                   (MEMreg_pc_out     ),
+    .WBreg_WB_ctrl_in              (MEMreg_WB_ctrl_out),
   
-    .WBreg_valid_out               (WBreg_valid_out              ), 
-    .WBreg_exception_out           (WBreg_exception_out          ),
-    .WBreg_interrupt_ret_inst_out  (WBreg_interrupt_ret_inst_out ),
-    .WBreg_EXE_out                 (WBreg_EXE_out                ),
-    .WBreg_MEM_out                 (WBreg_MEM_out                ),
-    .WBreg_rd_out                  (WBreg_rd_out                 ),
-    .WBreg_rs1_out                 (WBreg_rs1_out                ),
-    .WBreg_csr_out                 (WBreg_csr_out                ),
-    .WBreg_imm_out                 (WBreg_imm_out                ),
-    .WBreg_zimm_out                (WBreg_zimm_out               ),
-    .WBreg_pc_out                  (WBreg_pc_out                 ),
-    .WBreg_WB_ctrl_out             (WBreg_WB_ctrl_out            )
+    .WBreg_valid_out               (WBreg_valid_out   ), 
+    .WBreg_trap_out                (WBreg_trap_out    ),
+    .WBreg_EXE_out                 (WBreg_EXE_out     ),
+    .WBreg_MEM_out                 (WBreg_MEM_out     ),
+    .WBreg_rd_out                  (WBreg_rd_out      ),
+    .WBreg_rs1_out                 (WBreg_rs1_out     ),
+    .WBreg_csr_out                 (WBreg_csr_out     ),
+    .WBreg_imm_out                 (WBreg_imm_out     ),
+    .WBreg_zimm_out                (WBreg_zimm_out    ),
+    .WBreg_pc_out                  (WBreg_pc_out      ),
+    .WBreg_WB_ctrl_out             (WBreg_WB_ctrl_out )
 );
 
 
 ysyx_041461_WB WB(
 
-    .clk                   (clock                       ),
-    .rst                   (rst_sync                    ),
-    .WB_valid              (WBreg_valid_out             ),
+    .clk                   (clock            ),
+    .rst                   (rst_sync         ),
+    .WB_valid              (WBreg_valid_out  ),
             
-    .WB_ID_rs1             (ID_rs1                      ),
-    .WB_ID_rs2             (ID_rs2                      ),
+    .WB_ID_rs1             (ID_rs1           ),
+    .WB_ID_rs2             (ID_rs2           ),
             
-    .WB_EXE_rs1            (EXEreg_rs1_out              ),
-    .WB_EXE_rs2            (EXEreg_rs2_out              ),
-    .WB_EXE_csr            (EXEreg_csr_out              ),
+    .WB_EXE_rs1            (EXEreg_rs1_out   ),
+    .WB_EXE_rs2            (EXEreg_rs2_out   ),
+    .WB_EXE_csr            (EXEreg_csr_out   ),
             
-    .WB_MEM_rs2            (MEMreg_rs2_out              ),
+    .WB_MEM_rs2            (MEMreg_rs2_out   ),
             
-    .WB_EXE_in             (WBreg_EXE_out               ),
-    .WB_MEM_in             (WBreg_MEM_out               ),
-    .WB_rd                 (WBreg_rd_out                ),
-    .WB_rs1                (WBreg_rs1_out               ),
-    .WB_csr                (WBreg_csr_out               ),
-    .WB_imm                (WBreg_imm_out               ),
-    .WB_zimm               (WBreg_zimm_out              ),
-    .WB_pc                 (WBreg_pc_out                ),
-    .WB_ctrl               (WBreg_WB_ctrl_out           ),
-    .WB_exception          (WBreg_exception_out         ),
-    .WB_interrupt          (time_interrupt              ),
-    .WB_interrupt_ret_inst (WBreg_interrupt_ret_inst_out),
+    .WB_EXE_in             (WBreg_EXE_out    ),
+    .WB_MEM_in             (WBreg_MEM_out    ),
+    .WB_rd                 (WBreg_rd_out     ),
+    .WB_rs1                (WBreg_rs1_out    ),
+    .WB_csr                (WBreg_csr_out    ),
+    .WB_imm                (WBreg_imm_out    ),
+    .WB_zimm               (WBreg_zimm_out   ),
+    .WB_pc                 (WBreg_pc_out     ),
+    .WB_ctrl               (WBreg_WB_ctrl_out),
+    .WB_trap               (WBreg_trap_out   ),
+    .WB_interrupt          (time_interrupt   ),
 
-    .WB_IFreg_mtvec        (WB_IFreg_mtvec              ),
-    .WB_IFreg_mepc         (WB_IFreg_mepc               ),
-    .WB_IFreg_ctrl         (WB_IFreg_ctrl               ),
+    .WB_IFreg_mtvec        (WB_IFreg_mtvec   ),
+    .WB_IFreg_mepc         (WB_IFreg_mepc    ),
+    .WB_IFreg_ctrl         (WB_IFreg_ctrl    ),
 
-    .WB_IF_mstatus         (WB_IF_mstatus               ),
-    .WB_IF_mie             (WB_IF_mie                   ),
-    .WB_IF_mip             (WB_IF_mip                   ),
+    .WB_IF_mstatus         (WB_IF_mstatus    ),
+    .WB_IF_mie             (WB_IF_mie        ),
+    .WB_IF_mip             (WB_IF_mip        ),
 
-    .WB_ID_rs1_data        (WB_ID_rs1_data              ),
-    .WB_ID_rs2_data        (WB_ID_rs2_data              ),
+    .WB_ID_rs1_data        (WB_ID_rs1_data   ),
+    .WB_ID_rs2_data        (WB_ID_rs2_data   ),
 
-    .WB_EXE_rs1_data       (WB_EXE_rs1_data             ),
-    .WB_EXE_rs2_data       (WB_EXE_rs2_data             ),
-    .WB_EXE_csr_data       (WB_EXE_csr_data             ),
+    .WB_EXE_rs1_data       (WB_EXE_rs1_data  ),
+    .WB_EXE_rs2_data       (WB_EXE_rs2_data  ),
+    .WB_EXE_csr_data       (WB_EXE_csr_data  ),
 
-    .WB_MEM_rs2_data       (WB_MEM_rs2_data             )
+    .WB_MEM_rs2_data       (WB_MEM_rs2_data  )
 );
 
 
@@ -719,8 +703,7 @@ ysyx_041461_CD CD(
     .CD_ID_valid_in            (IDreg_valid_out    ),
     .CD_ID_rs1                 (ID_rs1             ),
     .CD_ID_rs2                 (ID_rs2             ),
-    .CD_ID_exception           (ID_exception_out   ),
-    .CD_ID_interrupt_ret_inst  (IDreg_interrupt_ret_inst_out),
+    .CD_ID_trap                (ID_trap_out   ),
    
     .CD_EXE_valid_in           (EXEreg_valid_out   ),
     .CD_EXE_ctrl               (EXEreg_EXE_ctrl_out),
@@ -730,10 +713,8 @@ ysyx_041461_CD CD(
     .CD_EXE_rs1                (EXEreg_rs1_out     ),
     .CD_EXE_rs2                (EXEreg_rs2_out     ),
     .CD_EXE_csr                (EXEreg_csr_out     ),
-    .CD_EXE_exception          (EXEreg_exception_out),
-    .CD_EXE_interrupt_ret_inst (EXEreg_interrupt_ret_inst_out),
+    .CD_EXE_trap               (EXEreg_trap_out),
 
-   
     .CD_MEM_valid_in           (MEMreg_valid_out   ),
     .CD_MEM_ok                 (MEM_ok             ),
     .CD_MEM_ctrl               (MEMreg_MEM_ctrl_out),   
@@ -741,15 +722,13 @@ ysyx_041461_CD CD(
     .CD_MEM_rd                 (MEMreg_rd_out      ),
     .CD_MEM_rs2                (MEMreg_rs2_out     ),
     .CD_MEM_csr                (MEMreg_csr_out     ),
-    .CD_MEM_exception          (MEM_exception_out  ),
-    .CD_MEM_interrupt_ret_inst (MEMreg_interrupt_ret_inst_out),
+    .CD_MEM_trap               (MEM_trap_out  ),
     
     .CD_WB_valid_in            (WBreg_valid_out    ),
     .CD_WB_ctrl                (WBreg_WB_ctrl_out  ),
     .CD_WB_rd                  (WBreg_rd_out       ),
     .CD_WB_csr                 (WBreg_csr_out      ),
-    .CD_WB_exception           (WBreg_exception_out),
-    .CD_WB_interrupt_ret_inst  (WBreg_interrupt_ret_inst_out),
+    .CD_WB_trap                (WBreg_trap_out),
 
     .CD_IFreg_enable           (CD_IFreg_enable    ),
     .CD_IF_valid               (CD_IF_valid        ),

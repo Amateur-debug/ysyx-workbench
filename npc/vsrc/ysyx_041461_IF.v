@@ -10,8 +10,7 @@ module ysyx_041461_IF(
     input   wire [63:0]   IF_mie               ,
     input   wire [63:0]   IF_mip               ,
   
-    output  reg  [0:0]    IF_interrupt_ret_inst,
-    output  reg  [2:0]    IF_exception_out     ,
+    output  reg  [3:0]    IF_trap_out          ,
     output  reg  [0:0]    IF_valid_out         ,
     output  reg  [0:0]    IF_ok                ,
     output  reg  [31:0]   IF_inst              ,
@@ -150,36 +149,21 @@ assign mie_MTIE = IF_mie[7:7];
 assign mip_MTIP = IF_mip[7:7];
 assign mstatus_MIE = IF_mstatus[3:3];
 
-always@(*) begin
-    if(IF_valid_fromCD == 1'b1) begin
-        if(IF_pc[1:0] != 2'b00) begin
-            IF_exception_out = `ysyx_041461_IF_MISALIGN;
-        end
-        else begin
-            IF_exception_out = `ysyx_041461_exception_NOP;
-        end
-    end
-    else begin
-        IF_exception_out = `ysyx_041461_exception_NOP;
-    end
-end
 
 always@(*) begin
     if(IF_valid_fromCD == 1'b1) begin
         if(mie_MTIE == 1'b1 && mip_MTIP == 1'b1 && mstatus_MIE == 1'b1) begin
-            if(state == `ysyx_041461_START || state == `ysyx_041461_FINISH) begin
-                IF_interrupt_ret_inst = 1'b1;
-            end
-            else begin
-                IF_interrupt_ret_inst = 1'b0;
-            end
+            IF_trap_out = `ysyx_041461_TIMER_INTERRUPT;
+        end
+        else if(IF_pc[1:0] != 2'b00) begin
+            IF_trap_out = `ysyx_041461_IF_MISALIGN;
         end
         else begin
-            IF_interrupt_ret_inst = 1'b0;
+            IF_trap_out = `ysyx_041461_TRAP_NOP;
         end
     end
     else begin
-        IF_interrupt_ret_inst = 1'b0;
+        IF_trap_out = `ysyx_041461_TRAP_NOP;
     end
 end
 
@@ -547,7 +531,7 @@ always@(*) begin
     end
     else begin
         if(state == `ysyx_041461_START) begin
-            if(IF_exception_out != `ysyx_041461_exception_NOP || IF_interrupt_ret_inst == 1'b1) begin
+            if(IF_trap_out != `ysyx_041461_TRAP_NOP) begin
                 IF_ok = 1'b1;
             end
             else begin
@@ -569,7 +553,7 @@ always@(*) begin
     end
     else begin
         if(state == `ysyx_041461_START) begin
-            if(IF_exception_out != `ysyx_041461_exception_NOP || IF_interrupt_ret_inst == 1'b1) begin
+            if(IF_trap_out != `ysyx_041461_TRAP_NOP) begin
                 IF_valid_out = 1'b1;
             end
             else begin
@@ -671,7 +655,7 @@ always@(posedge clk or posedge rst) begin
     else begin
         case(state)
             `ysyx_041461_START: begin
-                if(IF_exception_out != `ysyx_041461_exception_NOP || IF_interrupt_ret_inst == 1'b1) begin
+                if(IF_trap_out != `ysyx_041461_TRAP_NOP) begin
                     state <= state;
                 end
                 else if(IF_valid_fromCD == 1'b1 && IF_FENCE_I == 1'b0) begin

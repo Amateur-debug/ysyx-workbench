@@ -22,9 +22,8 @@ module ysyx_041461_WB(
     input   wire [63:0]  WB_zimm              ,
     input   wire [63:0]  WB_pc                ,
     input   wire [2:0]   WB_ctrl              ,
-    input   wire [2:0]   WB_exception         ,
+    input   wire [3:0]   WB_trap              ,
     input   wire [0:0]   WB_interrupt         ,
-    input   wire [0:0]   WB_interrupt_ret_inst,
 
     output  wire [63:0]  WB_IFreg_mtvec       ,
     output  wire [63:0]  WB_IFreg_mepc        ,
@@ -113,20 +112,38 @@ end
 
 always@(*) begin
     if(WB_valid == 1'b1) begin
-        if(WB_interrupt_ret_inst == 1'b1) begin
-            WB_IFreg_ctrl = `ysyx_041461_WB_IFreg_ctrl_MTVEC;
-        end
-        else if(WB_exception != `ysyx_041461_exception_NOP) begin
-            if(WB_exception == `ysyx_041461_ID_MRET) begin
-                WB_IFreg_ctrl = `ysyx_041461_WB_IFreg_ctrl_MEPC;
+        case(WB_trap)
+            `ysyx_041461_TRAP_NOP: begin
+                WB_IFreg_ctrl = `ysyx_041461_WB_IFreg_ctrl_NOP;
             end
-            else begin
+            `ysyx_041461_IF_MISALIGN: begin
                 WB_IFreg_ctrl = `ysyx_041461_WB_IFreg_ctrl_MTVEC;
             end
-        end
-        else begin
-            WB_IFreg_ctrl = `ysyx_041461_WB_IFreg_ctrl_NOP;
-        end
+            `ysyx_041461_ID_ECALL: begin
+                WB_IFreg_ctrl = `ysyx_041461_WB_IFreg_ctrl_MTVEC;
+            end
+            `ysyx_041461_ID_MRET: begin
+                WB_IFreg_ctrl = `ysyx_041461_WB_IFreg_ctrl_MEPC;
+            end
+            `ysyx_041461_ID_EBREAK: begin
+                WB_IFreg_ctrl = `ysyx_041461_WB_IFreg_ctrl_MTVEC;
+            end
+            `ysyx_041461_ID_ILLEGAL_INST: begin
+                WB_IFreg_ctrl = `ysyx_041461_WB_IFreg_ctrl_MTVEC;
+            end
+            `ysyx_041461_MEM_LOAD_MISALIGN: begin
+                WB_IFreg_ctrl = `ysyx_041461_WB_IFreg_ctrl_MTVEC;
+            end
+            `ysyx_041461_MEM_STORE_MISALIGN: begin
+                WB_IFreg_ctrl = `ysyx_041461_WB_IFreg_ctrl_MTVEC;
+            end
+            `ysyx_041461_TIMER_INTERRUPT: begin
+                WB_IFreg_ctrl = `ysyx_041461_WB_IFreg_ctrl_MTVEC;
+            end
+            default: begin
+                WB_IFreg_ctrl = `ysyx_041461_WB_IFreg_ctrl_NOP;
+            end
+        endcase
     end
     else begin
         WB_IFreg_ctrl = `ysyx_041461_WB_IFreg_ctrl_NOP;
@@ -148,15 +165,8 @@ always@(*) begin
     mip_next = mip; 
     mhartid_next = mhartid;
     if(WB_valid == 1'b1) begin
-        if(WB_interrupt_ret_inst == 1'b1) begin
-            mepc_next = WB_pc;
-            mcause_next[63:63] = 1'b1;
-            mcause_next[62:0] = 63'd7;
-            mstatus_next[3:3] = 1'b0;
-            mstatus_next[7:7] = mstatus[3:3];
-        end
-        else if(WB_exception != `ysyx_041461_exception_NOP) begin
-            case(WB_exception)
+        if(WB_trap != `ysyx_041461_TRAP_NOP) begin
+            case(WB_trap)
                 `ysyx_041461_IF_MISALIGN: begin
                     mepc_next = WB_pc;
                     mcause_next = 64'd0;
@@ -194,6 +204,13 @@ always@(*) begin
                 `ysyx_041461_MEM_STORE_MISALIGN: begin
                     mepc_next = WB_pc;
                     mcause_next = 64'd6;
+                    mstatus_next[3:3] = 1'b0;
+                    mstatus_next[7:7] = mstatus[3:3];
+                end
+                `ysyx_041461_TIMER_INTERRUPT: begin
+                    mepc_next = WB_pc;
+                    mcause_next[63:63] = 1'b1;
+                    mcause_next[62:0] = 63'd7;
                     mstatus_next[3:3] = 1'b0;
                     mstatus_next[7:7] = mstatus[3:3];
                 end
