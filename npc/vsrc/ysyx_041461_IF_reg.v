@@ -19,7 +19,7 @@ module ysyx_041461_IF_reg(
 //PC寄存器功能实现
 always@(posedge clk or posedge rst) begin
     if(rst == 1'b1) begin
-        IFreg_pc <= 64'h0000_0000_3000_0000;
+        IFreg_pc <= 64'h0000_0000_8000_0000;
     end
     else if(IFreg_enable == 1'b0) begin
         IFreg_pc <= IFreg_pc;

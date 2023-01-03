@@ -1,5 +1,5 @@
 #include "svdpi.h"
-#include "Vysyx_22041461_CPU__Dpi.h"
+#include "Vysyx_041461_TOP__Dpi.h"
 #include "/home/cxy/ysyx-workbench/npc/include/common.h"
 #include "/home/cxy/ysyx-workbench/npc/include/state.h"
 #include "/home/cxy/ysyx-workbench/npc/include/timer.h"

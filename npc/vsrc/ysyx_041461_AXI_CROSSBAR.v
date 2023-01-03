@@ -256,7 +256,7 @@ always@(posedge clk or posedge rst) begin
     else begin
         case(rstate)
             `ysyx_041461_AXI_CROSSBAR_RSTART: begin
-                if(AXI_CROSSBAR_awvalid == 1'b1) begin
+                if(AXI_CROSSBAR_arvalid == 1'b1) begin
                     rstate <= `ysyx_041461_AXI_CROSSBAR_RFINISH;
                 end
                 else begin
@@ -264,7 +264,7 @@ always@(posedge clk or posedge rst) begin
                 end
             end
             `ysyx_041461_AXI_CROSSBAR_RFINISH: begin
-                if(AXI_CROSSBAR_bready == 1'b1) begin
+                if(AXI_CROSSBAR_rready == 1'b1) begin
                     rstate <= `ysyx_041461_AXI_CROSSBAR_RSTART;
                 end
                 else begin

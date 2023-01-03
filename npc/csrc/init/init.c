@@ -3,9 +3,9 @@
 #include <stdio.h>
 #include <assert.h>
 #include "verilated_vcd_c.h" //可选，如果要导出vcd则需要加上
-#include "Vysyx_22041461_CPU.h"
+#include "Vysyx_041461_TOP.h"
 #include "svdpi.h"
-#include "Vysyx_22041461_CPU__Dpi.h"
+#include "Vysyx_041461_TOP__Dpi.h"
 #include "/home/cxy/ysyx-workbench/npc/include/common.h"
 #include "/home/cxy/ysyx-workbench/npc/include/sdb.h"
 #include "/home/cxy/ysyx-workbench/npc/include/difftest.h"
@@ -48,7 +48,7 @@ void load_img(){
   FILE *p = fopen(STR2(IMG), "rb");
   int size = getFileSize(p);
   if(fread(img, size, 1, p) != 1){
-     assert(0);
+    assert(0);
   }
   fclose(p);
 }
