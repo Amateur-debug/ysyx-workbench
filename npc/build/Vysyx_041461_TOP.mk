@@ -2,9 +2,9 @@
 # DESCRIPTION: Verilator output: Makefile for building Verilated archive or executable
 #
 # Execute this makefile from the object directory:
-#    make -f Vysyx_22041461_CPU.mk
+#    make -f Vysyx_041461_TOP.mk
 
-default: Vysyx_22041461_CPU
+default: Vysyx_041461_TOP
 
 ### Constants...
 # Perl executable (from $PERL)
@@ -30,9 +30,9 @@ VM_SC_TARGET_ARCH = linux
 
 ### Vars...
 # Design prefix (from --prefix)
-VM_PREFIX = Vysyx_22041461_CPU
+VM_PREFIX = Vysyx_041461_TOP
 # Module prefix (from --prefix)
-VM_MODPREFIX = Vysyx_22041461_CPU
+VM_MODPREFIX = Vysyx_041461_TOP
 # User CFLAGS (from -CFLAGS on Verilator command line)
 VM_USER_CFLAGS = \
 	-include \
@@ -40,7 +40,6 @@ VM_USER_CFLAGS = \
 	-fPIC \
 	-I \
 	/home/cxy/ysyx-workbench/npc/include \
-	-DIMG=/home/cxy/ysyx-workbench/nanos-lite/build/nanos-lite-riscv64-npc.bin \
 
 # User LDLIBS (from -LDFLAGS on Verilator command line)
 VM_USER_LDLIBS = \
@@ -62,7 +61,7 @@ VM_USER_CLASSES = \
 	vga \
 	difftest \
 	init \
-	pmem \
+	memory \
 	expr \
 	sdb \
 	state \
@@ -82,7 +81,7 @@ VM_USER_DIR = \
 
 ### Default rules...
 # Include list of all generated classes
-include Vysyx_22041461_CPU_classes.mk
+include Vysyx_041461_TOP_classes.mk
 # Include global rules
 include $(VERILATOR_ROOT)/include/verilated.mk
 
@@ -111,7 +110,7 @@ difftest.o: csrc/difftest/difftest.c
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST) -c -o $@ $<
 init.o: csrc/init/init.c
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST) -c -o $@ $<
-pmem.o: csrc/memory/pmem.c
+memory.o: csrc/memory/memory.c
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST) -c -o $@ $<
 expr.o: csrc/monitor/expr.c
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST) -c -o $@ $<
@@ -125,7 +124,7 @@ sim_CPU.o: csrc/sim_CPU.cpp
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST) -c -o $@ $<
 
 ### Link rules... (from --exe)
-Vysyx_22041461_CPU: $(VK_USER_OBJS) $(VK_GLOBAL_OBJS) $(VM_PREFIX)__ALL.a $(VM_HIER_LIBS)
+Vysyx_041461_TOP: $(VK_USER_OBJS) $(VK_GLOBAL_OBJS) $(VM_PREFIX)__ALL.a $(VM_HIER_LIBS)
 	$(LINK) $(LDFLAGS) $^ $(LOADLIBES) $(LDLIBS) $(LIBS) $(SC_LIBS) -o $@
 
 

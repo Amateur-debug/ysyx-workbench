@@ -1,14 +1,15 @@
-`include "/home/cxy/ysyx-workbench/npc/vsrc/ysyx_22041461_macro.v"
+`include "/home/cxy/ysyx-workbench/npc/vsrc/ysyx_041461_macro.v"
 
-module ysyx_22041461_WB_reg(
+module ysyx_041461_WB_reg(
 
     input   wire [0:0]   clk                ,
-    input   wire [0:0]   flush              ,
+    input   wire [0:0]   rst                ,
     input   wire [0:0]   WBreg_enable       ,
-
+         
     input   wire [0:0]   WBreg_valid_fromMEM,
     input   wire [0:0]   WBreg_valid_fromCD ,
-
+         
+    input   wire [3:0]   WBreg_trap_in      ,
     input   wire [63:0]  WBreg_EXE_in       ,
     input   wire [63:0]  WBreg_MEM_in       ,
     input   wire [4:0]   WBreg_rd_in        ,
@@ -17,9 +18,10 @@ module ysyx_22041461_WB_reg(
     input   wire [63:0]  WBreg_imm_in       ,
     input   wire [63:0]  WBreg_zimm_in      ,
     input   wire [63:0]  WBreg_pc_in        ,
-    input   wire [3:0]   WBreg_WB_ctrl_in   ,
-  
+    input   wire [2:0]   WBreg_WB_ctrl_in   ,
+         
     output  reg  [0:0]   WBreg_valid_out    , 
+    output  reg  [3:0]   WBreg_trap_out     ,
     output  reg  [63:0]  WBreg_EXE_out      ,
     output  reg  [63:0]  WBreg_MEM_out      ,
     output  reg  [4:0]   WBreg_rd_out       ,
@@ -28,30 +30,13 @@ module ysyx_22041461_WB_reg(
     output  reg  [63:0]  WBreg_imm_out      ,
     output  reg  [63:0]  WBreg_zimm_out     ,
     output  reg  [63:0]  WBreg_pc_out       ,
-    output  reg  [3:0]   WBreg_WB_ctrl_out  
+    output  reg  [2:0]   WBreg_WB_ctrl_out  
 );
 
-//异步复位同步释放
-reg  [0:0]   rst_r1;
-reg  [0:0]   rst_r2;
-wire [0:0]   rst;
-
-assign rst = rst_r2;
-
-always@(posedge clk or negedge flush) begin
-    if(flush == 1'b0) begin
-        rst_r1 <= 1'b0;
-        rst_r2 <= 1'b0;
-    end
-    else begin
-        rst_r1 <= 1'b1;
-        rst_r2 <= rst_r1;
-    end
-end
 
 //流水线寄存器功能实现
-always@(posedge clk or negedge rst) begin
-    if(rst == 1'b0) begin
+always@(posedge clk or posedge rst) begin
+    if(rst == 1'b1) begin
         WBreg_valid_out <= 1'b0;
     end
     else if(WBreg_enable == 1'b0) begin
@@ -65,8 +50,9 @@ always@(posedge clk or negedge rst) begin
     end
 end
 
-always@(posedge clk or negedge rst) begin
-    if(rst == 1'b0) begin  
+always@(posedge clk or posedge rst) begin
+    if(rst == 1'b1) begin  
+        WBreg_trap_out <= `ysyx_041461_TRAP_NOP;
         WBreg_EXE_out <= 64'b0;
         WBreg_MEM_out <= 64'b0;   
         WBreg_rd_out <= 5'b0;     
@@ -75,9 +61,10 @@ always@(posedge clk or negedge rst) begin
         WBreg_imm_out <= 64'b0;    
         WBreg_zimm_out <= 64'b0;   
         WBreg_pc_out <= 64'b0;     
-        WBreg_WB_ctrl_out <= `WB_NOP;           
+        WBreg_WB_ctrl_out <= `ysyx_041461_WB_NOP;           
     end
     else if(WBreg_enable == 1'b0) begin
+        WBreg_trap_out <= WBreg_trap_out;
         WBreg_EXE_out <= WBreg_EXE_out;
         WBreg_MEM_out <= WBreg_MEM_out;   
         WBreg_rd_out <= WBreg_rd_out;    
@@ -89,6 +76,7 @@ always@(posedge clk or negedge rst) begin
         WBreg_WB_ctrl_out <= WBreg_WB_ctrl_out;  
     end
     else begin 
+        WBreg_trap_out <= WBreg_trap_in;
         WBreg_EXE_out <= WBreg_EXE_in;
         WBreg_MEM_out <= WBreg_MEM_in;   
         WBreg_rd_out <= WBreg_rd_in;  
@@ -102,4 +90,3 @@ always@(posedge clk or negedge rst) begin
 end
 
 endmodule
-

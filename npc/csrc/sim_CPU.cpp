@@ -4,20 +4,20 @@
 #include <assert.h>
 #include <string.h>
 #include "verilated_vcd_c.h" //可选，如果要导出vcd则需要加上
-#include "Vysyx_22041461_CPU.h"
+#include "Vysyx_041461_TOP.h"
 
 #include "svdpi.h"
-#include "Vysyx_22041461_CPU__Dpi.h"
+#include "Vysyx_041461_TOP__Dpi.h"
 
 #include "/home/cxy/ysyx-workbench/npc/include/common.h"
 #include "/home/cxy/ysyx-workbench/npc/include/init.h"
-#include "/home/cxy/ysyx-workbench/npc/include/pmem.h"
+#include "/home/cxy/ysyx-workbench/npc/include/memory.h"
 #include "/home/cxy/ysyx-workbench/npc/include/sdb.h"
 #include "/home/cxy/ysyx-workbench/npc/include/state.h"
 #include "/home/cxy/ysyx-workbench/npc/include/cpu.h"
 #include "/home/cxy/ysyx-workbench/npc/include/difftest.h"
 
-Vysyx_22041461_CPU *top = new Vysyx_22041461_CPU("CPU"); //调用VAccumulator.h里面的IO struct
+Vysyx_041461_TOP *top = new Vysyx_041461_TOP("TOP"); //调用VAccumulator.h里面的IO struct
 VerilatedVcdC* tfp = new VerilatedVcdC; //导出vcd波形需要加此语句
 
 //#define WAVE 1
