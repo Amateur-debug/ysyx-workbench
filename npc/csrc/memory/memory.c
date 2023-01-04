@@ -54,12 +54,16 @@ void pmem_write(uint32_t addr, int len, uint64_t data) {
 }
 
 extern "C" void paddr_read(long long raddr, long long *rdata) {
-  if(raddr == CONFIG_RTC_MMIO || raddr == CONFIG_RTC_MMIO + 4){
-    *rdata = mmio_read(raddr, 4);
+  if(raddr == CONFIG_RTC_MMIO){
+    *rdata = mmio_read(raddr, 8);
+    return;
+  }
+  if(raddr == CONFIG_RTC_MMIO + 4){
+    *rdata = mmio_read(raddr, 4) << 32;
     return;
   }
   if(raddr == CONFIG_I8042_DATA_MMIO){
-    *rdata = mmio_read(raddr, 4);
+    *rdata = mmio_read(raddr & ~0x7ull, 4);
     return;
   }
   if(raddr >= CONFIG_VGA_CTL_MMIO && raddr < CONFIG_VGA_CTL_MMIO + 8){

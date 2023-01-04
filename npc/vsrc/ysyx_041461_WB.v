@@ -2,45 +2,49 @@
 
 module ysyx_041461_WB(
 
-    input   wire [0:0]   clk                  ,
-    input   wire [0:0]   rst                  ,
-    input   wire [0:0]   WB_valid             ,
+    input   wire [0:0]   clk            ,
+    input   wire [0:0]   rst            ,
+    input   wire [0:0]   WB_valid       ,
+
+    input   wire [0:0]   WB_IF_ready    ,
                 
-    input   wire [4:0]   WB_ID_rs1            ,
-    input   wire [4:0]   WB_ID_rs2            ,
+    input   wire [4:0]   WB_ID_rs1      ,
+    input   wire [4:0]   WB_ID_rs2      ,
          
-    input   wire [4:0]   WB_EXE_rs1           ,
-    input   wire [4:0]   WB_EXE_rs2           ,
-    input   wire [11:0]  WB_EXE_csr           ,
+    input   wire [4:0]   WB_EXE_rs1     ,
+    input   wire [4:0]   WB_EXE_rs2     ,
+    input   wire [11:0]  WB_EXE_csr     ,
          
-    input   wire [4:0]   WB_MEM_rs2           ,
+    input   wire [4:0]   WB_MEM_rs2     ,
          
-    input   wire [63:0]  WB_EXE_in            ,
-    input   wire [63:0]  WB_MEM_in            ,
-    input   wire [4:0]   WB_rd                ,
-    input   wire [4:0]   WB_rs1               ,
-    input   wire [11:0]  WB_csr               ,
-    input   wire [63:0]  WB_imm               ,
-    input   wire [63:0]  WB_zimm              ,
-    input   wire [63:0]  WB_pc                ,
-    input   wire [2:0]   WB_ctrl              ,
-    input   wire [3:0]   WB_trap              ,
-    input   wire [0:0]   WB_interrupt         ,
+    input   wire [63:0]  WB_EXE_in      ,
+    input   wire [63:0]  WB_MEM_in      ,
+    input   wire [4:0]   WB_rd          ,
+    input   wire [4:0]   WB_rs1         ,
+    input   wire [11:0]  WB_csr         ,
+    input   wire [63:0]  WB_imm         ,
+    input   wire [63:0]  WB_zimm        ,
+    input   wire [63:0]  WB_pc          ,
+    input   wire [2:0]   WB_ctrl        ,
+    input   wire [3:0]   WB_trap        ,
+    input   wire [0:0]   WB_interrupt   ,
 
-    output  wire [63:0]  WB_IFreg_mtvec       ,
-    output  wire [63:0]  WB_IFreg_mepc        ,
-    output  reg  [1:0]   WB_IFreg_ctrl        ,  
+    output  reg  [0:0]   WB_ready       ,  
 
-    output  wire [63:0]  WB_IF_mstatus        ,
-    output  wire [63:0]  WB_IF_mie            ,
-    output  wire [63:0]  WB_IF_mip            ,  
+    output  wire [63:0]  WB_IFreg_mtvec ,
+    output  wire [63:0]  WB_IFreg_mepc  ,
+    output  reg  [1:0]   WB_IFreg_ctrl  ,  
+
+    output  wire [63:0]  WB_IF_mstatus  ,
+    output  wire [63:0]  WB_IF_mie      ,
+    output  wire [63:0]  WB_IF_mip      ,  
         
-    output  wire [63:0]  WB_ID_rs1_data       ,
-    output  wire [63:0]  WB_ID_rs2_data       ,
+    output  wire [63:0]  WB_ID_rs1_data ,
+    output  wire [63:0]  WB_ID_rs2_data ,
         
-    output  wire [63:0]  WB_EXE_rs1_data      ,
-    output  wire [63:0]  WB_EXE_rs2_data      ,
-    output  reg  [63:0]  WB_EXE_csr_data      ,
+    output  wire [63:0]  WB_EXE_rs1_data,
+    output  wire [63:0]  WB_EXE_rs2_data,
+    output  reg  [63:0]  WB_EXE_csr_data,
 
     output  wire [63:0]  WB_MEM_rs2_data
 );
@@ -70,7 +74,6 @@ reg [63:0] mip_next;
 reg [63:0] mhartid;  //0xf14
 reg [63:0] mhartid_next; 
 
-
 integer i;
 integer j;
 
@@ -89,6 +92,12 @@ assign WB_EXE_rs2_data = x[WB_EXE_rs2];
 
 assign WB_MEM_rs2_data = x[WB_MEM_rs2];
 
+always@(*) begin
+    WB_ready = 1'b1;
+    if(WB_valid == 1'b1 && WB_trap != `ysyx_041461_TRAP_NOP && WB_IF_ready == 1'b0) begin
+        WB_ready = 1'b0;
+    end
+end
 
 always@(*) begin
     case(WB_EXE_csr)

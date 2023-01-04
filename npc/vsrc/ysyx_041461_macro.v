@@ -109,12 +109,12 @@
 `define ysyx_041461_EBREAK 25'b0000000_00001_00000_000_00000
 `define ysyx_041461_FENCE_I 25'b0000000_00000_00000_001_00000
 
-//CD_ctrl
-`define ysyx_041461_CD_NOP 3'b000
-`define ysyx_041461_CD_BRANCHES 3'b001
-`define ysyx_041461_CD_JAL 3'b010
-`define ysyx_041461_CD_JALR 3'b011
-`define ysyx_041461_CD_FENCE_I 3'b100
+//ID_TYPE
+`define ysyx_041461_TYPE_NOP 3'b000
+`define ysyx_041461_TYPE_BRANCHES 3'b001
+`define ysyx_041461_TYPE_JAL 3'b010
+`define ysyx_041461_TYPE_JALR 3'b011
+`define ysyx_041461_TYPE_FENCE_I 3'b100
 
 
 //EXE_ctrl
@@ -196,15 +196,24 @@
 `define ysyx_041461_MIP 12'h344
 `define ysyx_041461_MHARTID 12'hf14
 
-//cache state
-`define ysyx_041461_START 3'b000
-`define ysyx_041461_RCACHE 3'b001
-`define ysyx_041461_RAXI_AR 3'b010
-`define ysyx_041461_RAXI_R 3'b011
-`define ysyx_041461_WCACHE 3'b100
-`define ysyx_041461_WAXI_AW 3'b101
-`define ysyx_041461_WAXI_W 3'b110
-`define ysyx_041461_FINISH 3'b111
+//IF state
+`define ysyx_041461_IF_START 3'b000
+`define ysyx_041461_IF_RCACHE 3'b001
+`define ysyx_041461_IF_RAXI_AR 3'b010
+`define ysyx_041461_IF_RAXI_R 3'b011
+`define ysyx_041461_IF_WCACHE 3'b100
+`define ysyx_041461_IF_FINISH 3'b101
+
+//MEM state
+`define ysyx_041461_MEM_START 4'b0000
+`define ysyx_041461_MEM_RCACHE 4'b0001
+`define ysyx_041461_MEM_RAXI_AR 4'b0010
+`define ysyx_041461_MEM_RAXI_R 4'b0011
+`define ysyx_041461_MEM_WCACHE 4'b0100
+`define ysyx_041461_MEM_WAXI_AW 4'b0101
+`define ysyx_041461_MEM_WAXI_W 4'b0110
+`define ysyx_041461_MEM_WAXI_B 4'b0111
+`define ysyx_041461_MEM_FINISH 4'b1000
 
 //ARBITER rstate
 `define ysyx_041461_ARBITER_RSTART 2'b00

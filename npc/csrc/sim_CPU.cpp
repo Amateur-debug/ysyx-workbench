@@ -20,8 +20,6 @@
 Vysyx_041461_TOP *top = new Vysyx_041461_TOP("TOP"); //调用VAccumulator.h里面的IO struct
 VerilatedVcdC* tfp = new VerilatedVcdC; //导出vcd波形需要加此语句
 
-//#define WAVE 1
-
 int main(int argc, char **argv){
   Verilated::commandArgs(argc, argv); 
   #ifdef WAVE

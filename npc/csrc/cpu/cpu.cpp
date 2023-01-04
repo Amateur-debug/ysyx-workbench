@@ -6,6 +6,7 @@
 #include "Vysyx_041461_TOP__Dpi.h"
 #include "/home/cxy/ysyx-workbench/npc/include/state.h"
 #include "/home/cxy/ysyx-workbench/npc/include/difftest.h"
+#include "/home/cxy/ysyx-workbench/npc/include/common.h"
 
 #define MAX_MAIN_TIME 100
 #define RST_END_TIME 1  //rst拉高时间
@@ -31,25 +32,33 @@ void init_npc_cpu(){
   top->clk = 0;
   top->rst = 0;
   top->eval(); 
-  tfp->dump(main_time); //dump wave
+  #ifdef WAVE
+    tfp->dump(main_time); //dump wave
+  #endif
   main_time++; //推动仿真时间
 
   top->clk = !top->clk;
   top->rst = 0;
   top->eval(); 
-  tfp->dump(main_time); //dump wave
+  #ifdef WAVE
+    tfp->dump(main_time); //dump wave
+  #endif
   main_time++; //推动仿真时间
 
   top->clk = !top->clk;
   top->rst = 1;
   top->eval(); 
-  tfp->dump(main_time); //dump wave
+  #ifdef WAVE
+    tfp->dump(main_time); //dump wave
+  #endif
   main_time++; //推动仿真时间
 
   top->clk = !top->clk;
   top->rst = 0;
   top->eval(); 
-  tfp->dump(main_time); //dump wave
+  #ifdef WAVE
+    tfp->dump(main_time); //dump wave
+  #endif
   main_time++; //推动仿真时间
   
 }
@@ -58,13 +67,17 @@ void exec_once(){
   //negedge
   top->clk = !top->clk;
   top->eval(); 
-  tfp->dump(main_time); //dump wave
+  #ifdef WAVE
+    tfp->dump(main_time); //dump wave
+  #endif
   main_time++; //推动仿真时间
 
   //posedge
   top->clk = !top->clk;
   top->eval(); 
-  tfp->dump(main_time); //dump wave
+  #ifdef WAVE
+    tfp->dump(main_time); //dump wave
+  #endif
   main_time++; //推动仿真时间
 }
 
@@ -108,7 +121,7 @@ void cpu_exec(uint64_t n){
       difftest_exec(1); 
     #endif
     extern uint64_t *cpu_gpr;
-    if(cpu_gpr[10] == 0){
+    if(npc_state.halt_ret == 0){
       out = (char *)"HIT GOOD TRAP"; 
     }
     else{

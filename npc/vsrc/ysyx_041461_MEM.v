@@ -6,14 +6,16 @@ module ysyx_041461_MEM(
     input   wire [0:0]    rst             ,
       
     input   wire [0:0]    MEM_valid_in    ,
-    input   wire [0:0]    MEM_valid_fromCD,
     input   wire [63:0]   MEM_EXE_in      ,
     input   wire [63:0]   MEM_rs2_data    ,
     input   wire [3:0]    MEM_ctrl        ,  
     input   wire [3:0]    MEM_trap_in     ,
+    input   wire [0:0]    MEM_WB_ready    ,
+    input   wire [3:0]    MEM_WB_trap     ,
+    input   wire [0:0]    MEM_conflict    ,
 
     output  reg  [0:0]    MEM_valid_out   ,
-    output  reg  [0:0]    MEM_ok          ,
+    output  reg  [0:0]    MEM_ready       ,
     output  reg  [63:0]   MEM_out         ,
     output  reg  [3:0]    MEM_trap_out    ,
       
@@ -96,7 +98,7 @@ parameter Rserved = 2'b11;
 wire [0:0]   load;
 wire [0:0]   store;
 reg  [0:0]   uncached;
-reg  [2:0]   state;
+reg  [3:0]   state;
 
 reg  [63:0]  AXI_rdata;
 reg  [63:0]  AXI_rdata_next;
@@ -160,8 +162,22 @@ assign hit = hit1 || hit2 || hit3 || hit4 || hit5 || hit6 || hit7 || hit8;
 assign load = MEM_ctrl == `ysyx_041461_MEM_LB || MEM_ctrl == `ysyx_041461_MEM_LH || MEM_ctrl == `ysyx_041461_MEM_LBU || MEM_ctrl == `ysyx_041461_MEM_LHU || MEM_ctrl == `ysyx_041461_MEM_LW || MEM_ctrl == `ysyx_041461_MEM_LWU || MEM_ctrl == `ysyx_041461_MEM_LD;
 assign store = MEM_ctrl == `ysyx_041461_MEM_SB || MEM_ctrl == `ysyx_041461_MEM_SH || MEM_ctrl == `ysyx_041461_MEM_SW || MEM_ctrl == `ysyx_041461_MEM_SD;
 
+//在运行pa程序时，需判断地址大小，运行soc程序时只需判断一位
+//SOC
+/*
 always@(*) begin
     if(MEM_EXE_in[31:31] == 1'b1) begin
+        uncached = 1'b0;
+    end
+    else begin
+        uncached = 1'b1;
+    end
+end
+*/
+
+//PA
+always@(*) begin
+    if(MEM_EXE_in[31:0] >= 32'h8000_0000 && MEM_EXE_in[31:0] <= 32'h8fff_ffff) begin
         uncached = 1'b0;
     end
     else begin
@@ -415,7 +431,7 @@ always@(*) begin
 end
 
 always@(*) begin
-    if(MEM_valid_in == 1'b1 && MEM_valid_fromCD == 1'b1 && MEM_trap_in == `ysyx_041461_TRAP_NOP && align == 1'b0) begin
+    if(MEM_valid_in == 1'b1 && MEM_trap_in == `ysyx_041461_TRAP_NOP && align == 1'b0) begin
         if(load == 1'b1) begin
             MEM_trap_out = `ysyx_041461_MEM_LOAD_MISALIGN;
         end
@@ -607,7 +623,7 @@ end
 
 
 always@(*) begin
-    if(state == `ysyx_041461_RAXI_AR) begin
+    if(state == `ysyx_041461_MEM_RAXI_AR) begin
         MEM_arvalid = 1'b1;
     end
     else begin
@@ -616,7 +632,7 @@ always@(*) begin
 end
 
 always@(*) begin
-    if(state == `ysyx_041461_RAXI_R) begin
+    if(state == `ysyx_041461_MEM_RAXI_R) begin
         MEM_rready = 1'b1;
     end
     else begin
@@ -625,7 +641,7 @@ always@(*) begin
 end
 
 always@(*) begin
-    if(state == `ysyx_041461_RAXI_R) begin
+    if(state == `ysyx_041461_MEM_RAXI_R) begin
         AXI_rdata_next = MEM_rdata;
     end
     else begin
@@ -643,7 +659,7 @@ always@(posedge clk or posedge rst) begin
 end
 
 always@(*) begin
-    if(state == `ysyx_041461_WAXI_AW) begin
+    if(state == `ysyx_041461_MEM_WAXI_AW) begin
         MEM_awvalid = 1'b1;
     end
     else begin
@@ -652,14 +668,21 @@ always@(*) begin
 end
 
 always@(*) begin
-    if(state == `ysyx_041461_WAXI_W || state == `ysyx_041461_WAXI_AW) begin
+    if(state == `ysyx_041461_MEM_WAXI_W) begin
         MEM_wvalid = 1'b1;
         MEM_wlast = 1'b1;
-        MEM_bready = 1'b1;
     end
     else begin
         MEM_wvalid = 1'b0;
         MEM_wlast = 1'b0;
+    end
+end
+
+always@(*) begin
+    if(state == `ysyx_041461_MEM_WAXI_B) begin
+        MEM_bready = 1'b1;
+    end
+    else begin
         MEM_bready = 1'b0;
     end
 end
@@ -685,7 +708,7 @@ always@(*) begin
         tag7_next[i] = tag7[i];
         tag8_next[i] = tag8[i];
     end
-    if(state == `ysyx_041461_WCACHE) begin
+    if(state == `ysyx_041461_MEM_WCACHE) begin
         if(load == 1'b1) begin
             if(V1[index] == 1'b0) begin
                 V1_next[index] = 1'b1;
@@ -949,7 +972,7 @@ always@(*) begin
     MEM_sram7_wen = 1'b1;
     MEM_sram7_wmask = 128'hffff_ffff_ffff_ffff_ffff_ffff_ffff_ffff;
     MEM_sram7_wdata = 128'b0;
-    if(state == `ysyx_041461_WCACHE) begin
+    if(state == `ysyx_041461_MEM_WCACHE) begin
         if(load == 1'b1) begin
             if(V1[index] == 1'b0) begin
                 MEM_sram4_wen = 1'b0;
@@ -1043,41 +1066,56 @@ always@(*) begin
 end
 
 always@(*) begin
-    if(MEM_valid_in == 1'b0 || MEM_valid_fromCD == 1'b0) begin
-        MEM_ok = 1'b1;
+    if(MEM_valid_in == 1'b0) begin
+        MEM_ready = 1'b1;
     end
     else begin
-        if(state == `ysyx_041461_START) begin
+        if(state == `ysyx_041461_MEM_START) begin
             if(MEM_trap_out != `ysyx_041461_TRAP_NOP || MEM_ctrl == `ysyx_041461_MEM_NOP) begin
-                MEM_ok = 1'b1;
+                if(MEM_WB_ready == 1'b1) begin
+                    MEM_ready = 1'b1;
+                end
+                else begin
+                    MEM_ready = 1'b0;
+                end
             end
             else begin
-                MEM_ok = 1'b0;
+                MEM_ready = 1'b0;
             end
         end
-        else if(state == `ysyx_041461_FINISH) begin
-            MEM_ok = 1'b1;
+        else if(state == `ysyx_041461_MEM_FINISH) begin
+            if(MEM_WB_ready == 1'b1) begin
+                MEM_ready = 1'b1;
+            end
+            else begin
+                MEM_ready = 1'b0;
+            end
         end
         else begin
-            MEM_ok = 1'b0;
+            MEM_ready = 1'b0;
         end
     end
 end
 
 always@(*) begin
-    if(MEM_valid_in == 1'b0 || MEM_valid_fromCD == 1'b0) begin
+    if(MEM_valid_in == 1'b0) begin
         MEM_valid_out = 1'b0;
     end
     else begin
-        if(state == `ysyx_041461_START) begin
+        if(state == `ysyx_041461_MEM_START) begin
             if(MEM_trap_out != `ysyx_041461_TRAP_NOP || MEM_ctrl == `ysyx_041461_MEM_NOP) begin
-                MEM_valid_out = 1'b1;
+                if(MEM_WB_trap != `ysyx_041461_TRAP_NOP) begin
+                    MEM_valid_out = 1'b0;
+                end
+                else begin
+                    MEM_valid_out = 1'b1;
+                end
             end
             else begin
                 MEM_valid_out = 1'b0;
             end
         end
-        else if(state == `ysyx_041461_FINISH) begin
+        else if(state == `ysyx_041461_MEM_FINISH) begin
             MEM_valid_out = 1'b1;
         end
         else begin
@@ -1189,27 +1227,27 @@ end
 
 always@(posedge clk or posedge rst) begin
     if(rst == 1'b1) begin
-        state <= `ysyx_041461_START;
+        state <= `ysyx_041461_MEM_START;
     end
     else begin
         case(state)
-            `ysyx_041461_START: begin
-                if(MEM_valid_in == 1'b1 && MEM_valid_fromCD == 1'b1 && MEM_trap_out == `ysyx_041461_TRAP_NOP) begin
+            `ysyx_041461_MEM_START: begin
+                if(MEM_valid_in == 1'b1 && MEM_conflict == 1'b0 && MEM_trap_out == `ysyx_041461_TRAP_NOP) begin
                     if(load == 1'b1) begin
                         if(uncached == 1'b1) begin
-                            state <= `ysyx_041461_RAXI_AR;
+                            state <= `ysyx_041461_MEM_RAXI_AR;
                         end
                         else begin
                             if(hit == 1'b1) begin
-                                state <= `ysyx_041461_RCACHE;
+                                state <= `ysyx_041461_MEM_RCACHE;
                             end
                             else begin
-                                state <= `ysyx_041461_RAXI_AR;
+                                state <= `ysyx_041461_MEM_RAXI_AR;
                             end
                         end
                     end
                     else if(store == 1'b1) begin
-                        state <= `ysyx_041461_WAXI_AW;
+                        state <= `ysyx_041461_MEM_WAXI_AW;
                     end
                     else begin
                         state <= state;
@@ -1219,64 +1257,80 @@ always@(posedge clk or posedge rst) begin
                     state <= state;
                 end
             end
-            `ysyx_041461_RCACHE: begin
-                state <= `ysyx_041461_FINISH;
+            `ysyx_041461_MEM_RCACHE: begin
+                state <= `ysyx_041461_MEM_FINISH;
             end
-            `ysyx_041461_RAXI_AR: begin
+            `ysyx_041461_MEM_RAXI_AR: begin
                 if(MEM_arready == 1'b1) begin
-                    state <= `ysyx_041461_RAXI_R;
+                    state <= `ysyx_041461_MEM_RAXI_R;
                 end
                 else begin
                     state <= state;
                 end
             end
-            `ysyx_041461_RAXI_R: begin
+            `ysyx_041461_MEM_RAXI_R: begin
                 if(MEM_rvalid == 1'b1 && MEM_rid == MEM_AXI_id && MEM_rlast == 1'b1 && (MEM_rresp == OKAY || MEM_rresp == EXOKAY)) begin
                     if(uncached == 1'b1) begin
-                        state <= `ysyx_041461_FINISH;
+                        state <= `ysyx_041461_MEM_FINISH;
                     end
                     else begin
-                        state <= `ysyx_041461_WCACHE;
+                        state <= `ysyx_041461_MEM_WCACHE;
                     end
                 end
                 else begin
                     state <= state;
                 end
             end
-            `ysyx_041461_WCACHE: begin
+            `ysyx_041461_MEM_WCACHE: begin
                 if(store == 1'b1) begin
-                    state <= `ysyx_041461_FINISH;
+                    state <= `ysyx_041461_MEM_FINISH;
                 end
                 else if(load == 1'b1) begin
-                    state <= `ysyx_041461_RCACHE;
+                    state <= `ysyx_041461_MEM_RCACHE;
                 end
                 else begin
                     state <= state;
                 end
             end
-            `ysyx_041461_WAXI_AW: begin
+            `ysyx_041461_MEM_WAXI_AW: begin
                 if(MEM_awready == 1'b1) begin
-                    state <= `ysyx_041461_WAXI_W;
+                    state <= `ysyx_041461_MEM_WAXI_W;
                 end
                 else begin
                     state <= state;
                 end
             end
-            `ysyx_041461_WAXI_W: begin
+            `ysyx_041461_MEM_WAXI_W: begin
+                if(MEM_wready == 1'b1) begin
+                    state <= `ysyx_041461_MEM_WAXI_B;
+                end
+                else begin
+                    state <= state;
+                end
+            end
+            `ysyx_041461_MEM_WAXI_B: begin
                 if(MEM_bvalid == 1'b1 && (MEM_bresp == OKAY || MEM_bresp == EXOKAY) && MEM_bid == MEM_AXI_id) begin
                     if(hit == 1'b1) begin
-                        state <= `ysyx_041461_WCACHE;
+                        state <= `ysyx_041461_MEM_WCACHE;
                     end
                     else begin
-                        state <= `ysyx_041461_FINISH;
+                        state <= `ysyx_041461_MEM_FINISH;
                     end
                 end
                 else begin
                     state <= state;
                 end
             end
-            `ysyx_041461_FINISH: begin
-                state <= `ysyx_041461_START;
+            `ysyx_041461_MEM_FINISH: begin
+                if(MEM_WB_ready == 1'b1) begin
+                    state <= `ysyx_041461_MEM_START;
+                end
+                else begin
+                    state <= state;
+                end
+            end
+            default: begin
+                state <= `ysyx_041461_MEM_START;
             end
         endcase
     end      

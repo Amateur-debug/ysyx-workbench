@@ -140,8 +140,8 @@ reg  [1:0]  wstate;
 wire [0:0]  rclint;
 wire [0:0]  wclint;
 
-assign rclint = (ARBITER_MEM_araddr >= 32'h0200_bff8 && ARBITER_MEM_araddr <= 32'h0200_bfff) || (ARBITER_MEM_araddr >= 32'h0200_4000 && ARBITER_MEM_araddr <= 32'h0200_4007);
-assign wclint = (ARBITER_MEM_awaddr >= 32'h0200_bff8 && ARBITER_MEM_awaddr <= 32'h0200_bfff) || (ARBITER_MEM_awaddr >= 32'h0200_4000 && ARBITER_MEM_awaddr <= 32'h0200_4007);
+assign rclint = 1'b0;
+assign wclint = 1'b0;
 
 always@(posedge clk or posedge rst) begin
     if(rst == 1'b1) begin

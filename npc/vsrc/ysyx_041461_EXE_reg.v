@@ -6,9 +6,7 @@ module  ysyx_041461_EXE_reg(
     input   wire  [0:0]  rst                          ,
     input   wire  [0:0]  EXEreg_enable                ,
      
-    input   wire  [0:0]  EXEreg_valid_fromCD          ,
-    input   wire  [0:0]  EXEreg_valid_fromID          ,
-     
+    input   wire  [0:0]  EXEreg_valid_in              ,
     input   wire  [3:0]  EXEreg_trap_in               ,
     input   wire  [4:0]  EXEreg_rd_in                 ,
     input   wire  [4:0]  EXEreg_rs1_in                ,
@@ -39,23 +37,10 @@ module  ysyx_041461_EXE_reg(
 
 
 //流水线寄存器功能实现
-always@(posedge clk or posedge rst) begin
-    if(rst == 1'b1) begin
-        EXEreg_valid_out <= 1'b0;
-    end
-    else if(EXEreg_enable == 1'b0) begin
-        EXEreg_valid_out <= EXEreg_valid_out;
-    end
-    else if(EXEreg_valid_fromCD == 1'b0 || EXEreg_valid_fromID == 1'b0) begin
-        EXEreg_valid_out <= 1'b0;
-    end
-    else begin
-        EXEreg_valid_out <= 1'b1;
-    end
-end
 
 always@(posedge clk or posedge rst) begin
     if(rst == 1'b1) begin  
+        EXEreg_valid_out <= 1'b0;
         EXEreg_trap_out <= `ysyx_041461_TRAP_NOP;
         EXEreg_rd_out <= 5'b0;     
         EXEreg_rs1_out <= 5'b0;     
@@ -70,6 +55,7 @@ always@(posedge clk or posedge rst) begin
         EXEreg_WB_ctrl_out <= `ysyx_041461_WB_NOP;                      
     end
     else if(EXEreg_enable == 1'b0) begin
+        EXEreg_valid_out <= EXEreg_valid_out;
         EXEreg_trap_out <= EXEreg_trap_out;
         EXEreg_rd_out <= EXEreg_rd_out;     
         EXEreg_rs1_out <= EXEreg_rs1_out;     
@@ -84,6 +70,7 @@ always@(posedge clk or posedge rst) begin
         EXEreg_WB_ctrl_out <= EXEreg_WB_ctrl_out;  
     end
     else begin 
+        EXEreg_valid_out <= EXEreg_valid_in;
         EXEreg_trap_out <= EXEreg_trap_in;
         EXEreg_rd_out <= EXEreg_rd_in;     
         EXEreg_rs1_out <= EXEreg_rs1_in;     

@@ -6,9 +6,7 @@ module ysyx_041461_WB_reg(
     input   wire [0:0]   rst                ,
     input   wire [0:0]   WBreg_enable       ,
          
-    input   wire [0:0]   WBreg_valid_fromMEM,
-    input   wire [0:0]   WBreg_valid_fromCD ,
-         
+    input   wire [0:0]   WBreg_valid_in     ,
     input   wire [3:0]   WBreg_trap_in      ,
     input   wire [63:0]  WBreg_EXE_in       ,
     input   wire [63:0]  WBreg_MEM_in       ,
@@ -35,23 +33,10 @@ module ysyx_041461_WB_reg(
 
 
 //流水线寄存器功能实现
-always@(posedge clk or posedge rst) begin
-    if(rst == 1'b1) begin
-        WBreg_valid_out <= 1'b0;
-    end
-    else if(WBreg_enable == 1'b0) begin
-        WBreg_valid_out <= WBreg_valid_out;
-    end
-    else if(WBreg_valid_fromCD == 1'b0 || WBreg_valid_fromMEM == 1'b0) begin
-        WBreg_valid_out <= 1'b0;
-    end
-    else begin
-        WBreg_valid_out <= 1'b1;
-    end
-end
 
 always@(posedge clk or posedge rst) begin
     if(rst == 1'b1) begin  
+        WBreg_valid_out <= 1'b0;
         WBreg_trap_out <= `ysyx_041461_TRAP_NOP;
         WBreg_EXE_out <= 64'b0;
         WBreg_MEM_out <= 64'b0;   
@@ -64,6 +49,7 @@ always@(posedge clk or posedge rst) begin
         WBreg_WB_ctrl_out <= `ysyx_041461_WB_NOP;           
     end
     else if(WBreg_enable == 1'b0) begin
+        WBreg_valid_out <= WBreg_valid_out;
         WBreg_trap_out <= WBreg_trap_out;
         WBreg_EXE_out <= WBreg_EXE_out;
         WBreg_MEM_out <= WBreg_MEM_out;   
@@ -76,6 +62,7 @@ always@(posedge clk or posedge rst) begin
         WBreg_WB_ctrl_out <= WBreg_WB_ctrl_out;  
     end
     else begin 
+        WBreg_valid_out <= WBreg_valid_in;
         WBreg_trap_out <= WBreg_trap_in;
         WBreg_EXE_out <= WBreg_EXE_in;
         WBreg_MEM_out <= WBreg_MEM_in;   
