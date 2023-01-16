@@ -96,11 +96,12 @@ static void execute(uint64_t n){
       #ifdef DIFFTEST
         if(*WB_valid == 1){
           uint64_t pc = *cpu_pc;
+          uint64_t next_pc = pc + 4;
           if(skip == 0){
             exec_once();
             device_update();
             difftest_exec(1);
-            if(difftest_checkregs(cpu_gpr, *cpu_pc) == 0){
+            if(difftest_checkregs(cpu_gpr, pc) == 0){
               npc_state.state = NPC_ABORT;
               npc_state.halt_pc = pc;
             }
@@ -108,7 +109,8 @@ static void execute(uint64_t n){
           else {
             exec_once();
             device_update();
-            difftest_regcpy(cpu_gpr, pc + 4, DIFFTEST_TO_REF);
+            difftest_regcpy(cpu_gpr, &next_pc, DIFFTEST_TO_REF);
+            skip == 0;
           }
         }
         else {
