@@ -14,8 +14,7 @@
 
 uint8_t pmem[memory_size] = {};
 
-extern int is_difftest_this;
-extern int is_difftest_next;
+extern int skip;
 
 uint8_t *guest_to_host(uint64_t paddr){ 
   return pmem + paddr - 0x80000000; 
@@ -55,22 +54,27 @@ void pmem_write(uint32_t addr, int len, uint64_t data) {
 
 extern "C" void paddr_read(long long raddr, long long *rdata) {
   if(raddr == CONFIG_RTC_MMIO){
+    skip = 1;
     *rdata = mmio_read(raddr, 8);
     return;
   }
   if(raddr == CONFIG_RTC_MMIO + 4){
+    skip = 1;
     *rdata = mmio_read(raddr, 4) << 32;
     return;
   }
   if(raddr == CONFIG_I8042_DATA_MMIO){
-    *rdata = mmio_read(raddr & ~0x7ull, 4);
+    skip = 1;
+    *rdata = mmio_read(raddr, 4);
     return;
   }
   if(raddr >= CONFIG_VGA_CTL_MMIO && raddr < CONFIG_VGA_CTL_MMIO + 8){
+    skip = 1;
     *rdata = mmio_read(raddr & ~0x7ull, 8);
     return;
   }
   if(raddr >= CONFIG_FB_ADDR && raddr < CONFIG_FB_ADDR + 300 * 400 * 4){
+    skip = 1;
     *rdata = mmio_read(raddr & ~0x7ull, 8);
     return;
   } 
@@ -105,12 +109,13 @@ extern "C" void paddr_write(long long waddr, long long wdata, char wmask){
       }
       wdata = wdata >> 8;
     }
+    skip = 1;
     return;
   }
 
   if(waddr >= 0x80000000 && waddr < 0x80000000 + memory_size){
     for(i = 0; i < 8; i++){
-      if((wmask >> i) & 1 == 1){
+      if(((wmask >> i) & 0x1u) == 1){
         host_write(guest_to_host((waddr & ~0x7ull) + i), 1, wdata);
       }
       wdata = wdata >> 8;

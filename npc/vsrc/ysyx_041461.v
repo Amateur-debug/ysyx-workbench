@@ -167,9 +167,8 @@ wire [2:0]  ID_EXE_src  ;
 wire [3:0]  ID_MEM_ctrl ;
 wire [2:0]  ID_WB_ctrl  ;
 wire [3:0]  ID_trap_out;  
-/* verilator lint_off UNOPTFLAT */
 wire [0:0]  ID_ready;
-/* verilator lint_on UNOPTFLAT */
+
 
 wire [0:0]  EXEreg_valid_out   ;
 wire [3:0]  EXEreg_trap_out    ;
@@ -237,7 +236,9 @@ wire [63:0] WBreg_zimm_out   ;
 wire [63:0] WBreg_pc_out     ;
 wire [2:0]  WBreg_WB_ctrl_out; 
 
+/* verilator lint_off UNOPTFLAT */
 wire [0:0]   WB_ready;
+/* verilator lint_on UNOPTFLAT */
 wire [63:0]  WB_IFreg_mtvec ;
 wire [63:0]  WB_IFreg_mepc  ;
 wire [1:0]   WB_IFreg_ctrl  ;
@@ -427,7 +428,6 @@ ysyx_041461_ID ID(
     .ID_rs2_data           (WB_ID_rs2_data ),
     .ID_trap_in            (IDreg_trap_out),
     .ID_conflict           (CD_ID_conflict ),
-    .ID_IF_ready           (IF_ready ),
     .ID_EXE_ready          (EXE_ready),
     .ID_MEM_ready          (MEM_ready),
     .ID_EXE_trap           (CD_EXE_trap_out ),

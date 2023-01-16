@@ -51,10 +51,12 @@ module ysyx_041461_WB(
 
 import "DPI-C" function void set_gpr_ptr(input logic [63:0] a []);
 import "DPI-C" function void set_pc_ptr(input logic [63:0] a []);
+import "DPI-C" function void set_WB_valid_ptr(input logic [0:0] a []);
 import "DPI-C" function void ebreak();
 
 initial set_gpr_ptr(x);
 initial set_pc_ptr(WB_pc);
+initial set_WB_valid_ptr(WB_valid);
 
 reg [63:0] x [31:0];    //寄存器现态的值
 reg [63:0] d [31:0];    //寄存器次态的值
@@ -93,9 +95,16 @@ assign WB_EXE_rs2_data = x[WB_EXE_rs2];
 assign WB_MEM_rs2_data = x[WB_MEM_rs2];
 
 always@(*) begin
-    WB_ready = 1'b1;
-    if(WB_valid == 1'b1 && WB_trap != `ysyx_041461_TRAP_NOP && WB_IF_ready == 1'b0) begin
-        WB_ready = 1'b0;
+    if(WB_valid == 1'b1) begin
+        if(WB_trap != `ysyx_041461_TRAP_NOP && WB_IF_ready == 1'b0) begin
+            WB_ready = 1'b0;
+        end
+        else begin
+            WB_ready = 1'b1;
+        end
+    end
+    else begin
+        WB_ready = 1'b1;
     end
 end
 

@@ -1,6 +1,6 @@
 module ysyx_041461_TOP(
     input    wire   [0:0]    clk,
-    input    wire   [0:0]    rst           
+    input    wire   [0:0]    rst        
 );
 
 

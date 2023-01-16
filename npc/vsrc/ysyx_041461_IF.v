@@ -545,25 +545,32 @@ end
 
 always@(*) begin
     if(state == `ysyx_041461_IF_START) begin
-        if(IF_ID_trap != `ysyx_041461_TRAP_NOP || IF_EXE_trap != `ysyx_041461_TRAP_NOP || IF_MEM_trap != `ysyx_041461_TRAP_NOP || IF_WB_trap != `ysyx_041461_TRAP_NOP) begin
-            IF_ready = 1'b1;
+        if(IF_trap_out == `ysyx_041461_TRAP_NOP && IF_ID_TYPE == `ysyx_041461_TYPE_NOP && IF_ID_trap == `ysyx_041461_TRAP_NOP && IF_EXE_trap == `ysyx_041461_TRAP_NOP && IF_MEM_trap == `ysyx_041461_TRAP_NOP && IF_WB_trap == `ysyx_041461_TRAP_NOP) begin
+            IF_ready = 1'b0;
         end
-        else if(IF_trap_out != `ysyx_041461_TRAP_NOP) begin
-            IF_ready = 1'b1;
-        end
-        else if(IF_ID_TYPE != `ysyx_041461_TYPE_NOP) begin
-            IF_ready = 1'b1;
+        else if(IF_trap_out != `ysyx_041461_TRAP_NOP && IF_ID_TYPE == `ysyx_041461_TYPE_NOP && IF_ID_trap == `ysyx_041461_TRAP_NOP && IF_EXE_trap == `ysyx_041461_TRAP_NOP && IF_MEM_trap == `ysyx_041461_TRAP_NOP && IF_WB_trap == `ysyx_041461_TRAP_NOP) begin
+            if(IF_ID_ready == 1'b1) begin
+                IF_ready = 1'b1;
+            end
+            else begin
+                IF_ready = 1'b0;
+            end
         end
         else begin
-            IF_ready = 1'b0;
+            IF_ready = 1'b1;
         end
     end
     else if(state == `ysyx_041461_IF_FINISH) begin
-        if(IF_ID_ready == 1'b1) begin
+        if(IF_ID_trap != `ysyx_041461_TRAP_NOP || IF_EXE_trap != `ysyx_041461_TRAP_NOP || IF_MEM_trap != `ysyx_041461_TRAP_NOP || IF_WB_trap != `ysyx_041461_TRAP_NOP) begin
             IF_ready = 1'b1;
         end
         else begin
-            IF_ready = 1'b0;
+            if(IF_ID_ready == 1'b1) begin
+                IF_ready = 1'b1;
+            end
+            else begin
+                IF_ready = 1'b0;
+            end
         end
     end
     else begin
@@ -573,13 +580,10 @@ end
 
 always@(*) begin
     if(state == `ysyx_041461_IF_START) begin
-        if(IF_ID_trap != `ysyx_041461_TRAP_NOP || IF_EXE_trap != `ysyx_041461_TRAP_NOP || IF_MEM_trap != `ysyx_041461_TRAP_NOP || IF_WB_trap != `ysyx_041461_TRAP_NOP) begin
+        if(IF_trap_out == `ysyx_041461_TRAP_NOP && IF_ID_TYPE == `ysyx_041461_TYPE_NOP && IF_ID_trap == `ysyx_041461_TRAP_NOP && IF_EXE_trap == `ysyx_041461_TRAP_NOP && IF_MEM_trap == `ysyx_041461_TRAP_NOP && IF_WB_trap == `ysyx_041461_TRAP_NOP) begin
             IF_valid_out = 1'b0;
         end
-        else if(IF_ID_TYPE != `ysyx_041461_TYPE_NOP) begin
-            IF_valid_out = 1'b0;
-        end
-        else if(IF_trap_out != `ysyx_041461_TRAP_NOP) begin
+        else if(IF_trap_out != `ysyx_041461_TRAP_NOP && IF_ID_TYPE == `ysyx_041461_TYPE_NOP && IF_ID_trap == `ysyx_041461_TRAP_NOP && IF_EXE_trap == `ysyx_041461_TRAP_NOP && IF_MEM_trap == `ysyx_041461_TRAP_NOP && IF_WB_trap == `ysyx_041461_TRAP_NOP) begin
             IF_valid_out = 1'b1;
         end
         else begin
@@ -587,7 +591,12 @@ always@(*) begin
         end
     end
     else if(state == `ysyx_041461_IF_FINISH) begin
-        IF_valid_out = 1'b1;
+        if(IF_ID_trap != `ysyx_041461_TRAP_NOP || IF_EXE_trap != `ysyx_041461_TRAP_NOP || IF_MEM_trap != `ysyx_041461_TRAP_NOP || IF_WB_trap != `ysyx_041461_TRAP_NOP) begin
+            IF_valid_out = 1'b0;
+        end
+        else begin
+            IF_valid_out = 1'b1;
+        end
     end
     else begin
         IF_valid_out = 1'b0;
@@ -680,10 +689,7 @@ always@(posedge clk or posedge rst) begin
     else begin
         case(state)
             `ysyx_041461_IF_START: begin
-                if(IF_trap_out != `ysyx_041461_TRAP_NOP) begin
-                    state <= state;
-                end
-                else if(IF_ID_TYPE == `ysyx_041461_TYPE_NOP) begin
+                if(IF_trap_out == `ysyx_041461_TRAP_NOP && IF_ID_TYPE == `ysyx_041461_TYPE_NOP && IF_ID_trap == `ysyx_041461_TRAP_NOP && IF_EXE_trap == `ysyx_041461_TRAP_NOP && IF_MEM_trap == `ysyx_041461_TRAP_NOP && IF_WB_trap == `ysyx_041461_TRAP_NOP) begin
                     if(uncached == 1'b1) begin
                         state <= `ysyx_041461_IF_RAXI_AR;
                     end

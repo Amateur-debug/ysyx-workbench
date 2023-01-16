@@ -9,7 +9,6 @@ module ysyx_041461_ID(
     input   wire [63:0] ID_rs2_data  ,
     input   wire [3:0]  ID_trap_in   ,
     input   wire [0:0]  ID_conflict  ,
-    input   wire [0:0]  ID_IF_ready  ,
     input   wire [0:0]  ID_EXE_ready ,
     input   wire [0:0]  ID_MEM_ready ,
     input   wire [3:0]  ID_EXE_trap  ,
@@ -91,15 +90,15 @@ assign funct7 = ID_inst[31:25];
 always@(*) begin  
     ID_imm = 64'b0;
     ID_next_pc  = 64'b0;
-    ID_valid_out = ID_valid_in;
+    ID_valid_out = 1'b1;
     ID_IFreg_ctrl  = `ysyx_041461_ID_IFreg_ctrl_NOP;
     ID_TYPE  = `ysyx_041461_TYPE_NOP;
     ID_EXE_ctrl = `ysyx_041461_EXE_NOP;
     ID_EXE_src  = `ysyx_041461_EXE_src_NOP;
     ID_MEM_ctrl = `ysyx_041461_MEM_NOP;
     ID_WB_ctrl  = `ysyx_041461_WB_NOP;
-    ID_trap_out = ID_trap_in;
-    if(ID_trap_in == `ysyx_041461_TRAP_NOP && ID_valid_in == 1'b1) begin
+    ID_trap_out = `ysyx_041461_TRAP_NOP;
+    if(ID_valid_in == 1'b1 && ID_trap_in == `ysyx_041461_TRAP_NOP && ID_EXE_trap == `ysyx_041461_TRAP_NOP && ID_MEM_trap == `ysyx_041461_TRAP_NOP && ID_WB_trap == `ysyx_041461_TRAP_NOP) begin
         case(opcode)
             `ysyx_041461_RV32_R: begin
                 ID_EXE_src = `ysyx_041461_EXE_R_R;
@@ -499,40 +498,43 @@ always@(*) begin
             end
         endcase
     end
-    if(ID_EXE_trap != `ysyx_041461_TRAP_NOP || ID_MEM_trap != `ysyx_041461_TRAP_NOP || ID_WB_trap != `ysyx_041461_TRAP_NOP || ID_conflict == 1'b1) begin
+    if(ID_valid_in == 1'b1 && ID_trap_in == `ysyx_041461_TRAP_NOP && ID_EXE_trap == `ysyx_041461_TRAP_NOP && ID_MEM_trap == `ysyx_041461_TRAP_NOP && ID_WB_trap == `ysyx_041461_TRAP_NOP && ID_conflict == 1'b0) begin
+
+    end
+    else if(ID_valid_in == 1'b1 && ID_trap_in == `ysyx_041461_TRAP_NOP && ID_EXE_trap == `ysyx_041461_TRAP_NOP && ID_MEM_trap == `ysyx_041461_TRAP_NOP && ID_WB_trap == `ysyx_041461_TRAP_NOP && ID_conflict == 1'b1) begin
+        ID_valid_out = 1'b0;
+    end
+    else if(ID_valid_in == 1'b1 && ID_trap_in != `ysyx_041461_TRAP_NOP && ID_EXE_trap == `ysyx_041461_TRAP_NOP && ID_MEM_trap == `ysyx_041461_TRAP_NOP && ID_WB_trap == `ysyx_041461_TRAP_NOP) begin
+        ID_valid_out = 1'b1;
+        ID_trap_out = ID_trap_in;
+    end
+    else begin
         ID_valid_out = 1'b0;
     end
 end
 
 always@(*) begin
-    if(ID_conflict == 1'b0) begin
-        if(ID_TYPE == `ysyx_041461_TYPE_BRANCHES || ID_TYPE == `ysyx_041461_TYPE_JAL || ID_TYPE == `ysyx_041461_TYPE_JALR) begin
-            if(ID_IF_ready == 1'b1 && ID_EXE_ready == 1'b1) begin
-                ID_ready = 1'b1;
-            end
-            else begin
-                ID_ready = 1'b0;
-            end
+    if(ID_valid_in == 1'b1 && ID_trap_in == `ysyx_041461_TRAP_NOP && ID_EXE_trap == `ysyx_041461_TRAP_NOP && ID_MEM_trap == `ysyx_041461_TRAP_NOP && ID_WB_trap == `ysyx_041461_TRAP_NOP && ID_conflict == 1'b0) begin
+        if(ID_EXE_ready == 1'b1) begin
+            ID_ready = 1'b1;
         end
-        else if(ID_TYPE == `ysyx_041461_TYPE_FENCE_I) begin
-            if(ID_IF_ready == 1'b1 && ID_EXE_ready == 1'b1 && ID_MEM_ready == 1'b1) begin
-                ID_ready = 1'b1;
-            end
-            else begin
-                ID_ready = 1'b0;
-            end
-        end 
         else begin
-            if(ID_EXE_ready == 1'b1) begin
-                ID_ready = 1'b1;
-            end
-            else begin
-                ID_ready = 1'b0;
-            end
+            ID_ready = 1'b0;
+        end
+    end
+    else if(ID_valid_in == 1'b1 && ID_trap_in == `ysyx_041461_TRAP_NOP && ID_EXE_trap == `ysyx_041461_TRAP_NOP && ID_MEM_trap == `ysyx_041461_TRAP_NOP && ID_WB_trap == `ysyx_041461_TRAP_NOP && ID_conflict == 1'b1) begin
+        ID_ready = 1'b0;
+    end
+    else if(ID_valid_in == 1'b1 && ID_trap_in != `ysyx_041461_TRAP_NOP && ID_EXE_trap == `ysyx_041461_TRAP_NOP && ID_MEM_trap == `ysyx_041461_TRAP_NOP && ID_WB_trap == `ysyx_041461_TRAP_NOP) begin
+        if(ID_EXE_ready == 1'b1) begin
+            ID_ready = 1'b1;
+        end
+        else begin
+            ID_ready = 1'b0;
         end
     end
     else begin
-        ID_ready = 1'b0;
+        ID_ready = 1'b1;
     end
 end
 
