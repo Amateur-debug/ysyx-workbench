@@ -40,7 +40,6 @@ VM_USER_CFLAGS = \
 	-fPIC \
 	-I \
 	/home/cxy/ysyx-workbench/npc/include \
-	-DIMG=/home/cxy/ysyx-workbench/nanos-lite/build/nanos-lite-riscv64-npc.bin \
 
 # User LDLIBS (from -LDFLAGS on Verilator command line)
 VM_USER_LDLIBS = \
