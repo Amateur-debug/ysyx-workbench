@@ -280,7 +280,7 @@ VL_INLINE_OPT void Vysyx_041461_TOP___024root___sequent__TOP__4(Vysyx_041461_TOP
         vlSelf->__Vdly__ysyx_041461_TOP__DOT__core__DOT__EXEreg_MEM_ctrl_out = 0U;
         vlSelf->ysyx_041461_TOP__DOT__core__DOT__CLINT__DOT__mtimecmp = 0ULL;
         vlSelf->ysyx_041461_TOP__DOT__core__DOT__CLINT__DOT__mtime = 0ULL;
-        vlSelf->ysyx_041461_TOP__DOT__core__DOT__WBreg_pc_out = 0ULL;
+        vlSelf->ysyx_041461_TOP__DOT__core__DOT__WBreg_pc_out = 0x80000000ULL;
         vlSelf->ysyx_041461_TOP__DOT__core__DOT__IF__DOT__AXI_rdata = 0ULL;
         vlSelf->ysyx_041461_TOP__DOT__core__DOT__MEMreg_pc_out = 0x80000000ULL;
         vlSelf->__Vdly__ysyx_041461_TOP__DOT__core__DOT__MEMreg_zimm_out = 0ULL;

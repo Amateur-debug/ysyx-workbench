@@ -45,7 +45,7 @@ always@(posedge clk or posedge rst) begin
         WBreg_csr_out <= 12'b0;   
         WBreg_imm_out <= 64'b0;    
         WBreg_zimm_out <= 64'b0;   
-        WBreg_pc_out <= 64'b0;     
+        WBreg_pc_out <= 64'h0000_0000_8000_0000;     
         WBreg_WB_ctrl_out <= `ysyx_041461_WB_NOP;           
     end
     else if(WBreg_enable == 1'b0) begin

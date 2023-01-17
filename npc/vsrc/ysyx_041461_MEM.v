@@ -177,7 +177,7 @@ end
 
 //PA
 always@(*) begin
-    if(MEM_EXE_in[31:0] >= 32'h8000_0000 && MEM_EXE_in[31:0] <= 32'h8fff_ffff) begin
+    if(MEM_EXE_in[31:0] >= 32'h8000_0000 && MEM_EXE_in[31:0] < 32'h8800_0000) begin
         uncached = 1'b0;
     end
     else begin

@@ -187,7 +187,7 @@ end
 
 //PA
 always@(*) begin
-    if(IF_pc[31:0] >= 32'h8000_0000 && IF_pc[31:0] <= 32'h8fff_ffff) begin
+    if(IF_pc[31:0] >= 32'h8000_0000 && IF_pc[31:0] < 32'h8800_0000) begin
         uncached = 1'b0;
     end
     else begin

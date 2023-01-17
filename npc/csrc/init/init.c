@@ -47,6 +47,7 @@ long long  getFileSize(FILE *fp){
 void load_img(){
   FILE *p = fopen(STR2(IMG), "rb");
   int size = getFileSize(p);
+  printf("img_size = %d\n", size);
   if(fread(img, size, 1, p) != 1){
     assert(0);
   }
@@ -73,14 +74,16 @@ void init_sdb() {
 #endif
 }
 
-void init_difftest(){
-  extern uint64_t *cpu_gpr;
-  extern uint64_t *cpu_pc;
-  extern uint8_t pmem[memory_size];
-  difftest_init();
-  difftest_memcpy(0x80000000, pmem, sizeof(img), DIFFTEST_TO_REF);
-  difftest_regcpy(cpu_gpr, cpu_pc, DIFFTEST_TO_REF);
-}
+#ifdef DIFFTEST
+  void init_difftest(){
+    extern uint64_t *cpu_gpr;
+    extern uint64_t *cpu_pc;
+    extern uint8_t pmem[memory_size];
+    difftest_init();
+    difftest_memcpy(0x80000000, pmem, sizeof(img), DIFFTEST_TO_REF);
+    difftest_regcpy(cpu_gpr, cpu_pc, DIFFTEST_TO_REF);
+  }
+#endif
 
 void init_device() {
   init_map();
