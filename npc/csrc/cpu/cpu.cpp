@@ -16,12 +16,17 @@ extern VerilatedVcdC* tfp;
 static vluint64_t main_time = 0;  //initial 仿真时间
 static bool g_print_step = false;
 
-int skip;
+int skip = 0;
 
 void ebreak(){      //结束指令
   extern uint64_t *cpu_gpr;
   extern uint64_t *cpu_pc;
   set_npc_state(NPC_END, *cpu_pc, cpu_gpr[10]);
+}
+
+char WB_valid;
+void get_WB_valid(char get_WB_valid){
+  WB_valid = get_WB_valid;
 }
 
 double sc_time_stamp(){
@@ -90,11 +95,10 @@ void device_update();
 static void execute(uint64_t n){
   extern uint64_t *cpu_gpr;
   extern uint64_t *cpu_pc;
-  extern uint64_t *WB_valid;
   for (;n > 0; n --){
     if(!Verilated::gotFinish()){
       #ifdef DIFFTEST
-        if(*WB_valid == 1){
+        if(WB_valid == 1){
           uint64_t pc = *cpu_pc;
           uint64_t next_pc = pc + 4;
           if(skip == 0){
@@ -110,7 +114,7 @@ static void execute(uint64_t n){
             exec_once();
             device_update();
             difftest_regcpy(cpu_gpr, &next_pc, DIFFTEST_TO_REF);
-            skip == 0;
+            skip = 0;
           }
         }
         else {
@@ -151,9 +155,11 @@ void cpu_exec(uint64_t n){
     extern uint64_t *cpu_pc;
     if(npc_state.halt_ret == 0){
       out = (char *)"HIT GOOD TRAP"; 
+      difftest_exec(1);
     }
     else{
       out = (char *)"ABORT";
+      difftest_exec(1);
     }
       printf("npc: %s at pc = 0x%016x\n", out, *cpu_pc); break;
     case NPC_ABORT: out = (char *)"ABORT"; 

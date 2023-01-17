@@ -387,7 +387,7 @@ always@(posedge clk or posedge rst) begin
                 end
             end
             `ysyx_041461_ARBITER_WAXI: begin
-                 if(ARBITER_io_bvalid == 1'b1 && (ARBITER_io_bresp == OKAY || ARBITER_io_bresp == EXOKAY) && ARBITER_io_bid == MEM_AXI_id) begin
+                 if(ARBITER_MEM_bready == 1'b1 && ARBITER_io_bvalid == 1'b1 && (ARBITER_io_bresp == OKAY || ARBITER_io_bresp == EXOKAY) && ARBITER_io_bid == MEM_AXI_id) begin
                     wstate <= `ysyx_041461_ARBITER_WSTART;
                 end
                 else begin
@@ -395,7 +395,7 @@ always@(posedge clk or posedge rst) begin
                 end
             end
             `ysyx_041461_ARBITER_WCLINT: begin
-                if(ARBITER_CLINT_bvalid == 1'b1 && (ARBITER_CLINT_bresp == OKAY || ARBITER_CLINT_bresp == EXOKAY) && ARBITER_CLINT_bid == MEM_AXI_id) begin
+                if(ARBITER_MEM_bready == 1'b1 && ARBITER_CLINT_bvalid == 1'b1 && (ARBITER_CLINT_bresp == OKAY || ARBITER_CLINT_bresp == EXOKAY) && ARBITER_CLINT_bid == MEM_AXI_id) begin
                     wstate <= `ysyx_041461_ARBITER_WSTART;
                 end
                 else begin

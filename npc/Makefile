@@ -14,7 +14,7 @@ BUILD := build
 
 VFLAGS +=  --cc --exe --trace --Mdir $(BUILD)
 VFLAGS += -LDFLAGS -lreadline
-VFLAGS += -LDFLAGS -lriscv64-nemu-interpreter-so
+VFLAGS += -LDFLAGS -ldl
 VFLAGS += -LDFLAGS -lSDL2
 VFLAGS += -CFLAGS -include
 VFLAGS += -CFLAGS /home/cxy/ysyx-workbench/npc/include/difftest.h

@@ -51,12 +51,12 @@ module ysyx_041461_WB(
 
 import "DPI-C" function void set_gpr_ptr(input logic [63:0] a []);
 import "DPI-C" function void set_pc_ptr(input logic [63:0] a []);
-import "DPI-C" function void set_WB_valid_ptr(input logic [0:0] a []);
+import "DPI-C" function void get_WB_valid(input byte a);
 import "DPI-C" function void ebreak();
 
 initial set_gpr_ptr(x);
 initial set_pc_ptr(WB_pc);
-initial set_WB_valid_ptr(WB_valid);
+initial get_WB_valid({7'b0, WB_valid});
 
 reg [63:0] x [31:0];    //寄存器现态的值
 reg [63:0] d [31:0];    //寄存器次态的值
@@ -409,6 +409,10 @@ always@(posedge clk or posedge rst) begin
         mip <= mip_next;
         mhartid <= mhartid_next;
     end
+end
+
+always@(*) begin
+    get_WB_valid({7'b0, WB_valid});
 end
 
 endmodule

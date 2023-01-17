@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <assert.h>
+#include <dlfcn.h>
 #include "verilated_vcd_c.h" //可选，如果要导出vcd则需要加上
 #include "Vysyx_041461_TOP.h"
 #include "svdpi.h"
@@ -20,6 +21,19 @@ void init_timer();
 void init_vga();
 void init_i8042();
 void init_disk();
+
+void (*difftest_memcpy)(paddr_t addr, uint8_t *buf, size_t n, bool direction);
+
+void (*difftest_regcpy)(uint64_t *dut, uint64_t *dut_pc, bool direction);
+
+void (*difftest_exec)(uint64_t n);
+
+bool (*difftest_checkregs)(uint64_t *dut, uint64_t dut_pc);
+
+void (*difftest_init)();
+
+void* handle = dlopen("/home/cxy/ysyx-workbench/nemu/build/riscv64-nemu-interpreter-so", RTLD_LAZY);
+
 
 uint32_t img[memory_size/4] = {
   0x00000297,  // auipc t0,0
@@ -79,6 +93,11 @@ void init_sdb() {
     extern uint64_t *cpu_gpr;
     extern uint64_t *cpu_pc;
     extern uint8_t pmem[memory_size];
+    difftest_regcpy = (void (*)(uint64_t *dut, uint64_t *dut_pc, bool direction))dlsym(handle, "difftest_regcpy");
+    difftest_memcpy = (void (*)(paddr_t addr, uint8_t *buf, size_t n, bool direction))dlsym(handle, "difftest_memcpy");
+    difftest_exec = (void (*)(uint64_t n))dlsym(handle, "difftest_exec");
+    difftest_checkregs = (bool (*)(uint64_t *dut, uint64_t dut_pc))dlsym(handle, "difftest_checkregs");
+    difftest_init = (void (*)())dlsym(handle, "difftest_init");
     difftest_init();
     difftest_memcpy(0x80000000, pmem, sizeof(img), DIFFTEST_TO_REF);
     difftest_regcpy(cpu_gpr, cpu_pc, DIFFTEST_TO_REF);
