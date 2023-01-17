@@ -17,6 +17,6 @@
 
 //#define WAVE 1
 #define WAVE_time 180000000
-#define DIFFTEST 1
+//#define DIFFTEST 1
 
 #endif
