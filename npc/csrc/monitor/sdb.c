@@ -8,12 +8,12 @@
 #include "/home/cxy/ysyx-workbench/npc/include/cpu.h"
 #include "/home/cxy/ysyx-workbench/npc/include/state.h"
 #include "/home/cxy/ysyx-workbench/npc/include/regs.h"
-#include "/home/cxy/ysyx-workbench/npc/include/pmem.h"
+#include "/home/cxy/ysyx-workbench/npc/include/memory.h"
 
 // calculate the length of an array
 #define ARRLEN(arr) (int)(sizeof(arr) / sizeof(arr[0]))
 
-static int is_batch_mode = true;
+static int is_batch_mode = false;
 static int wp_number = 0;
 WP *HEAD = NULL;
 
@@ -69,7 +69,7 @@ static int cmd_x(char *args){
   int i;
   for(i = 0;i < n;i++){
     uint64_t data ;
-    data = direct_pmem_read(address, len);
+    data = pmem_read(address, len);
     printf("0x%016lx\n", data);  
     address = address + 4;
   }

@@ -171,6 +171,7 @@ static int decode_exec(Decode *s) {
   INSTPAT("??????? ????? ????? 010 ????? 11100 11", csrrs  , I, csr = RCSR(BITS(src2, 11, 0)); WCSR(BITS(src2, 11, 0), src1 | csr); R(dest) = csr);
   INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall  , I, s->dnpc = isa_raise_intr(11, s->pc));
   INSTPAT("0011000 00010 00000 000 00000 11100 11", mret   , R, s->dnpc = cpu.mepc);
+  INSTPAT("0000000 00000 00000 001 00000 00011 11", fence.i, I, );
 
   INSTPAT("??????? ????? ????? ??? ????? ????? ??", inv    , N, INV(s->pc));
   INSTPAT_END();             

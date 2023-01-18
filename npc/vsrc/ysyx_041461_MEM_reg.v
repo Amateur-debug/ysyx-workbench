@@ -1,12 +1,12 @@
+`include "/home/cxy/ysyx-workbench/npc/vsrc/ysyx_041461_macro.v"
+
 module ysyx_041461_MEM_reg(
 
     input   wire [0:0]   clk                 ,
     input   wire [0:0]   rst                 ,
     input   wire [0:0]   MEMreg_enable       ,
        
-    input   wire [0:0]   MEMreg_valid_fromEXE,
-    input   wire [0:0]   MEMreg_valid_fromCD ,
-       
+    input   wire [0:0]   MEMreg_valid_in     ,
     input   wire [3:0]   MEMreg_trap_in      ,
     input   wire [63:0]  MEMreg_EXE_in       ,
     input   wire [4:0]   MEMreg_rd_in        ,
@@ -35,23 +35,10 @@ module ysyx_041461_MEM_reg(
 
 
 //流水线寄存器功能实现
-always@(posedge clk or posedge rst) begin
-    if(rst == 1'b1) begin
-        MEMreg_valid_out <= 1'b0;
-    end
-    else if(MEMreg_enable == 1'b0) begin
-        MEMreg_valid_out <= MEMreg_valid_out;
-    end
-    else if(MEMreg_valid_fromCD == 1'b0 || MEMreg_valid_fromEXE == 1'b0) begin
-        MEMreg_valid_out <= 1'b0;
-    end
-    else begin
-        MEMreg_valid_out <= 1'b1;
-    end
-end
 
 always@(posedge clk or posedge rst) begin
     if(rst == 1'b1) begin  
+        MEMreg_valid_out <= 1'b0;
         MEMreg_trap_out <= `ysyx_041461_TRAP_NOP;
         MEMreg_EXE_out <= 64'b0;   
         MEMreg_rd_out <= 5'b0;   
@@ -65,6 +52,7 @@ always@(posedge clk or posedge rst) begin
         MEMreg_WB_ctrl_out <= `ysyx_041461_WB_NOP;           
     end
     else if(MEMreg_enable == 1'b0) begin
+        MEMreg_valid_out <= MEMreg_valid_out;
         MEMreg_trap_out <= MEMreg_trap_out;
         MEMreg_EXE_out <= MEMreg_EXE_out;   
         MEMreg_rd_out <= MEMreg_rd_out;   
@@ -78,6 +66,7 @@ always@(posedge clk or posedge rst) begin
         MEMreg_WB_ctrl_out <= MEMreg_WB_ctrl_out;  
     end
     else begin 
+        MEMreg_valid_out <= MEMreg_valid_in;
         MEMreg_trap_out <= MEMreg_trap_in;     
         MEMreg_EXE_out <= MEMreg_EXE_in;   
         MEMreg_rd_out <= MEMreg_rd_in;   

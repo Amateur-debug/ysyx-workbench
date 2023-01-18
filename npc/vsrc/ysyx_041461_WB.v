@@ -1,47 +1,62 @@
+`include "/home/cxy/ysyx-workbench/npc/vsrc/ysyx_041461_macro.v"
+
 module ysyx_041461_WB(
 
-    input   wire [0:0]   clk                  ,
-    input   wire [0:0]   rst                  ,
-    input   wire [0:0]   WB_valid             ,
+    input   wire [0:0]   clk            ,
+    input   wire [0:0]   rst            ,
+    input   wire [0:0]   WB_valid       ,
+
+    input   wire [0:0]   WB_IF_ready    ,
                 
-    input   wire [4:0]   WB_ID_rs1            ,
-    input   wire [4:0]   WB_ID_rs2            ,
+    input   wire [4:0]   WB_ID_rs1      ,
+    input   wire [4:0]   WB_ID_rs2      ,
          
-    input   wire [4:0]   WB_EXE_rs1           ,
-    input   wire [4:0]   WB_EXE_rs2           ,
-    input   wire [11:0]  WB_EXE_csr           ,
+    input   wire [4:0]   WB_EXE_rs1     ,
+    input   wire [4:0]   WB_EXE_rs2     ,
+    input   wire [11:0]  WB_EXE_csr     ,
          
-    input   wire [4:0]   WB_MEM_rs2           ,
+    input   wire [4:0]   WB_MEM_rs2     ,
          
-    input   wire [63:0]  WB_EXE_in            ,
-    input   wire [63:0]  WB_MEM_in            ,
-    input   wire [4:0]   WB_rd                ,
-    input   wire [4:0]   WB_rs1               ,
-    input   wire [11:0]  WB_csr               ,
-    input   wire [63:0]  WB_imm               ,
-    input   wire [63:0]  WB_zimm              ,
-    input   wire [63:0]  WB_pc                ,
-    input   wire [2:0]   WB_ctrl              ,
-    input   wire [3:0]   WB_trap              ,
-    input   wire [0:0]   WB_interrupt         ,
+    input   wire [63:0]  WB_EXE_in      ,
+    input   wire [63:0]  WB_MEM_in      ,
+    input   wire [4:0]   WB_rd          ,
+    input   wire [4:0]   WB_rs1         ,
+    input   wire [11:0]  WB_csr         ,
+    input   wire [63:0]  WB_imm         ,
+    input   wire [63:0]  WB_zimm        ,
+    input   wire [63:0]  WB_pc          ,
+    input   wire [2:0]   WB_ctrl        ,
+    input   wire [3:0]   WB_trap        ,
+    input   wire [0:0]   WB_interrupt   ,
 
-    output  wire [63:0]  WB_IFreg_mtvec       ,
-    output  wire [63:0]  WB_IFreg_mepc        ,
-    output  reg  [1:0]   WB_IFreg_ctrl        ,  
+    output  reg  [0:0]   WB_ready       ,  
 
-    output  wire [63:0]  WB_IF_mstatus        ,
-    output  wire [63:0]  WB_IF_mie            ,
-    output  wire [63:0]  WB_IF_mip            ,  
+    output  wire [63:0]  WB_IFreg_mtvec ,
+    output  wire [63:0]  WB_IFreg_mepc  ,
+    output  reg  [1:0]   WB_IFreg_ctrl  ,  
+
+    output  wire [63:0]  WB_IF_mstatus  ,
+    output  wire [63:0]  WB_IF_mie      ,
+    output  wire [63:0]  WB_IF_mip      ,  
         
-    output  wire [63:0]  WB_ID_rs1_data       ,
-    output  wire [63:0]  WB_ID_rs2_data       ,
+    output  wire [63:0]  WB_ID_rs1_data ,
+    output  wire [63:0]  WB_ID_rs2_data ,
         
-    output  wire [63:0]  WB_EXE_rs1_data      ,
-    output  wire [63:0]  WB_EXE_rs2_data      ,
-    output  reg  [63:0]  WB_EXE_csr_data      ,
+    output  wire [63:0]  WB_EXE_rs1_data,
+    output  wire [63:0]  WB_EXE_rs2_data,
+    output  reg  [63:0]  WB_EXE_csr_data,
 
     output  wire [63:0]  WB_MEM_rs2_data
 );
+
+import "DPI-C" function void set_gpr_ptr(input logic [63:0] a []);
+import "DPI-C" function void set_pc_ptr(input logic [63:0] a []);
+import "DPI-C" function void get_WB_valid(input byte a);
+import "DPI-C" function void ebreak();
+
+initial set_gpr_ptr(x);
+initial set_pc_ptr(WB_pc);
+initial get_WB_valid({7'b0, WB_valid});
 
 reg [63:0] x [31:0];    //寄存器现态的值
 reg [63:0] d [31:0];    //寄存器次态的值
@@ -61,7 +76,6 @@ reg [63:0] mip_next;
 reg [63:0] mhartid;  //0xf14
 reg [63:0] mhartid_next; 
 
-
 integer i;
 integer j;
 
@@ -80,6 +94,19 @@ assign WB_EXE_rs2_data = x[WB_EXE_rs2];
 
 assign WB_MEM_rs2_data = x[WB_MEM_rs2];
 
+always@(*) begin
+    if(WB_valid == 1'b1) begin
+        if(WB_trap != `ysyx_041461_TRAP_NOP && WB_IF_ready == 1'b0) begin
+            WB_ready = 1'b0;
+        end
+        else begin
+            WB_ready = 1'b1;
+        end
+    end
+    else begin
+        WB_ready = 1'b1;
+    end
+end
 
 always@(*) begin
     case(WB_EXE_csr)
@@ -127,6 +154,7 @@ always@(*) begin
             end
             `ysyx_041461_ID_EBREAK: begin
                 WB_IFreg_ctrl = `ysyx_041461_WB_IFreg_ctrl_MTVEC;
+                ebreak();
             end
             `ysyx_041461_ID_ILLEGAL_INST: begin
                 WB_IFreg_ctrl = `ysyx_041461_WB_IFreg_ctrl_MTVEC;
@@ -381,6 +409,10 @@ always@(posedge clk or posedge rst) begin
         mip <= mip_next;
         mhartid <= mhartid_next;
     end
+end
+
+always@(*) begin
+    get_WB_valid({7'b0, WB_valid});
 end
 
 endmodule

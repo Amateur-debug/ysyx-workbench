@@ -1,18 +1,23 @@
+`include "/home/cxy/ysyx-workbench/npc/vsrc/ysyx_041461_macro.v"
+
 module ysyx_041461_IF(
 
     input   wire [0:0]    clk                  ,
     input   wire [0:0]    rst                  ,
     input   wire [63:0]   IF_pc                ,
-    input   wire [0:0]    IF_valid_fromCD      ,
-    input   wire [0:0]    IF_FENCE_I           ,
-    input   wire [0:0]    IF_MEM_ok            ,
     input   wire [63:0]   IF_mstatus           ,
     input   wire [63:0]   IF_mie               ,
     input   wire [63:0]   IF_mip               ,
+    input   wire [2:0]    IF_ID_TYPE           ,
+    input   wire [0:0]    IF_ID_ready          ,
+    input   wire [3:0]    IF_ID_trap           ,
+    input   wire [3:0]    IF_EXE_trap          ,
+    input   wire [3:0]    IF_MEM_trap          ,
+    input   wire [3:0]    IF_WB_trap           ,
   
     output  reg  [3:0]    IF_trap_out          ,
     output  reg  [0:0]    IF_valid_out         ,
-    output  reg  [0:0]    IF_ok                ,
+    output  reg  [0:0]    IF_ready             ,
     output  reg  [31:0]   IF_inst              ,
        
     input   wire [0:0]    IF_arready           ,
@@ -151,7 +156,7 @@ assign mstatus_MIE = IF_mstatus[3:3];
 
 
 always@(*) begin
-    if(IF_valid_fromCD == 1'b1) begin
+    if(IF_ID_TYPE == `ysyx_041461_TYPE_NOP) begin
         if(mie_MTIE == 1'b1 && mip_MTIP == 1'b1 && mstatus_MIE == 1'b1) begin
             IF_trap_out = `ysyx_041461_TIMER_INTERRUPT;
         end
@@ -167,9 +172,22 @@ always@(*) begin
     end
 end
 
-
+//在运行pa程序时，需判断地址大小，运行soc程序时只需判断一位
+//SOC
+/*
 always@(*) begin
     if(IF_pc[31:31] == 1'b1) begin
+        uncached = 1'b0;
+    end
+    else begin
+        uncached = 1'b1;
+    end
+end
+*/
+
+//PA
+always@(*) begin
+    if(IF_pc[31:0] >= 32'h8000_0000 && IF_pc[31:0] < 32'h8800_0000) begin
         uncached = 1'b0;
     end
     else begin
@@ -303,7 +321,7 @@ always@(*) begin
     IF_sram3_wen = 1'b1;
     IF_sram3_wmask = 128'hffff_ffff_ffff_ffff_ffff_ffff_ffff_ffff;
     IF_sram3_wdata = 128'b0;
-    if(state == `ysyx_041461_WCACHE) begin
+    if(state == `ysyx_041461_IF_WCACHE) begin
         if(V1[index] == 1'b0) begin
             IF_sram0_wen = 1'b0;
             IF_sram0_wmask = 128'hffff_ffff_ffff_ffff_0000_0000_0000_0000;
@@ -372,7 +390,7 @@ always@(*) begin
         tag7_next[i] = tag7[i];
         tag8_next[i] = tag8[i];
     end
-    if(state == `ysyx_041461_WCACHE) begin
+    if(state == `ysyx_041461_IF_WCACHE) begin
         if(V1[index] == 1'b0) begin
             V1_next[index] = 1'b1;
             tag1_next[index] = tag;
@@ -410,7 +428,7 @@ always@(*) begin
             tag1_next[index] = tag;
         end
     end
-    else if(IF_FENCE_I == 1'b1) begin
+    else if(IF_ID_TYPE == `ysyx_041461_TYPE_FENCE_I) begin
         for(i = 0; i < 64; i = i + 1) begin
             V1_next[i] = 1'b0;
             V2_next[i] = 1'b0;
@@ -470,7 +488,7 @@ end
 
 always@(*) begin
     AXI_rdata_next = AXI_rdata;
-    if(state == `ysyx_041461_RAXI_R) begin
+    if(state == `ysyx_041461_IF_RAXI_R) begin
         AXI_rdata_next = IF_rdata;
     end
 end
@@ -507,7 +525,7 @@ always@(*) begin
 end
 
 always@(*) begin
-    if(state == `ysyx_041461_RAXI_AR) begin
+    if(state == `ysyx_041461_IF_RAXI_AR) begin
         IF_arvalid = 1'b1;
     end
     else begin
@@ -516,7 +534,7 @@ always@(*) begin
 end
 
 always@(*) begin
-    if(state == `ysyx_041461_RAXI_R) begin
+    if(state == `ysyx_041461_IF_RAXI_R) begin
         IF_rready = 1'b1;
     end
     else begin
@@ -526,46 +544,62 @@ end
 
 
 always@(*) begin
-    if(IF_valid_fromCD == 1'b0) begin
-        IF_ok = 1'b1;
-    end
-    else begin
-        if(state == `ysyx_041461_START) begin
-            if(IF_trap_out != `ysyx_041461_TRAP_NOP) begin
-                IF_ok = 1'b1;
+    if(state == `ysyx_041461_IF_START) begin
+        if(IF_trap_out == `ysyx_041461_TRAP_NOP && IF_ID_TYPE == `ysyx_041461_TYPE_NOP && IF_ID_trap == `ysyx_041461_TRAP_NOP && IF_EXE_trap == `ysyx_041461_TRAP_NOP && IF_MEM_trap == `ysyx_041461_TRAP_NOP && IF_WB_trap == `ysyx_041461_TRAP_NOP) begin
+            IF_ready = 1'b0;
+        end
+        else if(IF_trap_out != `ysyx_041461_TRAP_NOP && IF_ID_TYPE == `ysyx_041461_TYPE_NOP && IF_ID_trap == `ysyx_041461_TRAP_NOP && IF_EXE_trap == `ysyx_041461_TRAP_NOP && IF_MEM_trap == `ysyx_041461_TRAP_NOP && IF_WB_trap == `ysyx_041461_TRAP_NOP) begin
+            if(IF_ID_ready == 1'b1) begin
+                IF_ready = 1'b1;
             end
             else begin
-                IF_ok = 1'b0;
+                IF_ready = 1'b0;
             end
         end
-        else if(state == `ysyx_041461_FINISH) begin
-            IF_ok = 1'b1;
+        else begin
+            IF_ready = 1'b1;
+        end
+    end
+    else if(state == `ysyx_041461_IF_FINISH) begin
+        if(IF_ID_trap != `ysyx_041461_TRAP_NOP || IF_EXE_trap != `ysyx_041461_TRAP_NOP || IF_MEM_trap != `ysyx_041461_TRAP_NOP || IF_WB_trap != `ysyx_041461_TRAP_NOP) begin
+            IF_ready = 1'b1;
         end
         else begin
-            IF_ok = 1'b0;
+            if(IF_ID_ready == 1'b1) begin
+                IF_ready = 1'b1;
+            end
+            else begin
+                IF_ready = 1'b0;
+            end
         end
+    end
+    else begin
+        IF_ready = 1'b0;
     end
 end
 
 always@(*) begin
-    if(IF_valid_fromCD == 1'b0) begin
-        IF_valid_out = 1'b0;
-    end
-    else begin
-        if(state == `ysyx_041461_START) begin
-            if(IF_trap_out != `ysyx_041461_TRAP_NOP) begin
-                IF_valid_out = 1'b1;
-            end
-            else begin
-                IF_valid_out = 1'b0;
-            end
+    if(state == `ysyx_041461_IF_START) begin
+        if(IF_trap_out == `ysyx_041461_TRAP_NOP && IF_ID_TYPE == `ysyx_041461_TYPE_NOP && IF_ID_trap == `ysyx_041461_TRAP_NOP && IF_EXE_trap == `ysyx_041461_TRAP_NOP && IF_MEM_trap == `ysyx_041461_TRAP_NOP && IF_WB_trap == `ysyx_041461_TRAP_NOP) begin
+            IF_valid_out = 1'b0;
         end
-        else if(state == `ysyx_041461_FINISH) begin
+        else if(IF_trap_out != `ysyx_041461_TRAP_NOP && IF_ID_TYPE == `ysyx_041461_TYPE_NOP && IF_ID_trap == `ysyx_041461_TRAP_NOP && IF_EXE_trap == `ysyx_041461_TRAP_NOP && IF_MEM_trap == `ysyx_041461_TRAP_NOP && IF_WB_trap == `ysyx_041461_TRAP_NOP) begin
             IF_valid_out = 1'b1;
         end
         else begin
             IF_valid_out = 1'b0;
         end
+    end
+    else if(state == `ysyx_041461_IF_FINISH) begin
+        if(IF_ID_trap != `ysyx_041461_TRAP_NOP || IF_EXE_trap != `ysyx_041461_TRAP_NOP || IF_MEM_trap != `ysyx_041461_TRAP_NOP || IF_WB_trap != `ysyx_041461_TRAP_NOP) begin
+            IF_valid_out = 1'b0;
+        end
+        else begin
+            IF_valid_out = 1'b1;
+        end
+    end
+    else begin
+        IF_valid_out = 1'b0;
     end
 end
 
@@ -650,24 +684,21 @@ end
 
 always@(posedge clk or posedge rst) begin
     if(rst == 1'b1) begin
-        state <= `ysyx_041461_START;
+        state <= `ysyx_041461_IF_START;
     end
     else begin
         case(state)
-            `ysyx_041461_START: begin
-                if(IF_trap_out != `ysyx_041461_TRAP_NOP) begin
-                    state <= state;
-                end
-                else if(IF_valid_fromCD == 1'b1 && IF_FENCE_I == 1'b0) begin
+            `ysyx_041461_IF_START: begin
+                if(IF_trap_out == `ysyx_041461_TRAP_NOP && IF_ID_TYPE == `ysyx_041461_TYPE_NOP && IF_ID_trap == `ysyx_041461_TRAP_NOP && IF_EXE_trap == `ysyx_041461_TRAP_NOP && IF_MEM_trap == `ysyx_041461_TRAP_NOP && IF_WB_trap == `ysyx_041461_TRAP_NOP) begin
                     if(uncached == 1'b1) begin
-                        state <= `ysyx_041461_RAXI_AR;
+                        state <= `ysyx_041461_IF_RAXI_AR;
                     end
                     else begin
                         if(hit == 1'b1) begin
-                            state <= `ysyx_041461_RCACHE;
+                            state <= `ysyx_041461_IF_RCACHE;
                         end
                         else begin
-                            state <= `ysyx_041461_RAXI_AR;
+                            state <= `ysyx_041461_IF_RAXI_AR;
                         end
                     end
                 end
@@ -675,43 +706,43 @@ always@(posedge clk or posedge rst) begin
                     state <= state;
                 end
             end
-            `ysyx_041461_RCACHE: begin
-                state <= `ysyx_041461_FINISH;
+            `ysyx_041461_IF_RCACHE: begin
+                state <= `ysyx_041461_IF_FINISH;
             end
-            `ysyx_041461_RAXI_AR: begin
+            `ysyx_041461_IF_RAXI_AR: begin
                 if(IF_arready == 1'b1) begin
-                    state <= `ysyx_041461_RAXI_R;
+                    state <= `ysyx_041461_IF_RAXI_R;
                 end
                 else begin
                     state <= state;
                 end
             end
-            `ysyx_041461_RAXI_R: begin
+            `ysyx_041461_IF_RAXI_R: begin
                 if(IF_rvalid == 1'b1 && IF_rid == IF_AXI_id && IF_rlast == 1'b1 && (IF_rresp == OKAY || IF_rresp == EXOKAY)) begin
                     if(uncached == 1'b1) begin
-                        state <= `ysyx_041461_FINISH;
+                        state <= `ysyx_041461_IF_FINISH;
                     end
                     else begin
-                        state <= `ysyx_041461_WCACHE;
+                        state <= `ysyx_041461_IF_WCACHE;
                     end
                 end
                 else begin
                     state <= state;
                 end
             end
-            `ysyx_041461_WCACHE: begin
-                state <= `ysyx_041461_RCACHE;
+            `ysyx_041461_IF_WCACHE: begin
+                state <= `ysyx_041461_IF_RCACHE;
             end
-            `ysyx_041461_FINISH: begin
-                if(IF_MEM_ok == 1'b1) begin
-                    state <= `ysyx_041461_START;
+            `ysyx_041461_IF_FINISH: begin
+                if(IF_ID_ready == 1'b1) begin
+                    state <= `ysyx_041461_IF_START;
                 end
                 else begin
                     state <= state;
                 end
             end
             default: begin
-                state <= `ysyx_041461_START;
+                state <= `ysyx_041461_IF_START;
             end
         endcase
     end      

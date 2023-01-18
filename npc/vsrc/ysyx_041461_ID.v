@@ -1,11 +1,19 @@
+`include "/home/cxy/ysyx-workbench/npc/vsrc/ysyx_041461_macro.v"
+
 module ysyx_041461_ID( 
-    
+
     input   wire [31:0] ID_inst      ,
     input   wire [0:0]  ID_valid_in  ,
     input   wire [63:0] ID_pc        ,
     input   wire [63:0] ID_rs1_data  ,
     input   wire [63:0] ID_rs2_data  ,
     input   wire [3:0]  ID_trap_in   ,
+    input   wire [0:0]  ID_conflict  ,
+    input   wire [0:0]  ID_EXE_ready ,
+    input   wire [0:0]  ID_MEM_ready ,
+    input   wire [3:0]  ID_EXE_trap  ,
+    input   wire [3:0]  ID_MEM_trap  ,
+    input   wire [3:0]  ID_WB_trap   ,
 
     output  wire [4:0]  ID_rd        ,
     output  wire [4:0]  ID_rs1       ,
@@ -16,13 +24,13 @@ module ysyx_041461_ID(
     output  reg  [63:0] ID_next_pc   ,
     output  reg  [0:0]  ID_valid_out ,
     output  reg  [0:0]  ID_IFreg_ctrl,
-    output  reg  [0:0]  ID_FENCE_I   ,
-    output  reg  [2:0]  ID_CD_ctrl   ,
+    output  reg  [2:0]  ID_TYPE      ,
     output  reg  [4:0]  ID_EXE_ctrl  ,
     output  reg  [2:0]  ID_EXE_src   ,
-    output  reg  [3:0]  ID_MEM_ctrl  ,   
+    output  reg  [3:0]  ID_MEM_ctrl  ,
     output  reg  [2:0]  ID_WB_ctrl   ,
-    output  reg  [3:0]  ID_trap_out  
+    output  reg  [3:0]  ID_trap_out  ,
+    output  reg  [0:0]  ID_ready     
 ); 
 
 function [63:0] immI(
@@ -82,16 +90,15 @@ assign funct7 = ID_inst[31:25];
 always@(*) begin  
     ID_imm = 64'b0;
     ID_next_pc  = 64'b0;
-    ID_valid_out = ID_valid_in;
+    ID_valid_out = 1'b1;
     ID_IFreg_ctrl  = `ysyx_041461_ID_IFreg_ctrl_NOP;
-    ID_CD_ctrl  = `ysyx_041461_CD_NOP;
+    ID_TYPE  = `ysyx_041461_TYPE_NOP;
     ID_EXE_ctrl = `ysyx_041461_EXE_NOP;
     ID_EXE_src  = `ysyx_041461_EXE_src_NOP;
     ID_MEM_ctrl = `ysyx_041461_MEM_NOP;
     ID_WB_ctrl  = `ysyx_041461_WB_NOP;
-    ID_FENCE_I = 1'b0;
-    ID_trap_out = ID_trap_in;
-    if(ID_trap_in == `ysyx_041461_TRAP_NOP && ID_valid_in == 1'b1) begin
+    ID_trap_out = `ysyx_041461_TRAP_NOP;
+    if(ID_valid_in == 1'b1 && ID_trap_in == `ysyx_041461_TRAP_NOP && ID_EXE_trap == `ysyx_041461_TRAP_NOP && ID_MEM_trap == `ysyx_041461_TRAP_NOP && ID_WB_trap == `ysyx_041461_TRAP_NOP) begin
         case(opcode)
             `ysyx_041461_RV32_R: begin
                 ID_EXE_src = `ysyx_041461_EXE_R_R;
@@ -359,43 +366,38 @@ always@(*) begin
             end
             `ysyx_041461_Branches: begin
                 ID_imm = immB(ID_inst);
-                ID_IFreg_ctrl = `ysyx_041461_ID_IFreg_ctrl_NOP;
-                ID_CD_ctrl = `ysyx_041461_CD_BRANCHES;
+                ID_next_pc = ID_pc + 64'd4;
+                ID_IFreg_ctrl = `ysyx_041461_ID_IFreg_ctrl_IDpc;
+                ID_TYPE = `ysyx_041461_TYPE_BRANCHES;
                 case(funct3)
                     `ysyx_041461_BEQ: begin
                         if(ID_rs1_data == ID_rs2_data) begin
                             ID_next_pc = ID_pc + ID_imm;
-                            ID_IFreg_ctrl = `ysyx_041461_ID_IFreg_ctrl_IDpc;
                         end
                     end
                     `ysyx_041461_BNE: begin
                         if(ID_rs1_data != ID_rs2_data) begin
                             ID_next_pc = ID_pc + ID_imm;
-                            ID_IFreg_ctrl = `ysyx_041461_ID_IFreg_ctrl_IDpc;
                         end
                     end
                     `ysyx_041461_BLT: begin
                         if($signed(ID_rs1_data) < $signed(ID_rs2_data)) begin
                             ID_next_pc = ID_pc + ID_imm;
-                            ID_IFreg_ctrl = `ysyx_041461_ID_IFreg_ctrl_IDpc;
                         end
                     end
                     `ysyx_041461_BGE: begin
                         if($signed(ID_rs1_data) >= $signed(ID_rs2_data)) begin
                             ID_next_pc = ID_pc + ID_imm;
-                            ID_IFreg_ctrl = `ysyx_041461_ID_IFreg_ctrl_IDpc;
                         end
                     end
                     `ysyx_041461_BLTU: begin
                         if(ID_rs1_data < ID_rs2_data) begin
                             ID_next_pc = ID_pc + ID_imm;
-                            ID_IFreg_ctrl = `ysyx_041461_ID_IFreg_ctrl_IDpc;
                         end
                     end
                     `ysyx_041461_BGEU: begin
                         if(ID_rs1_data >= ID_rs2_data) begin
                             ID_next_pc = ID_pc + ID_imm;
-                            ID_IFreg_ctrl = `ysyx_041461_ID_IFreg_ctrl_IDpc;
                         end
                     end
                     default: begin
@@ -407,7 +409,7 @@ always@(*) begin
                 ID_imm = immJ(ID_inst);
                 ID_next_pc = ID_pc + ID_imm;
                 ID_IFreg_ctrl = `ysyx_041461_ID_IFreg_ctrl_IDpc;
-                ID_CD_ctrl = `ysyx_041461_CD_JAL;
+                ID_TYPE = `ysyx_041461_TYPE_JAL;
                 ID_WB_ctrl = `ysyx_041461_WB_SNPC;
             end
             `ysyx_041461_Jalr: begin
@@ -416,7 +418,7 @@ always@(*) begin
                     `ysyx_041461_JALR: begin
                         ID_next_pc = (ID_rs1_data + ID_imm) & ~64'b1;
                         ID_IFreg_ctrl = `ysyx_041461_ID_IFreg_ctrl_IDpc;
-                        ID_CD_ctrl = `ysyx_041461_CD_JALR;
+                        ID_TYPE = `ysyx_041461_TYPE_JALR;
                         ID_WB_ctrl = `ysyx_041461_WB_SNPC;
                     end
                     default: begin
@@ -483,8 +485,9 @@ always@(*) begin
             `ysyx_041461_FENCE: begin
                 case(ID_inst[31:7])
                     `ysyx_041461_FENCE_I: begin
-                        ID_FENCE_I = 1'b1;
-                        ID_CD_ctrl = `ysyx_041461_CD_FENCE_I;
+                        ID_TYPE = `ysyx_041461_TYPE_FENCE_I;
+                        ID_next_pc = ID_pc + 64'd4;
+                        ID_IFreg_ctrl = `ysyx_041461_ID_IFreg_ctrl_IDpc;
                     end
                     default: begin
                         ID_trap_out = `ysyx_041461_ID_ILLEGAL_INST;
@@ -496,7 +499,61 @@ always@(*) begin
             end
         endcase
     end
+    if(ID_valid_in == 1'b1 && ID_trap_in == `ysyx_041461_TRAP_NOP && ID_EXE_trap == `ysyx_041461_TRAP_NOP && ID_MEM_trap == `ysyx_041461_TRAP_NOP && ID_WB_trap == `ysyx_041461_TRAP_NOP && ID_conflict == 1'b0) begin
+        if(ID_TYPE == `ysyx_041461_TYPE_FENCE_I) begin
+            if(ID_EXE_ready == 1'b1 && ID_MEM_ready == 1'b1) begin
+                ID_valid_out = 1'b1;
+            end
+            else begin
+                ID_valid_out = 1'b0;
+            end
+        end
+    end
+    else if(ID_valid_in == 1'b1 && ID_trap_in == `ysyx_041461_TRAP_NOP && ID_EXE_trap == `ysyx_041461_TRAP_NOP && ID_MEM_trap == `ysyx_041461_TRAP_NOP && ID_WB_trap == `ysyx_041461_TRAP_NOP && ID_conflict == 1'b1) begin
+        ID_valid_out = 1'b0;
+    end
+    else if(ID_valid_in == 1'b1 && ID_trap_in != `ysyx_041461_TRAP_NOP && ID_EXE_trap == `ysyx_041461_TRAP_NOP && ID_MEM_trap == `ysyx_041461_TRAP_NOP && ID_WB_trap == `ysyx_041461_TRAP_NOP) begin
+        ID_valid_out = 1'b1;
+        ID_trap_out = ID_trap_in;
+    end
+    else begin
+        ID_valid_out = 1'b0;
+    end
 end
 
+always@(*) begin
+    if(ID_valid_in == 1'b1 && ID_trap_in == `ysyx_041461_TRAP_NOP && ID_EXE_trap == `ysyx_041461_TRAP_NOP && ID_MEM_trap == `ysyx_041461_TRAP_NOP && ID_WB_trap == `ysyx_041461_TRAP_NOP && ID_conflict == 1'b0) begin
+        if(ID_TYPE == `ysyx_041461_TYPE_FENCE_I) begin
+            if(ID_EXE_ready == 1'b1 && ID_MEM_ready == 1'b1) begin
+                ID_ready = 1'b1;
+            end
+            else begin
+                ID_ready = 1'b0;
+            end
+        end
+        else begin
+            if(ID_EXE_ready == 1'b1) begin
+                ID_ready = 1'b1;
+            end
+            else begin
+                ID_ready = 1'b0;
+            end
+        end
+    end
+    else if(ID_valid_in == 1'b1 && ID_trap_in == `ysyx_041461_TRAP_NOP && ID_EXE_trap == `ysyx_041461_TRAP_NOP && ID_MEM_trap == `ysyx_041461_TRAP_NOP && ID_WB_trap == `ysyx_041461_TRAP_NOP && ID_conflict == 1'b1) begin
+        ID_ready = 1'b0;
+    end
+    else if(ID_valid_in == 1'b1 && ID_trap_in != `ysyx_041461_TRAP_NOP && ID_EXE_trap == `ysyx_041461_TRAP_NOP && ID_MEM_trap == `ysyx_041461_TRAP_NOP && ID_WB_trap == `ysyx_041461_TRAP_NOP) begin
+        if(ID_EXE_ready == 1'b1) begin
+            ID_ready = 1'b1;
+        end
+        else begin
+            ID_ready = 1'b0;
+        end
+    end
+    else begin
+        ID_ready = 1'b1;
+    end
+end
 
 endmodule

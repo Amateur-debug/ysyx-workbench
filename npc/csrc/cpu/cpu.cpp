@@ -1,35 +1,32 @@
 #include <stdint.h>
 #include "verilated_dpi.h"
 #include "verilated_vcd_c.h" //可选，如果要导出vcd则需要加上
-#include "Vysyx_22041461_CPU.h"
+#include "Vysyx_041461_TOP.h"
 #include "svdpi.h"
-#include "Vysyx_22041461_CPU__Dpi.h"
+#include "Vysyx_041461_TOP__Dpi.h"
 #include "/home/cxy/ysyx-workbench/npc/include/state.h"
 #include "/home/cxy/ysyx-workbench/npc/include/difftest.h"
+#include "/home/cxy/ysyx-workbench/npc/include/common.h"
 
-#define MAX_MAIN_TIME 100
-#define RST_END_TIME 1  //rst拉高时间
 #define MAX_INST_TO_PRINT 10
 
-extern Vysyx_22041461_CPU *top; 
+extern Vysyx_041461_TOP *top; 
 extern VerilatedVcdC* tfp;
 
 static vluint64_t main_time = 0;  //initial 仿真时间
 static bool g_print_step = false;
 
-int is_difftest_this = 1;
-int is_difftest_next = 1;
-
+int skip = 0;
 
 void ebreak(){      //结束指令
   extern uint64_t *cpu_gpr;
-  set_npc_state(NPC_END, top->pc, cpu_gpr[10]);
+  extern uint64_t *cpu_pc;
+  set_npc_state(NPC_END, *cpu_pc, cpu_gpr[10]);
 }
 
-void invalid_inst(){  
-  npc_state.state = NPC_ABORT;
-  printf("pc = 0x%016lx  指令没有实现\n", top->pc);
-  printf("inst = 0x%x\n", top->inst);
+char WB_valid;
+void get_WB_valid(char get_WB_valid){
+  WB_valid = get_WB_valid;
 }
 
 double sc_time_stamp(){
@@ -37,68 +34,59 @@ double sc_time_stamp(){
 }
 
 void init_npc_cpu(){
-  top->clk = 1;
-  top->rst = 1;
+  top->clk = 0;
+  top->rst = 0;
   top->eval(); 
-  tfp->dump(main_time); //dump wave
-  main_time++; //推动仿真时间
-
-  top->clk = !top->clk;
-  top->rst = 1;
-  top->eval(); 
-  tfp->dump(main_time); //dump wave
-  main_time++; //推动仿真时间
-
-  top->clk = !top->clk;
-  top->rst = 1;
-  top->eval(); 
-  tfp->dump(main_time); //dump wave
-  main_time++; //推动仿真时间
-
-  top->clk = !top->clk;
-  top->rst = 1;
-  top->eval(); 
-  tfp->dump(main_time); //dump wave
-  main_time++; //推动仿真时间
-
-  top->clk = !top->clk;
-  top->rst = 1;
-  top->eval(); 
-  tfp->dump(main_time); //dump wave
+  #ifdef WAVE
+    tfp->dump(main_time); //dump wave
+  #endif
   main_time++; //推动仿真时间
 
   top->clk = !top->clk;
   top->rst = 0;
   top->eval(); 
-  tfp->dump(main_time); //dump wave
+  #ifdef WAVE
+    tfp->dump(main_time); //dump wave
+  #endif
   main_time++; //推动仿真时间
 
   top->clk = !top->clk;
   top->rst = 1;
   top->eval(); 
-  tfp->dump(main_time); //dump wave
+  #ifdef WAVE
+    tfp->dump(main_time); //dump wave
+  #endif
   main_time++; //推动仿真时间
 
   top->clk = !top->clk;
-  top->rst = 1;
+  top->rst = 0;
   top->eval(); 
-  tfp->dump(main_time); //dump wave
+  #ifdef WAVE
+    tfp->dump(main_time); //dump wave
+  #endif
   main_time++; //推动仿真时间
   
 }
 
 void exec_once(){
-  npc_state.halt_pc = top->pc;
   //negedge
   top->clk = !top->clk;
   top->eval(); 
-  tfp->dump(main_time); //dump wave
+  #ifdef WAVE
+    if(main_time > WAVE_time){
+      tfp->dump(main_time); //dump wave
+    }
+  #endif
   main_time++; //推动仿真时间
 
   //posedge
   top->clk = !top->clk;
   top->eval(); 
-  tfp->dump(main_time); //dump wave
+  #ifdef WAVE
+    if(main_time > WAVE_time){
+      tfp->dump(main_time); //dump wave
+    }
+  #endif
   main_time++; //推动仿真时间
 }
 
@@ -109,26 +97,37 @@ static void execute(uint64_t n){
   extern uint64_t *cpu_pc;
   for (;n > 0; n --){
     if(!Verilated::gotFinish()){
-      exec_once();
-      device_update();
+      #ifdef DIFFTEST
+        if(WB_valid == 1){
+          uint64_t pc = *cpu_pc;
+          uint64_t next_pc = pc + 4;
+          if(skip == 0){
+            exec_once();
+            device_update();
+            difftest_exec(1);
+            if(difftest_checkregs(cpu_gpr, pc) == 0){
+              npc_state.state = NPC_ABORT;
+              npc_state.halt_pc = pc;
+            }
+          }
+          else {
+            exec_once();
+            device_update();
+            difftest_regcpy(cpu_gpr, &next_pc, DIFFTEST_TO_REF);
+            skip = 0;
+          }
+        }
+        else {
+          exec_once();
+        }
+      #else
+        exec_once();
+        device_update();
+      #endif
       if(g_print_step){
         printf("excute at pc = 0x%016x\n", npc_state.halt_pc);
       }
     }
-    #ifdef DIFFTEST
-      extern int is_difftest_this;
-      extern int is_difftest_next;
-      if(is_difftest_this){
-        difftest_exec(1);
-      }
-      else{
-        difftest_regcpy(cpu_gpr, cpu_pc, DIFFTEST_TO_REF);
-      }
-      if(!difftest_checkregs(cpu_gpr, top->pc)){
-        npc_state.state = NPC_ABORT;
-      }
-      is_difftest_this = is_difftest_next;
-    #endif
     if(npc_state.state != NPC_RUNNING){
       break;
     }
@@ -152,15 +151,15 @@ void cpu_exec(uint64_t n){
   switch(npc_state.state){
     case NPC_RUNNING: out = (char *)"stop"; npc_state.state = NPC_STOP; break;
     case NPC_END: 
-    #ifdef DIFFTEST 
-      difftest_exec(1); 
-    #endif
     extern uint64_t *cpu_gpr;
-    if(cpu_gpr[10] == 0){
+    extern uint64_t *cpu_pc;
+    if(npc_state.halt_ret == 0){
       out = (char *)"HIT GOOD TRAP"; 
+      difftest_exec(1);
     }
     else{
       out = (char *)"ABORT";
+      difftest_exec(1);
     }
       printf("npc: %s at pc = 0x%016x\n", out, npc_state.halt_pc); break;
     case NPC_ABORT: out = (char *)"ABORT"; 

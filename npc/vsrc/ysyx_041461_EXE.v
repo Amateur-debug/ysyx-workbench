@@ -1,3 +1,5 @@
+`include "/home/cxy/ysyx-workbench/npc/vsrc/ysyx_041461_macro.v"
+
 module ysyx_041461_EXE(
 
     input  wire   [0:0]  EXE_valid_in ,
@@ -10,10 +12,14 @@ module ysyx_041461_EXE(
     input  wire   [63:0] EXE_pc       ,
     input  wire   [4:0]  EXE_ctrl     ,
     input  wire   [2:0]  EXE_src      ,
+    input  wire   [0:0]  EXE_conflict ,
+    input  wire   [0:0]  EXE_MEM_ready,
+    input  wire   [3:0]  EXE_MEM_trap ,
+    input  wire   [3:0]  EXE_WB_trap  ,
     
     output reg    [63:0] EXE_out      ,
-    output wire   [0:0]  EXE_valid_out
-
+    output reg    [0:0]  EXE_valid_out,
+    output reg    [0:0]  EXE_ready    
 );
 
 
@@ -21,7 +27,45 @@ reg [63:0]  src1;
 reg [63:0]  src2;
 reg [127:0] middle;
 
-assign EXE_valid_out = EXE_valid_in;
+always@(*) begin
+    if(EXE_valid_in == 1'b1 && EXE_trap_in == `ysyx_041461_TRAP_NOP && EXE_MEM_trap == `ysyx_041461_TRAP_NOP && EXE_WB_trap == `ysyx_041461_TRAP_NOP && EXE_conflict == 1'b0) begin
+        EXE_valid_out = 1'b1;
+    end
+    else if(EXE_valid_in == 1'b1 && EXE_trap_in == `ysyx_041461_TRAP_NOP && EXE_MEM_trap == `ysyx_041461_TRAP_NOP && EXE_WB_trap == `ysyx_041461_TRAP_NOP && EXE_conflict == 1'b1) begin
+        EXE_valid_out = 1'b0;
+    end
+    else if(EXE_valid_in == 1'b1 && EXE_trap_in != `ysyx_041461_TRAP_NOP && EXE_MEM_trap == `ysyx_041461_TRAP_NOP && EXE_WB_trap == `ysyx_041461_TRAP_NOP) begin
+        EXE_valid_out = 1'b1;
+    end
+    else begin
+        EXE_valid_out = 1'b0;
+    end
+end
+
+always@(*) begin
+    if(EXE_valid_in == 1'b1 && EXE_trap_in == `ysyx_041461_TRAP_NOP && EXE_MEM_trap == `ysyx_041461_TRAP_NOP && EXE_WB_trap == `ysyx_041461_TRAP_NOP && EXE_conflict == 1'b0) begin
+        if(EXE_MEM_ready == 1'b1) begin
+            EXE_ready = 1'b1;
+        end
+        else begin
+            EXE_ready = 1'b0;
+        end
+    end
+    else if(EXE_valid_in == 1'b1 && EXE_trap_in == `ysyx_041461_TRAP_NOP && EXE_MEM_trap == `ysyx_041461_TRAP_NOP && EXE_WB_trap == `ysyx_041461_TRAP_NOP && EXE_conflict == 1'b1)begin
+        EXE_ready = 1'b0;
+    end
+    else if(EXE_valid_in == 1'b1 && EXE_trap_in != `ysyx_041461_TRAP_NOP && EXE_MEM_trap == `ysyx_041461_TRAP_NOP && EXE_WB_trap == `ysyx_041461_TRAP_NOP) begin
+        if(EXE_MEM_ready == 1'b1) begin
+            EXE_ready = 1'b1;
+        end
+        else begin
+            EXE_ready = 1'b0;
+        end
+    end
+    else begin
+        EXE_ready = 1'b1;
+    end
+end
 
 always@(*) begin
     if(EXE_valid_in == 1'b0) begin
