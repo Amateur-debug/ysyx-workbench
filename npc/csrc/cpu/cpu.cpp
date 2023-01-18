@@ -161,10 +161,10 @@ void cpu_exec(uint64_t n){
       out = (char *)"ABORT";
       difftest_exec(1);
     }
-      printf("npc: %s at pc = 0x%016x\n", out, *cpu_pc); break;
+      printf("npc: %s at pc = 0x%016x\n", out, npc_state.halt_pc); break;
     case NPC_ABORT: out = (char *)"ABORT"; 
-      printf("npc: %s at pc = 0x%016x\n", out, *cpu_pc); break;
+      printf("npc: %s at pc = 0x%016x\n", out, npc_state.halt_pc); break;
     default: out = (char *)"HIT BAD TRAP"; 
-      printf("npc: %s at pc = 0x%016x\n", out, *cpu_pc); break;
+      printf("npc: %s at pc = 0x%016x\n", out, npc_state.halt_pc); break;
   }
 }
