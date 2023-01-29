@@ -161,13 +161,17 @@ wire [63:0] ID_zimm     ;
 wire [63:0] ID_next_pc  ;
 wire [0:0]  ID_valid_out;
 wire [0:0]  ID_IFreg_ctrl;
+/* verilator lint_off UNOPTFLAT */
 wire [2:0]  ID_TYPE  ;
+/* verilator lint_on UNOPTFLAT */
 wire [4:0]  ID_EXE_ctrl ;
 wire [2:0]  ID_EXE_src  ;
 wire [3:0]  ID_MEM_ctrl ;
 wire [2:0]  ID_WB_ctrl  ;
 wire [3:0]  ID_trap_out;  
+/* verilator lint_off UNOPTFLAT */
 wire [0:0]  ID_ready;
+/* verilator lint_on UNOPTFLAT */
 
 
 wire [0:0]  EXEreg_valid_out   ;
@@ -236,9 +240,8 @@ wire [63:0] WBreg_zimm_out   ;
 wire [63:0] WBreg_pc_out     ;
 wire [2:0]  WBreg_WB_ctrl_out; 
 
-/* verilator lint_off UNOPTFLAT */
+
 wire [0:0]   WB_ready;
-/* verilator lint_on UNOPTFLAT */
 wire [63:0]  WB_IFreg_mtvec ;
 wire [63:0]  WB_IFreg_mepc  ;
 wire [1:0]   WB_IFreg_ctrl  ;
@@ -490,6 +493,9 @@ ysyx_041461_EXE_reg EXE_reg(
 );
 
 ysyx_041461_EXE EXE(
+
+    .clk           (clock              ),
+    .rst           (rst_sync           ),
 
     .EXE_valid_in  (EXEreg_valid_out   ),
     .EXE_trap_in   (EXEreg_trap_out    ),

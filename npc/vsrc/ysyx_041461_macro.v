@@ -158,6 +158,11 @@
 `define ysyx_041461_EXE_CSR_ZIMM 3'b110
 `define ysyx_041461_EXE_CSR_NOTZIMM 3'b111
 
+//MUL_signed
+`define ysyx_041461_MUL_unsigned_x_unsigned 2'b00
+`define ysyx_041461_MUL_signed_x_unsigned 2'b10
+`define ysyx_041461_MUL_signed_x_signed 2'b11
+
 //MEM_ctrl
 `define ysyx_041461_MEM_NOP 4'b0000
 `define ysyx_041461_MEM_LB 4'b0001
@@ -203,6 +208,12 @@
 `define ysyx_041461_IF_RAXI_R 3'b011
 `define ysyx_041461_IF_WCACHE 3'b100
 `define ysyx_041461_IF_FINISH 3'b101
+
+//EXE state
+`define ysyx_041461_EXE_START 2'b00
+`define ysyx_041461_EXE_STATE_MUL 2'b01
+`define ysyx_041461_EXE_STATE_DIV 2'b10
+`define ysyx_041461_EXE_FINISH 2'b11
 
 //MEM state
 `define ysyx_041461_MEM_START 4'b0000

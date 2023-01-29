@@ -485,6 +485,7 @@ always@(*) begin
             `ysyx_041461_FENCE: begin
                 case(ID_inst[31:7])
                     `ysyx_041461_FENCE_I: begin
+                        ID_TYPE = `ysyx_041461_TYPE_FENCE_I;
                         ID_next_pc = ID_pc + 64'd4;
                         ID_IFreg_ctrl = `ysyx_041461_ID_IFreg_ctrl_IDpc;
                     end
@@ -499,7 +500,14 @@ always@(*) begin
         endcase
     end
     if(ID_valid_in == 1'b1 && ID_trap_in == `ysyx_041461_TRAP_NOP && ID_EXE_trap == `ysyx_041461_TRAP_NOP && ID_MEM_trap == `ysyx_041461_TRAP_NOP && ID_WB_trap == `ysyx_041461_TRAP_NOP && ID_conflict == 1'b0) begin
-
+        if(ID_TYPE == `ysyx_041461_TYPE_FENCE_I) begin
+            if(ID_EXE_ready == 1'b1 && ID_MEM_ready == 1'b1) begin
+                ID_valid_out = 1'b1;
+            end
+            else begin
+                ID_valid_out = 1'b0;
+            end
+        end
     end
     else if(ID_valid_in == 1'b1 && ID_trap_in == `ysyx_041461_TRAP_NOP && ID_EXE_trap == `ysyx_041461_TRAP_NOP && ID_MEM_trap == `ysyx_041461_TRAP_NOP && ID_WB_trap == `ysyx_041461_TRAP_NOP && ID_conflict == 1'b1) begin
         ID_valid_out = 1'b0;
@@ -515,11 +523,21 @@ end
 
 always@(*) begin
     if(ID_valid_in == 1'b1 && ID_trap_in == `ysyx_041461_TRAP_NOP && ID_EXE_trap == `ysyx_041461_TRAP_NOP && ID_MEM_trap == `ysyx_041461_TRAP_NOP && ID_WB_trap == `ysyx_041461_TRAP_NOP && ID_conflict == 1'b0) begin
-        if(ID_EXE_ready == 1'b1) begin
-            ID_ready = 1'b1;
+        if(ID_TYPE == `ysyx_041461_TYPE_FENCE_I) begin
+            if(ID_EXE_ready == 1'b1 && ID_MEM_ready == 1'b1) begin
+                ID_ready = 1'b1;
+            end
+            else begin
+                ID_ready = 1'b0;
+            end
         end
         else begin
-            ID_ready = 1'b0;
+            if(ID_EXE_ready == 1'b1) begin
+                ID_ready = 1'b1;
+            end
+            else begin
+                ID_ready = 1'b0;
+            end
         end
     end
     else if(ID_valid_in == 1'b1 && ID_trap_in == `ysyx_041461_TRAP_NOP && ID_EXE_trap == `ysyx_041461_TRAP_NOP && ID_MEM_trap == `ysyx_041461_TRAP_NOP && ID_WB_trap == `ysyx_041461_TRAP_NOP && ID_conflict == 1'b1) begin
