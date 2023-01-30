@@ -155,11 +155,15 @@ void cpu_exec(uint64_t n){
     extern uint64_t *cpu_pc;
     if(npc_state.halt_ret == 0){
       out = (char *)"HIT GOOD TRAP"; 
-      difftest_exec(1);
+      #ifdef DIFFTEST
+        difftest_exec(1);
+      #endif
     }
     else{
       out = (char *)"ABORT";
-      difftest_exec(1);
+      #ifdef DIFFTEST
+        difftest_exec(1);
+      #endif
     }
       printf("npc: %s at pc = 0x%016x\n", out, npc_state.halt_pc); break;
     case NPC_ABORT: out = (char *)"ABORT"; 

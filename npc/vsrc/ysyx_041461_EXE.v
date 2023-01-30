@@ -177,19 +177,19 @@ always@(*) begin
             end
             `ysyx_041461_EXE_DIV: begin
                 middle = 64'b0;
-                EXE_out = DIV_quotient;
+                EXE_out = DIV_quotient_out;
             end
             `ysyx_041461_EXE_DIVU: begin
                 middle = 64'b0;
-                EXE_out = DIV_quotient;
+                EXE_out = DIV_quotient_out;
             end
             `ysyx_041461_EXE_REM: begin
                 middle = 64'b0;
-                EXE_out = DIV_remainder;
+                EXE_out = DIV_remainder_out;
             end
             `ysyx_041461_EXE_REMU: begin
                 middle = 64'b0;
-                EXE_out = DIV_remainder;
+                EXE_out = DIV_remainder_out;
             end
             `ysyx_041461_EXE_SLLW: begin
                 middle = src1 << src2[4:0];
@@ -219,19 +219,19 @@ always@(*) begin
             end
             `ysyx_041461_EXE_DIVW: begin
                 middle = 64'b0;
-                EXE_out = {{32{DIV_quotient[31:31]}}, DIV_quotient[31:0]};
+                EXE_out = {{32{DIV_quotient_out[31:31]}}, DIV_quotient_out[31:0]};
             end
             `ysyx_041461_EXE_DIVUW: begin
                 middle = 64'b0;
-                EXE_out = {{32{DIV_quotient[31:31]}}, DIV_quotient[31:0]};
+                EXE_out = {{32{DIV_quotient_out[31:31]}}, DIV_quotient_out[31:0]};
             end
             `ysyx_041461_EXE_REMW: begin
                 middle = 64'b0;
-                EXE_out = {{32{DIV_remainder[31:31]}}, DIV_remainder[31:0]};
+                EXE_out = {{32{DIV_remainder_out[31:31]}}, DIV_remainder_out[31:0]};
             end
             `ysyx_041461_EXE_REMUW: begin
                 middle = 64'b0;
-                EXE_out = {{32{DIV_remainder[31:31]}}, DIV_remainder[31:0]};
+                EXE_out = {{32{DIV_remainder_out[31:31]}}, DIV_remainder_out[31:0]};
             end
             default: begin
                 middle = 64'b0;
@@ -314,56 +314,6 @@ always@(*) begin
     end
     else begin
         EXE_ready = 1'b0;
-    end
-end
-
-always@(posedge clk or posedge rst) begin
-    if(rst == 1'b1) begin
-        state <= `ysyx_041461_EXE_START;
-    end
-    else begin
-        case(state)
-            `ysyx_041461_EXE_START: begin
-                if(EXE_valid_in == 1'b1 && EXE_trap_in == `ysyx_041461_TRAP_NOP && EXE_MEM_trap == `ysyx_041461_TRAP_NOP && EXE_WB_trap == `ysyx_041461_TRAP_NOP && EXE_conflict == 1'b0) begin
-                    if(multiplication == 1'b1) begin
-                        state <= `ysyx_041461_EXE_STATE_MUL;
-                    end
-                    else if(division == 1'b1) begin
-                        state <= `ysyx_041461_EXE_STATE_DIV;
-                    end
-                    else begin
-                        state <= state;
-                    end
-                end
-                else begin
-                    state <= state;
-                end
-            end
-            `ysyx_041461_EXE_STATE_MUL: begin
-                if(MUL_valid_out == 1'b1) begin
-                    state <= `ysyx_041461_EXE_FINISH;
-                end
-                else begin
-                    state <= state;
-                end
-            end
-            `ysyx_041461_EXE_STATE_DIV: begin
-                if(DIV_valid_out == 1'b1) begin
-                    state <= `ysyx_041461_EXE_FINISH;
-                end
-                else begin
-                    state <= state;
-                end
-            end
-            `ysyx_041461_EXE_FINISH: begin
-                if(EXE_MEM_ready == 1'b1) begin
-                    state <= `ysyx_041461_EXE_START;
-                end
-                else begin
-                    state <= state;
-                end
-            end
-        endcase
     end
 end
 
@@ -480,6 +430,76 @@ always@(*) begin
     end
     else begin
         DIV_valid_in = 1'b0;
+    end
+end
+
+reg [63:0] DIV_quotient_out;
+reg [63:0] DIV_remainder_out;
+
+always@(posedge clk or posedge rst) begin
+    if(rst == 1'b1) begin
+        DIV_quotient_out <= 64'b0;
+        DIV_remainder_out <= 64'b0;
+    end
+    else begin
+        if(state == `ysyx_041461_EXE_STATE_DIV) begin
+            DIV_quotient_out <= DIV_quotient;
+            DIV_remainder_out <= DIV_remainder;
+        end
+        else begin
+            DIV_quotient_out <= DIV_quotient_out;
+            DIV_remainder_out <= DIV_remainder_out;
+        end
+    end
+end
+
+always@(posedge clk or posedge rst) begin
+    if(rst == 1'b1) begin
+        state <= `ysyx_041461_EXE_START;
+    end
+    else begin
+        case(state)
+            `ysyx_041461_EXE_START: begin
+                if(EXE_valid_in == 1'b1 && EXE_trap_in == `ysyx_041461_TRAP_NOP && EXE_MEM_trap == `ysyx_041461_TRAP_NOP && EXE_WB_trap == `ysyx_041461_TRAP_NOP && EXE_conflict == 1'b0) begin
+                    if(multiplication == 1'b1) begin
+                        state <= `ysyx_041461_EXE_STATE_MUL;
+                    end
+                    else if(division == 1'b1) begin
+                        state <= `ysyx_041461_EXE_STATE_DIV;
+                    end
+                    else begin
+                        state <= state;
+                    end
+                end
+                else begin
+                    state <= state;
+                end
+            end
+            `ysyx_041461_EXE_STATE_MUL: begin
+                if(MUL_valid_out == 1'b1) begin
+                    state <= `ysyx_041461_EXE_FINISH;
+                end
+                else begin
+                    state <= state;
+                end
+            end
+            `ysyx_041461_EXE_STATE_DIV: begin
+                if(DIV_valid_out == 1'b1) begin
+                    state <= `ysyx_041461_EXE_FINISH;
+                end
+                else begin
+                    state <= state;
+                end
+            end
+            `ysyx_041461_EXE_FINISH: begin
+                if(EXE_MEM_ready == 1'b1) begin
+                    state <= `ysyx_041461_EXE_START;
+                end
+                else begin
+                    state <= state;
+                end
+            end
+        endcase
     end
 end
 
