@@ -494,6 +494,9 @@ ysyx_041461_EXE_reg EXE_reg(
 
 ysyx_041461_EXE EXE(
 
+    .clk           (clock              ),
+    .rst           (rst_sync           ),
+
     .EXE_valid_in  (EXEreg_valid_out   ),
     .EXE_trap_in   (EXEreg_trap_out    ),
     .EXE_rs1_data  (WB_EXE_rs1_data    ),

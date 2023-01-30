@@ -209,6 +209,12 @@
 `define ysyx_041461_IF_WCACHE 3'b100
 `define ysyx_041461_IF_FINISH 3'b101
 
+//EXE state
+`define ysyx_041461_EXE_START 2'b00
+`define ysyx_041461_EXE_STATE_MUL 2'b01
+`define ysyx_041461_EXE_STATE_DIV 2'b10
+`define ysyx_041461_EXE_FINISH 2'b11
+
 //MEM state
 `define ysyx_041461_MEM_START 4'b0000
 `define ysyx_041461_MEM_RCACHE 4'b0001
