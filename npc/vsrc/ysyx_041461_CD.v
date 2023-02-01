@@ -1,5 +1,3 @@
-`include "/home/cxy/ysyx-workbench/npc/vsrc/ysyx_041461_macro.v"
-
 //conflict detector
 module ysyx_041461_CD(  
     
@@ -12,7 +10,7 @@ module ysyx_041461_CD(
     input   wire  [0:0]  CD_EXE_valid_in,
     input   wire  [4:0]  CD_EXE_ctrl    ,
     input   wire  [2:0]  CD_EXE_src     ,
-    input   wire  [2:0]  CD_EXE_WB_ctrl ,
+    input   wire  [3:0]  CD_EXE_WB_ctrl ,
     input   wire  [4:0]  CD_EXE_rd      ,
     input   wire  [4:0]  CD_EXE_rs1     ,
     input   wire  [4:0]  CD_EXE_rs2     ,
@@ -21,14 +19,14 @@ module ysyx_041461_CD(
 
     input   wire  [0:0]  CD_MEM_valid_in,
     input   wire  [3:0]  CD_MEM_ctrl    ,   
-    input   wire  [2:0]  CD_MEM_WB_ctrl ,
+    input   wire  [3:0]  CD_MEM_WB_ctrl ,
     input   wire  [4:0]  CD_MEM_rd      ,
     input   wire  [4:0]  CD_MEM_rs2     ,
     input   wire  [11:0] CD_MEM_csr     ,
     input   wire  [3:0]  CD_MEM_trap_in ,
  
     input   wire  [0:0]  CD_WB_valid_in ,
-    input   wire  [2:0]  CD_WB_ctrl     ,
+    input   wire  [3:0]  CD_WB_ctrl     ,
     input   wire  [4:0]  CD_WB_rd       ,
     input   wire  [11:0] CD_WB_csr      ,
     input   wire  [3:0]  CD_WB_trap_in  ,
@@ -91,8 +89,8 @@ always@(*) begin
     if(CD_EXE_valid_in == 1'b1) begin
         if(CD_EXE_WB_ctrl == `ysyx_041461_WB_EXE || CD_EXE_WB_ctrl == `ysyx_041461_WB_MEM || 
         CD_EXE_WB_ctrl == `ysyx_041461_WB_IMM || CD_EXE_WB_ctrl == `ysyx_041461_WB_SNPC || 
-        CD_EXE_WB_ctrl == `ysyx_041461_WB_CSRRW || CD_EXE_WB_ctrl == 3'b110 || 
-        CD_EXE_WB_ctrl == `ysyx_041461_WB_CSRRWI) begin
+        CD_EXE_WB_ctrl == `ysyx_041461_WB_CSR_RS1 || CD_EXE_WB_ctrl == `ysyx_041461_WB_CSR_EXE || 
+        CD_EXE_WB_ctrl == `ysyx_041461_WB_CSR_ZIMM || CD_EXE_WB_ctrl == `ysyx_041461_WB_CSR_RO) begin
             EXE_rd_write = 1'b1;
         end
         else begin
@@ -107,8 +105,8 @@ end
 
 always@(*) begin
     if(CD_EXE_valid_in == 1'b1) begin
-        if(CD_EXE_WB_ctrl == `ysyx_041461_WB_CSRRW || CD_EXE_WB_ctrl == 3'b110 || 
-        CD_EXE_WB_ctrl == `ysyx_041461_WB_CSRRWI) begin
+        if(CD_EXE_WB_ctrl == `ysyx_041461_WB_CSR_RS1 || CD_EXE_WB_ctrl == `ysyx_041461_WB_CSR_EXE || 
+        CD_EXE_WB_ctrl == `ysyx_041461_WB_CSR_ZIMM) begin
             EXE_csr_write = 1'b1;
         end
         else begin
@@ -189,8 +187,8 @@ always@(*) begin
     if(CD_MEM_valid_in == 1'b1) begin
         if(CD_MEM_WB_ctrl == `ysyx_041461_WB_EXE || CD_MEM_WB_ctrl == `ysyx_041461_WB_MEM || 
         CD_MEM_WB_ctrl == `ysyx_041461_WB_IMM || CD_MEM_WB_ctrl == `ysyx_041461_WB_SNPC || 
-        CD_MEM_WB_ctrl == `ysyx_041461_WB_CSRRW || CD_MEM_WB_ctrl == 3'b110 || 
-        CD_MEM_WB_ctrl == `ysyx_041461_WB_CSRRWI) begin
+        CD_MEM_WB_ctrl == `ysyx_041461_WB_CSR_RS1 || CD_MEM_WB_ctrl == `ysyx_041461_WB_CSR_EXE || 
+        CD_MEM_WB_ctrl == `ysyx_041461_WB_CSR_ZIMM || CD_MEM_WB_ctrl == `ysyx_041461_WB_CSR_RO) begin
             MEM_rd_write = 1'b1;
         end
         else begin
@@ -204,8 +202,8 @@ end
 
 always@(*) begin
     if(CD_MEM_valid_in == 1'b1) begin
-        if(CD_MEM_WB_ctrl == `ysyx_041461_WB_CSRRW || CD_MEM_WB_ctrl == 3'b110 || 
-        CD_MEM_WB_ctrl == `ysyx_041461_WB_CSRRWI) begin
+        if(CD_MEM_WB_ctrl == `ysyx_041461_WB_CSR_RS1 || CD_MEM_WB_ctrl == `ysyx_041461_WB_CSR_EXE || 
+        CD_MEM_WB_ctrl == `ysyx_041461_WB_CSR_ZIMM) begin
             MEM_csr_write = 1'b1;
         end
         else begin
@@ -246,8 +244,8 @@ always@(*) begin
     if(CD_WB_valid_in == 1'b1) begin
         if(CD_WB_ctrl == `ysyx_041461_WB_EXE || CD_WB_ctrl == `ysyx_041461_WB_MEM || 
         CD_WB_ctrl == `ysyx_041461_WB_IMM || CD_WB_ctrl == `ysyx_041461_WB_SNPC || 
-        CD_WB_ctrl == `ysyx_041461_WB_CSRRW || CD_WB_ctrl == 3'b110 || 
-        CD_WB_ctrl == `ysyx_041461_WB_CSRRWI) begin
+        CD_WB_ctrl == `ysyx_041461_WB_CSR_RS1 || CD_WB_ctrl == `ysyx_041461_WB_CSR_EXE || 
+        CD_WB_ctrl == `ysyx_041461_WB_CSR_ZIMM || CD_WB_ctrl == `ysyx_041461_WB_CSR_RO) begin
             WB_rd_write = 1'b1;
         end
         else begin
@@ -261,8 +259,8 @@ end
 
 always@(*) begin
     if(CD_WB_valid_in == 1'b1) begin
-        if(CD_WB_ctrl == `ysyx_041461_WB_CSRRW || CD_WB_ctrl == 3'b110 || 
-        CD_WB_ctrl == `ysyx_041461_WB_CSRRWI) begin
+        if(CD_WB_ctrl == `ysyx_041461_WB_CSR_RS1 || CD_WB_ctrl == `ysyx_041461_WB_CSR_EXE || 
+        CD_WB_ctrl == `ysyx_041461_WB_CSR_ZIMM) begin
             WB_csr_write = 1'b1;
         end
         else begin

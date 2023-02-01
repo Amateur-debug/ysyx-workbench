@@ -140,6 +140,7 @@ reg  [1:0]  wstate;
 wire [0:0]  rclint;
 wire [0:0]  wclint;
 
+//在pa中，由于地址冲突，需要屏蔽CLINT模块
 assign rclint = 1'b0;
 assign wclint = 1'b0;
 

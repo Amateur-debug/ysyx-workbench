@@ -1,5 +1,4 @@
 `include "/home/cxy/ysyx-workbench/npc/vsrc/ysyx_041461_macro.v"
-
 module ysyx_041461_ID( 
 
     input   wire [31:0] ID_inst      ,
@@ -28,7 +27,7 @@ module ysyx_041461_ID(
     output  reg  [4:0]  ID_EXE_ctrl  ,
     output  reg  [2:0]  ID_EXE_src   ,
     output  reg  [3:0]  ID_MEM_ctrl  ,
-    output  reg  [2:0]  ID_WB_ctrl   ,
+    output  reg  [3:0]  ID_WB_ctrl   ,
     output  reg  [3:0]  ID_trap_out  ,
     output  reg  [0:0]  ID_ready     
 ); 
@@ -73,6 +72,7 @@ wire  [2:0]  funct3;
 wire  [5:0]  funct6;
 wire  [6:0]  funct7;
 wire  [5:0]  shamt;
+wire  [0:0]  MRO_csr;
 
 assign ID_rd   = ID_inst[11:7] ;
 assign ID_rs1  = ID_inst[19:15];
@@ -84,7 +84,7 @@ assign opcode = ID_inst[6:0]  ;
 assign funct3 = ID_inst[14:12];
 assign funct6 = ID_inst[31:26];
 assign funct7 = ID_inst[31:25];
-
+assign MRO_csr = ID_csr[11:10] == 2'b11;
 
 //指令译码
 always@(*) begin  
@@ -450,30 +450,68 @@ always@(*) begin
                     default: begin
                         case(funct3)
                             `ysyx_041461_CSRRW: begin
-                                ID_WB_ctrl = `ysyx_041461_WB_CSRRW;
+                                ID_WB_ctrl = `ysyx_041461_WB_CSR_RS1;
+                                if(MRO_csr == 1'b1) begin
+                                    ID_trap_out = `ysyx_041461_ID_ILLEGAL_INST;
+                                end
                             end
                             `ysyx_041461_CSRRS: begin
                                 ID_EXE_ctrl = `ysyx_041461_EXE_OR;
                                 ID_EXE_src = `ysyx_041461_EXE_R_CSR;
-                                ID_WB_ctrl = `ysyx_041461_WB_CSRRS;
+                                if(ID_rs1 == 5'b0) begin
+                                    ID_WB_ctrl = `ysyx_041461_WB_CSR_RO;
+                                end
+                                else begin
+                                    ID_WB_ctrl = `ysyx_041461_WB_CSR_EXE;
+                                end
+                                if(MRO_csr == 1'b1 && ID_rs1 != 5'b0) begin
+                                    ID_trap_out = `ysyx_041461_ID_ILLEGAL_INST;
+                                end
                             end
                             `ysyx_041461_CSRRC: begin
                                 ID_EXE_ctrl = `ysyx_041461_EXE_ADD;
                                 ID_EXE_src = `ysyx_041461_EXE_NOTR_CSR;
-                                ID_WB_ctrl = `ysyx_041461_WB_CSRRC;
+                                if(ID_rs1 == 5'b0) begin
+                                    ID_WB_ctrl = `ysyx_041461_WB_CSR_RO;
+                                end
+                                else begin
+                                    ID_WB_ctrl = `ysyx_041461_WB_CSR_EXE;
+                                end
+                                if(MRO_csr == 1'b1 && ID_rs1 != 5'b0) begin
+                                    ID_trap_out = `ysyx_041461_ID_ILLEGAL_INST;
+                                end
                             end
                             `ysyx_041461_CSRRWI: begin
-                                ID_WB_ctrl = `ysyx_041461_WB_CSRRWI;
+                                ID_WB_ctrl = `ysyx_041461_WB_CSR_ZIMM;
+                                if(MRO_csr == 1'b1) begin
+                                    ID_trap_out = `ysyx_041461_ID_ILLEGAL_INST;
+                                end
                             end
                             `ysyx_041461_CSRRSI: begin
                                 ID_EXE_ctrl = `ysyx_041461_EXE_OR;
                                 ID_EXE_src = `ysyx_041461_EXE_CSR_ZIMM;
-                                ID_WB_ctrl = `ysyx_041461_WB_CSRRSI;
+                                if(ID_zimm[4:0] == 5'b0) begin
+                                    ID_WB_ctrl = `ysyx_041461_WB_CSR_RO;
+                                end
+                                else begin
+                                    ID_WB_ctrl = `ysyx_041461_WB_CSR_EXE;
+                                end
+                                if(MRO_csr == 1'b1 && ID_zimm[4:0] != 5'b0) begin
+                                    ID_trap_out = `ysyx_041461_ID_ILLEGAL_INST;
+                                end
                             end
                             `ysyx_041461_CSRRCI: begin
                                 ID_EXE_ctrl = `ysyx_041461_EXE_AND;
                                 ID_EXE_src = `ysyx_041461_EXE_CSR_NOTZIMM;
-                                ID_WB_ctrl = `ysyx_041461_WB_CSRRCI;
+                                if(ID_zimm[4:0] == 5'b0) begin
+                                    ID_WB_ctrl = `ysyx_041461_WB_CSR_RO;
+                                end
+                                else begin
+                                    ID_WB_ctrl = `ysyx_041461_WB_CSR_EXE;
+                                end
+                                if(MRO_csr == 1'b1 && ID_zimm[4:0] != 5'b0) begin
+                                    ID_trap_out = `ysyx_041461_ID_ILLEGAL_INST;
+                                end
                             end
                             default: begin
                                 ID_trap_out = `ysyx_041461_ID_ILLEGAL_INST;

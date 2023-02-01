@@ -1,5 +1,4 @@
 `include "/home/cxy/ysyx-workbench/npc/vsrc/ysyx_041461_macro.v"
-
 module ysyx_041461_IF(
 
     input   wire [0:0]    clk                  ,
@@ -179,8 +178,7 @@ end
 
 //在运行pa程序时，需判断地址大小，运行soc程序时只需判断一位
 //SOC
-/*
-always@(*) begin
+/*always@(*) begin
     if(IF_pc[31:31] == 1'b1) begin
         uncached = 1'b0;
     end
@@ -199,6 +197,7 @@ always@(*) begin
         uncached = 1'b1;
     end
 end
+
 
 always@(*) begin
     if(V1[index] == 1'b1) begin

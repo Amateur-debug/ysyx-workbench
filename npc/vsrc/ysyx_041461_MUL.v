@@ -1,5 +1,4 @@
 `include "/home/cxy/ysyx-workbench/npc/vsrc/ysyx_041461_macro.v"
-
 module ysyx_041461_MUL(
 
     input  wire   [0:0]  clk             ,
@@ -14,9 +13,6 @@ module ysyx_041461_MUL(
     output reg    [63:0] MUL_result_hi   ,
     output reg    [63:0] MUL_result_lo
 );
-
-wire [127:0] aaaa;
-assign aaaa = $signed(multiplicand) * $signed(multiplier);
 
 reg [127:0] multiplicand;
 reg [65:0] multiplier;

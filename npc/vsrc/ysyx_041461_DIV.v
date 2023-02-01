@@ -1,3 +1,4 @@
+`include "/home/cxy/ysyx-workbench/npc/vsrc/ysyx_041461_macro.v"
 module ysyx_041461_DIV(
 
     input  wire   [0:0]  clk          ,
@@ -269,12 +270,6 @@ always@(posedge clk or posedge rst) begin
         end
     end
 end
-
-
-
-
-
-
 
 
 endmodule

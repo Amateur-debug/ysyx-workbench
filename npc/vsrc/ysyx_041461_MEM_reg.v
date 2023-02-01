@@ -1,5 +1,3 @@
-`include "/home/cxy/ysyx-workbench/npc/vsrc/ysyx_041461_macro.v"
-
 module ysyx_041461_MEM_reg(
 
     input   wire [0:0]   clk                 ,
@@ -17,7 +15,7 @@ module ysyx_041461_MEM_reg(
     input   wire [63:0]  MEMreg_zimm_in      ,
     input   wire [63:0]  MEMreg_pc_in        ,
     input   wire [3:0]   MEMreg_MEM_ctrl_in  ,
-    input   wire [2:0]   MEMreg_WB_ctrl_in   ,
+    input   wire [3:0]   MEMreg_WB_ctrl_in   ,
   
     output  reg  [0:0]   MEMreg_valid_out    ,    
     output  reg  [3:0]   MEMreg_trap_out     ,
@@ -30,7 +28,7 @@ module ysyx_041461_MEM_reg(
     output  reg  [63:0]  MEMreg_zimm_out     ,
     output  reg  [63:0]  MEMreg_pc_out       ,
     output  reg  [3:0]   MEMreg_MEM_ctrl_out ,
-    output  reg  [2:0]   MEMreg_WB_ctrl_out  
+    output  reg  [3:0]   MEMreg_WB_ctrl_out  
 );
 
 
@@ -47,7 +45,7 @@ always@(posedge clk or posedge rst) begin
         MEMreg_csr_out <= 12'b0;   
         MEMreg_imm_out <= 64'b0;    
         MEMreg_zimm_out <= 64'b0;   
-        MEMreg_pc_out <= 64'h0000_0000_8000_0000;     
+        MEMreg_pc_out <= 64'h0000_0000_3000_0000;     
         MEMreg_MEM_ctrl_out <= `ysyx_041461_MEM_NOP;
         MEMreg_WB_ctrl_out <= `ysyx_041461_WB_NOP;           
     end

@@ -1,5 +1,3 @@
-`include "/home/cxy/ysyx-workbench/npc/vsrc/ysyx_041461_macro.v"
-
 module ysyx_041461_WB_reg(
 
     input   wire [0:0]   clk                ,
@@ -16,7 +14,7 @@ module ysyx_041461_WB_reg(
     input   wire [63:0]  WBreg_imm_in       ,
     input   wire [63:0]  WBreg_zimm_in      ,
     input   wire [63:0]  WBreg_pc_in        ,
-    input   wire [2:0]   WBreg_WB_ctrl_in   ,
+    input   wire [3:0]   WBreg_WB_ctrl_in   ,
          
     output  reg  [0:0]   WBreg_valid_out    , 
     output  reg  [3:0]   WBreg_trap_out     ,
@@ -28,7 +26,7 @@ module ysyx_041461_WB_reg(
     output  reg  [63:0]  WBreg_imm_out      ,
     output  reg  [63:0]  WBreg_zimm_out     ,
     output  reg  [63:0]  WBreg_pc_out       ,
-    output  reg  [2:0]   WBreg_WB_ctrl_out  
+    output  reg  [3:0]   WBreg_WB_ctrl_out  
 );
 
 

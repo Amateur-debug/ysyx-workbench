@@ -179,27 +179,32 @@
 `define ysyx_041461_MEM_FENCE_I 4'b1100
 
 //WB_ctrl
-`define ysyx_041461_WB_NOP 3'b000
-`define ysyx_041461_WB_EXE 3'b001
-`define ysyx_041461_WB_MEM 3'b010
-`define ysyx_041461_WB_IMM 3'b011
-`define ysyx_041461_WB_SNPC 3'b100
-`define ysyx_041461_WB_CSRRW 3'b101
-`define ysyx_041461_WB_CSRRS 3'b110
-`define ysyx_041461_WB_CSRRC 3'b110
-`define ysyx_041461_WB_CSRRSI 3'b110
-`define ysyx_041461_WB_CSRRCI 3'b110
-`define ysyx_041461_WB_CSRRWI 3'b111
-
+`define ysyx_041461_WB_NOP 4'b0000
+`define ysyx_041461_WB_EXE 4'b0001
+`define ysyx_041461_WB_MEM 4'b0010
+`define ysyx_041461_WB_IMM 4'b0011
+`define ysyx_041461_WB_SNPC 4'b0100
+`define ysyx_041461_WB_CSR_RS1 4'b0101
+`define ysyx_041461_WB_CSR_EXE 4'b0110
+`define ysyx_041461_WB_CSR_ZIMM 4'b0111
+`define ysyx_041461_WB_CSR_RO 4'b1000
 
 //csr
+`define ysyx_041461_MVENDORID 12'hf11
+`define ysyx_041461_MARCHID 12'hf12
+`define ysyx_041461_MIMPID 12'hf13
+`define ysyx_041461_MHARTID 12'hf14
+`define ysyx_041461_MSTATUS 12'h300
+`define ysyx_041461_MISA 12'h301
+`define ysyx_041461_MIE 12'h304
 `define ysyx_041461_MTVEC 12'h305
+`define ysyx_041461_MSCRATCH 12'h340
 `define ysyx_041461_MEPC 12'h341
 `define ysyx_041461_MCAUSE 12'h342
-`define ysyx_041461_MSTATUS 12'h300
-`define ysyx_041461_MIE 12'h304
+`define ysyx_041461_MTVAL 12'h343
 `define ysyx_041461_MIP 12'h344
-`define ysyx_041461_MHARTID 12'hf14
+`define ysyx_041461_MCYCLE 12'hb00
+`define ysyx_041461_MINSTRET 12'hb02
 
 //IF state
 `define ysyx_041461_IF_START 3'b000
