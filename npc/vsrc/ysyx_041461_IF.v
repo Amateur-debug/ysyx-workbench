@@ -1,5 +1,4 @@
 `include "/home/cxy/ysyx-workbench/npc/vsrc/ysyx_041461_macro.v"
-
 module ysyx_041461_IF(
 
     input   wire [0:0]    clk                  ,
@@ -140,6 +139,11 @@ wire [54:0]  tag;
 
 reg  [0:0]   uncached;
 
+reg  [6:0]   PLRU_tree       [63:0];
+reg  [6:0]   PLRU_tree_next  [63:0];
+reg  [2:0]   replace_line;
+
+
 assign index = IF_pc[8:3];
 assign offset = IF_pc[2:0];
 assign tag = IF_pc[63:9];
@@ -174,8 +178,7 @@ end
 
 //在运行pa程序时，需判断地址大小，运行soc程序时只需判断一位
 //SOC
-/*
-always@(*) begin
+/*always@(*) begin
     if(IF_pc[31:31] == 1'b1) begin
         uncached = 1'b0;
     end
@@ -194,6 +197,7 @@ always@(*) begin
         uncached = 1'b1;
     end
 end
+
 
 always@(*) begin
     if(V1[index] == 1'b1) begin
@@ -307,6 +311,107 @@ always@(*) begin
     end
 end
 
+integer n;
+always@(*) begin
+    for(n = 0; n < 64; n = n + 1) begin
+        PLRU_tree_next[n] = PLRU_tree[n];
+    end
+    if(state == `ysyx_041461_IF_RCACHE) begin
+        if(hit1 == 1'b1) begin
+            PLRU_tree_next[index][0:0] = 1'b1;
+            PLRU_tree_next[index][1:1] = 1'b1;
+            PLRU_tree_next[index][3:3] = 1'b1;
+        end
+        else if(hit2 == 1'b1) begin
+            PLRU_tree_next[index][0:0] = 1'b1;
+            PLRU_tree_next[index][1:1] = 1'b1;
+            PLRU_tree_next[index][3:3] = 1'b0;
+        end
+        else if(hit3 == 1'b1) begin
+            PLRU_tree_next[index][0:0] = 1'b1;
+            PLRU_tree_next[index][1:1] = 1'b0;
+            PLRU_tree_next[index][4:4] = 1'b1;
+        end
+        else if(hit4 == 1'b1) begin
+            PLRU_tree_next[index][0:0] = 1'b1;
+            PLRU_tree_next[index][1:1] = 1'b0;
+            PLRU_tree_next[index][4:4] = 1'b0;
+        end
+        else if(hit5 == 1'b1) begin
+            PLRU_tree_next[index][0:0] = 1'b0;
+            PLRU_tree_next[index][2:2] = 1'b1;
+            PLRU_tree_next[index][5:5] = 1'b1;
+        end
+        else if(hit6 == 1'b1) begin
+            PLRU_tree_next[index][0:0] = 1'b0;
+            PLRU_tree_next[index][2:2] = 1'b1;
+            PLRU_tree_next[index][5:5] = 1'b0;
+        end
+        else if(hit7 == 1'b1) begin
+            PLRU_tree_next[index][0:0] = 1'b0;
+            PLRU_tree_next[index][2:2] = 1'b0;
+            PLRU_tree_next[index][6:6] = 1'b1;
+        end
+        else if(hit8 == 1'b1) begin
+            PLRU_tree_next[index][0:0] = 1'b0;
+            PLRU_tree_next[index][2:2] = 1'b0;
+            PLRU_tree_next[index][6:6] = 1'b0;
+        end
+    end
+end
+
+integer r;
+always@(posedge clk or posedge rst) begin
+    if(rst == 1'b1) begin
+        for(r = 0; r < 64; r = r + 1) begin
+            PLRU_tree[r] <= 7'b0;
+        end
+    end
+    else begin
+        for(r = 0; r < 64; r = r + 1) begin
+            PLRU_tree[r] <= PLRU_tree_next[r];
+        end
+    end
+end
+
+always@(*) begin
+    if(PLRU_tree[index][0:0] == 1'b0) begin
+        if(PLRU_tree[index][1:1] == 1'b0) begin
+            if(PLRU_tree[index][3:3] == 1'b0) begin
+                replace_line = 3'b000;
+            end
+            else begin
+                replace_line = 3'b001;
+            end
+        end
+        else begin
+            if(PLRU_tree[index][4:4] == 1'b0) begin 
+                replace_line = 3'b010;
+            end
+            else begin
+                replace_line = 3'b011;
+            end
+        end
+    end
+    else begin
+        if(PLRU_tree[index][2:2] == 1'b0) begin
+            if(PLRU_tree[index][5:5] == 1'b0) begin
+                replace_line = 3'b100;
+            end
+            else begin
+                replace_line = 3'b101;
+            end
+        end
+        else begin
+            if(PLRU_tree[index][6:6] == 1'b0) begin 
+                replace_line = 3'b110;
+            end
+            else begin
+                replace_line = 3'b111;
+            end
+        end
+    end
+end
 
 always@(*) begin
     IF_sram0_wen = 1'b1;
@@ -363,9 +468,48 @@ always@(*) begin
             IF_sram3_wdata = {AXI_rdata, 64'b0};
         end
         else begin
-            IF_sram0_wen = 1'b0;
-            IF_sram0_wmask = 128'hffff_ffff_ffff_ffff_0000_0000_0000_0000;
-            IF_sram0_wdata = {64'b0, AXI_rdata};
+            case(replace_line)
+                3'b000: begin
+                    IF_sram0_wen = 1'b0;
+                    IF_sram0_wmask = 128'hffff_ffff_ffff_ffff_0000_0000_0000_0000;
+                    IF_sram0_wdata = {64'b0, AXI_rdata};
+                end
+                3'b001: begin
+                    IF_sram0_wen = 1'b0;
+                    IF_sram0_wmask = 128'h0000_0000_0000_0000_ffff_ffff_ffff_ffff;
+                    IF_sram0_wdata = {AXI_rdata, 64'b0};
+                end
+                3'b010: begin
+                    IF_sram1_wen = 1'b0;
+                    IF_sram1_wmask = 128'hffff_ffff_ffff_ffff_0000_0000_0000_0000;
+                    IF_sram1_wdata = {64'b0, AXI_rdata};
+                end
+                3'b011: begin
+                    IF_sram1_wen = 1'b0;
+                    IF_sram1_wmask = 128'h0000_0000_0000_0000_ffff_ffff_ffff_ffff;
+                    IF_sram1_wdata = {AXI_rdata, 64'b0};
+                end
+                3'b100: begin
+                    IF_sram2_wen = 1'b0;
+                    IF_sram2_wmask = 128'hffff_ffff_ffff_ffff_0000_0000_0000_0000;
+                    IF_sram2_wdata = {64'b0, AXI_rdata};
+                end
+                3'b101: begin
+                    IF_sram2_wen = 1'b0;
+                    IF_sram2_wmask = 128'h0000_0000_0000_0000_ffff_ffff_ffff_ffff;
+                    IF_sram2_wdata = {AXI_rdata, 64'b0};
+                end
+                3'b110: begin
+                    IF_sram3_wen = 1'b0;
+                    IF_sram3_wmask = 128'hffff_ffff_ffff_ffff_0000_0000_0000_0000;
+                    IF_sram3_wdata = {64'b0, AXI_rdata};
+                end
+                3'b111: begin
+                    IF_sram3_wen = 1'b0;
+                    IF_sram3_wmask = 128'h0000_0000_0000_0000_ffff_ffff_ffff_ffff;
+                    IF_sram3_wdata = {AXI_rdata, 64'b0};
+                end
+            endcase
         end
     end
 end
@@ -424,8 +568,32 @@ always@(*) begin
             tag8_next[index] = tag;
         end
         else begin
-            V1_next[index] = 1'b1;
-            tag1_next[index] = tag;
+            case(replace_line)
+                3'b000: begin
+                    tag1_next[index] = tag;
+                end
+                3'b001: begin
+                    tag2_next[index] = tag;
+                end
+                3'b010: begin
+                    tag3_next[index] = tag;
+                end
+                3'b011: begin
+                    tag4_next[index] = tag;
+                end
+                3'b100: begin
+                    tag5_next[index] = tag;
+                end
+                3'b101: begin
+                    tag6_next[index] = tag;
+                end
+                3'b110: begin
+                    tag7_next[index] = tag;
+                end
+                3'b111: begin
+                    tag8_next[index] = tag;
+                end
+            endcase
         end
     end
     else if(IF_ID_TYPE == `ysyx_041461_TYPE_FENCE_I) begin

@@ -1,5 +1,3 @@
-`include "/home/cxy/ysyx-workbench/npc/vsrc/ysyx_041461_macro.v"
-
 module  ysyx_041461_EXE_reg(
 
     input   wire  [0:0]  clk                          ,
@@ -18,7 +16,7 @@ module  ysyx_041461_EXE_reg(
     input   wire  [4:0]  EXEreg_EXE_ctrl_in           ,
     input   wire  [2:0]  EXEreg_EXE_src_in            ,
     input   wire  [3:0]  EXEreg_MEM_ctrl_in           ,
-    input   wire  [2:0]  EXEreg_WB_ctrl_in            ,
+    input   wire  [3:0]  EXEreg_WB_ctrl_in            ,
           
     output  reg   [0:0]  EXEreg_valid_out             ,
     output  reg   [3:0]  EXEreg_trap_out              ,
@@ -32,7 +30,7 @@ module  ysyx_041461_EXE_reg(
     output  reg   [4:0]  EXEreg_EXE_ctrl_out          ,
     output  reg   [2:0]  EXEreg_EXE_src_out           ,
     output  reg   [3:0]  EXEreg_MEM_ctrl_out          ,
-    output  reg   [2:0]  EXEreg_WB_ctrl_out
+    output  reg   [3:0]  EXEreg_WB_ctrl_out
 );
 
 

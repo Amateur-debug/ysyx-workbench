@@ -4,7 +4,7 @@ module ysyx_041461_Booth_core(
     input  wire  [127:0]  Booth_core_x  ,
 
     output reg   [127:0]  Booth_core_p  ,
-	output reg   [0:0]    Booth_core_c
+    output reg   [0:0]    Booth_core_c
 );
 
 wire [0:0] y_add;
@@ -24,26 +24,26 @@ assign sel_double_negative =  y_add & ~y & ~y_sub;
 assign sel_double_positive = ~y_add &  y &  y_sub;
 
 always@(*) begin
-	if(sel_negative == 1'b1) begin
-		Booth_core_p = ~Booth_core_x;
-		Booth_core_c = 1'b1;
-	end
-	else if(sel_positive == 1'b1) begin
-		Booth_core_p = Booth_core_x;
-		Booth_core_c = 1'b0;
-	end
-	else if(sel_double_negative == 1'b1) begin
-		Booth_core_p = ~(Booth_core_x << 1);
-		Booth_core_c = 1'b1;
-	end
-	else if(sel_positive == 1'b1) begin
-		Booth_core_p = Booth_core_x << 1;
-		Booth_core_c = 1'b0;
-	end
-	else begin
-		Booth_core_p = 128'b0;
-		Booth_core_c = 1'b0;
-	end
+    if(sel_negative == 1'b1) begin
+        Booth_core_p = ~Booth_core_x;
+        Booth_core_c = 1'b1;
+    end
+    else if(sel_positive == 1'b1) begin
+        Booth_core_p = Booth_core_x;
+        Booth_core_c = 1'b0;
+    end
+    else if(sel_double_negative == 1'b1) begin
+        Booth_core_p = ~(Booth_core_x << 1);
+        Booth_core_c = 1'b1;
+    end
+    else if(sel_double_positive == 1'b1) begin
+        Booth_core_p = Booth_core_x << 1;
+        Booth_core_c = 1'b0;
+    end
+    else begin
+        Booth_core_p = 128'b0;
+        Booth_core_c = 1'b0;
+    end
 end
 
 endmodule

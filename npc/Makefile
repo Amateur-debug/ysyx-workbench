@@ -21,7 +21,6 @@ VFLAGS += -CFLAGS /home/cxy/ysyx-workbench/npc/include/difftest.h
 VFLAGS += -CFLAGS -fPIC
 VFLAGS += -CFLAGS -I
 VFLAGS += -CFLAGS /home/cxy/ysyx-workbench/npc/include
-VFLAGS += --unroll-count 128
 
 ifdef IMG
 VFLAGS += -CFLAGS -DIMG=$(IMG)

@@ -1,5 +1,4 @@
 `include "/home/cxy/ysyx-workbench/npc/vsrc/ysyx_041461_macro.v"
-
 module ysyx_041461_MUL(
 
     input  wire   [0:0]  clk             ,
@@ -65,37 +64,36 @@ generate
 endgenerate
 
 reg [32:0] switch_out [127:0];
-reg [32:0] switch_out_next [127:0];
 reg [32:0] switch_c;
-reg [32:0] switch_c_next;
 
-integer j, k, m;
-always@(*) begin
-    for(j = 0; j < 128; j = j + 1) begin
-        for(k = 0; k < 33; k = k + 1) begin
-            switch_out_next[j][k] = Booth_core_p[k][j];
+genvar j, k, m;
+generate
+    for(j = 0; j < 128; j = j + 1) begin: switch1
+        for(k = 0; k < 33; k = k + 1) begin: switch2
+            always@(posedge clk or posedge rst) begin
+                if(rst == 1'b1) begin
+                    switch_out[j][k] <= 1'b0;
+                end
+                else begin
+                    switch_out[j][k] <= Booth_core_p[k][j];
+                end
+            end
         end
     end
-    for(m = 0; m < 33; m = m + 1) begin
-        switch_c_next[m] = Booth_core_c[m];
+endgenerate
+generate
+    for(m = 0; m < 33; m = m + 1) begin: switch3
+        always@(posedge clk or posedge rst) begin
+            if(rst == 1'b1) begin
+                switch_c[m] <= 1'b0;
+            end
+            else begin
+                switch_c[m] <= Booth_core_c[m];
+            end
+        end
     end
-end
+endgenerate
 
-integer n;
-always@(posedge clk or posedge rst) begin
-    if(rst == 1'b1) begin
-        for(n = 0; n < 128; n = n + 1) begin
-            switch_out[n] <= 33'b0;
-        end
-        switch_c <= 33'b0;
-    end
-    else begin
-        for(n = 0; n < 128; n = n + 1) begin
-            switch_out[n] <= switch_out_next[n];
-        end
-        switch_c <= switch_c_next;
-    end
-end
 
 wire   [10:0] Walloc_33bits_cout1 [127:0];
 wire   [6:0]  Walloc_33bits_cout2 [127:0];
@@ -139,7 +137,7 @@ generate
             .clk                 (clk),
             .rst                 (rst),
 
-            .Walloc_33bits_src   (switch_out[0]  ),
+            .Walloc_33bits_src   (switch_out[t]  ),
             .Walloc_33bits_cin2  (Walloc_33bits_cout1[t-1]),
             .Walloc_33bits_cin3  (Walloc_33bits_cout2[t-1]),
             .Walloc_33bits_cin4  (Walloc_33bits_cout3[t-1]),
@@ -175,7 +173,7 @@ always@(posedge clk or posedge rst) begin
         adder_src1[0:0] <= switch_c[31:31];
         adder_src2[0:0] <= Walloc_33bits_sout[0];
         for(r = 1; r < 128; r = r + 1) begin
-            adder_src1[r] <= Walloc_33bits_cout[r];
+            adder_src1[r] <= Walloc_33bits_cout[r - 1];
             adder_src2[r] <= Walloc_33bits_sout[r];
         end
     end
@@ -183,7 +181,7 @@ end
 
 assign {MUL_result_hi, MUL_result_lo} = adder_src1 + adder_src2 + {127'b0, switch_c[32:32]};
 
-reg [2:0] state;
+reg [2:0] state; 
 
 always@(posedge clk or posedge rst) begin
     if(rst == 1'b1) begin

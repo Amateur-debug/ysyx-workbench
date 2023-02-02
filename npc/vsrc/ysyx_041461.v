@@ -1,5 +1,3 @@
-`include "/home/cxy/ysyx-workbench/npc/vsrc/ysyx_041461_macro.v"
-
 module ysyx_041461(
     input             clock            , 
     input             reset            ,
@@ -167,7 +165,7 @@ wire [2:0]  ID_TYPE  ;
 wire [4:0]  ID_EXE_ctrl ;
 wire [2:0]  ID_EXE_src  ;
 wire [3:0]  ID_MEM_ctrl ;
-wire [2:0]  ID_WB_ctrl  ;
+wire [3:0]  ID_WB_ctrl  ;
 wire [3:0]  ID_trap_out;  
 /* verilator lint_off UNOPTFLAT */
 wire [0:0]  ID_ready;
@@ -186,7 +184,7 @@ wire [63:0] EXEreg_pc_out      ;
 wire [4:0]  EXEreg_EXE_ctrl_out;
 wire [2:0]  EXEreg_EXE_src_out ;
 wire [3:0]  EXEreg_MEM_ctrl_out;
-wire [2:0]  EXEreg_WB_ctrl_out ;
+wire [3:0]  EXEreg_WB_ctrl_out ;
 
 wire [63:0] EXE_out            ;
 wire [0:0]  EXE_valid_out      ;
@@ -203,7 +201,7 @@ wire [63:0] MEMreg_imm_out     ;
 wire [63:0] MEMreg_zimm_out    ;
 wire [63:0] MEMreg_pc_out      ;
 wire [3:0]  MEMreg_MEM_ctrl_out;
-wire [2:0]  MEMreg_WB_ctrl_out ;
+wire [3:0]  MEMreg_WB_ctrl_out ;
 
 wire [0:0]  MEM_valid_out;
 wire [0:0]  MEM_ready    ;
@@ -238,7 +236,7 @@ wire [11:0] WBreg_csr_out    ;
 wire [63:0] WBreg_imm_out    ;
 wire [63:0] WBreg_zimm_out   ;
 wire [63:0] WBreg_pc_out     ;
-wire [2:0]  WBreg_WB_ctrl_out; 
+wire [3:0]  WBreg_WB_ctrl_out; 
 
 
 wire [0:0]   WB_ready;

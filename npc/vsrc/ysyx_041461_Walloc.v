@@ -90,9 +90,9 @@ generate
     for(m = 0; m < 3; m = m + 1) begin: fourth
         ysyx_041461_CSA CSA(
 
-            .a    (src3[3*m:3*m]),
-            .b    (src3[3*m + 1:3*m + 1]),
-            .cin  (src3[3*m + 2:3*m + 2]),
+            .a    (src4[3*m:3*m]),
+            .b    (src4[3*m + 1:3*m + 1]),
+            .cin  (src4[3*m + 2:3*m + 2]),
             .cout (Walloc_33bits_cout4[m:m]),
             .s    (sout4[m:m])
         );
@@ -162,7 +162,7 @@ ysyx_041461_CSA CSA7(
 ///////////////eighth///////////////
 wire [2:0] src8;
 assign src8 = {Walloc_33bits_cin8, sout7};
-ysyx_041461_CSA CSA(
+ysyx_041461_CSA CSA8(
     .a    (src8[0:0]),
     .b    (src8[1:1]),
     .cin  (src8[2:2]),

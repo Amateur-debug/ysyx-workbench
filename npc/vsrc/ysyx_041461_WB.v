@@ -1,5 +1,4 @@
 `include "/home/cxy/ysyx-workbench/npc/vsrc/ysyx_041461_macro.v"
-
 module ysyx_041461_WB(
 
     input   wire [0:0]   clk            ,
@@ -25,7 +24,7 @@ module ysyx_041461_WB(
     input   wire [63:0]  WB_imm         ,
     input   wire [63:0]  WB_zimm        ,
     input   wire [63:0]  WB_pc          ,
-    input   wire [2:0]   WB_ctrl        ,
+    input   wire [3:0]   WB_ctrl        ,
     input   wire [3:0]   WB_trap        ,
     input   wire [0:0]   WB_interrupt   ,
 
@@ -61,20 +60,32 @@ initial get_WB_valid({7'b0, WB_valid});
 reg [63:0] x [31:0];    //寄存器现态的值
 reg [63:0] d [31:0];    //寄存器次态的值
 
-reg [63:0] mtvec;    //0x305
+reg [63:0] t;
+reg [63:0] c;
+
+reg [63:0] mhartid;
+reg [63:0] mhartid_next;
+reg [63:0] mstatus;
+reg [63:0] mstatus_next;
+reg [63:0] misa;
+reg [63:0] misa_next;
+reg [63:0] mie;
+reg [63:0] mie_next;
+reg [63:0] mtvec;
 reg [63:0] mtvec_next;
-reg [63:0] mepc;     //0x341
+reg [63:0] mscratch;
+reg [63:0] mscratch_next;
+reg [63:0] mepc;
 reg [63:0] mepc_next;
-reg [63:0] mcause;   //0x342
+reg [63:0] mcause;
 reg [63:0] mcause_next;
-reg [63:0] mstatus;  //0x300
-reg [63:0] mstatus_next; 
-reg [63:0] mie;  //0x304
-reg [63:0] mie_next; 
-reg [63:0] mip;  //0x344
-reg [63:0] mip_next; 
-reg [63:0] mhartid;  //0xf14
-reg [63:0] mhartid_next; 
+reg [63:0] mip;
+reg [63:0] mip_next;
+reg [63:0] mcycle;
+reg [63:0] mcycle_next;
+reg [63:0] minstret;
+reg [63:0] minstret_next;
+
 
 integer i;
 integer j;
@@ -110,8 +121,32 @@ end
 
 always@(*) begin
     case(WB_EXE_csr)
+        `ysyx_041461_MVENDORID: begin
+            WB_EXE_csr_data = 64'b0;
+        end
+        `ysyx_041461_MARCHID: begin
+            WB_EXE_csr_data = 64'b0;
+        end
+        `ysyx_041461_MIMPID: begin
+            WB_EXE_csr_data = 64'b0;
+        end
+        `ysyx_041461_MHARTID: begin
+            WB_EXE_csr_data = mhartid;
+        end
+        `ysyx_041461_MSTATUS: begin
+            WB_EXE_csr_data = mstatus;
+        end
+        `ysyx_041461_MISA: begin
+            WB_EXE_csr_data = misa;
+        end
+        `ysyx_041461_MIE: begin
+            WB_EXE_csr_data = mie;
+        end
         `ysyx_041461_MTVEC: begin
             WB_EXE_csr_data = mtvec;
+        end
+        `ysyx_041461_MSCRATCH: begin
+            WB_EXE_csr_data = mscratch;
         end
         `ysyx_041461_MEPC: begin
             WB_EXE_csr_data = mepc;
@@ -119,17 +154,14 @@ always@(*) begin
         `ysyx_041461_MCAUSE: begin
             WB_EXE_csr_data = mcause;
         end
-        `ysyx_041461_MSTATUS: begin
-            WB_EXE_csr_data = mstatus;
-        end
-        `ysyx_041461_MIE: begin
-            WB_EXE_csr_data = mie;
-        end
         `ysyx_041461_MIP: begin
             WB_EXE_csr_data = mip;
         end
-        `ysyx_041461_MHARTID: begin
-            WB_EXE_csr_data = mhartid;
+        `ysyx_041461_MCYCLE: begin
+            WB_EXE_csr_data = mcycle;
+        end
+        `ysyx_041461_MINSTRET: begin
+            WB_EXE_csr_data = minstret;
         end
         default: begin
             WB_EXE_csr_data = 64'b0;
@@ -154,7 +186,6 @@ always@(*) begin
             end
             `ysyx_041461_ID_EBREAK: begin
                 WB_IFreg_ctrl = `ysyx_041461_WB_IFreg_ctrl_MTVEC;
-                ebreak();
             end
             `ysyx_041461_ID_ILLEGAL_INST: begin
                 WB_IFreg_ctrl = `ysyx_041461_WB_IFreg_ctrl_MTVEC;
@@ -178,20 +209,126 @@ always@(*) begin
     end
 end
 
+always@(*) begin
+    case(WB_csr)
+        `ysyx_041461_MVENDORID: begin
+            t = 64'b0;
+        end
+        `ysyx_041461_MARCHID: begin
+            t = 64'b0;
+        end
+        `ysyx_041461_MIMPID: begin
+            t = 64'b0;
+        end
+        `ysyx_041461_MHARTID: begin
+            t = mhartid;
+        end
+        `ysyx_041461_MSTATUS: begin
+            t = mstatus;
+        end
+        `ysyx_041461_MISA: begin
+            t = misa;
+        end
+        `ysyx_041461_MIE: begin
+            t = mie;
+        end
+        `ysyx_041461_MTVEC: begin
+            t = mtvec;
+        end
+        `ysyx_041461_MSCRATCH: begin
+            t = mscratch;
+        end
+        `ysyx_041461_MEPC: begin
+            t = mepc;
+        end
+        `ysyx_041461_MCAUSE: begin
+            t = mcause;
+        end
+        `ysyx_041461_MIP: begin
+            t = mip;
+        end
+        `ysyx_041461_MCYCLE: begin
+            t = mcycle;
+        end
+        `ysyx_041461_MINSTRET: begin
+            t = minstret;
+        end
+        default: begin
+            t = 64'b0;
+        end
+    endcase
+end
 
-
+always@(*) begin
+    case(WB_ctrl)
+        `ysyx_041461_WB_CSR_RS1: begin
+            c = x[WB_rs1];
+        end
+        `ysyx_041461_WB_CSR_EXE: begin
+            c = WB_EXE_in;
+        end
+        `ysyx_041461_WB_CSR_ZIMM: begin
+            c = WB_zimm;
+        end
+        default: begin
+            c = 64'b0;
+        end
+    endcase
+end
 
 always@(*) begin
     for(i = 0; i < 32; i = i + 1) begin
         d[i] = x[i];
     end
+    if(WB_valid == 1'b1 && WB_trap == `ysyx_041461_TRAP_NOP) begin
+        case(WB_ctrl)
+            `ysyx_041461_WB_NOP: begin
+
+            end
+            `ysyx_041461_WB_EXE: begin
+                d[WB_rd] = WB_EXE_in;
+            end
+            `ysyx_041461_WB_MEM: begin
+                d[WB_rd] = WB_MEM_in;
+            end
+            `ysyx_041461_WB_IMM: begin
+                d[WB_rd] = WB_imm;
+            end        
+            `ysyx_041461_WB_SNPC: begin
+                d[WB_rd] = WB_pc + 4;
+            end
+            `ysyx_041461_WB_CSR_RS1: begin
+                d[WB_rd] = t;
+            end
+            `ysyx_041461_WB_CSR_EXE: begin
+                d[WB_rd] = t;
+            end
+            `ysyx_041461_WB_CSR_ZIMM: begin
+                d[WB_rd] = t;
+            end
+            `ysyx_041461_WB_CSR_RO: begin
+                d[WB_rd] = t;
+            end
+            default: begin
+
+            end
+        endcase
+    end
+    d[0] = 64'b0;
+end
+
+always@(*) begin
+    mhartid_next = mhartid;
+    mstatus_next = mstatus;
+    misa_next = misa;
+    mie_next = mie; 
     mtvec_next = mtvec;
+    mscratch_next = mscratch;
     mepc_next = mepc;
     mcause_next = mcause;
-    mstatus_next = mstatus;
-    mie_next = mie; 
     mip_next = mip; 
-    mhartid_next = mhartid;
+    mcycle_next = mcycle + 1'b1;
+    minstret_next = minstret;
     if(WB_valid == 1'b1) begin
         if(WB_trap != `ysyx_041461_TRAP_NOP) begin
             case(WB_trap)
@@ -216,6 +353,7 @@ always@(*) begin
                     mcause_next = 64'd3;
                     mstatus_next[3:3] = 1'b0;
                     mstatus_next[7:7] = mstatus[3:3];
+                    ebreak();
                 end
                 `ysyx_041461_ID_ILLEGAL_INST: begin
                     mepc_next = WB_pc;
@@ -246,128 +384,45 @@ always@(*) begin
                     
                 end
             endcase
+            if(WB_IF_ready == 1'b1) begin
+                minstret_next = minstret + 1'b1;
+            end
         end
-        else begin
-            case(WB_ctrl)
-                `ysyx_041461_WB_NOP: begin
+        else if(WB_ctrl == `ysyx_041461_WB_CSR_RS1 || WB_ctrl == `ysyx_041461_WB_CSR_EXE || WB_ctrl == `ysyx_041461_WB_CSR_ZIMM)begin
+            minstret_next = minstret + 1'b1;
+            case(WB_csr)
+                `ysyx_041461_MSTATUS: begin
+                    mstatus_next = c;
+                end
+                `ysyx_041461_MISA: begin
+                    misa_next = c;
+                end
+                `ysyx_041461_MIE: begin
+                    mie_next = c;
+                end
+                `ysyx_041461_MTVEC: begin
+                    mtvec_next = c;
+                end
+                `ysyx_041461_MSCRATCH: begin
+                    mscratch_next = c;
+                end
+                `ysyx_041461_MEPC: begin
+                    mepc_next = c;
+                end
+                `ysyx_041461_MCAUSE: begin
+                    mcause_next = c;
+                end
+                `ysyx_041461_MIP: begin
+                    mip_next = c;
+                end
+                `ysyx_041461_MCYCLE: begin
+                    mcycle_next = c;
+                end
+                `ysyx_041461_MINSTRET: begin
+                    minstret_next = c;
+                end
+                default: begin
 
-                end
-                `ysyx_041461_WB_EXE: begin
-                    d[WB_rd] = WB_EXE_in;
-                end
-                `ysyx_041461_WB_MEM: begin
-                    d[WB_rd] = WB_MEM_in;
-                end
-                `ysyx_041461_WB_IMM: begin
-                    d[WB_rd] = WB_imm;
-                end        
-                `ysyx_041461_WB_SNPC: begin
-                    d[WB_rd] = WB_pc + 4;
-                end
-                `ysyx_041461_WB_CSRRW: begin
-                    case(WB_csr)
-                        `ysyx_041461_MTVEC: begin
-                            d[WB_rd] = mtvec;
-                            mtvec_next = x[WB_rs1];
-                        end
-                        `ysyx_041461_MEPC: begin
-                            d[WB_rd] = mepc;
-                            mepc_next = x[WB_rs1];
-                        end
-                        `ysyx_041461_MCAUSE: begin
-                            d[WB_rd] = mcause;
-                            mcause_next = x[WB_rs1];
-                        end
-                        `ysyx_041461_MSTATUS: begin
-                            d[WB_rd] = mstatus;
-                            mstatus_next = x[WB_rs1];
-                        end
-                        `ysyx_041461_MIE: begin
-                            d[WB_rd] = mie;
-                            mie_next = x[WB_rs1];
-                        end
-                        `ysyx_041461_MIP: begin
-                            d[WB_rd] = mip;
-                            mip_next = x[WB_rs1];
-                        end
-                        `ysyx_041461_MHARTID: begin
-                            d[WB_rd] = mhartid;
-                            mhartid_next = x[WB_rs1];
-                        end
-                        default: begin
-
-                        end
-                    endcase
-                end
-                3'b110: begin
-                    case(WB_csr)
-                        `ysyx_041461_MTVEC: begin
-                            d[WB_rd] = mtvec;
-                            mtvec_next = WB_EXE_in;
-                        end
-                        `ysyx_041461_MEPC: begin
-                            d[WB_rd] = mepc;
-                            mepc_next = WB_EXE_in;
-                        end
-                        `ysyx_041461_MCAUSE: begin
-                            d[WB_rd] = mcause;
-                            mcause_next = WB_EXE_in;
-                        end
-                        `ysyx_041461_MSTATUS: begin
-                            d[WB_rd] = mstatus;
-                            mstatus_next = WB_EXE_in;
-                        end
-                        `ysyx_041461_MIE: begin
-                            d[WB_rd] = mie;
-                            mie_next = WB_EXE_in;
-                        end
-                        `ysyx_041461_MIP: begin
-                            d[WB_rd] = mip;
-                            mip_next = WB_EXE_in;
-                        end
-                        `ysyx_041461_MHARTID: begin
-                            d[WB_rd] = mhartid;
-                            mhartid_next = WB_EXE_in;
-                        end
-                        default: begin
-
-                        end
-                    endcase
-                end
-                `ysyx_041461_WB_CSRRWI: begin
-                    case(WB_csr)
-                        `ysyx_041461_MTVEC: begin
-                            d[WB_rd] = mtvec;
-                            mtvec_next = WB_zimm;
-                        end
-                        `ysyx_041461_MEPC: begin
-                            d[WB_rd] = mepc;
-                            mepc_next = WB_zimm;
-                        end
-                        `ysyx_041461_MCAUSE: begin
-                            d[WB_rd] = mcause;
-                            mcause_next = WB_zimm;
-                        end
-                        `ysyx_041461_MSTATUS: begin
-                            d[WB_rd] = mstatus;
-                            mstatus_next = WB_zimm;
-                        end
-                        `ysyx_041461_MIE: begin
-                            d[WB_rd] = mie;
-                            mie_next = WB_zimm;
-                        end
-                        `ysyx_041461_MIP: begin
-                            d[WB_rd] = mip;
-                            mip_next = WB_zimm;
-                        end
-                        `ysyx_041461_MHARTID: begin
-                            d[WB_rd] = mhartid;
-                            mhartid_next = WB_zimm;
-                        end
-                        default: begin
-
-                        end
-                    endcase
                 end
             endcase
         end
@@ -378,10 +433,8 @@ always@(*) begin
     else begin
         mip_next[7:7] = 1'b0;
     end
-    mhartid_next = mhartid;
     {mip_next[63:8], mip_next[6:0]} = 63'b0;
     {mie_next[63:8], mie_next[6:0]} = 63'b0;
-    d[0] = 64'b0;
 end
 
 always@(posedge clk or posedge rst) begin
@@ -389,25 +442,33 @@ always@(posedge clk or posedge rst) begin
         for(j = 0; j < 32; j = j + 1) begin
             x[j] <= 64'd0;
         end
+        mhartid <= 64'b0;
+        mstatus <= 64'd0;
+        misa <= {2'b10, 36'b0, 26'b00000_00000_00010_00100_00000_0};
+        mie <= 64'b0;
         mtvec <= 64'd0;
+        mscratch <= 64'b0;
         mepc <= 64'd0;
         mcause <= 64'd0;
-        mstatus <= 64'd0;
-        mie <= 64'b0;
         mip <= 64'b0;
-        mhartid <= 64'b0;
+        mcycle <= 64'b0;
+        minstret <= 64'b0;
     end
     else begin
         for(j = 0; j < 32; j = j + 1) begin
             x[j] <= d[j];
         end
+        mhartid <= mhartid_next;
+        mstatus <= mstatus_next;
+        misa <= misa_next;
+        mie <= mie_next;
         mtvec <= mtvec_next;
+        mscratch <= mscratch_next;
         mepc <= mepc_next;
         mcause <= mcause_next;
-        mstatus <= mstatus_next;
-        mie <= mie_next;
         mip <= mip_next;
-        mhartid <= mhartid_next;
+        mcycle <= mcycle_next;
+        minstret <= minstret_next;
     end
 end
 

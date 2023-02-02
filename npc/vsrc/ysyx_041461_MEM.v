@@ -1,5 +1,4 @@
 `include "/home/cxy/ysyx-workbench/npc/vsrc/ysyx_041461_macro.v"
-
 module ysyx_041461_MEM(
 
     input   wire [0:0]    clk             ,
@@ -151,6 +150,10 @@ wire [5:0]   index;
 wire [2:0]   offset;
 wire [54:0]  tag;
 
+reg  [6:0]   PLRU_tree       [63:0];
+reg  [6:0]   PLRU_tree_next  [63:0];
+reg  [2:0]   replace_line;
+
 reg [0:0]  align;
 
 assign index = MEM_EXE_in[8:3];
@@ -184,6 +187,7 @@ always@(*) begin
         uncached = 1'b1;
     end
 end
+
 
 always@(*) begin
     if(V1[index] == 1'b1) begin
@@ -687,6 +691,107 @@ always@(*) begin
     end
 end
 
+integer n;
+always@(*) begin
+    for(n = 0; n < 64; n = n + 1) begin
+        PLRU_tree_next[n] = PLRU_tree[n];
+    end
+    if(state == `ysyx_041461_MEM_RCACHE) begin
+        if(hit1 == 1'b1) begin
+            PLRU_tree_next[index][0:0] = 1'b1;
+            PLRU_tree_next[index][1:1] = 1'b1;
+            PLRU_tree_next[index][3:3] = 1'b1;
+        end
+        else if(hit2 == 1'b1) begin
+            PLRU_tree_next[index][0:0] = 1'b1;
+            PLRU_tree_next[index][1:1] = 1'b1;
+            PLRU_tree_next[index][3:3] = 1'b0;
+        end
+        else if(hit3 == 1'b1) begin
+            PLRU_tree_next[index][0:0] = 1'b1;
+            PLRU_tree_next[index][1:1] = 1'b0;
+            PLRU_tree_next[index][4:4] = 1'b1;
+        end
+        else if(hit4 == 1'b1) begin
+            PLRU_tree_next[index][0:0] = 1'b1;
+            PLRU_tree_next[index][1:1] = 1'b0;
+            PLRU_tree_next[index][4:4] = 1'b0;
+        end
+        else if(hit5 == 1'b1) begin
+            PLRU_tree_next[index][0:0] = 1'b0;
+            PLRU_tree_next[index][2:2] = 1'b1;
+            PLRU_tree_next[index][5:5] = 1'b1;
+        end
+        else if(hit6 == 1'b1) begin
+            PLRU_tree_next[index][0:0] = 1'b0;
+            PLRU_tree_next[index][2:2] = 1'b1;
+            PLRU_tree_next[index][5:5] = 1'b0;
+        end
+        else if(hit7 == 1'b1) begin
+            PLRU_tree_next[index][0:0] = 1'b0;
+            PLRU_tree_next[index][2:2] = 1'b0;
+            PLRU_tree_next[index][6:6] = 1'b1;
+        end
+        else if(hit8 == 1'b1) begin
+            PLRU_tree_next[index][0:0] = 1'b0;
+            PLRU_tree_next[index][2:2] = 1'b0;
+            PLRU_tree_next[index][6:6] = 1'b0;
+        end
+    end
+end
+
+integer r;
+always@(posedge clk or posedge rst) begin
+    if(rst == 1'b1) begin
+        for(r = 0; r < 64; r = r + 1) begin
+            PLRU_tree[r] <= 7'b0;
+        end
+    end
+    else begin
+        for(r = 0; r < 64; r = r + 1) begin
+            PLRU_tree[r] <= PLRU_tree_next[r];
+        end
+    end
+end
+
+always@(*) begin
+    if(PLRU_tree[index][0:0] == 1'b0) begin
+        if(PLRU_tree[index][1:1] == 1'b0) begin
+            if(PLRU_tree[index][3:3] == 1'b0) begin
+                replace_line = 3'b000;
+            end
+            else begin
+                replace_line = 3'b001;
+            end
+        end
+        else begin
+            if(PLRU_tree[index][4:4] == 1'b0) begin 
+                replace_line = 3'b010;
+            end
+            else begin
+                replace_line = 3'b011;
+            end
+        end
+    end
+    else begin
+        if(PLRU_tree[index][2:2] == 1'b0) begin
+            if(PLRU_tree[index][5:5] == 1'b0) begin
+                replace_line = 3'b100;
+            end
+            else begin
+                replace_line = 3'b101;
+            end
+        end
+        else begin
+            if(PLRU_tree[index][6:6] == 1'b0) begin 
+                replace_line = 3'b110;
+            end
+            else begin
+                replace_line = 3'b111;
+            end
+        end
+    end
+end
 
 integer i;
 always@(*) begin
@@ -743,8 +848,32 @@ always@(*) begin
                 tag8_next[index] = tag;
             end
             else begin
-                V1_next[index] = 1'b1;
-                tag1_next[index] = tag;
+                case(replace_line)
+                3'b000: begin
+                    tag1_next[index] = tag;
+                end
+                3'b001: begin
+                    tag2_next[index] = tag;
+                end
+                3'b010: begin
+                    tag3_next[index] = tag;
+                end
+                3'b011: begin
+                    tag4_next[index] = tag;
+                end
+                3'b100: begin
+                    tag5_next[index] = tag;
+                end
+                3'b101: begin
+                    tag6_next[index] = tag;
+                end
+                3'b110: begin
+                    tag7_next[index] = tag;
+                end
+                3'b111: begin
+                    tag8_next[index] = tag;
+                end
+            endcase
             end
         end
     end
@@ -1015,9 +1144,48 @@ always@(*) begin
                 MEM_sram7_wdata = {cache_wdata, 64'b0};
             end
             else begin
-                MEM_sram4_wen = 1'b0;
-                MEM_sram4_wmask = 128'hffff_ffff_ffff_ffff_0000_0000_0000_0000;
-                MEM_sram4_wdata = {64'b0, cache_wdata};
+                case(replace_line)
+                    3'b000: begin
+                        MEM_sram4_wen = 1'b0;
+                        MEM_sram4_wmask = 128'hffff_ffff_ffff_ffff_0000_0000_0000_0000;
+                        MEM_sram4_wdata = {64'b0, cache_wdata};
+                    end
+                    3'b001: begin
+                        MEM_sram4_wen = 1'b0;
+                        MEM_sram4_wmask = 128'h0000_0000_0000_0000_ffff_ffff_ffff_ffff;
+                        MEM_sram4_wdata = {cache_wdata, 64'b0};
+                    end
+                    3'b010: begin
+                        MEM_sram5_wen = 1'b0;
+                        MEM_sram5_wmask = 128'hffff_ffff_ffff_ffff_0000_0000_0000_0000;
+                        MEM_sram5_wdata = {64'b0, cache_wdata};
+                    end
+                    3'b011: begin
+                        MEM_sram5_wen = 1'b0;
+                        MEM_sram5_wmask = 128'h0000_0000_0000_0000_ffff_ffff_ffff_ffff;
+                        MEM_sram5_wdata = {cache_wdata, 64'b0};
+                    end
+                    3'b100: begin
+                        MEM_sram6_wen = 1'b0;
+                        MEM_sram6_wmask = 128'hffff_ffff_ffff_ffff_0000_0000_0000_0000;
+                        MEM_sram6_wdata = {64'b0, cache_wdata};
+                    end
+                    3'b101: begin
+                        MEM_sram6_wen = 1'b0;
+                        MEM_sram6_wmask = 128'h0000_0000_0000_0000_ffff_ffff_ffff_ffff;
+                        MEM_sram6_wdata = {cache_wdata, 64'b0};
+                    end
+                    3'b110: begin
+                        MEM_sram7_wen = 1'b0;
+                        MEM_sram7_wmask = 128'hffff_ffff_ffff_ffff_0000_0000_0000_0000;
+                        MEM_sram7_wdata = {64'b0, cache_wdata};
+                    end
+                    3'b111: begin
+                        MEM_sram7_wen = 1'b0;
+                        MEM_sram7_wmask = 128'h0000_0000_0000_0000_ffff_ffff_ffff_ffff;
+                        MEM_sram7_wdata = {cache_wdata, 64'b0};
+                    end
+                endcase
             end
         end
         else if(store == 1'b1) begin
