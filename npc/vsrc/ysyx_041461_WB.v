@@ -426,6 +426,9 @@ always@(*) begin
                 end
             endcase
         end
+        else begin
+            minstret_next = minstret + 1'b1;
+        end
     end
     if(WB_interrupt == 1'b1) begin
         mip_next[7:7] = 1'b1;
@@ -460,7 +463,7 @@ always@(posedge clk or posedge rst) begin
         end
         mhartid <= mhartid_next;
         mstatus <= mstatus_next;
-        misa <= misa_next;
+        misa <= misa_next ;
         mie <= mie_next;
         mtvec <= mtvec_next;
         mscratch <= mscratch_next;
