@@ -34,6 +34,7 @@ VM_CLASSES_FAST += \
 	Vysyx_041461_TOP___024root__5 \
 	Vysyx_041461_TOP___024root__6 \
 	Vysyx_041461_TOP___024root__7 \
+	Vysyx_041461_TOP___024root__8 \
 	Vysyx_041461_TOP_ysyx_041461_Walloc_33bits \
 	Vysyx_041461_TOP_ysyx_041461_Walloc_33bits__1 \
 	Vysyx_041461_TOP_ysyx_041461_Walloc_33bits__2 \

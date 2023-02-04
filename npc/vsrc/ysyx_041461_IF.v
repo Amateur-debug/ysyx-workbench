@@ -8,17 +8,23 @@ module ysyx_041461_IF(
     input   wire [63:0]   IF_mie               ,
     input   wire [63:0]   IF_mip               ,
     input   wire [2:0]    IF_ID_TYPE           ,
-    input   wire [0:0]    IF_ID_ready          ,
-    input   wire [3:0]    IF_ID_trap           ,
-    input   wire [3:0]    IF_EXE_trap          ,
-    input   wire [3:0]    IF_MEM_trap          ,
-    input   wire [3:0]    IF_WB_trap           ,
+    input   wire [0:0]    IF_IF2_ready         ,
+    input   wire [0:0]    IF_CD_trap           ,
   
     output  reg  [3:0]    IF_trap_out          ,
     output  reg  [0:0]    IF_valid_out         ,
     output  reg  [0:0]    IF_ready             ,
-    output  reg  [31:0]   IF_inst              ,
-       
+    output  reg  [63:0]   IF_AXI_rdata         ,
+
+    output  reg  [0:0]    IF_hit1              ,
+    output  reg  [0:0]    IF_hit2              ,
+    output  reg  [0:0]    IF_hit3              ,
+    output  reg  [0:0]    IF_hit4              ,
+    output  reg  [0:0]    IF_hit5              ,
+    output  reg  [0:0]    IF_hit6              ,
+    output  reg  [0:0]    IF_hit7              ,
+    output  reg  [0:0]    IF_hit8              ,
+        
     input   wire [0:0]    IF_arready           ,
     output  reg  [0:0]    IF_arvalid           ,
     output  reg  [31:0]   IF_araddr            ,
@@ -39,28 +45,24 @@ module ysyx_041461_IF(
     output  reg  [0:0]    IF_sram0_wen         , 
     output  reg  [127:0]  IF_sram0_wmask       , 
     output  reg  [127:0]  IF_sram0_wdata       , 
-    input   wire [127:0]  IF_sram0_rdata       ,
    
     output  wire [5:0]    IF_sram1_addr        , 
     output  reg  [0:0]    IF_sram1_cen         , 
     output  reg  [0:0]    IF_sram1_wen         , 
     output  reg  [127:0]  IF_sram1_wmask       , 
     output  reg  [127:0]  IF_sram1_wdata       , 
-    input   wire [127:0]  IF_sram1_rdata       ,
    
     output  wire [5:0]    IF_sram2_addr        , 
     output  reg  [0:0]    IF_sram2_cen         , 
     output  reg  [0:0]    IF_sram2_wen         , 
     output  reg  [127:0]  IF_sram2_wmask       , 
     output  reg  [127:0]  IF_sram2_wdata       , 
-    input   wire [127:0]  IF_sram2_rdata       ,
-   
+
     output  wire [5:0]    IF_sram3_addr        , 
     output  reg  [0:0]    IF_sram3_cen         , 
     output  reg  [0:0]    IF_sram3_wen         , 
     output  reg  [127:0]  IF_sram3_wmask       , 
-    output  reg  [127:0]  IF_sram3_wdata       , 
-    input   wire [127:0]  IF_sram3_rdata 
+    output  reg  [127:0]  IF_sram3_wdata       
 );
 
 parameter IF_AXI_id = 4'b0000;
@@ -87,7 +89,6 @@ assign IF_sram3_cen  = 1'b0;
 reg  [2:0]   state;
 
 reg  [63:0]  AXI_rdata;
-reg  [63:0]  AXI_rdata_next;
 
 reg  [0:0]   V1        [63:0];
 reg  [0:0]   V1_next   [63:0];
@@ -122,15 +123,6 @@ reg  [0:0]   V8_next   [63:0];
 reg  [54:0]  tag8      [63:0];
 reg  [54:0]  tag8_next [63:0];
 
-reg  [0:0]   hit1;
-reg  [0:0]   hit2;
-reg  [0:0]   hit3;
-reg  [0:0]   hit4;
-reg  [0:0]   hit5;
-reg  [0:0]   hit6;
-reg  [0:0]   hit7;
-reg  [0:0]   hit8;
-
 wire [0:0]   hit;
 
 wire [5:0]   index;
@@ -148,7 +140,7 @@ assign index = IF_pc[8:3];
 assign offset = IF_pc[2:0];
 assign tag = IF_pc[63:9];
 
-assign hit = hit1 || hit2 || hit3 || hit4 || hit5 || hit6 || hit7 || hit8;
+assign hit = IF_hit1 || IF_hit2 || IF_hit3 || IF_hit4 || IF_hit5 || IF_hit6 || IF_hit7 || IF_hit8;
 
 wire [0:0]   mie_MTIE;
 wire [0:0]   mip_MTIP;
@@ -202,112 +194,112 @@ end
 always@(*) begin
     if(V1[index] == 1'b1) begin
         if(tag1[index] == tag) begin
-            hit1 = 1'b1;
+            IF_hit1 = 1'b1;
         end
         else begin
-            hit1 = 1'b0;
+            IF_hit1 = 1'b0;
         end
     end
     else begin
-        hit1 = 1'b0;
+        IF_hit1 = 1'b0;
     end
 end
 
 always@(*) begin
     if(V2[index] == 1'b1) begin
         if(tag2[index] == tag) begin
-            hit2 = 1'b1;
+            IF_hit2 = 1'b1;
         end
         else begin
-            hit2 = 1'b0;
+            IF_hit2 = 1'b0;
         end
     end
     else begin
-        hit2 = 1'b0;
+        IF_hit2 = 1'b0;
     end
 end
 
 always@(*) begin
     if(V3[index] == 1'b1) begin
         if(tag3[index] == tag) begin
-            hit3 = 1'b1;
+            IF_hit3 = 1'b1;
         end
         else begin
-            hit3 = 1'b0;
+            IF_hit3 = 1'b0;
         end
     end
     else begin
-        hit3 = 1'b0;
+        IF_hit3 = 1'b0;
     end
 end
 
 always@(*) begin
     if(V4[index] == 1'b1) begin
         if(tag4[index] == tag) begin
-            hit4 = 1'b1;
+            IF_hit4 = 1'b1;
         end
         else begin
-            hit4 = 1'b0;
+            IF_hit4 = 1'b0;
         end
     end
     else begin
-        hit4 = 1'b0;
+        IF_hit4 = 1'b0;
     end
 end
 
 always@(*) begin
     if(V5[index] == 1'b1) begin
         if(tag5[index] == tag) begin
-            hit5 = 1'b1;
+            IF_hit5 = 1'b1;
         end
         else begin
-            hit5 = 1'b0;
+            IF_hit5 = 1'b0;
         end
     end
     else begin
-        hit5 = 1'b0;
+        IF_hit5 = 1'b0;
     end
 end
 
 always@(*) begin
     if(V6[index] == 1'b1) begin
         if(tag6[index] == tag) begin
-            hit6 = 1'b1;
+            IF_hit6 = 1'b1;
         end
         else begin
-            hit6 = 1'b0;
+            IF_hit6 = 1'b0;
         end
     end
     else begin
-        hit6 = 1'b0;
+        IF_hit6 = 1'b0;
     end
 end
 
 always@(*) begin
     if(V7[index] == 1'b1) begin
         if(tag7[index] == tag) begin
-            hit7 = 1'b1;
+            IF_hit7 = 1'b1;
         end
         else begin
-            hit7 = 1'b0;
+            IF_hit7 = 1'b0;
         end
     end
     else begin
-        hit7 = 1'b0;
+        IF_hit7 = 1'b0;
     end
 end
 
 always@(*) begin
     if(V8[index] == 1'b1) begin
         if(tag8[index] == tag) begin
-            hit8 = 1'b1;
+            IF_hit8 = 1'b1;
         end
         else begin
-            hit8 = 1'b0;
+            IF_hit8 = 1'b0;
         end
     end
     else begin
-        hit8 = 1'b0;
+        IF_hit8 = 1'b0;
     end
 end
 
@@ -316,43 +308,43 @@ always@(*) begin
     for(n = 0; n < 64; n = n + 1) begin
         PLRU_tree_next[n] = PLRU_tree[n];
     end
-    if(state == `ysyx_041461_IF_RCACHE) begin
-        if(hit1 == 1'b1) begin
+    if(state == `ysyx_041461_IF_START && IF_trap_out == `ysyx_041461_TRAP_NOP && IF_ID_TYPE == `ysyx_041461_TYPE_NOP && IF_CD_trap == 1'b0) begin
+        if(IF_hit1 == 1'b1) begin
             PLRU_tree_next[index][0:0] = 1'b1;
             PLRU_tree_next[index][1:1] = 1'b1;
             PLRU_tree_next[index][3:3] = 1'b1;
         end
-        else if(hit2 == 1'b1) begin
+        else if(IF_hit2 == 1'b1) begin
             PLRU_tree_next[index][0:0] = 1'b1;
             PLRU_tree_next[index][1:1] = 1'b1;
             PLRU_tree_next[index][3:3] = 1'b0;
         end
-        else if(hit3 == 1'b1) begin
+        else if(IF_hit3 == 1'b1) begin
             PLRU_tree_next[index][0:0] = 1'b1;
             PLRU_tree_next[index][1:1] = 1'b0;
             PLRU_tree_next[index][4:4] = 1'b1;
         end
-        else if(hit4 == 1'b1) begin
+        else if(IF_hit4 == 1'b1) begin
             PLRU_tree_next[index][0:0] = 1'b1;
             PLRU_tree_next[index][1:1] = 1'b0;
             PLRU_tree_next[index][4:4] = 1'b0;
         end
-        else if(hit5 == 1'b1) begin
+        else if(IF_hit5 == 1'b1) begin
             PLRU_tree_next[index][0:0] = 1'b0;
             PLRU_tree_next[index][2:2] = 1'b1;
             PLRU_tree_next[index][5:5] = 1'b1;
         end
-        else if(hit6 == 1'b1) begin
+        else if(IF_hit6 == 1'b1) begin
             PLRU_tree_next[index][0:0] = 1'b0;
             PLRU_tree_next[index][2:2] = 1'b1;
             PLRU_tree_next[index][5:5] = 1'b0;
         end
-        else if(hit7 == 1'b1) begin
+        else if(IF_hit7 == 1'b1) begin
             PLRU_tree_next[index][0:0] = 1'b0;
             PLRU_tree_next[index][2:2] = 1'b0;
             PLRU_tree_next[index][6:6] = 1'b1;
         end
-        else if(hit8 == 1'b1) begin
+        else if(IF_hit8 == 1'b1) begin
             PLRU_tree_next[index][0:0] = 1'b0;
             PLRU_tree_next[index][2:2] = 1'b0;
             PLRU_tree_next[index][6:6] = 1'b0;
@@ -655,9 +647,9 @@ always@(posedge clk or posedge rst) begin
 end
 
 always@(*) begin
-    AXI_rdata_next = AXI_rdata;
+    IF_AXI_rdata = AXI_rdata;
     if(state == `ysyx_041461_IF_RAXI_R) begin
-        AXI_rdata_next = IF_rdata;
+        IF_AXI_rdata = IF_rdata;
     end
 end
 
@@ -666,7 +658,7 @@ always@(posedge clk or posedge rst) begin
         AXI_rdata <= 64'b0;
     end
     else begin
-        AXI_rdata <= AXI_rdata_next;
+        AXI_rdata <= IF_AXI_rdata;
     end
 end
 
@@ -712,143 +704,102 @@ end
 
 
 always@(*) begin
-    if(state == `ysyx_041461_IF_START) begin
-        if(IF_trap_out == `ysyx_041461_TRAP_NOP && IF_ID_TYPE == `ysyx_041461_TYPE_NOP && IF_ID_trap == `ysyx_041461_TRAP_NOP && IF_EXE_trap == `ysyx_041461_TRAP_NOP && IF_MEM_trap == `ysyx_041461_TRAP_NOP && IF_WB_trap == `ysyx_041461_TRAP_NOP) begin
+    case(state)
+        `ysyx_041461_IF_START: begin
+            if(IF_trap_out == `ysyx_041461_TRAP_NOP && IF_ID_TYPE == `ysyx_041461_TYPE_NOP && IF_CD_trap == 1'b0) begin
+                if(uncached == 1'b1) begin
+                    IF_ready = 1'b0;
+                end
+                else begin
+                    if(hit == 1'b1) begin
+                        IF_ready = IF_IF2_ready;
+                    end
+                    else begin
+                        IF_ready = 1'b0;
+                    end
+                end
+            end
+            else begin
+                IF_ready = 1'b1;
+            end
+        end
+        `ysyx_041461_IF_RAXI_R:begin
+            if(IF_rvalid == 1'b1 && IF_rid == IF_AXI_id && IF_rlast == 1'b1 && (IF_rresp == OKAY || IF_rresp == EXOKAY)) begin
+                if(uncached == 1'b1) begin
+                    if(IF_CD_trap == 1'b1) begin
+                        IF_ready = 1'b1;
+                    end
+                    else begin
+                        IF_ready = IF_IF2_ready;
+                    end
+                end
+                else begin
+                    IF_ready = 1'b0;
+                end
+            end
+        end
+        `ysyx_041461_IF_FINISH: begin
+            if(IF_CD_trap == 1'b1) begin
+                IF_ready = 1'b1;
+            end
+            else begin
+                IF_ready = IF_IF2_ready;
+            end
+        end
+        default: begin
             IF_ready = 1'b0;
         end
-        else if(IF_trap_out != `ysyx_041461_TRAP_NOP && IF_ID_TYPE == `ysyx_041461_TYPE_NOP && IF_ID_trap == `ysyx_041461_TRAP_NOP && IF_EXE_trap == `ysyx_041461_TRAP_NOP && IF_MEM_trap == `ysyx_041461_TRAP_NOP && IF_WB_trap == `ysyx_041461_TRAP_NOP) begin
-            if(IF_ID_ready == 1'b1) begin
-                IF_ready = 1'b1;
-            end
-            else begin
-                IF_ready = 1'b0;
-            end
-        end
-        else begin
-            IF_ready = 1'b1;
-        end
-    end
-    else if(state == `ysyx_041461_IF_FINISH) begin
-        if(IF_ID_trap != `ysyx_041461_TRAP_NOP || IF_EXE_trap != `ysyx_041461_TRAP_NOP || IF_MEM_trap != `ysyx_041461_TRAP_NOP || IF_WB_trap != `ysyx_041461_TRAP_NOP) begin
-            IF_ready = 1'b1;
-        end
-        else begin
-            if(IF_ID_ready == 1'b1) begin
-                IF_ready = 1'b1;
-            end
-            else begin
-                IF_ready = 1'b0;
-            end
-        end
-    end
-    else begin
-        IF_ready = 1'b0;
-    end
+    endcase
 end
 
 always@(*) begin
-    if(state == `ysyx_041461_IF_START) begin
-        if(IF_trap_out == `ysyx_041461_TRAP_NOP && IF_ID_TYPE == `ysyx_041461_TYPE_NOP && IF_ID_trap == `ysyx_041461_TRAP_NOP && IF_EXE_trap == `ysyx_041461_TRAP_NOP && IF_MEM_trap == `ysyx_041461_TRAP_NOP && IF_WB_trap == `ysyx_041461_TRAP_NOP) begin
+    case(state)
+        `ysyx_041461_IF_START: begin
+            if(IF_trap_out == `ysyx_041461_TRAP_NOP && IF_ID_TYPE == `ysyx_041461_TYPE_NOP && IF_CD_trap == 1'b0) begin
+                if(uncached == 1'b1) begin
+                    IF_valid_out = 1'b0;
+                end
+                else begin
+                    if(hit == 1'b1) begin
+                        IF_valid_out = 1'b1;
+                    end
+                    else begin
+                        IF_valid_out = 1'b0;
+                    end
+                end
+            end
+            else begin
+                IF_valid_out = 1'b0;
+            end
+        end
+        `ysyx_041461_IF_RAXI_R:begin
+            if(IF_rvalid == 1'b1 && IF_rid == IF_AXI_id && IF_rlast == 1'b1 && (IF_rresp == OKAY || IF_rresp == EXOKAY)) begin
+                if(uncached == 1'b1) begin
+                    if(IF_CD_trap == 1'b1) begin
+                        IF_valid_out = 1'b0;
+                    end
+                    else begin
+                        IF_valid_out = 1'b1;
+                    end
+                end
+                else begin
+                    IF_valid_out = 1'b0;
+                end
+            end
+        end
+        `ysyx_041461_IF_FINISH: begin
+            if(IF_CD_trap == 1'b1) begin
+                IF_valid_out = 1'b0;
+            end
+            else begin
+                IF_valid_out = 1'b1;
+            end
+        end
+        default: begin
             IF_valid_out = 1'b0;
         end
-        else if(IF_trap_out != `ysyx_041461_TRAP_NOP && IF_ID_TYPE == `ysyx_041461_TYPE_NOP && IF_ID_trap == `ysyx_041461_TRAP_NOP && IF_EXE_trap == `ysyx_041461_TRAP_NOP && IF_MEM_trap == `ysyx_041461_TRAP_NOP && IF_WB_trap == `ysyx_041461_TRAP_NOP) begin
-            IF_valid_out = 1'b1;
-        end
-        else begin
-            IF_valid_out = 1'b0;
-        end
-    end
-    else if(state == `ysyx_041461_IF_FINISH) begin
-        if(IF_ID_trap != `ysyx_041461_TRAP_NOP || IF_EXE_trap != `ysyx_041461_TRAP_NOP || IF_MEM_trap != `ysyx_041461_TRAP_NOP || IF_WB_trap != `ysyx_041461_TRAP_NOP) begin
-            IF_valid_out = 1'b0;
-        end
-        else begin
-            IF_valid_out = 1'b1;
-        end
-    end
-    else begin
-        IF_valid_out = 1'b0;
-    end
+    endcase
 end
-
-
-always@(*) begin
-    if(hit1 == 1'b1) begin
-        if(IF_pc[2:2] == 1'b0) begin
-            IF_inst = IF_sram0_rdata[31:0];
-        end
-        else begin
-            IF_inst = IF_sram0_rdata[63:32];
-        end
-    end
-    else if(hit2 == 1'b1) begin
-        if(IF_pc[2:2] == 1'b0) begin
-            IF_inst = IF_sram0_rdata[95:64];
-        end
-        else begin
-            IF_inst = IF_sram0_rdata[127:96];
-        end
-    end
-    else if(hit3 == 1'b1) begin
-        if(IF_pc[2:2] == 1'b0) begin
-            IF_inst = IF_sram1_rdata[31:0];
-        end
-        else begin
-            IF_inst = IF_sram1_rdata[63:32];
-        end
-    end
-    else if(hit4 == 1'b1) begin
-        if(IF_pc[2:2] == 1'b0) begin
-            IF_inst = IF_sram1_rdata[95:64];
-        end
-        else begin
-            IF_inst = IF_sram1_rdata[127:96];
-        end
-    end
-    else if(hit5 == 1'b1) begin
-        if(IF_pc[2:2] == 1'b0) begin
-            IF_inst = IF_sram2_rdata[31:0];
-        end
-        else begin
-            IF_inst = IF_sram2_rdata[63:32];
-        end
-    end
-    else if(hit6 == 1'b1) begin
-        if(IF_pc[2:2] == 1'b0) begin
-            IF_inst = IF_sram2_rdata[95:64];
-        end
-        else begin
-            IF_inst = IF_sram2_rdata[127:96];
-        end
-    end
-    else if(hit7 == 1'b1) begin
-        if(IF_pc[2:2] == 1'b0) begin
-            IF_inst = IF_sram3_rdata[31:0];
-        end
-        else begin
-            IF_inst = IF_sram3_rdata[63:32];
-        end
-    end
-    else if(hit8 == 1'b1) begin
-        if(IF_pc[2:2] == 1'b0) begin
-            IF_inst = IF_sram3_rdata[95:64];
-        end
-        else begin
-            IF_inst = IF_sram3_rdata[127:96];
-        end
-    end
-    else begin
-        if(IF_pc[2:2] == 1'b0) begin
-            IF_inst = AXI_rdata[31:0];
-        end
-        else begin
-            IF_inst = AXI_rdata[63:32];
-        end
-    end
-end
-
-
-
 
 always@(posedge clk or posedge rst) begin
     if(rst == 1'b1) begin
@@ -857,13 +808,13 @@ always@(posedge clk or posedge rst) begin
     else begin
         case(state)
             `ysyx_041461_IF_START: begin
-                if(IF_trap_out == `ysyx_041461_TRAP_NOP && IF_ID_TYPE == `ysyx_041461_TYPE_NOP && IF_ID_trap == `ysyx_041461_TRAP_NOP && IF_EXE_trap == `ysyx_041461_TRAP_NOP && IF_MEM_trap == `ysyx_041461_TRAP_NOP && IF_WB_trap == `ysyx_041461_TRAP_NOP) begin
+                if(IF_trap_out == `ysyx_041461_TRAP_NOP && IF_ID_TYPE == `ysyx_041461_TYPE_NOP && IF_CD_trap == 1'b0) begin
                     if(uncached == 1'b1) begin
                         state <= `ysyx_041461_IF_RAXI_AR;
                     end
                     else begin
                         if(hit == 1'b1) begin
-                            state <= `ysyx_041461_IF_RCACHE;
+                            state <= state;
                         end
                         else begin
                             state <= `ysyx_041461_IF_RAXI_AR;
@@ -873,9 +824,6 @@ always@(posedge clk or posedge rst) begin
                 else begin
                     state <= state;
                 end
-            end
-            `ysyx_041461_IF_RCACHE: begin
-                state <= `ysyx_041461_IF_FINISH;
             end
             `ysyx_041461_IF_RAXI_AR: begin
                 if(IF_arready == 1'b1) begin
@@ -888,10 +836,20 @@ always@(posedge clk or posedge rst) begin
             `ysyx_041461_IF_RAXI_R: begin
                 if(IF_rvalid == 1'b1 && IF_rid == IF_AXI_id && IF_rlast == 1'b1 && (IF_rresp == OKAY || IF_rresp == EXOKAY)) begin
                     if(uncached == 1'b1) begin
-                        state <= `ysyx_041461_IF_FINISH;
+                        if(IF_IF2_ready == 1'b1 || IF_CD_trap == 1'b1) begin
+                            state <= `ysyx_041461_IF_START;
+                        end
+                        else begin
+                            state <= `ysyx_041461_IF_FINISH;
+                        end
                     end
                     else begin
-                        state <= `ysyx_041461_IF_WCACHE;
+                        if(IF_CD_trap == 1'b1) begin
+                            state <= `ysyx_041461_IF_START;
+                        end
+                        else begin
+                            state <= `ysyx_041461_IF_WCACHE;
+                        end
                     end
                 end
                 else begin
@@ -899,10 +857,10 @@ always@(posedge clk or posedge rst) begin
                 end
             end
             `ysyx_041461_IF_WCACHE: begin
-                state <= `ysyx_041461_IF_RCACHE;
+                state <= `ysyx_041461_IF_START;
             end
             `ysyx_041461_IF_FINISH: begin
-                if(IF_ID_ready == 1'b1) begin
+                if(IF_IF2_ready == 1'b1 || IF_CD_trap == 1'b1) begin
                     state <= `ysyx_041461_IF_START;
                 end
                 else begin

@@ -10,7 +10,7 @@ module ysyx_041461_MEM(
     input   wire [3:0]    MEM_ctrl        ,  
     input   wire [3:0]    MEM_trap_in     ,
     input   wire [0:0]    MEM_WB_ready    ,
-    input   wire [3:0]    MEM_WB_trap     ,
+    input   wire [0:0]    MEM_CD_trap     ,
     input   wire [0:0]    MEM_conflict    ,
 
     output  reg  [0:0]    MEM_valid_out   ,
@@ -1235,7 +1235,7 @@ end
 
 always@(*) begin
     if(state == `ysyx_041461_MEM_START) begin
-        if(MEM_valid_in == 1'b1 && MEM_trap_out == `ysyx_041461_TRAP_NOP && MEM_WB_trap == `ysyx_041461_TRAP_NOP && MEM_conflict == 1'b0) begin
+        if(MEM_valid_in == 1'b1 && MEM_trap_out == `ysyx_041461_TRAP_NOP && MEM_CD_trap == 1'b0 && MEM_conflict == 1'b0) begin
             if(MEM_ctrl == `ysyx_041461_MEM_NOP) begin
                 if(MEM_WB_ready == 1'b1) begin
                     MEM_ready = 1'b1;
@@ -1248,10 +1248,10 @@ always@(*) begin
                 MEM_ready = 1'b0;
             end
         end
-        else if(MEM_valid_in == 1'b1 && MEM_trap_out == `ysyx_041461_TRAP_NOP && MEM_WB_trap == `ysyx_041461_TRAP_NOP && MEM_conflict == 1'b1) begin
+        else if(MEM_valid_in == 1'b1 && MEM_trap_out == `ysyx_041461_TRAP_NOP && MEM_CD_trap == 1'b0 && MEM_conflict == 1'b1) begin
             MEM_ready = 1'b0;
         end
-        else if(MEM_valid_in == 1'b1 && MEM_trap_out != `ysyx_041461_TRAP_NOP && MEM_WB_trap == `ysyx_041461_TRAP_NOP) begin
+        else if(MEM_valid_in == 1'b1 && MEM_trap_out != `ysyx_041461_TRAP_NOP && MEM_CD_trap == 1'b0) begin
             if(MEM_WB_ready == 1'b1) begin
                 MEM_ready = 1'b1;
             end
@@ -1278,7 +1278,7 @@ end
 
 always@(*) begin
     if(state == `ysyx_041461_MEM_START) begin
-        if(MEM_valid_in == 1'b1 && MEM_trap_out == `ysyx_041461_TRAP_NOP && MEM_WB_trap == `ysyx_041461_TRAP_NOP && MEM_conflict == 1'b0) begin
+        if(MEM_valid_in == 1'b1 && MEM_trap_out == `ysyx_041461_TRAP_NOP && MEM_CD_trap == 1'b0 && MEM_conflict == 1'b0) begin
             if(MEM_ctrl == `ysyx_041461_MEM_NOP) begin
                 MEM_valid_out = 1'b1;
             end
@@ -1286,10 +1286,10 @@ always@(*) begin
                 MEM_valid_out = 1'b0;
             end
         end
-        else if(MEM_valid_in == 1'b1 && MEM_trap_out == `ysyx_041461_TRAP_NOP && MEM_WB_trap == `ysyx_041461_TRAP_NOP && MEM_conflict == 1'b1) begin
+        else if(MEM_valid_in == 1'b1 && MEM_trap_out == `ysyx_041461_TRAP_NOP && MEM_CD_trap == 1'b0 && MEM_conflict == 1'b1) begin
             MEM_valid_out = 1'b0;
         end
-        else if(MEM_valid_in == 1'b1 && MEM_trap_out != `ysyx_041461_TRAP_NOP && MEM_WB_trap == `ysyx_041461_TRAP_NOP) begin
+        else if(MEM_valid_in == 1'b1 && MEM_trap_out != `ysyx_041461_TRAP_NOP && MEM_CD_trap == 1'b0) begin
             MEM_valid_out = 1'b1;
         end
         else begin
@@ -1297,7 +1297,7 @@ always@(*) begin
         end
     end
     else if(state == `ysyx_041461_MEM_FINISH) begin
-        if(MEM_WB_trap != `ysyx_041461_TRAP_NOP) begin
+        if(MEM_CD_trap == 1'b1) begin
             MEM_valid_out = 1'b0;
         end
         else begin
@@ -1417,7 +1417,7 @@ always@(posedge clk or posedge rst) begin
     else begin
         case(state)
             `ysyx_041461_MEM_START: begin
-                if(MEM_valid_in == 1'b1 && MEM_trap_out == `ysyx_041461_TRAP_NOP && MEM_WB_trap == `ysyx_041461_TRAP_NOP && MEM_conflict == 1'b0) begin
+                if(MEM_valid_in == 1'b1 && MEM_trap_out == `ysyx_041461_TRAP_NOP && MEM_CD_trap == 1'b0 && MEM_conflict == 1'b0) begin
                     if(load == 1'b1) begin
                         if(uncached == 1'b1) begin
                             state <= `ysyx_041461_MEM_RAXI_AR;
@@ -1507,7 +1507,7 @@ always@(posedge clk or posedge rst) begin
                 end
             end
             `ysyx_041461_MEM_FINISH: begin
-                if(MEM_WB_ready == 1'b1) begin
+                if(MEM_WB_ready == 1'b1 || MEM_CD_trap == 1'b1) begin
                     state <= `ysyx_041461_MEM_START;
                 end
                 else begin

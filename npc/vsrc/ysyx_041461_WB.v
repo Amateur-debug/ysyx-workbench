@@ -426,6 +426,9 @@ always@(*) begin
                 end
             endcase
         end
+        else begin
+            minstret_next = minstret + 1'b1;
+        end
     end
     if(WB_interrupt == 1'b1) begin
         mip_next[7:7] = 1'b1;
