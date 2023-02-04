@@ -16,8 +16,7 @@ module ysyx_041461_EXE(
     input  wire   [2:0]  EXE_src      ,
     input  wire   [0:0]  EXE_conflict ,
     input  wire   [0:0]  EXE_MEM_ready,
-    input  wire   [3:0]  EXE_MEM_trap ,
-    input  wire   [3:0]  EXE_WB_trap  ,
+    input  wire   [0:0]  EXE_CD_trap  ,
     
     output reg    [63:0] EXE_out      ,
     output reg    [0:0]  EXE_valid_out,
@@ -242,7 +241,7 @@ end
 
 always@(*) begin
     if(state == `ysyx_041461_EXE_START) begin
-        if(EXE_valid_in == 1'b1 && EXE_trap_in == `ysyx_041461_TRAP_NOP && EXE_MEM_trap == `ysyx_041461_TRAP_NOP && EXE_WB_trap == `ysyx_041461_TRAP_NOP && EXE_conflict == 1'b0) begin
+        if(EXE_valid_in == 1'b1 && EXE_trap_in == `ysyx_041461_TRAP_NOP && EXE_CD_trap == 1'b0 && EXE_conflict == 1'b0) begin
             if(multiplication == 1'b0 && division == 1'b0) begin
                 EXE_valid_out = 1'b1;
             end
@@ -250,10 +249,10 @@ always@(*) begin
                 EXE_valid_out = 1'b0;
             end
         end
-        else if(EXE_valid_in == 1'b1 && EXE_trap_in == `ysyx_041461_TRAP_NOP && EXE_MEM_trap == `ysyx_041461_TRAP_NOP && EXE_WB_trap == `ysyx_041461_TRAP_NOP && EXE_conflict == 1'b1)begin
+        else if(EXE_valid_in == 1'b1 && EXE_trap_in == `ysyx_041461_TRAP_NOP && EXE_CD_trap == 1'b0 && EXE_conflict == 1'b1)begin
             EXE_valid_out = 1'b0;
         end
-        else if(EXE_valid_in == 1'b1 && EXE_trap_in != `ysyx_041461_TRAP_NOP && EXE_MEM_trap == `ysyx_041461_TRAP_NOP && EXE_WB_trap == `ysyx_041461_TRAP_NOP) begin
+        else if(EXE_valid_in == 1'b1 && EXE_trap_in != `ysyx_041461_TRAP_NOP && EXE_CD_trap == 1'b0) begin
             EXE_valid_out = 1'b1;
         end
         else begin
@@ -261,7 +260,7 @@ always@(*) begin
         end
     end
     else if(state == `ysyx_041461_EXE_FINISH) begin
-        if(EXE_MEM_trap != `ysyx_041461_TRAP_NOP || EXE_WB_trap != `ysyx_041461_TRAP_NOP) begin
+        if(EXE_CD_trap == 1'b1) begin
             EXE_valid_out = 1'b0;
         end
         else begin
@@ -275,7 +274,7 @@ end
 
 always@(*) begin
     if(state == `ysyx_041461_EXE_START) begin
-        if(EXE_valid_in == 1'b1 && EXE_trap_in == `ysyx_041461_TRAP_NOP && EXE_MEM_trap == `ysyx_041461_TRAP_NOP && EXE_WB_trap == `ysyx_041461_TRAP_NOP && EXE_conflict == 1'b0) begin
+        if(EXE_valid_in == 1'b1 && EXE_trap_in == `ysyx_041461_TRAP_NOP && EXE_CD_trap == 1'b0 && EXE_conflict == 1'b0) begin
             if(multiplication == 1'b0 && division == 1'b0) begin
                 if(EXE_MEM_ready == 1'b1) begin
                     EXE_ready = 1'b1;
@@ -288,10 +287,10 @@ always@(*) begin
                 EXE_ready = 1'b0;
             end
         end
-        else if(EXE_valid_in == 1'b1 && EXE_trap_in == `ysyx_041461_TRAP_NOP && EXE_MEM_trap == `ysyx_041461_TRAP_NOP && EXE_WB_trap == `ysyx_041461_TRAP_NOP && EXE_conflict == 1'b1)begin
+        else if(EXE_valid_in == 1'b1 && EXE_trap_in == `ysyx_041461_TRAP_NOP && EXE_CD_trap == 1'b0 && EXE_conflict == 1'b1)begin
             EXE_ready = 1'b0;
         end
-        else if(EXE_valid_in == 1'b1 && EXE_trap_in != `ysyx_041461_TRAP_NOP && EXE_MEM_trap == `ysyx_041461_TRAP_NOP && EXE_WB_trap == `ysyx_041461_TRAP_NOP) begin
+        else if(EXE_valid_in == 1'b1 && EXE_trap_in != `ysyx_041461_TRAP_NOP && EXE_CD_trap == 1'b0) begin
             if(EXE_MEM_ready == 1'b1) begin
                 EXE_ready = 1'b1;
             end
@@ -348,7 +347,7 @@ end
 
 always@(*) begin
     if(state == `ysyx_041461_EXE_START ) begin
-        if(EXE_valid_in == 1'b1 && EXE_trap_in == `ysyx_041461_TRAP_NOP && EXE_MEM_trap == `ysyx_041461_TRAP_NOP && EXE_WB_trap == `ysyx_041461_TRAP_NOP && EXE_conflict == 1'b0) begin
+        if(EXE_valid_in == 1'b1 && EXE_trap_in == `ysyx_041461_TRAP_NOP && EXE_CD_trap == 1'b0 && EXE_conflict == 1'b0) begin
             if(multiplication == 1'b1) begin
                 MUL_valid_in = 1'b1;
             end
@@ -415,7 +414,7 @@ end
 
 always@(*) begin
     if(state == `ysyx_041461_EXE_START ) begin
-        if(EXE_valid_in == 1'b1 && EXE_trap_in == `ysyx_041461_TRAP_NOP && EXE_MEM_trap == `ysyx_041461_TRAP_NOP && EXE_WB_trap == `ysyx_041461_TRAP_NOP && EXE_conflict == 1'b0) begin
+        if(EXE_valid_in == 1'b1 && EXE_trap_in == `ysyx_041461_TRAP_NOP && EXE_CD_trap == 1'b0 && EXE_conflict == 1'b0) begin
             if(division == 1'b1) begin
                 DIV_valid_in = 1'b1;
             end
@@ -459,7 +458,7 @@ always@(posedge clk or posedge rst) begin
     else begin
         case(state)
             `ysyx_041461_EXE_START: begin
-                if(EXE_valid_in == 1'b1 && EXE_trap_in == `ysyx_041461_TRAP_NOP && EXE_MEM_trap == `ysyx_041461_TRAP_NOP && EXE_WB_trap == `ysyx_041461_TRAP_NOP && EXE_conflict == 1'b0) begin
+                if(EXE_valid_in == 1'b1 && EXE_trap_in == `ysyx_041461_TRAP_NOP && EXE_CD_trap == 1'b0 && EXE_conflict == 1'b0) begin
                     if(multiplication == 1'b1) begin
                         state <= `ysyx_041461_EXE_STATE_MUL;
                     end

@@ -214,6 +214,10 @@
 `define ysyx_041461_IF_WCACHE 3'b100
 `define ysyx_041461_IF_FINISH 3'b101
 
+//IF2 state
+`define ysyx_041461_IF2_START 1'b0
+`define ysyx_041461_IF2_FINISH 1'b1
+
 //EXE state
 `define ysyx_041461_EXE_START 2'b00
 `define ysyx_041461_EXE_STATE_MUL 2'b01

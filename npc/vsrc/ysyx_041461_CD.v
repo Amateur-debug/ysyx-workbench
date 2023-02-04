@@ -1,6 +1,9 @@
 //conflict detector
 module ysyx_041461_CD(  
-    
+
+    input   wire  [0:0]  CD_IF2_valid_in ,
+    input   wire  [3:0]  CD_IF2_trap_in  ,
+
     input   wire  [0:0]  CD_ID_valid_in ,
     input   wire  [2:0]  CD_ID_TYPE     ,
     input   wire  [4:0]  CD_ID_rs1      ,
@@ -31,13 +34,14 @@ module ysyx_041461_CD(
     input   wire  [11:0] CD_WB_csr      ,
     input   wire  [3:0]  CD_WB_trap_in  ,
 
+    output  reg   [0:0]  CD_IF_trap     ,
+    output  reg   [0:0]  CD_IF2_trap    ,
     output  reg   [0:0]  CD_ID_conflict ,
-    output  reg   [3:0]  CD_ID_trap_out ,
+    output  reg   [0:0]  CD_ID_trap     ,
     output  reg   [0:0]  CD_EXE_conflict,
-    output  reg   [3:0]  CD_EXE_trap_out,
+    output  reg   [0:0]  CD_EXE_trap    ,
     output  reg   [0:0]  CD_MEM_conflict,
-    output  reg   [3:0]  CD_MEM_trap_out,
-    output  reg   [3:0]  CD_WB_trap_out 
+    output  reg   [0:0]  CD_MEM_trap
 );
 
 
@@ -362,39 +366,50 @@ always@(*) begin
 end
 
 always@(*) begin
-    if(CD_ID_valid_in == 1'b1) begin
-        CD_ID_trap_out = CD_ID_trap_in;
+    if((CD_IF2_valid_in == 1'b1 && CD_IF2_trap_in != `ysyx_041461_TRAP_NOP) || (CD_ID_valid_in == 1'b1 && CD_ID_trap_in != `ysyx_041461_TRAP_NOP) || (CD_EXE_valid_in == 1'b1 && CD_EXE_trap_in != `ysyx_041461_TRAP_NOP) || (CD_MEM_valid_in == 1'b1 && CD_MEM_trap_in != `ysyx_041461_TRAP_NOP) || (CD_WB_valid_in == 1'b1 && CD_WB_trap_in != `ysyx_041461_TRAP_NOP)) begin
+        CD_IF_trap = 1'b1;
     end
     else begin
-        CD_ID_trap_out = `ysyx_041461_TRAP_NOP;
+        CD_IF_trap = 1'b0;
     end
 end
 
 always@(*) begin
-    if(CD_EXE_valid_in == 1'b1) begin
-        CD_EXE_trap_out = CD_EXE_trap_in;
+    if((CD_ID_valid_in == 1'b1 && CD_ID_trap_in != `ysyx_041461_TRAP_NOP) || (CD_EXE_valid_in == 1'b1 && CD_EXE_trap_in != `ysyx_041461_TRAP_NOP) || (CD_MEM_valid_in == 1'b1 && CD_MEM_trap_in != `ysyx_041461_TRAP_NOP) || (CD_WB_valid_in == 1'b1 && CD_WB_trap_in != `ysyx_041461_TRAP_NOP)) begin
+        CD_IF2_trap = 1'b1;
     end
     else begin
-        CD_EXE_trap_out = `ysyx_041461_TRAP_NOP;
+        CD_IF2_trap = 1'b0;
+    end
+end
+
+
+always@(*) begin
+    if((CD_EXE_valid_in == 1'b1 && CD_EXE_trap_in != `ysyx_041461_TRAP_NOP) || (CD_MEM_valid_in == 1'b1 && CD_MEM_trap_in != `ysyx_041461_TRAP_NOP) || (CD_WB_valid_in == 1'b1 && CD_WB_trap_in != `ysyx_041461_TRAP_NOP)) begin
+        CD_ID_trap = 1'b1;
+    end
+    else begin
+        CD_ID_trap = 1'b0;
     end
 end
 
 always@(*) begin
-    if(CD_MEM_valid_in == 1'b1) begin
-        CD_MEM_trap_out = CD_MEM_trap_in;
+    if((CD_MEM_valid_in == 1'b1 && CD_MEM_trap_in != `ysyx_041461_TRAP_NOP) || (CD_WB_valid_in == 1'b1 && CD_WB_trap_in != `ysyx_041461_TRAP_NOP)) begin
+        CD_EXE_trap = 1'b1;
     end
     else begin
-        CD_MEM_trap_out = `ysyx_041461_TRAP_NOP;
+        CD_EXE_trap = 1'b0;
     end
 end
 
 always@(*) begin
-    if(CD_WB_valid_in == 1'b1) begin
-        CD_WB_trap_out = CD_WB_trap_in;
+    if(CD_WB_valid_in == 1'b1 && CD_WB_trap_in != `ysyx_041461_TRAP_NOP) begin
+        CD_MEM_trap = 1'b1;
     end
     else begin
-        CD_WB_trap_out = `ysyx_041461_TRAP_NOP;
+        CD_MEM_trap = 1'b0;
     end
 end
+
 
 endmodule
