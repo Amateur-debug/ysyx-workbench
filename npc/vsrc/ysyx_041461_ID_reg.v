@@ -1,3 +1,4 @@
+`include "ysyx_041461_macro.v"
 module ysyx_041461_ID_reg(
 
     input   wire [0:0]   clk               ,

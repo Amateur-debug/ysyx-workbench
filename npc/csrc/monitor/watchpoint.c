@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <assert.h>
 #include <string.h>
-#include "/home/cxy/ysyx-workbench/npc/include/sdb.h"
+#include "sdb.h"
 
 static WP wp_pool[NR_WP] = {};
 static WP *head = NULL, *free_ = NULL;

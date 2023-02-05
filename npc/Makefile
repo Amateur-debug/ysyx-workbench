@@ -13,14 +13,10 @@ C_SOURCE := $(shell find $(C_PATH) -name "*.c")
 BUILD := build
 
 VFLAGS +=  --cc --exe --trace --Mdir $(BUILD)
-VFLAGS += -LDFLAGS -lreadline
+VFLAGS += -I./vsrc/
 VFLAGS += -LDFLAGS -ldl
 VFLAGS += -LDFLAGS -lSDL2
-VFLAGS += -CFLAGS -include
-VFLAGS += -CFLAGS /home/cxy/ysyx-workbench/npc/include/difftest.h
-VFLAGS += -CFLAGS -fPIC
-VFLAGS += -CFLAGS -I
-VFLAGS += -CFLAGS /home/cxy/ysyx-workbench/npc/include
+VFLAGS += -CFLAGS -I../include
 
 ifdef IMG
 VFLAGS += -CFLAGS -DIMG=$(IMG)

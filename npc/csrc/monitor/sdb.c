@@ -4,11 +4,11 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <assert.h>
-#include "/home/cxy/ysyx-workbench/npc/include/sdb.h"
-#include "/home/cxy/ysyx-workbench/npc/include/cpu.h"
-#include "/home/cxy/ysyx-workbench/npc/include/state.h"
-#include "/home/cxy/ysyx-workbench/npc/include/regs.h"
-#include "/home/cxy/ysyx-workbench/npc/include/memory.h"
+#include "sdb.h"
+#include "cpu.h"
+#include "state.h"
+#include "regs.h"
+#include "memory.h"
 
 // calculate the length of an array
 #define ARRLEN(arr) (int)(sizeof(arr) / sizeof(arr[0]))

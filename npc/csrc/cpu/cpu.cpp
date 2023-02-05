@@ -4,9 +4,9 @@
 #include "Vysyx_041461_TOP.h"
 #include "svdpi.h"
 #include "Vysyx_041461_TOP__Dpi.h"
-#include "/home/cxy/ysyx-workbench/npc/include/state.h"
-#include "/home/cxy/ysyx-workbench/npc/include/difftest.h"
-#include "/home/cxy/ysyx-workbench/npc/include/common.h"
+#include "state.h"
+#include "difftest.h"
+#include "common.h"
 
 #define MAX_INST_TO_PRINT 10
 

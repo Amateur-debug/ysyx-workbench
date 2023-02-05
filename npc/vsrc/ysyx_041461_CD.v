@@ -1,4 +1,5 @@
 //conflict detector
+`include "ysyx_041461_macro.v"
 module ysyx_041461_CD(  
 
     input   wire  [0:0]  CD_IF2_valid_in ,
@@ -278,7 +279,7 @@ end
 
 always@(*) begin
     CD_ID_conflict = 1'b0;
-    if(ID_rs1_read == 1'b1) begin
+    if(ID_rs1_read == 1'b1 && CD_ID_rs1 != 5'b0) begin
         if(EXE_rd_write == 1'b1) begin
             if(CD_ID_rs1 == CD_EXE_rd) begin
                 CD_ID_conflict = 1'b1;
@@ -295,7 +296,7 @@ always@(*) begin
             end
         end
     end
-    if(ID_rs2_read == 1'b1) begin
+    if(ID_rs2_read == 1'b1 && CD_ID_rs2 != 5'b0) begin
         if(EXE_rd_write == 1'b1) begin
             if(CD_ID_rs2 == CD_EXE_rd) begin
                 CD_ID_conflict = 1'b1;
@@ -316,7 +317,7 @@ end
 
 always@(*) begin
     CD_EXE_conflict = 1'b0;
-    if(EXE_rs1_read == 1'b1) begin
+    if(EXE_rs1_read == 1'b1 && CD_EXE_rs1 != 5'b0) begin
         if(MEM_rd_write == 1'b1) begin
             if(CD_EXE_rs1 == CD_MEM_rd) begin
                 CD_EXE_conflict = 1'b1;
@@ -328,7 +329,7 @@ always@(*) begin
             end
         end
     end
-    if(EXE_rs2_read == 1'b1) begin
+    if(EXE_rs2_read == 1'b1 && CD_EXE_rs2 != 5'b0) begin
         if(MEM_rd_write == 1'b1) begin
             if(CD_EXE_rs2 == CD_MEM_rd) begin
                 CD_EXE_conflict = 1'b1;
@@ -356,7 +357,7 @@ end
 
 always@(*) begin
     CD_MEM_conflict = 1'b0;
-    if(MEM_rs2_read == 1'b1) begin
+    if(MEM_rs2_read == 1'b1 && CD_MEM_rs2 != 5'b0) begin
         if(WB_rd_write == 1'b1) begin
             if(CD_MEM_rs2 == CD_WB_rd) begin
                 CD_MEM_conflict = 1'b1;

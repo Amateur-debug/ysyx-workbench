@@ -1,4 +1,4 @@
-`include "/home/cxy/ysyx-workbench/npc/vsrc/ysyx_041461_macro.v"
+`include "ysyx_041461_macro.v"
 module ysyx_041461_ID( 
 
     input   wire [31:0] ID_inst      ,
@@ -539,7 +539,7 @@ always@(*) begin
     if(ID_valid_in == 1'b1 && ID_trap_in == `ysyx_041461_TRAP_NOP && ID_CD_trap == 1'b0 && ID_conflict == 1'b0) begin
         case(ID_TYPE)
             `ysyx_041461_TYPE_NOP: begin
-                ID_valid_out = 1'b1;
+                
             end
             `ysyx_041461_TYPE_JAL: begin
                 if(ID_IF_ready == 1'b1) begin
@@ -626,7 +626,7 @@ always@(*) begin
                 end
             end
             `ysyx_041461_TYPE_FENCE_I: begin
-                if(ID_EXE_ready == 1'b1 && ID_MEM_ready == 1'b1) begin
+                if(ID_IF_ready == 1'b1 && ID_EXE_ready == 1'b1 && ID_MEM_ready == 1'b1) begin
                     ID_ready = 1'b1;
                 end
                 else begin

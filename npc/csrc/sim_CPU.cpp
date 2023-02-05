@@ -9,13 +9,13 @@
 #include "svdpi.h"
 #include "Vysyx_041461_TOP__Dpi.h"
 
-#include "/home/cxy/ysyx-workbench/npc/include/common.h"
-#include "/home/cxy/ysyx-workbench/npc/include/init.h"
-#include "/home/cxy/ysyx-workbench/npc/include/memory.h"
-#include "/home/cxy/ysyx-workbench/npc/include/sdb.h"
-#include "/home/cxy/ysyx-workbench/npc/include/state.h"
-#include "/home/cxy/ysyx-workbench/npc/include/cpu.h"
-#include "/home/cxy/ysyx-workbench/npc/include/difftest.h"
+#include "common.h"
+#include "init.h"
+#include "memory.h"
+#include "sdb.h"
+#include "state.h"
+#include "cpu.h"
+#include "difftest.h"
 
 Vysyx_041461_TOP *top = new Vysyx_041461_TOP("TOP"); //调用VAccumulator.h里面的IO struct
 VerilatedVcdC* tfp = new VerilatedVcdC; //导出vcd波形需要加此语句
