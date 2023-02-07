@@ -1,5 +1,5 @@
 #include <am.h>
-#include "/home/cxy/ysyx-workbench/abstract-machine/am/src/riscv/riscv.h"
+#include "riscv.h"
 
 #define VGACTL_ADDR   0xa0000100
 #define FB_ADDR       0xa1000000
