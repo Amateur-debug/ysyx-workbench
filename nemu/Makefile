@@ -47,6 +47,7 @@ CFLAGS_BUILD += $(if $(CONFIG_CC_DEBUG),-Og -ggdb3,)
 CFLAGS_BUILD += $(if $(CONFIG_CC_ASAN),-fsanitize=address,)
 CFLAGS_TRACE += -DITRACE_COND=$(if $(CONFIG_ITRACE_COND),$(call remove_quote,$(CONFIG_ITRACE_COND)),true)
 CFLAGS  += $(CFLAGS_BUILD) $(CFLAGS_TRACE) -D__GUEST_ISA__=$(GUEST_ISA)
+CFLAGS  += -DMTRACE_FILE="$(NEMU_HOME)build/mtrace.txt"
 LDFLAGS += $(CFLAGS_BUILD)
 
 # Include rules for menuconfig
@@ -61,7 +62,7 @@ include $(NEMU_HOME)/scripts/native.mk
 endif
 
 count:
-	find /home/cxy/ysyx-workbench/nemu/ -name *.c -or -name *.h | xargs cat | wc -l
+	find $(NEMU_HOME)/ -name *.c -or -name *.h | xargs cat | wc -l
 
 count-excblankline:
-	find /home/cxy/ysyx-workbench/nemu/ -name *.c -or -name *.h | xargs cat | grep -v ^$$ | wc -l
+	find $(NEMU_HOME)/ -name *.c -or -name *.h | xargs cat | grep -v ^$$ | wc -l

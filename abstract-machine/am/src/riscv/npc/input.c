@@ -1,5 +1,5 @@
 #include <am.h>
-#include "/home/cxy/ysyx-workbench/abstract-machine/am/src/riscv/riscv.h"
+#include "riscv.h"
 
 #define KEYDOWN_MASK 0x8000
 #define KBD_ADDR   0xa0000060

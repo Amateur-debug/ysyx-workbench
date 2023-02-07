@@ -32,7 +32,7 @@ bool (*difftest_checkregs)(uint64_t *dut, uint64_t dut_pc);
 
 void (*difftest_init)();
 
-void* handle = dlopen("/home/cxy/ysyx-workbench/nemu/build/riscv64-nemu-interpreter-so", RTLD_LAZY);
+void* handle = dlopen(STR2(DIFFTEST_LIB), RTLD_LAZY);
 
 
 uint32_t img[memory_size/4] = {

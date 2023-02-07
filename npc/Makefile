@@ -17,6 +17,7 @@ VFLAGS += -I./vsrc/
 VFLAGS += -LDFLAGS -ldl
 VFLAGS += -LDFLAGS -lSDL2
 VFLAGS += -CFLAGS -I../include
+VFLAGS += -CFLAGS -DDIFFTEST_LIB=$(NEMU_HOME)/build/riscv64-nemu-interpreter-so
 
 ifdef IMG
 VFLAGS += -CFLAGS -DIMG=$(IMG)
