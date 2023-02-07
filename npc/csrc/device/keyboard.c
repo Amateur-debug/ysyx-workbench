@@ -1,6 +1,6 @@
 #include <common.h>
 #include <map.h>
-#include "/home/cxy/ysyx-workbench/npc/include/state.h"
+#include "state.h"
 
 #define KEYDOWN_MASK 0x8000
 #define CONFIG_I8042_DATA_MMIO 0xa0000060

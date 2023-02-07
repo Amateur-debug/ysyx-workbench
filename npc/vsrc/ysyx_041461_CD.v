@@ -1,4 +1,5 @@
 //conflict detector
+`include "ysyx_041461_macro.v"
 module ysyx_041461_CD(  
 
     input   wire  [0:0]  CD_IF2_valid_in ,

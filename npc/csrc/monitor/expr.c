@@ -4,8 +4,8 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <assert.h>
-#include "/home/cxy/ysyx-workbench/npc/include/regs.h"
-#include "/home/cxy/ysyx-workbench/npc/include/memory.h"
+#include "regs.h"
+#include "memory.h"
 
 #define ARRLEN(arr) (int)(sizeof(arr) / sizeof(arr[0]))
 

@@ -7,9 +7,9 @@
 #include "Vysyx_041461_TOP.h"
 #include "svdpi.h"
 #include "Vysyx_041461_TOP__Dpi.h"
-#include "/home/cxy/ysyx-workbench/npc/include/common.h"
-#include "/home/cxy/ysyx-workbench/npc/include/sdb.h"
-#include "/home/cxy/ysyx-workbench/npc/include/difftest.h"
+#include "common.h"
+#include "sdb.h"
+#include "difftest.h"
 
 #define STR1(R) #R
 #define STR2(R) STR1(R)

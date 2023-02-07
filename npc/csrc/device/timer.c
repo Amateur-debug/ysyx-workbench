@@ -1,4 +1,4 @@
-#include "/home/cxy/ysyx-workbench/npc/include/common.h"
+#include "common.h"
 #include <time.h>
 #include <common.h>
 #include <map.h>

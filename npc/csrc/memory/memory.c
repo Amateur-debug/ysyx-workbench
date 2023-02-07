@@ -1,8 +1,8 @@
 #include "svdpi.h"
 #include "Vysyx_041461_TOP__Dpi.h"
-#include "/home/cxy/ysyx-workbench/npc/include/common.h"
-#include "/home/cxy/ysyx-workbench/npc/include/state.h"
-#include "/home/cxy/ysyx-workbench/npc/include/timer.h"
+#include "common.h"
+#include "state.h"
+#include "timer.h"
 
 #define memory_size 128*1024*1024
 

@@ -15,7 +15,7 @@
 #define concat5(x, y, z, v, w) concat4(concat(x, y), z, v, w)
 
 
-#define WAVE 1
+//#define WAVE 1
 #define WAVE_time 2200000
 //#define DIFFTEST 1
 
