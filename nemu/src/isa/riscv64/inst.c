@@ -50,6 +50,7 @@ void down_ftrace(uint64_t pc){
     uint64_t size;
   };
   extern struct ELF_function *ELF_function;
+  assert(ELF_function != NULL);
   extern int ELF_function_num;
   int j;
   for(j = 0; j < ELF_function_num; j++){
