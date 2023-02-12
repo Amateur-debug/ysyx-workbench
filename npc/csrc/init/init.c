@@ -11,8 +11,6 @@
 #include "sdb.h"
 #include "difftest.h"
 
-#define STR1(R) #R
-#define STR2(R) STR1(R)
 #define memory_size 128*1024*1024
 
 void init_map();
@@ -111,3 +109,8 @@ void init_device() {
   init_vga();
   init_i8042();
 } 
+
+void init_mtrace(const char *mtrace_file){
+  FILE *p = fopen(mtrace_file, "w");
+  fclose(p);
+}

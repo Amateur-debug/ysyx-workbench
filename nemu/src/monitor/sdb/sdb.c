@@ -20,20 +20,12 @@
 #include "sdb.h"
 #include <memory/paddr.h>
 
-#define STR1(R) #R
-#define STR2(R) STR1(R)
-
 static int is_batch_mode = false;
 static int wp_number = 0;
 WP *HEAD = NULL;
 
 void init_regex();
 void init_wp_pool();
-
-void init_mtrace(){
-  FILE *p = fopen(STR2(MTRACE_FILE), "w");
-  fclose(p);
-}
 
 /* We use the `readline' library to provide more flexibility to read from stdin. */
 static char* rl_gets() {
@@ -241,7 +233,4 @@ void init_sdb() {
   /* Initialize the watchpoint pool. */
   init_wp_pool();
 
-#ifdef CONFIG_MTRACE
-  init_mtrace();
-#endif
 }
