@@ -14,7 +14,8 @@ LDFLAGS   += --gc-sections -e _start
 override NEMUFLAGS += -l $(shell dirname $(IMAGE).elf)/nemu-log.txt
 override NEMUFLAGS += -b
 override NEMUFLAGS += -m $(shell dirname $(IMAGE).elf)/nemu-mtrace.txt
-override NEMUFLAGS += -f $(shell dirname $(IMAGE).elf)/nemu-ftrace.txt $(IMAGE).elf
+override NEMUFLAGS += -f $(shell dirname $(IMAGE).elf)/nemu-ftrace.txt
+override NEMUFLAGS += --elf $(IMAGE).elf
 
 CFLAGS += -DMAINARGS=\"$(mainargs)\"
 CFLAGS += -I$(AM_HOME)/am/src/platform/nemu/include
