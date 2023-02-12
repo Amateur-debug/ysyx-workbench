@@ -93,7 +93,7 @@ static int parse_args(int argc, char *argv[]) {
       case 'l': log_file = optarg; break;
       case 'd': diff_so_file = optarg; break;
       case 'm': mtrace_file = optarg; break;
-      case 'f': ftrace_file = optarg; break;
+      case 'f': ftrace_file = optarg; printf("ftrace_file=%s\n", ftrace_file) ;break;
       case 2: elf_file = optarg; break;
       case 1: img_file = optarg; return 0;
       default:
