@@ -49,7 +49,7 @@ void down_ftrace(uint64_t pc){
     uint64_t addr;
     uint64_t size;
   } *ELF_function;
-  assert(ELF_function != NULL);
+  assert(ELF_function == NULL);
   extern int ELF_function_num;
   extern char *ftrace_file;
   FILE *fp = fopen(ftrace_file, "a");
