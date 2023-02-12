@@ -62,6 +62,7 @@ void down_ftrace(uint64_t pc){
       return;
     }
     else if(pc > ELF_function[i].addr && pc < ELF_function[i].addr + ELF_function[i].size){
+      printf("aaa\n");
       fprintf(fp, "%016lx: ret %s\n", ELF_function[i].addr, ELF_function[i].name);
       fclose(fp);
       return;
