@@ -215,10 +215,9 @@ void init_ftrace(const char *ftrace_file){
   printf("aaa\n");
   int n = 0;
   for(i = 0; i < symtab_num; i++){
-    if((symtab[i].st_info & 0x0fu) == STT_FUNC){
+    if((symtab[i].st_info & 0xf0u) == STT_FUNC << 4){
       ELF_function[n].addr = symtab[i].st_value;
       int j = 0;
-      printf("aaa\n");
       while(strtab[symtab[i].st_name + j] != '\0'){
         ELF_function[n].name[j] = strtab[symtab[i].st_name + j];
       }
