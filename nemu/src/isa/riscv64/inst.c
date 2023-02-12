@@ -50,6 +50,10 @@ void down_ftrace(uint64_t pc){
     uint64_t size;
   } *ELF_function;
   extern int ELF_function_num;
+  int j;
+  for(j = 0; j < ELF_function_num; j++){
+    printf("%s\n", ELF_function[j].name);
+  }
   extern char *ftrace_file;
   printf("ftrace_file=%s\n", ftrace_file);
   FILE *fp = fopen(ftrace_file, "a");
