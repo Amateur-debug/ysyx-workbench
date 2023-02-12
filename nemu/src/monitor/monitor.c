@@ -94,8 +94,8 @@ static int parse_args(int argc, char *argv[]) {
       case 'l': log_file = optarg; break;
       case 'd': diff_so_file = optarg; break;
       case 'm': mtrace_file = optarg; break;
-      case 'f': ftrace_file = optarg; elf_file = argv[optind + 1]; break;
-      case 1: img_file = optarg; printf("%s\n", img_file); return 0;
+      case 'f': ftrace_file = optarg; elf_file = argv[optind + 1]; printf("%s\n", elf_file); break;
+      case 1: img_file = optarg; return 0;
       default:
         printf("Usage: %s [OPTION...] IMAGE [args]\n\n", argv[0]);
         printf("\t-b,--batch              run with batch mode\n");
