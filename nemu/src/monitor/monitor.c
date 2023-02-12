@@ -184,7 +184,10 @@ void init_mtrace(const char *mtrace_file){
 struct ELF_function{
   char name[30];
   uint64_t addr;
+  uint64_t size;
 } ELF_function[MAX_FUC_NUM];
+
+int ELF_function_num;
 
 void init_ftrace(const char *ftrace_file){
   FILE *fp = fopen(elf_file, "r");
@@ -212,17 +215,19 @@ void init_ftrace(const char *ftrace_file){
   fseek(fp, strtab_h.sh_offset, SEEK_SET);
   assert(fread(strtab, strtab_h.sh_size, 1, fp) == 1);
   int n = 0;
-  printf("symtab_num=%d\n", symtab_num);
   for(i = 0; i < symtab_num; i++){
     if((symtab[i].st_info & 0x0fu) == STT_FUNC){
       ELF_function[n].addr = symtab[i].st_value;
+      ELF_function[n].size = symtab[i].st_size;
       int j = 0;
       while(strtab[symtab[i].st_name + j] != '\0'){
         ELF_function[n].name[j] = strtab[symtab[i].st_name + j];
         j++;
       }
-      printf("%s %lx\n", ELF_function[n].name, ELF_function[n].addr);
+      ELF_function[n].name[j] = strtab[symtab[i].st_name + j];
       n++;
     }
   }
+  ELF_function_num = n;
+  fclose(fp);
 }
