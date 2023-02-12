@@ -204,7 +204,6 @@ void init_ftrace(const char *ftrace_file){
       strtab_h = shdr[i];
     }
   }
-  printf("aaa\n");
   int symtab_num = symtab_h.sh_size / sizeof(Elf64_Sym);
   Elf64_Sym symtab[symtab_num];
   fseek(fp, symtab_h.sh_offset, SEEK_SET);
@@ -212,7 +211,6 @@ void init_ftrace(const char *ftrace_file){
   char strtab[strtab_h.sh_size];
   fseek(fp, strtab_h.sh_offset, SEEK_SET);
   assert(fread(strtab, strtab_h.sh_size, 1, fp) == 1);
-  printf("aaa\n");
   int n = 0;
   for(i = 0; i < symtab_num; i++){
     if((symtab[i].st_info & 0xf0u) == STT_FUNC << 4){
@@ -221,8 +219,8 @@ void init_ftrace(const char *ftrace_file){
       while(strtab[symtab[i].st_name + j] != '\0'){
         ELF_function[n].name[j] = strtab[symtab[i].st_name + j];
       }
+      printf("%s %lx\n", ELF_function[n].name, ELF_function[n].addr);
       n++;
     }
   }
-  printf("aaa\n");
 }
