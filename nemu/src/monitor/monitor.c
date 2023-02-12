@@ -224,4 +224,5 @@ void init_ftrace(const char *ftrace_file){
       n++;
     }
   }
+  printf("aaa\n");
 }
