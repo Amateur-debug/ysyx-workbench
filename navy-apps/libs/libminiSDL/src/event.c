@@ -24,7 +24,7 @@ static int ev_used = 0;
 
 void init_ev_queue() {
   int i;
-  for (i = 0; i < NR_EV; i ++) {
+  for (i = 0; i < NR_EV; i++) {
     //环形链表
     ev_queue[i].next = (i == NR_EV - 1 ? ev_queue : &ev_queue[i + 1]);
   }

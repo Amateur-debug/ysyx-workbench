@@ -18,6 +18,9 @@
 #include <device/mmio.h>
 #include <isa.h>
 
+#define STR1(R) #R
+#define STR2(R) STR1(R)
+
 #if   defined(CONFIG_PMEM_MALLOC)
 static uint8_t *pmem = NULL;
 #else // CONFIG_PMEM_GARRAY
@@ -59,7 +62,8 @@ void init_mem() {
 
 word_t paddr_read(paddr_t addr, int len) {
 #ifdef CONFIG_MTRACE
-  FILE *p = fopen(MTRACE_FILE, "a");
+  extern char *mtrace_file;
+  FILE *p = fopen(mtrace_file, "a");
   fprintf(p, "读取地址： 0x%016x\t读取字长:  %d\n", addr, len);
   fclose(p);
 #endif
@@ -71,7 +75,8 @@ word_t paddr_read(paddr_t addr, int len) {
 
 void paddr_write(paddr_t addr, int len, word_t data) {
 #ifdef CONFIG_MTRACE
-  FILE *p = fopen(MTRACE_FILE, "a");
+  extern char *mtrace_file;
+  FILE *p = fopen(mtrace_file, "a");
   fprintf(p, "写入地址： 0x%016x\t写入字长:  %d\t写入数据:  0x%016lx\n", addr, len, data);
   fclose(p);
 #endif
