@@ -212,6 +212,7 @@ void init_ftrace(const char *ftrace_file){
   char strtab[strtab_h.sh_size];
   fseek(fp, strtab_h.sh_offset, SEEK_SET);
   assert(fread(strtab, strtab_h.sh_size, 1, fp) == 1);
+  printf("aaa\n");
   int n = 0;
   for(i = 0; i < symtab_num; i++){
     if((symtab[i].st_info & 0x0fu) == STT_FUNC){
