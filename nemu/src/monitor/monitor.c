@@ -82,7 +82,7 @@ static int parse_args(int argc, char *argv[]) {
     {"help"     , no_argument      , NULL, 'h'},
     {"mtrace"   , required_argument, NULL, 'm'},
     {"ftrace"   , required_argument, NULL, 'f'},
-    {"elf"      , required_argument, NULL, '2'},
+    {"elf"      , required_argument, NULL,  2},
     {0          , 0                , NULL,  0 },
   };
   int o;
