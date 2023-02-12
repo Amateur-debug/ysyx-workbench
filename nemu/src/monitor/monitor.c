@@ -16,6 +16,7 @@
 #include <isa.h>
 #include <memory/paddr.h>
 #include <elf.h>
+#include <trace.h>
 
 void init_rand();
 void init_log(const char *log_file);
@@ -179,14 +180,7 @@ void init_mtrace(const char *mtrace_file){
   fclose(p);
 }
 
-#define MAX_FUC_NUM 9000
-
-struct _ELF_function{
-  char name[30];
-  uint64_t addr;
-  uint64_t size;
-} ELF_function[MAX_FUC_NUM];
-
+_ELF_function ELF_function[MAX_FUC_NUM];
 int ELF_function_num;
 
 void init_ftrace(const char *ftrace_file){
