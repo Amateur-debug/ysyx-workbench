@@ -224,7 +224,7 @@ void init_ftrace(const char *ftrace_file){
         ELF_function[n].name[j] = strtab[symtab[i].st_name + j];
         j++;
       }
-      
+      ELF_function[n].name[j] = strtab[symtab[i].st_name + j];
       n++;
     }
   }
