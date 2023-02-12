@@ -82,8 +82,7 @@ static int parse_args(int argc, char *argv[]) {
     {"help"     , no_argument      , NULL, 'h'},
     {"mtrace"   , required_argument, NULL, 'm'},
     {"ftrace"   , required_argument, NULL, 'f'},
-    {0          , 0                , NULL,  0 },
-    {0          , 0                , NULL,  0 },
+
   };
   int o;
   while ( (o = getopt_long(argc, argv, "-bhf:m:l:d:p:", table, NULL)) != -1) {
