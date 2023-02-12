@@ -48,7 +48,6 @@ void down_ftrace(uint64_t pc){
   extern _ELF_function ELF_function[MAX_FUC_NUM];
   extern int ELF_function_num;
   extern char *ftrace_file;
-  printf("ftrace_file=%s\n", ftrace_file);
   FILE *fp = fopen(ftrace_file, "a");
   int i;
   for(i = 0; i < ELF_function_num; i++){
