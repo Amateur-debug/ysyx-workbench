@@ -62,6 +62,7 @@ void down_ftrace(uint64_t pc){
       return;
     }
   }
+  fclose(fp);
 }
 
 enum {
