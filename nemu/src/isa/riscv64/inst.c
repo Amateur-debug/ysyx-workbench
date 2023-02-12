@@ -56,6 +56,7 @@ void down_ftrace(uint64_t pc){
   printf("aaa\n");
   for(i = 0; i < ELF_function_num; i++){
     if(pc == ELF_function[i].addr){
+      printf("aaa\n");
       fprintf(fp, "%016lx: call %s\n", ELF_function[i].addr, ELF_function[i].name);
       fclose(fp);
       return;
