@@ -213,7 +213,7 @@ void init_ftrace(const char *ftrace_file){
   assert(fread(strtab, strtab_h.sh_size, 1, fp) == 1);
   int n = 0;
   for(i = 0; i < symtab_num; i++){
-    if((symtab[i].st_info & 0xf0u) == STT_FUNC << 4){
+    if((symtab[i].st_info & 0x0fu) == STT_FUNC){
       ELF_function[n].addr = symtab[i].st_value;
       int j = 0;
       while(strtab[symtab[i].st_name + j] != '\0'){
