@@ -94,7 +94,7 @@ static int parse_args(int argc, char *argv[]) {
       case 'd': diff_so_file = optarg; break;
       case 'm': mtrace_file = optarg; break;
       case 'f': ftrace_file = optarg; break;
-      case 2: elf_file = optarg; break;
+      case 2: elf_file = optarg; printf("img=%s\n", elf_file);break;
       case 1: img_file = optarg; printf("img=%s\n", img_file); return 0;
       default:
         printf("Usage: %s [OPTION...] IMAGE [args]\n\n", argv[0]);
