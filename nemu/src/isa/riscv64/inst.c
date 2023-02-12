@@ -57,14 +57,15 @@ void down_ftrace(uint64_t pc){
   for(i = 0; i < ELF_function_num; i++){
     if(pc == ELF_function[i].addr){
       fprintf(fp, "%016lx: call %s\n", ELF_function[i].addr, ELF_function[i].name);
+      fclose(fp);
       return;
     }
     else if(pc > ELF_function[i].addr && pc < ELF_function[i].addr + ELF_function[i].size){
       fprintf(fp, "%016lx: ret %s\n", ELF_function[i].addr, ELF_function[i].name);
+      fclose(fp);
       return;
     }
   }
-  fclose(fp);
 }
 
 enum {
