@@ -181,7 +181,7 @@ void init_mtrace(const char *mtrace_file){
 
 #define MAX_FUC_NUM 9000
 
-struct ELF_function{
+struct _ELF_function{
   char name[30];
   uint64_t addr;
   uint64_t size;

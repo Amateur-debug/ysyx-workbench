@@ -44,12 +44,12 @@ void WCSR(int csr_num, uint64_t wdata){
 }
 
 void down_ftrace(uint64_t pc){
-  struct ELF_function{
+  struct _ELF_function{
     char name[30];
     uint64_t addr;
     uint64_t size;
   };
-  extern struct ELF_function *ELF_function;
+  extern struct _ELF_function *ELF_function;
   assert(ELF_function != NULL);
   extern int ELF_function_num;
   int j;
