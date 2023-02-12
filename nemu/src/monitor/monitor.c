@@ -161,3 +161,8 @@ void am_init_monitor() {
   welcome();
 }
 #endif
+
+void init_mtrace(const char *mtrace_file){
+  FILE *p = fopen(mtrace_file, "w");
+  fclose(p);
+}
