@@ -14,6 +14,7 @@ LDFLAGS   += --gc-sections -e _start
 override NEMUFLAGS += -l $(shell dirname $(IMAGE).elf)/nemu-log.txt
 override NEMUFLAGS += -b
 override NEMUFLAGS += -m $(shell dirname $(IMAGE).elf)/nemu-mtrace.txt
+override NEMUFLAGS += -f $(shell dirname $(IMAGE).elf)/nemu-ftrace.txt $(IMAGE).elf
 
 CFLAGS += -DMAINARGS=\"$(mainargs)\"
 CFLAGS += -I$(AM_HOME)/am/src/platform/nemu/include
@@ -25,7 +26,7 @@ image: $(IMAGE).elf
 	@$(OBJCOPY) -S --set-section-flags .bss=alloc,contents -O binary $(IMAGE).elf $(IMAGE).bin
 
 run: image
-	$(MAKE) -C $(NEMU_HOME) ISA=$(ISA) run ARGS="$(NEMUFLAGS)" IMG=$(IMAGE).bin ELF=$(IMAGE).elf
+	$(MAKE) -C $(NEMU_HOME) ISA=$(ISA) run ARGS="$(NEMUFLAGS)" IMG=$(IMAGE).bin
 
 gdb: image
 	$(MAKE) -C $(NEMU_HOME) ISA=$(ISA) gdb ARGS="$(NEMUFLAGS)" IMG=$(IMAGE).bin
