@@ -46,17 +46,11 @@ void WCSR(int csr_num, uint64_t wdata){
 
 void down_ftrace(uint64_t pc){
   extern _ELF_function ELF_function[MAX_FUC_NUM];
-  assert(ELF_function != NULL);
   extern int ELF_function_num;
-  int j;
-  for(j = 0; j < ELF_function_num; j++){
-    printf("%s\n", ELF_function[j].name);
-  }
   extern char *ftrace_file;
   printf("ftrace_file=%s\n", ftrace_file);
   FILE *fp = fopen(ftrace_file, "a");
   int i;
-  printf("aaa\n");
   for(i = 0; i < ELF_function_num; i++){
     if(pc == ELF_function[i].addr){
       fprintf(fp, "%016lx: call %s\n", ELF_function[i].addr, ELF_function[i].name);
