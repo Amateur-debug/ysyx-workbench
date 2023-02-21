@@ -52,12 +52,12 @@ void down_ftrace(uint64_t spc, uint64_t snpc, int call_ret){
   int i;
   for(i = 0; i < ELF_function_num; i++){
     if(snpc == ELF_function[i].addr && call_ret == 1){
-      fprintf(fp, "%16x: call %s[%16x]\n", (uint32_t)spc, ELF_function[i].name, (uint32_t)ELF_function[i].addr);
+      fprintf(fp, "%8x: call %s[%8x]\n", (uint32_t)spc, ELF_function[i].name, (uint32_t)ELF_function[i].addr);
       fclose(fp);
       return;
     }
     else if(snpc >= ELF_function[i].addr && snpc < (ELF_function[i].addr + ELF_function[i].size) && call_ret == 0){
-      fprintf(fp, "%16x: ret %s[%16x]\n", (uint32_t)spc, ELF_function[i].name, (uint32_t)ELF_function[i].addr);
+      fprintf(fp, "%8x: ret %s[%8x]\n", (uint32_t)spc, ELF_function[i].name, (uint32_t)ELF_function[i].addr);
       fclose(fp);
       return;
     }
