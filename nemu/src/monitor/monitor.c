@@ -184,6 +184,8 @@ _ELF_function ELF_function[MAX_FUC_NUM];
 int ELF_function_num;
 
 void init_ftrace(const char *ftrace_file){
+  FILE *ft = fopen(ftrace_file, "w");
+  fclose(ft);
   FILE *fp = fopen(elf_file, "r");
   Elf64_Ehdr ehdr;
   assert(fread(&ehdr, sizeof(Elf64_Ehdr), 1, fp) == 1);
