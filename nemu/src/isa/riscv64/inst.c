@@ -56,7 +56,7 @@ void down_ftrace(uint64_t spc, uint64_t snpc, int call_ret){
       fclose(fp);
       return;
     }
-    else if(snpc >= ELF_function[i].addr && snpc < ELF_function[i].addr + ELF_function[i].size && call_ret == 0){
+    else if(snpc >= ELF_function[i].addr && snpc < (ELF_function[i].addr + ELF_function[i].size) && call_ret == 0){
       fprintf(fp, "%016x: ret %s[%016x]\n", (uint32_t)spc, ELF_function[i].name, (uint32_t)ELF_function[i].addr);
       fclose(fp);
       return;
