@@ -101,7 +101,7 @@ void init_sdb() {
     difftest_checkregs = (bool (*)(uint64_t *dut, uint64_t dut_pc))dlsym(handle, "difftest_checkregs");
     difftest_init = (void (*)())dlsym(handle, "difftest_init");
     difftest_init();
-    difftest_memcpy(0x80000000, pmem, sizeof(img), DIFFTEST_TO_REF);
+    difftest_memcpy(0x80000000, (uint8_t *)img, sizeof(img), DIFFTEST_TO_REF);
     difftest_regcpy(cpu_gpr, cpu_pc, DIFFTEST_TO_REF);
   }
 #endif

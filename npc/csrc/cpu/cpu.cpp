@@ -16,7 +16,6 @@ extern VerilatedVcdC* tfp;
 static vluint64_t main_time = 0;  //initial 仿真时间
 static bool g_print_step = false;
 
-int skip = 0;
 
 void ebreak(){      //结束指令
   extern uint64_t *cpu_gpr;
@@ -24,9 +23,14 @@ void ebreak(){      //结束指令
   set_npc_state(NPC_END, *cpu_pc, cpu_gpr[10]);
 }
 
-char WB_valid;
-void get_WB_valid(char get_WB_valid){
-  WB_valid = get_WB_valid;
+char need_difftest;
+void get_need_difftest(char get_need_difftest){
+  need_difftest = get_need_difftest;
+}
+
+char skip;
+void get_skip(char get_skip){
+  skip = get_skip;
 }
 
 double sc_time_stamp(){
@@ -98,25 +102,24 @@ static void execute(uint64_t n){
   for (;n > 0; n --){
     if(!Verilated::gotFinish()){
       #ifdef DIFFTEST
-        if(WB_valid == 1){
+        if(need_difftest == 1){
           uint64_t pc = *cpu_pc;
           uint64_t next_pc = pc + 4;
           if(skip == 0){
-            printf("aaa\n");
+            printf("pc = %x\n", pc);
             exec_once();
             device_update();
             difftest_exec(1);
-            printf("aaa\n");
             if(difftest_checkregs(cpu_gpr, pc) == 0){
               npc_state.state = NPC_ABORT;
               npc_state.halt_pc = pc;
             }
           }
           else {
+            printf("ancncn\n");
             exec_once();
             device_update();
             difftest_regcpy(cpu_gpr, &next_pc, DIFFTEST_TO_REF);
-            skip = 0;
           }
         }
         else {

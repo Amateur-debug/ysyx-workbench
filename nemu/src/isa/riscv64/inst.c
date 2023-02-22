@@ -45,24 +45,26 @@ void WCSR(int csr_num, uint64_t wdata){
 }
 
 void down_ftrace(uint64_t spc, uint64_t snpc, int call_ret){
-  extern _ELF_function ELF_function[MAX_FUC_NUM];
-  extern int ELF_function_num;
-  extern char *ftrace_file;
-  FILE *fp = fopen(ftrace_file, "a");
-  int i;
-  for(i = 0; i < ELF_function_num; i++){
-    if(snpc == ELF_function[i].addr && call_ret == 1){
-      fprintf(fp, "%8x: call %s[%8x]\n", (uint32_t)spc, ELF_function[i].name, (uint32_t)ELF_function[i].addr);
-      fclose(fp);
-      return;
+  #ifdef CONFIG_FTRACE
+    extern _ELF_function ELF_function[MAX_FUC_NUM];
+    extern int ELF_function_num;
+    extern char *ftrace_file;
+    FILE *fp = fopen(ftrace_file, "a");
+    int i;
+    for(i = 0; i < ELF_function_num; i++){
+      if(snpc == ELF_function[i].addr && call_ret == 1){
+        fprintf(fp, "%8x: call %s[%8x]\n", (uint32_t)spc, ELF_function[i].name, (uint32_t)ELF_function[i].addr);
+        fclose(fp);
+        return;
+      }
+      else if(snpc >= ELF_function[i].addr && snpc < (ELF_function[i].addr + ELF_function[i].size) && call_ret == 0){
+        fprintf(fp, "%8x: ret %s[%8x]\n", (uint32_t)spc, ELF_function[i].name, (uint32_t)ELF_function[i].addr);
+        fclose(fp);
+        return;
+      }
     }
-    else if(snpc >= ELF_function[i].addr && snpc < (ELF_function[i].addr + ELF_function[i].size) && call_ret == 0){
-      fprintf(fp, "%8x: ret %s[%8x]\n", (uint32_t)spc, ELF_function[i].name, (uint32_t)ELF_function[i].addr);
-      fclose(fp);
-      return;
-    }
-  }
-  fclose(fp);
+    fclose(fp);
+  #endif
 }
 
 enum {
