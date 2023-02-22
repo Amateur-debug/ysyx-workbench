@@ -102,9 +102,11 @@ static void execute(uint64_t n){
           uint64_t pc = *cpu_pc;
           uint64_t next_pc = pc + 4;
           if(skip == 0){
+            printf("aaa\n");
             exec_once();
             device_update();
             difftest_exec(1);
+            printf("aaa\n");
             if(difftest_checkregs(cpu_gpr, pc) == 0){
               npc_state.state = NPC_ABORT;
               npc_state.halt_pc = pc;
