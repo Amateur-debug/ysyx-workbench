@@ -45,17 +45,21 @@ module ysyx_041461_WB(
     output  wire [63:0]  WB_EXE_rs2_data,
     output  reg  [63:0]  WB_EXE_csr_data,
 
-    output  wire [63:0]  WB_MEM_rs2_data
+    output  wire [63:0]  WB_MEM_rs2_data,
+
+    input   wire [0:0]   WB_skip_difftest
 );
 
 import "DPI-C" function void set_gpr_ptr(input logic [63:0] a []);
 import "DPI-C" function void set_pc_ptr(input logic [63:0] a []);
-import "DPI-C" function void get_WB_valid(input byte a);
+import "DPI-C" function void get_need_difftest(input byte a);
+import "DPI-C" function void get_skip(input byte a);
 import "DPI-C" function void ebreak();
 
 initial set_gpr_ptr(x);
 initial set_pc_ptr(WB_pc);
-initial get_WB_valid({7'b0, WB_valid});
+initial get_need_difftest({7'b0, need_difftest});
+initial get_skip({7'b0, WB_skip_difftest});
 
 reg [63:0] x [31:0];    //寄存器现态的值
 reg [63:0] d [31:0];    //寄存器次态的值
@@ -476,7 +480,26 @@ always@(posedge clk or posedge rst) begin
 end
 
 always@(*) begin
-    get_WB_valid({7'b0, WB_valid});
+    get_skip({7'b0, WB_skip_difftest});
+end
+
+always@(*) begin
+    get_need_difftest({7'b0, need_difftest});
+end
+
+reg [0:0] need_difftest;
+always@(*) begin
+    if(WB_valid == 1'b1) begin
+        if(WB_trap != `ysyx_041461_TRAP_NOP && WB_IF_ready == 1'b0) begin
+            need_difftest = 1'b0;
+        end
+        else begin
+            need_difftest = 1'b1;
+        end
+    end
+    else begin
+        need_difftest = 1'b0;
+    end
 end
 
 endmodule

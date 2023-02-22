@@ -78,7 +78,9 @@ module ysyx_041461_MEM(
     output  wire [0:0]    MEM_sram7_wen   , 
     output  wire [127:0]  MEM_sram7_wmask , 
     output  wire [127:0]  MEM_sram7_wdata , 
-    input   wire [127:0]  MEM_sram7_rdata  
+    input   wire [127:0]  MEM_sram7_rdata ,
+
+    output  reg  [0:0]    MEM_skip_difftest
 );
 
 parameter MEM_AXI_id = 4'b0001;
@@ -1519,6 +1521,16 @@ always@(posedge clk or posedge rst) begin
             end
         endcase
     end      
+end
+
+//difftest
+always@(*) begin
+    if(uncached == 1'b1 && state == `ysyx_041461_MEM_FINISH) begin
+        MEM_skip_difftest = 1'b1;
+    end
+    else begin
+        MEM_skip_difftest = 1'b0;
+    end
 end
 
 endmodule

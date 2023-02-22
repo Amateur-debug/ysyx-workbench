@@ -32,7 +32,7 @@ bool (*difftest_checkregs)(uint64_t *dut, uint64_t dut_pc);
 
 void (*difftest_init)();
 
-void* handle = dlopen(STR2(DIFFTEST_LIB), RTLD_LAZY);
+void* handle; 
 
 
 uint32_t img[memory_size/4] = {
@@ -92,14 +92,15 @@ void init_sdb() {
   void init_difftest(){
     extern uint64_t *cpu_gpr;
     extern uint64_t *cpu_pc;
-    extern uint8_t pmem[memory_size];
+    printf("%s\n", STR2(DIFFTEST_LIB));
+    handle = dlopen(STR2(DIFFTEST_LIB), RTLD_LAZY);
     difftest_regcpy = (void (*)(uint64_t *dut, uint64_t *dut_pc, bool direction))dlsym(handle, "difftest_regcpy");
     difftest_memcpy = (void (*)(paddr_t addr, uint8_t *buf, size_t n, bool direction))dlsym(handle, "difftest_memcpy");
     difftest_exec = (void (*)(uint64_t n))dlsym(handle, "difftest_exec");
     difftest_checkregs = (bool (*)(uint64_t *dut, uint64_t dut_pc))dlsym(handle, "difftest_checkregs");
     difftest_init = (void (*)())dlsym(handle, "difftest_init");
     difftest_init();
-    difftest_memcpy(0x80000000, pmem, sizeof(img), DIFFTEST_TO_REF);
+    difftest_memcpy(0x80000000, (uint8_t *)img, sizeof(img), DIFFTEST_TO_REF);
     difftest_regcpy(cpu_gpr, cpu_pc, DIFFTEST_TO_REF);
   }
 #endif
