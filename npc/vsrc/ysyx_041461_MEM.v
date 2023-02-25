@@ -1,4 +1,4 @@
-`include "ysyx_041461_macro.v"
+
 module ysyx_041461_MEM(
 
     input   wire [0:0]    clk             ,
@@ -78,9 +78,7 @@ module ysyx_041461_MEM(
     output  wire [0:0]    MEM_sram7_wen   , 
     output  wire [127:0]  MEM_sram7_wmask , 
     output  wire [127:0]  MEM_sram7_wdata , 
-    input   wire [127:0]  MEM_sram7_rdata ,
-
-    output  reg  [0:0]    MEM_skip_difftest
+    input   wire [127:0]  MEM_sram7_rdata 
 );
 
 parameter MEM_AXI_id = 4'b0001;
@@ -169,7 +167,6 @@ assign store = MEM_ctrl == `ysyx_041461_MEM_SB || MEM_ctrl == `ysyx_041461_MEM_S
 
 //在运行pa程序时，需判断地址大小，运行soc程序时只需判断一位
 //SOC
-/*
 always@(*) begin
     if(MEM_EXE_in[31:31] == 1'b1) begin
         uncached = 1'b0;
@@ -178,9 +175,9 @@ always@(*) begin
         uncached = 1'b1;
     end
 end
-*/
 
 //PA
+/*
 always@(*) begin
     if(MEM_EXE_in[31:0] >= 32'h8000_0000 && MEM_EXE_in[31:0] < 32'h8800_0000) begin
         uncached = 1'b0;
@@ -189,7 +186,7 @@ always@(*) begin
         uncached = 1'b1;
     end
 end
-
+*/
 
 always@(*) begin
     if(V1[index] == 1'b1) begin
@@ -1521,16 +1518,6 @@ always@(posedge clk or posedge rst) begin
             end
         endcase
     end      
-end
-
-//difftest
-always@(*) begin
-    if(uncached == 1'b1 && state == `ysyx_041461_MEM_FINISH) begin
-        MEM_skip_difftest = 1'b1;
-    end
-    else begin
-        MEM_skip_difftest = 1'b0;
-    end
 end
 
 endmodule

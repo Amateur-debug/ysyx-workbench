@@ -1,4 +1,4 @@
-`include "ysyx_041461_macro.v"
+
 module ysyx_041461_ID( 
 
     input   wire [31:0] ID_inst      ,

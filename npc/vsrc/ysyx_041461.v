@@ -328,9 +328,6 @@ wire [2:0]   ARBITER_CLINT_arsize ;
 wire [1:0]   ARBITER_CLINT_arburst;
 wire         ARBITER_CLINT_rready ;
 
-wire [0:0]    MEM_skip_difftest;
-wire [0:0]    WBreg_skip_difftets_out;
-
 //异步复位同步释放
 reg  [0:0]   rst_r1;
 reg  [0:0]   rst_r2;
@@ -719,8 +716,7 @@ ysyx_041461_MEM MEM(
     .MEM_sram7_wen          (io_sram7_wen            ), 
     .MEM_sram7_wmask        (io_sram7_wmask          ), 
     .MEM_sram7_wdata        (io_sram7_wdata          ), 
-    .MEM_sram7_rdata        (io_sram7_rdata          ),
-    .MEM_skip_difftest      (MEM_skip_difftest)
+    .MEM_sram7_rdata        (io_sram7_rdata          )
 );
 
 ysyx_041461_WB_reg WB_reg(
@@ -740,7 +736,6 @@ ysyx_041461_WB_reg WB_reg(
     .WBreg_zimm_in                 (MEMreg_zimm_out   ),
     .WBreg_pc_in                   (MEMreg_pc_out     ),
     .WBreg_WB_ctrl_in              (MEMreg_WB_ctrl_out),
-    .WBreg_skip_difftets_in        (MEM_skip_difftest),
   
     .WBreg_valid_out               (WBreg_valid_out   ), 
     .WBreg_trap_out                (WBreg_trap_out    ),
@@ -752,8 +747,7 @@ ysyx_041461_WB_reg WB_reg(
     .WBreg_imm_out                 (WBreg_imm_out     ),
     .WBreg_zimm_out                (WBreg_zimm_out    ),
     .WBreg_pc_out                  (WBreg_pc_out      ),
-    .WBreg_WB_ctrl_out             (WBreg_WB_ctrl_out ),
-    .WBreg_skip_difftets_out       (WBreg_skip_difftets_out)
+    .WBreg_WB_ctrl_out             (WBreg_WB_ctrl_out )
 );
 
 
@@ -803,8 +797,7 @@ ysyx_041461_WB WB(
     .WB_EXE_rs2_data       (WB_EXE_rs2_data  ),
     .WB_EXE_csr_data       (WB_EXE_csr_data  ),
 
-    .WB_MEM_rs2_data       (WB_MEM_rs2_data  ),
-    .WB_skip_difftest      (WBreg_skip_difftets_out)
+    .WB_MEM_rs2_data       (WB_MEM_rs2_data  )
 );
 
 

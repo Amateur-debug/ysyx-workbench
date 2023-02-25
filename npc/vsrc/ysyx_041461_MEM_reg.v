@@ -1,4 +1,4 @@
-`include "ysyx_041461_macro.v"
+
 module ysyx_041461_MEM_reg(
 
     input   wire [0:0]   clk                 ,
@@ -46,7 +46,7 @@ always@(posedge clk or posedge rst) begin
         MEMreg_csr_out <= 12'b0;   
         MEMreg_imm_out <= 64'b0;    
         MEMreg_zimm_out <= 64'b0;   
-        MEMreg_pc_out <= 64'h0000_0000_8000_0000;     
+        MEMreg_pc_out <= 64'h0000_0000_3000_0000;     
         MEMreg_MEM_ctrl_out <= `ysyx_041461_MEM_NOP;
         MEMreg_WB_ctrl_out <= `ysyx_041461_WB_NOP;           
     end

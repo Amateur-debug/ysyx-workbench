@@ -1,4 +1,4 @@
-`include "ysyx_041461_macro.v"
+
 module  ysyx_041461_ARBITER(
 
     input   wire [0:0]    clk                       ,
@@ -141,8 +141,8 @@ wire [0:0]  rclint;
 wire [0:0]  wclint;
 
 //在pa中，由于地址冲突，需要屏蔽CLINT模块
-assign rclint = 1'b0;
-assign wclint = 1'b0;
+assign rclint = (ARBITER_MEM_araddr >= 32'h0200_bff8 && ARBITER_MEM_araddr <= 32'h0200_bfff) || (ARBITER_MEM_araddr >= 32'h0200_4000 && ARBITER_MEM_araddr <= 32'h0200_4007);
+assign wclint = (ARBITER_MEM_awaddr >= 32'h0200_bff8 && ARBITER_MEM_awaddr <= 32'h0200_bfff) || (ARBITER_MEM_awaddr >= 32'h0200_4000 && ARBITER_MEM_awaddr <= 32'h0200_4007);
 
 always@(posedge clk or posedge rst) begin
     if(rst == 1'b1) begin

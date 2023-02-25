@@ -1,4 +1,4 @@
-`include "ysyx_041461_macro.v"
+
 module ysyx_041461_IF(
 
     input   wire [0:0]    clk                  ,
@@ -170,7 +170,7 @@ end
 
 //在运行pa程序时，需判断地址大小，运行soc程序时只需判断一位
 //SOC
-/*always@(*) begin
+always@(*) begin
     if(IF_pc[31:31] == 1'b1) begin
         uncached = 1'b0;
     end
@@ -178,10 +178,10 @@ end
         uncached = 1'b1;
     end
 end
-*/
+
 
 //PA
-always@(*) begin
+/*always@(*) begin
     if(IF_pc[31:0] >= 32'h8000_0000 && IF_pc[31:0] < 32'h8800_0000) begin
         uncached = 1'b0;
     end
@@ -189,6 +189,7 @@ always@(*) begin
         uncached = 1'b1;
     end
 end
+*/
 
 
 always@(*) begin
