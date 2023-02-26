@@ -41,25 +41,25 @@ module ysyx_041461_IF(
     input   wire [3:0]    IF_rid               ,
    
     output  wire [5:0]    IF_sram0_addr        , 
-    output  reg  [0:0]    IF_sram0_cen         , 
+    output  wire [0:0]    IF_sram0_cen         , 
     output  reg  [0:0]    IF_sram0_wen         , 
     output  reg  [127:0]  IF_sram0_wmask       , 
     output  reg  [127:0]  IF_sram0_wdata       , 
    
     output  wire [5:0]    IF_sram1_addr        , 
-    output  reg  [0:0]    IF_sram1_cen         , 
+    output  wire [0:0]    IF_sram1_cen         , 
     output  reg  [0:0]    IF_sram1_wen         , 
     output  reg  [127:0]  IF_sram1_wmask       , 
     output  reg  [127:0]  IF_sram1_wdata       , 
    
     output  wire [5:0]    IF_sram2_addr        , 
-    output  reg  [0:0]    IF_sram2_cen         , 
+    output  wire [0:0]    IF_sram2_cen         , 
     output  reg  [0:0]    IF_sram2_wen         , 
     output  reg  [127:0]  IF_sram2_wmask       , 
     output  reg  [127:0]  IF_sram2_wdata       , 
 
     output  wire [5:0]    IF_sram3_addr        , 
-    output  reg  [0:0]    IF_sram3_cen         , 
+    output  wire [0:0]    IF_sram3_cen         , 
     output  reg  [0:0]    IF_sram3_wen         , 
     output  reg  [127:0]  IF_sram3_wmask       , 
     output  reg  [127:0]  IF_sram3_wdata       
@@ -69,22 +69,13 @@ parameter IF_AXI_id = 4'b0000;
 
 parameter OKAY = 2'b00;
 parameter EXOKAY = 2'b01;
-parameter SLVERR = 2'b10;
-parameter DECERR = 2'b11;
+//parameter SLVERR = 2'b10;
+//parameter DECERR = 2'b11;
 
 parameter FIXED = 2'b00;
-parameter INCR = 2'b01;
-parameter WRAP = 2'b10;
-parameter Rserved = 2'b11;
-
-assign IF_sram0_addr = index;
-assign IF_sram1_addr = index;
-assign IF_sram2_addr = index;
-assign IF_sram3_addr = index;
-assign IF_sram0_cen  = 1'b0;
-assign IF_sram1_cen  = 1'b0;
-assign IF_sram2_cen  = 1'b0;
-assign IF_sram3_cen  = 1'b0;
+//parameter INCR = 2'b01;
+//parameter WRAP = 2'b10;
+//parameter Rserved = 2'b11;
 
 reg  [2:0]   state;
 
@@ -135,16 +126,25 @@ reg  [6:0]   PLRU_tree       [63:0];
 reg  [6:0]   PLRU_tree_next  [63:0];
 reg  [2:0]   replace_line;
 
+wire [0:0]   mie_MTIE;
+wire [0:0]   mip_MTIP;
+wire [0:0]   mstatus_MIE;
+
 
 assign index = IF_pc[8:3];
 assign offset = IF_pc[2:0];
 assign tag = IF_pc[63:9];
 
-assign hit = IF_hit1 || IF_hit2 || IF_hit3 || IF_hit4 || IF_hit5 || IF_hit6 || IF_hit7 || IF_hit8;
+assign IF_sram0_addr = index;
+assign IF_sram1_addr = index;
+assign IF_sram2_addr = index;
+assign IF_sram3_addr = index;
+assign IF_sram0_cen  = 1'b0;
+assign IF_sram1_cen  = 1'b0;
+assign IF_sram2_cen  = 1'b0;
+assign IF_sram3_cen  = 1'b0;
 
-wire [0:0]   mie_MTIE;
-wire [0:0]   mip_MTIP;
-wire [0:0]   mstatus_MIE;
+assign hit = IF_hit1 || IF_hit2 || IF_hit3 || IF_hit4 || IF_hit5 || IF_hit6 || IF_hit7 || IF_hit8;
 
 assign mie_MTIE = IF_mie[7:7];
 assign mip_MTIP = IF_mip[7:7];
@@ -155,7 +155,7 @@ always@(*) begin
     if(mie_MTIE == 1'b1 && mip_MTIP == 1'b1 && mstatus_MIE == 1'b1) begin
         IF_trap_out = `ysyx_041461_TIMER_INTERRUPT;
     end
-    else if(IF_pc[1:0] != 2'b00) begin
+    else if(offset[1:0] != 2'b00) begin
         IF_trap_out = `ysyx_041461_IF_MISALIGN;
     end
     else begin

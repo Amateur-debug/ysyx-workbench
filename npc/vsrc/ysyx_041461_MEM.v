@@ -19,65 +19,65 @@ module ysyx_041461_MEM(
     output  reg  [3:0]    MEM_trap_out    ,
       
     input   wire [0:0]    MEM_awready     ,
-    output  wire [0:0]    MEM_awvalid     ,
+    output  reg  [0:0]    MEM_awvalid     ,
     output  reg  [31:0]   MEM_awaddr      ,
-    output  wire [3:0]    MEM_awid        ,
-    output  wire [7:0]    MEM_awlen       ,
-    output  wire [2:0]    MEM_awsize      ,
-    output  wire [1:0]    MEM_awburst     ,
+    output  reg  [3:0]    MEM_awid        ,
+    output  reg  [7:0]    MEM_awlen       ,
+    output  reg  [2:0]    MEM_awsize      ,
+    output  reg  [1:0]    MEM_awburst     ,
              
     input   wire [0:0]    MEM_wready      ,
-    output  wire [0:0]    MEM_wvalid      ,
-    output  wire [63:0]   MEM_wdata       ,
-    output  wire [7:0]    MEM_wstrb       ,
-    output  wire [0:0]    MEM_wlast       ,
+    output  reg  [0:0]    MEM_wvalid      ,
+    output  reg  [63:0]   MEM_wdata       ,
+    output  reg  [7:0]    MEM_wstrb       ,
+    output  reg  [0:0]    MEM_wlast       ,
              
-    output  wire [0:0]    MEM_bready      ,
+    output  reg  [0:0]    MEM_bready      ,
     input   wire [0:0]    MEM_bvalid      ,
     input   wire [1:0]    MEM_bresp       ,
     input   wire [3:0]    MEM_bid         ,
             
     input   wire [0:0]    MEM_arready     ,
-    output  wire [0:0]    MEM_arvalid     ,
-    output  wire [31:0]   MEM_araddr      ,
-    output  wire [3:0]    MEM_arid        ,
-    output  wire [7:0]    MEM_arlen       ,
-    output  wire [2:0]    MEM_arsize      ,
-    output  wire [1:0]    MEM_arburst     ,
+    output  reg  [0:0]    MEM_arvalid     ,
+    output  reg  [31:0]   MEM_araddr      ,
+    output  reg  [3:0]    MEM_arid        ,
+    output  reg  [7:0]    MEM_arlen       ,
+    output  reg  [2:0]    MEM_arsize      ,
+    output  reg  [1:0]    MEM_arburst     ,
              
-    output  wire [0:0]    MEM_rready      ,
+    output  reg  [0:0]    MEM_rready      ,
     input   wire [0:0]    MEM_rvalid      ,
     input   wire [1:0]    MEM_rresp       ,
     input   wire [63:0]   MEM_rdata       ,
     input   wire [0:0]    MEM_rlast       ,
     input   wire [3:0]    MEM_rid         ,
        
-    output  wire [5:0]    MEM_sram4_addr  , 
+    output  reg  [5:0]    MEM_sram4_addr  , 
     output  wire [0:0]    MEM_sram4_cen   , 
-    output  wire [0:0]    MEM_sram4_wen   , 
-    output  wire [127:0]  MEM_sram4_wmask , 
-    output  wire [127:0]  MEM_sram4_wdata , 
+    output  reg  [0:0]    MEM_sram4_wen   , 
+    output  reg  [127:0]  MEM_sram4_wmask , 
+    output  reg  [127:0]  MEM_sram4_wdata , 
     input   wire [127:0]  MEM_sram4_rdata ,
        
-    output  wire [5:0]    MEM_sram5_addr  , 
+    output  reg  [5:0]    MEM_sram5_addr  , 
     output  wire [0:0]    MEM_sram5_cen   , 
-    output  wire [0:0]    MEM_sram5_wen   , 
-    output  wire [127:0]  MEM_sram5_wmask , 
-    output  wire [127:0]  MEM_sram5_wdata , 
+    output  reg  [0:0]    MEM_sram5_wen   , 
+    output  reg  [127:0]  MEM_sram5_wmask , 
+    output  reg  [127:0]  MEM_sram5_wdata , 
     input   wire [127:0]  MEM_sram5_rdata ,
        
-    output  wire [5:0]    MEM_sram6_addr  , 
+    output  reg  [5:0]    MEM_sram6_addr  , 
     output  wire [0:0]    MEM_sram6_cen   , 
-    output  wire [0:0]    MEM_sram6_wen   , 
-    output  wire [127:0]  MEM_sram6_wmask , 
-    output  wire [127:0]  MEM_sram6_wdata , 
+    output  reg  [0:0]    MEM_sram6_wen   , 
+    output  reg  [127:0]  MEM_sram6_wmask , 
+    output  reg  [127:0]  MEM_sram6_wdata , 
     input   wire [127:0]  MEM_sram6_rdata ,
        
-    output  wire [5:0]    MEM_sram7_addr  , 
+    output  reg  [5:0]    MEM_sram7_addr  , 
     output  wire [0:0]    MEM_sram7_cen   , 
-    output  wire [0:0]    MEM_sram7_wen   , 
-    output  wire [127:0]  MEM_sram7_wmask , 
-    output  wire [127:0]  MEM_sram7_wdata , 
+    output  reg  [0:0]    MEM_sram7_wen   , 
+    output  reg  [127:0]  MEM_sram7_wmask , 
+    output  reg  [127:0]  MEM_sram7_wdata , 
     input   wire [127:0]  MEM_sram7_rdata 
 );
 
@@ -85,13 +85,13 @@ parameter MEM_AXI_id = 4'b0001;
 
 parameter OKAY = 2'b00;
 parameter EXOKAY = 2'b01;
-parameter SLVERR = 2'b10;
-parameter DECERR = 2'b11;
+//parameter SLVERR = 2'b10;
+//parameter DECERR = 2'b11;
 
 parameter FIXED = 2'b00;
-parameter INCR = 2'b01;
-parameter WRAP = 2'b10;
-parameter Rserved = 2'b11;
+//parameter INCR = 2'b01;
+//parameter WRAP = 2'b10;
+//parameter Rserved = 2'b11;
 
 
 wire [0:0]   load;
@@ -303,7 +303,7 @@ end
 always@(*) begin
     case(MEM_ctrl)
         `ysyx_041461_MEM_SD: begin
-            case(MEM_EXE_in[2:0])
+            case(offset)
                 3'b000: begin
                     align = 1'b1;
                 end
@@ -313,7 +313,7 @@ always@(*) begin
             endcase
         end
         `ysyx_041461_MEM_SW: begin
-            case(MEM_EXE_in[2:0])
+            case(offset)
                 3'b000: begin
                     align = 1'b1;
                 end
@@ -326,7 +326,7 @@ always@(*) begin
             endcase
         end
         `ysyx_041461_MEM_SH: begin
-            case(MEM_EXE_in[2:0])
+            case(offset)
                 3'b000: begin
                     align = 1'b1;
                 end
@@ -351,7 +351,7 @@ always@(*) begin
             align = 1'b1;
         end
         `ysyx_041461_MEM_LH: begin
-            case(MEM_EXE_in[2:0])
+            case(offset)
                 3'b000: begin
                     align = 1'b1;
                 end
@@ -373,7 +373,7 @@ always@(*) begin
             align = 1'b1;
         end
         `ysyx_041461_MEM_LHU: begin
-            case(MEM_EXE_in[2:0])
+            case(offset)
                 3'b000: begin
                     align = 1'b1;
                 end
@@ -392,7 +392,7 @@ always@(*) begin
             endcase
         end
         `ysyx_041461_MEM_LW: begin
-            case(MEM_EXE_in[2:0])
+            case(offset)
                 3'b000: begin
                     align = 1'b1;
                 end
@@ -405,7 +405,7 @@ always@(*) begin
             endcase
         end
         `ysyx_041461_MEM_LWU: begin
-            case(MEM_EXE_in[2:0])
+            case(offset)
                 3'b000: begin
                     align = 1'b1;
                 end
@@ -418,7 +418,7 @@ always@(*) begin
             endcase
         end
         `ysyx_041461_MEM_LD: begin
-            case(MEM_EXE_in[2:0])
+            case(offset)
                 3'b000: begin
                     align = 1'b1;
                 end
@@ -542,7 +542,7 @@ always@(*) begin
             MEM_wdata = MEM_rs2_data;
         end
         `ysyx_041461_MEM_SW: begin
-            case(MEM_EXE_in[2:0])
+            case(offset)
                 3'b000: begin
                     MEM_wstrb = 8'b0000_1111;
                     MEM_wdata = MEM_rs2_data;
@@ -558,7 +558,7 @@ always@(*) begin
             endcase
         end
         `ysyx_041461_MEM_SH: begin
-            case(MEM_EXE_in[2:0])
+            case(offset)
                 3'b000: begin
                     MEM_wstrb = 8'b0000_0011;
                     MEM_wdata = MEM_rs2_data;
@@ -582,7 +582,7 @@ always@(*) begin
             endcase
         end
         `ysyx_041461_MEM_SB: begin
-            case(MEM_EXE_in[2:0])
+            case(offset)
                 3'b000: begin
                     MEM_wstrb = 8'b0000_0001;
                     MEM_wdata = MEM_rs2_data;
@@ -940,7 +940,7 @@ always@(*) begin
             cache_wmask = 64'h0000_0000_0000_0000;
         end
         `ysyx_041461_MEM_SW: begin
-            case(MEM_EXE_in[2:0])
+            case(offset)
                 3'b000: begin
                     cache_wmask = 64'hffff_ffff_0000_0000;
                 end
@@ -953,7 +953,7 @@ always@(*) begin
             endcase
         end
         `ysyx_041461_MEM_SH: begin
-            case(MEM_EXE_in[2:0])
+            case(offset)
                 3'b000: begin
                     cache_wmask = 64'hffff_ffff_ffff_0000;
                 end
@@ -972,7 +972,7 @@ always@(*) begin
             endcase
         end
         `ysyx_041461_MEM_SB: begin
-            case(MEM_EXE_in[2:0])
+            case(offset)
                 3'b000: begin
                     cache_wmask = 64'hffff_ffff_ffff_ff00;
                 end
@@ -1017,7 +1017,7 @@ always@(*) begin
                 cache_wdata = MEM_rs2_data;
             end
             `ysyx_041461_MEM_SW: begin
-                case(MEM_EXE_in[2:0])
+                case(offset)
                     3'b000: begin
                         cache_wdata = MEM_rs2_data;
                     end
@@ -1030,7 +1030,7 @@ always@(*) begin
                 endcase
             end
             `ysyx_041461_MEM_SH: begin
-                case(MEM_EXE_in[2:0])
+                case(offset)
                     3'b000: begin
                         cache_wdata = MEM_rs2_data;
                     end
@@ -1049,7 +1049,7 @@ always@(*) begin
                 endcase
             end
             `ysyx_041461_MEM_SB: begin
-                case(MEM_EXE_in[2:0])
+                case(offset)
                     3'b000: begin
                         cache_wdata = MEM_rs2_data;
                     end
@@ -1348,7 +1348,7 @@ always@(*) begin
 end
 
 always@(*) begin
-    case(MEM_EXE_in[2:0])
+    case(offset)
         3'b000: begin
             rrdata = rdata;
         end

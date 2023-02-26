@@ -10,7 +10,7 @@ module  ysyx_041461_ARBITER(
     input   wire [7:0]    ARBITER_IF_arlen     ,
     input   wire [2:0]    ARBITER_IF_arsize    ,
     input   wire [1:0]    ARBITER_IF_arburst   ,
-    output  reg  [0:0]    ARBITER_IF_arready   ,
+    output  wire [0:0]    ARBITER_IF_arready   ,
 
     input   wire [0:0]    ARBITER_IF_rready    ,
     output  wire [0:0]    ARBITER_IF_rvalid    ,
@@ -28,30 +28,30 @@ module  ysyx_041461_ARBITER(
     output  reg  [0:0]    ARBITER_MEM_arready  ,
 
     input   wire [0:0]    ARBITER_MEM_rready   ,
-    output  wire [0:0]    ARBITER_MEM_rvalid   ,
-    output  wire [1:0]    ARBITER_MEM_rresp    ,
-    output  wire [63:0]   ARBITER_MEM_rdata    ,
-    output  wire [0:0]    ARBITER_MEM_rlast    ,
-    output  wire [3:0]    ARBITER_MEM_rid      ,
+    output  reg  [0:0]    ARBITER_MEM_rvalid   ,
+    output  reg  [1:0]    ARBITER_MEM_rresp    ,
+    output  reg  [63:0]   ARBITER_MEM_rdata    ,
+    output  reg  [0:0]    ARBITER_MEM_rlast    ,
+    output  reg  [3:0]    ARBITER_MEM_rid      ,
 
-    output  wire [0:0]    ARBITER_MEM_awready  ,
+    output  reg  [0:0]    ARBITER_MEM_awready  ,
     input   wire [0:0]    ARBITER_MEM_awvalid  ,
-    input   reg  [31:0]   ARBITER_MEM_awaddr   ,
+    input   wire [31:0]   ARBITER_MEM_awaddr   ,
     input   wire [3:0]    ARBITER_MEM_awid     ,
     input   wire [7:0]    ARBITER_MEM_awlen    ,
     input   wire [2:0]    ARBITER_MEM_awsize   ,
     input   wire [1:0]    ARBITER_MEM_awburst  ,
        
-    output  wire [0:0]    ARBITER_MEM_wready   ,
+    output  reg  [0:0]    ARBITER_MEM_wready   ,
     input   wire [0:0]    ARBITER_MEM_wvalid   ,
     input   wire [63:0]   ARBITER_MEM_wdata    ,
     input   wire [7:0]    ARBITER_MEM_wstrb    ,
     input   wire [0:0]    ARBITER_MEM_wlast    ,
        
     input   wire [0:0]    ARBITER_MEM_bready   ,
-    output  wire [0:0]    ARBITER_MEM_bvalid   ,
-    output  wire [1:0]    ARBITER_MEM_bresp    ,
-    output  wire [3:0]    ARBITER_MEM_bid      ,
+    output  reg  [0:0]    ARBITER_MEM_bvalid   ,
+    output  reg  [1:0]    ARBITER_MEM_bresp    ,
+    output  reg  [3:0]    ARBITER_MEM_bid      ,
     
     input   wire          ARBITER_CLINT_awready,
     output  reg           ARBITER_CLINT_awvalid,
@@ -88,7 +88,7 @@ module  ysyx_041461_ARBITER(
     input   wire          ARBITER_CLINT_rlast  ,
 
     input   wire          ARBITER_io_awready   ,
-    output  wire          ARBITER_io_awvalid   ,
+    output  reg           ARBITER_io_awvalid   ,
     output  wire [3:0]    ARBITER_io_awid      ,
     output  wire [31:0]   ARBITER_io_awaddr    ,
     output  wire [7:0]    ARBITER_io_awlen     ,
@@ -127,13 +127,13 @@ parameter MEM_AXI_id = 4'b0001;
 
 parameter OKAY = 2'b00;
 parameter EXOKAY = 2'b01;
-parameter SLVERR = 2'b10;
-parameter DECERR = 2'b11;
+//parameter SLVERR = 2'b10;
+//parameter DECERR = 2'b11;
 
-parameter FIXED = 2'b00;
-parameter INCR = 2'b01;
-parameter WRAP = 2'b10;
-parameter Rserved = 2'b11;
+//parameter FIXED = 2'b00;
+//parameter INCR = 2'b01;
+//parameter WRAP = 2'b10;
+//parameter Rserved = 2'b11;
 
 reg  [1:0]  MEM_rstate;
 reg  [1:0]  wstate;
@@ -189,17 +189,15 @@ always@(posedge clk or posedge rst) begin
     end
 end
 
-always@(*) begin
-    ARBITER_IF_arready = ARBITER_io_arready;
-end
 
-always@(*) begin
-    ARBITER_IF_rvalid = ARBITER_io_rvalid;
-    ARBITER_IF_rresp  = ARBITER_io_rresp ;
-    ARBITER_IF_rdata  = ARBITER_io_rdata ;
-    ARBITER_IF_rlast  = ARBITER_io_rlast ;
-    ARBITER_IF_rid    = ARBITER_io_rid   ;
-end
+assign ARBITER_IF_arready = ARBITER_io_arready;
+
+assign ARBITER_IF_rvalid = ARBITER_io_rvalid;
+assign ARBITER_IF_rresp  = ARBITER_io_rresp ;
+assign ARBITER_IF_rdata  = ARBITER_io_rdata ;
+assign ARBITER_IF_rlast  = ARBITER_io_rlast ;
+assign ARBITER_IF_rid    = ARBITER_io_rid   ;
+
 
 always@(*) begin
     if(rclint == 1'b1) begin
@@ -239,18 +237,16 @@ always@(*) begin
     endcase
 end
 
-always@(*) begin
-    ARBITER_CLINT_arvalid = ARBITER_MEM_arvalid;
-    ARBITER_CLINT_arid    = ARBITER_MEM_arid;
-    ARBITER_CLINT_araddr  = ARBITER_MEM_araddr;
-    ARBITER_CLINT_arlen   = ARBITER_MEM_arlen  ;
-    ARBITER_CLINT_arsize  = ARBITER_MEM_arsize ;
-    ARBITER_CLINT_arburst = ARBITER_MEM_arburst;
-end
 
-always@(*) begin
-    ARBITER_CLINT_rready = ARBITER_MEM_rready;
-end
+assign ARBITER_CLINT_arvalid = ARBITER_MEM_arvalid;
+assign ARBITER_CLINT_arid    = ARBITER_MEM_arid;
+assign ARBITER_CLINT_araddr  = ARBITER_MEM_araddr;
+assign ARBITER_CLINT_arlen   = ARBITER_MEM_arlen  ;
+assign ARBITER_CLINT_arsize  = ARBITER_MEM_arsize ;
+assign ARBITER_CLINT_arburst = ARBITER_MEM_arburst;
+
+assign ARBITER_CLINT_rready = ARBITER_MEM_rready;
+
 
 always@(*) begin
     if(ARBITER_IF_arvalid == 1'b1) begin

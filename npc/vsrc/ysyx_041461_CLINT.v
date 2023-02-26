@@ -42,9 +42,9 @@ module ysyx_041461_CLINT (
 );
 
 parameter OKAY = 2'b00;
-parameter EXOKAY = 2'b01;
-parameter SLVERR = 2'b10;
-parameter DECERR = 2'b11;
+//parameter EXOKAY = 2'b01;
+//parameter SLVERR = 2'b10;
+//parameter DECERR = 2'b11;
 
 
 reg  [63:0]  mtime;
