@@ -72,6 +72,7 @@ wire  [5:0]  funct6;
 wire  [6:0]  funct7;
 wire  [5:0]  shamt;
 wire  [0:0]  MRO_csr;
+wire  [0:0]  valid_csr;
 
 assign ID_rd   = ID_inst[11:7] ;
 assign ID_rs1  = ID_inst[19:15];
@@ -84,6 +85,7 @@ assign funct3 = ID_inst[14:12];
 assign funct6 = ID_inst[31:26];
 assign funct7 = ID_inst[31:25];
 assign MRO_csr = ID_csr[11:10] == 2'b11;
+assign valid_csr = ID_csr == `ysyx_041461_MVENDORID || ID_csr == `ysyx_041461_MARCHID || ID_csr == `ysyx_041461_MIMPID || ID_csr == `ysyx_041461_MHARTID || ID_csr == `ysyx_041461_MSTATUS || ID_csr == `ysyx_041461_MISA || ID_csr == `ysyx_041461_MIE || ID_csr == `ysyx_041461_MTVEC || ID_csr == `ysyx_041461_MSCRATCH || ID_csr == `ysyx_041461_MEPC || ID_csr == `ysyx_041461_MCAUSE || ID_csr == `ysyx_041461_MTVAL || ID_csr == `ysyx_041461_MIP || ID_csr == `ysyx_041461_MCYCLE || ID_csr == `ysyx_041461_MINSTRET;
 
 //指令译码
 always@(*) begin  
@@ -450,7 +452,7 @@ always@(*) begin
                         case(funct3)
                             `ysyx_041461_CSRRW: begin
                                 ID_WB_ctrl = `ysyx_041461_WB_CSR_RS1;
-                                if(MRO_csr == 1'b1) begin
+                                if(MRO_csr == 1'b1 || valid_csr == 1'b0) begin
                                     ID_trap_out = `ysyx_041461_ID_ILLEGAL_INST;
                                 end
                             end
@@ -463,7 +465,7 @@ always@(*) begin
                                 else begin
                                     ID_WB_ctrl = `ysyx_041461_WB_CSR_EXE;
                                 end
-                                if(MRO_csr == 1'b1 && ID_rs1 != 5'b0) begin
+                                if((MRO_csr == 1'b1 && ID_rs1 != 5'b0) || valid_csr == 1'b0) begin
                                     ID_trap_out = `ysyx_041461_ID_ILLEGAL_INST;
                                 end
                             end
@@ -476,13 +478,13 @@ always@(*) begin
                                 else begin
                                     ID_WB_ctrl = `ysyx_041461_WB_CSR_EXE;
                                 end
-                                if(MRO_csr == 1'b1 && ID_rs1 != 5'b0) begin
+                                if((MRO_csr == 1'b1 && ID_rs1 != 5'b0) || valid_csr == 1'b0) begin
                                     ID_trap_out = `ysyx_041461_ID_ILLEGAL_INST;
                                 end
                             end
                             `ysyx_041461_CSRRWI: begin
                                 ID_WB_ctrl = `ysyx_041461_WB_CSR_ZIMM;
-                                if(MRO_csr == 1'b1) begin
+                                if(MRO_csr == 1'b1 || valid_csr == 1'b0) begin
                                     ID_trap_out = `ysyx_041461_ID_ILLEGAL_INST;
                                 end
                             end
@@ -495,7 +497,7 @@ always@(*) begin
                                 else begin
                                     ID_WB_ctrl = `ysyx_041461_WB_CSR_EXE;
                                 end
-                                if(MRO_csr == 1'b1 && ID_zimm[4:0] != 5'b0) begin
+                                if((MRO_csr == 1'b1 && ID_zimm[4:0] != 5'b0) || valid_csr == 1'b0) begin
                                     ID_trap_out = `ysyx_041461_ID_ILLEGAL_INST;
                                 end
                             end
@@ -508,7 +510,7 @@ always@(*) begin
                                 else begin
                                     ID_WB_ctrl = `ysyx_041461_WB_CSR_EXE;
                                 end
-                                if(MRO_csr == 1'b1 && ID_zimm[4:0] != 5'b0) begin
+                                if((MRO_csr == 1'b1 && ID_zimm[4:0] != 5'b0) || valid_csr == 1'b0) begin
                                     ID_trap_out = `ysyx_041461_ID_ILLEGAL_INST;
                                 end
                             end

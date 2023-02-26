@@ -32,6 +32,7 @@ module ysyx_041461_WB(
 
     output  wire [63:0]  WB_IFreg_mtvec ,
     output  wire [63:0]  WB_IFreg_mepc  ,
+    output  reg  [62:0]  WB_IFreg_CAUSE ,
     output  reg  [1:0]   WB_IFreg_ctrl  ,  
 
     output  wire [63:0]  WB_IF_mstatus  ,
@@ -166,38 +167,49 @@ always@(*) begin
         case(WB_trap)
             `ysyx_041461_TRAP_NOP: begin
                 WB_IFreg_ctrl = `ysyx_041461_WB_IFreg_ctrl_NOP;
+                WB_IFreg_CAUSE = 63'b0;
             end
             `ysyx_041461_IF_MISALIGN: begin
                 WB_IFreg_ctrl = `ysyx_041461_WB_IFreg_ctrl_MTVEC;
+                WB_IFreg_CAUSE = 63'b0;
             end
             `ysyx_041461_ID_ECALL: begin
                 WB_IFreg_ctrl = `ysyx_041461_WB_IFreg_ctrl_MTVEC;
+                WB_IFreg_CAUSE = 63'b0;
             end
             `ysyx_041461_ID_MRET: begin
                 WB_IFreg_ctrl = `ysyx_041461_WB_IFreg_ctrl_MEPC;
+                WB_IFreg_CAUSE = 63'b0;
             end
             `ysyx_041461_ID_EBREAK: begin
                 WB_IFreg_ctrl = `ysyx_041461_WB_IFreg_ctrl_MTVEC;
+                WB_IFreg_CAUSE = 63'b0;
             end
             `ysyx_041461_ID_ILLEGAL_INST: begin
                 WB_IFreg_ctrl = `ysyx_041461_WB_IFreg_ctrl_MTVEC;
+                WB_IFreg_CAUSE = 63'b0;
             end
             `ysyx_041461_MEM_LOAD_MISALIGN: begin
                 WB_IFreg_ctrl = `ysyx_041461_WB_IFreg_ctrl_MTVEC;
+                WB_IFreg_CAUSE = 63'b0;
             end
             `ysyx_041461_MEM_STORE_MISALIGN: begin
                 WB_IFreg_ctrl = `ysyx_041461_WB_IFreg_ctrl_MTVEC;
+                WB_IFreg_CAUSE = 63'b0;
             end
             `ysyx_041461_TIMER_INTERRUPT: begin
                 WB_IFreg_ctrl = `ysyx_041461_WB_IFreg_ctrl_MTVEC;
+                WB_IFreg_CAUSE = 63'd7;
             end
             default: begin
                 WB_IFreg_ctrl = `ysyx_041461_WB_IFreg_ctrl_NOP;
+                WB_IFreg_CAUSE = 63'b0;
             end
         endcase
     end
     else begin
         WB_IFreg_ctrl = `ysyx_041461_WB_IFreg_ctrl_NOP;
+        WB_IFreg_CAUSE = 63'b0;
     end
 end
 
@@ -429,6 +441,8 @@ always@(*) begin
     end
     {mip_next[63:8], mip_next[6:0]} = 63'b0;
     {mie_next[63:8], mie_next[6:0]} = 63'b0;
+    {mstatus_next[63:13], mstatus_next[10:8], mstatus_next[6:4], mstatus_next[2:0]} = 60'b0;
+    mstatus_next[12:11] = 2'b11;
 end
 
 always@(posedge clk or posedge rst) begin
@@ -437,7 +451,7 @@ always@(posedge clk or posedge rst) begin
             x[j] <= 64'd0;
         end
         mhartid <= 64'b0;
-        mstatus <= 64'd0;
+        mstatus <= {51'b0, 2'b11, 11'b0};
         misa <= {2'b10, 36'b0, 26'b00000_00000_00010_00100_00000_0};
         mie <= 64'b0;
         mtvec <= 64'd0;

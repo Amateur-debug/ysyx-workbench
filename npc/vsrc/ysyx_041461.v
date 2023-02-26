@@ -268,6 +268,7 @@ wire [3:0]  WBreg_WB_ctrl_out;
 wire [0:0]   WB_ready;
 wire [63:0]  WB_IFreg_mtvec ;
 wire [63:0]  WB_IFreg_mepc  ;
+wire [62:0]  WB_IFreg_CAUSE ;
 wire [1:0]   WB_IFreg_ctrl  ;
 wire [63:0]  WB_IF_mstatus  ;
 wire [63:0]  WB_IF_mie      ;
@@ -358,6 +359,7 @@ ysyx_041461_IF_reg IF_reg(
     .IFreg_next_pc      (ID_next_pc     ),
     .IFreg_mtvec        (WB_IFreg_mtvec ),
     .IFreg_mepc         (WB_IFreg_mepc  ),
+    .IFreg_CAUSE        (WB_IFreg_CAUSE ),
 
     .IFreg_pc           (IFreg_pc       )
 );
@@ -784,6 +786,7 @@ ysyx_041461_WB WB(
 
     .WB_IFreg_mtvec        (WB_IFreg_mtvec   ),
     .WB_IFreg_mepc         (WB_IFreg_mepc    ),
+    .WB_IFreg_CAUSE        (WB_IFreg_CAUSE   ),
     .WB_IFreg_ctrl         (WB_IFreg_ctrl    ),
 
     .WB_IF_mstatus         (WB_IF_mstatus    ),
