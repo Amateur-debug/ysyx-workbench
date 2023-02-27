@@ -106,7 +106,6 @@ static void execute(uint64_t n){
           uint64_t pc = *cpu_pc;
           uint64_t next_pc = pc + 4;
           if(skip == 0){
-            printf("pc = %x\n", pc);
             exec_once();
             device_update();
             difftest_exec(1);
@@ -116,7 +115,6 @@ static void execute(uint64_t n){
             }
           }
           else {
-            printf("ancncn\n");
             exec_once();
             device_update();
             difftest_regcpy(cpu_gpr, &next_pc, DIFFTEST_TO_REF);

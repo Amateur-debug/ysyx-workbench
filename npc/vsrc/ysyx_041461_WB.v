@@ -1,4 +1,4 @@
-`include "ysyx_041461_macro.v"
+
 module ysyx_041461_WB(
 
     input   wire [0:0]   clk            ,
@@ -32,6 +32,7 @@ module ysyx_041461_WB(
 
     output  wire [63:0]  WB_IFreg_mtvec ,
     output  wire [63:0]  WB_IFreg_mepc  ,
+    output  reg  [62:0]  WB_IFreg_CAUSE ,
     output  reg  [1:0]   WB_IFreg_ctrl  ,  
 
     output  wire [63:0]  WB_IF_mstatus  ,
@@ -45,21 +46,9 @@ module ysyx_041461_WB(
     output  wire [63:0]  WB_EXE_rs2_data,
     output  reg  [63:0]  WB_EXE_csr_data,
 
-    output  wire [63:0]  WB_MEM_rs2_data,
+    output  wire [63:0]  WB_MEM_rs2_data
 
-    input   wire [0:0]   WB_skip_difftest
 );
-
-import "DPI-C" function void set_gpr_ptr(input logic [63:0] a []);
-import "DPI-C" function void set_pc_ptr(input logic [63:0] a []);
-import "DPI-C" function void get_need_difftest(input byte a);
-import "DPI-C" function void get_skip(input byte a);
-import "DPI-C" function void ebreak();
-
-initial set_gpr_ptr(x);
-initial set_pc_ptr(WB_pc);
-initial get_need_difftest({7'b0, need_difftest});
-initial get_skip({7'b0, WB_skip_difftest});
 
 reg [63:0] x [31:0];    //寄存器现态的值
 reg [63:0] d [31:0];    //寄存器次态的值
@@ -178,38 +167,49 @@ always@(*) begin
         case(WB_trap)
             `ysyx_041461_TRAP_NOP: begin
                 WB_IFreg_ctrl = `ysyx_041461_WB_IFreg_ctrl_NOP;
+                WB_IFreg_CAUSE = 63'b0;
             end
             `ysyx_041461_IF_MISALIGN: begin
                 WB_IFreg_ctrl = `ysyx_041461_WB_IFreg_ctrl_MTVEC;
+                WB_IFreg_CAUSE = 63'b0;
             end
             `ysyx_041461_ID_ECALL: begin
                 WB_IFreg_ctrl = `ysyx_041461_WB_IFreg_ctrl_MTVEC;
+                WB_IFreg_CAUSE = 63'b0;
             end
             `ysyx_041461_ID_MRET: begin
                 WB_IFreg_ctrl = `ysyx_041461_WB_IFreg_ctrl_MEPC;
+                WB_IFreg_CAUSE = 63'b0;
             end
             `ysyx_041461_ID_EBREAK: begin
                 WB_IFreg_ctrl = `ysyx_041461_WB_IFreg_ctrl_MTVEC;
+                WB_IFreg_CAUSE = 63'b0;
             end
             `ysyx_041461_ID_ILLEGAL_INST: begin
                 WB_IFreg_ctrl = `ysyx_041461_WB_IFreg_ctrl_MTVEC;
+                WB_IFreg_CAUSE = 63'b0;
             end
             `ysyx_041461_MEM_LOAD_MISALIGN: begin
                 WB_IFreg_ctrl = `ysyx_041461_WB_IFreg_ctrl_MTVEC;
+                WB_IFreg_CAUSE = 63'b0;
             end
             `ysyx_041461_MEM_STORE_MISALIGN: begin
                 WB_IFreg_ctrl = `ysyx_041461_WB_IFreg_ctrl_MTVEC;
+                WB_IFreg_CAUSE = 63'b0;
             end
             `ysyx_041461_TIMER_INTERRUPT: begin
                 WB_IFreg_ctrl = `ysyx_041461_WB_IFreg_ctrl_MTVEC;
+                WB_IFreg_CAUSE = 63'd7;
             end
             default: begin
                 WB_IFreg_ctrl = `ysyx_041461_WB_IFreg_ctrl_NOP;
+                WB_IFreg_CAUSE = 63'b0;
             end
         endcase
     end
     else begin
         WB_IFreg_ctrl = `ysyx_041461_WB_IFreg_ctrl_NOP;
+        WB_IFreg_CAUSE = 63'b0;
     end
 end
 
@@ -357,7 +357,6 @@ always@(*) begin
                     mcause_next = 64'd3;
                     mstatus_next[3:3] = 1'b0;
                     mstatus_next[7:7] = mstatus[3:3];
-                    ebreak();
                 end
                 `ysyx_041461_ID_ILLEGAL_INST: begin
                     mepc_next = WB_pc;
@@ -442,15 +441,17 @@ always@(*) begin
     end
     {mip_next[63:8], mip_next[6:0]} = 63'b0;
     {mie_next[63:8], mie_next[6:0]} = 63'b0;
+    {mstatus_next[63:13], mstatus_next[10:8], mstatus_next[6:4], mstatus_next[2:0]} = 60'b0;
+    mstatus_next[12:11] = 2'b11;
 end
 
-always@(posedge clk or posedge rst) begin
+always@(posedge clk or posedge rst)  begin
     if(rst == 1'b1) begin
         for(j = 0; j < 32; j = j + 1) begin
             x[j] <= 64'd0;
         end
         mhartid <= 64'b0;
-        mstatus <= 64'd0;
+        mstatus <= {51'b0, 2'b11, 11'b0};
         misa <= {2'b10, 36'b0, 26'b00000_00000_00010_00100_00000_0};
         mie <= 64'b0;
         mtvec <= 64'd0;
@@ -476,29 +477,6 @@ always@(posedge clk or posedge rst) begin
         mip <= mip_next;
         mcycle <= mcycle_next;
         minstret <= minstret_next;
-    end
-end
-
-always@(*) begin
-    get_skip({7'b0, WB_skip_difftest});
-end
-
-always@(*) begin
-    get_need_difftest({7'b0, need_difftest});
-end
-
-reg [0:0] need_difftest;
-always@(*) begin
-    if(WB_valid == 1'b1) begin
-        if(WB_trap != `ysyx_041461_TRAP_NOP && WB_IF_ready == 1'b0) begin
-            need_difftest = 1'b0;
-        end
-        else begin
-            need_difftest = 1'b1;
-        end
-    end
-    else begin
-        need_difftest = 1'b0;
     end
 end
 

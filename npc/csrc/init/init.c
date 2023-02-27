@@ -92,7 +92,6 @@ void init_sdb() {
   void init_difftest(){
     extern uint64_t *cpu_gpr;
     extern uint64_t *cpu_pc;
-    extern uint8_t pmem[memory_size];
     printf("%s\n", STR2(DIFFTEST_LIB));
     handle = dlopen(STR2(DIFFTEST_LIB), RTLD_LAZY);
     difftest_regcpy = (void (*)(uint64_t *dut, uint64_t *dut_pc, bool direction))dlsym(handle, "difftest_regcpy");

@@ -1,4 +1,4 @@
-`include "ysyx_041461_macro.v"
+
 module ysyx_041461_CLINT (
 
     input    wire   [0:0]    clk           ,
@@ -6,33 +6,33 @@ module ysyx_041461_CLINT (
     output   reg    [0:0]    time_interrupt,
   
     output   reg             CLINT_awready ,
-    input    reg             CLINT_awvalid ,
-    input    reg    [3:0]    CLINT_awid    ,
-    input    reg    [31:0]   CLINT_awaddr  ,
-    input    reg    [7:0]    CLINT_awlen   ,
-    input    reg    [2:0]    CLINT_awsize  ,
-    input    reg    [1:0]    CLINT_awburst ,
+    input    wire            CLINT_awvalid ,
+    input    wire   [3:0]    CLINT_awid    ,
+    input    wire   [31:0]   CLINT_awaddr  ,
+    input    wire   [7:0]    CLINT_awlen   ,
+    input    wire   [2:0]    CLINT_awsize  ,
+    input    wire   [1:0]    CLINT_awburst ,
  
     output   reg             CLINT_wready  ,
-    input    reg             CLINT_wvalid  ,
-    input    reg    [63:0]   CLINT_wdata   ,
-    input    reg    [7:0]    CLINT_wstrb   ,
-    input    reg             CLINT_wlast   ,
+    input    wire            CLINT_wvalid  ,
+    input    wire   [63:0]   CLINT_wdata   ,
+    input    wire   [7:0]    CLINT_wstrb   ,
+    input    wire            CLINT_wlast   ,
  
-    input    reg             CLINT_bready  ,
+    input    wire            CLINT_bready  ,
     output   reg             CLINT_bvalid  ,
     output   reg    [3:0]    CLINT_bid     ,
     output   reg    [1:0]    CLINT_bresp   ,
   
     output   reg             CLINT_arready ,
-    input    reg             CLINT_arvalid ,
-    input    reg    [3:0]    CLINT_arid    ,
-    input    reg    [31:0]   CLINT_araddr  ,
-    input    reg    [7:0]    CLINT_arlen   ,
-    input    reg    [2:0]    CLINT_arsize  ,
-    input    reg    [1:0]    CLINT_arburst ,
+    input    wire            CLINT_arvalid ,
+    input    wire   [3:0]    CLINT_arid    ,
+    input    wire   [31:0]   CLINT_araddr  ,
+    input    wire   [7:0]    CLINT_arlen   ,
+    input    wire   [2:0]    CLINT_arsize  ,
+    input    wire   [1:0]    CLINT_arburst ,
 
-    input    reg             CLINT_rready  ,
+    input    wire            CLINT_rready  ,
     output   reg             CLINT_rvalid  ,
     output   reg    [3:0]    CLINT_rid     ,
     output   reg    [1:0]    CLINT_rresp   ,
@@ -42,9 +42,9 @@ module ysyx_041461_CLINT (
 );
 
 parameter OKAY = 2'b00;
-parameter EXOKAY = 2'b01;
-parameter SLVERR = 2'b10;
-parameter DECERR = 2'b11;
+//parameter EXOKAY = 2'b01;
+//parameter SLVERR = 2'b10;
+//parameter DECERR = 2'b11;
 
 
 reg  [63:0]  mtime;

@@ -1,4 +1,4 @@
-`include "ysyx_041461_macro.v"
+
 module ysyx_041461_WB_reg(
 
     input   wire [0:0]   clk                ,
@@ -16,7 +16,6 @@ module ysyx_041461_WB_reg(
     input   wire [63:0]  WBreg_zimm_in      ,
     input   wire [63:0]  WBreg_pc_in        ,
     input   wire [3:0]   WBreg_WB_ctrl_in   ,
-    input   wire [0:0]   WBreg_skip_difftets_in,
          
     output  reg  [0:0]   WBreg_valid_out    , 
     output  reg  [3:0]   WBreg_trap_out     ,
@@ -28,8 +27,7 @@ module ysyx_041461_WB_reg(
     output  reg  [63:0]  WBreg_imm_out      ,
     output  reg  [63:0]  WBreg_zimm_out     ,
     output  reg  [63:0]  WBreg_pc_out       ,
-    output  reg  [3:0]   WBreg_WB_ctrl_out  ,
-    output  reg  [0:0]   WBreg_skip_difftets_out
+    output  reg  [3:0]   WBreg_WB_ctrl_out  
 );
 
 
@@ -46,9 +44,8 @@ always@(posedge clk or posedge rst) begin
         WBreg_csr_out <= 12'b0;   
         WBreg_imm_out <= 64'b0;    
         WBreg_zimm_out <= 64'b0;   
-        WBreg_pc_out <= 64'h0000_0000_8000_0000;     
-        WBreg_WB_ctrl_out <= `ysyx_041461_WB_NOP;   
-        WBreg_skip_difftets_out <= 1'b0;        
+        WBreg_pc_out <= 64'h0000_0000_3000_0000;     
+        WBreg_WB_ctrl_out <= `ysyx_041461_WB_NOP;       
     end
     else if(WBreg_enable == 1'b0) begin
         WBreg_valid_out <= WBreg_valid_out;
@@ -62,7 +59,6 @@ always@(posedge clk or posedge rst) begin
         WBreg_zimm_out <= WBreg_zimm_out;   
         WBreg_pc_out <= WBreg_pc_out;     
         WBreg_WB_ctrl_out <= WBreg_WB_ctrl_out;  
-        WBreg_skip_difftets_out <= WBreg_skip_difftets_out;  
     end
     else begin 
         WBreg_valid_out <= WBreg_valid_in;
@@ -76,7 +72,6 @@ always@(posedge clk or posedge rst) begin
         WBreg_zimm_out <= WBreg_zimm_in;   
         WBreg_pc_out <= WBreg_pc_in;     
         WBreg_WB_ctrl_out <= WBreg_WB_ctrl_in;  
-        WBreg_skip_difftets_out <= WBreg_skip_difftets_in;  
     end
 end
 

@@ -1,4 +1,4 @@
-`include "ysyx_041461_macro.v"
+
 module ysyx_041461_IF2(
 
     input   wire [0:0]    clk            ,
