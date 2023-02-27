@@ -22,6 +22,7 @@
 #define R(i) gpr(i)
 #define Mr vaddr_read
 #define Mw vaddr_write
+#define CONFIG_FTRACE 1
 
 word_t RCSR(int csr_num){
   switch (csr_num){
