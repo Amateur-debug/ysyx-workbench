@@ -15,6 +15,7 @@ module ysyx_041461_IF(
     output  reg  [0:0]    IF_valid_out         ,
     output  reg  [0:0]    IF_ready             ,
     output  reg  [63:0]   IF_AXI_rdata         ,
+    output  reg  [0:0]    IF_ok                ,
 
     output  reg  [0:0]    IF_hit1              ,
     output  reg  [0:0]    IF_hit2              ,
@@ -28,10 +29,10 @@ module ysyx_041461_IF(
     input   wire [0:0]    IF_arready           ,
     output  reg  [0:0]    IF_arvalid           ,
     output  reg  [31:0]   IF_araddr            ,
-    output  reg  [3:0]    IF_arid              ,
-    output  reg  [7:0]    IF_arlen             ,
+    output  wire [3:0]    IF_arid              ,
+    output  wire [7:0]    IF_arlen             ,
     output  reg  [2:0]    IF_arsize            ,
-    output  reg  [1:0]    IF_arburst           ,
+    output  wire [1:0]    IF_arburst           ,
          
     output  reg  [0:0]    IF_rready            ,
     input   wire [0:0]    IF_rvalid            ,
@@ -731,6 +732,43 @@ always@(*) begin
     else begin
         IF_rready = 1'b0;
     end
+end
+
+always@(*) begin
+    case(state)
+        `ysyx_041461_IF_START: begin
+            if(IF_ID_TYPE != `ysyx_041461_TYPE_NOP || IF_CD_trap == 1'b1) begin
+                IF_ok = 1'b1;
+            end
+            else begin
+                IF_ok = 1'b0;
+            end
+        end
+        `ysyx_041461_IF_RAXI_R: begin
+            if(IF_rvalid == 1'b1 && IF_rid == IF_AXI_id && IF_rlast == 1'b1 && (IF_rresp == OKAY || IF_rresp == EXOKAY)) begin
+                if(IF_ID_TYPE != `ysyx_041461_TYPE_NOP || IF_CD_trap == 1'b1) begin
+                    IF_ok = 1'b1;
+                end
+                else begin
+                    IF_ok = 1'b0;
+                end
+            end
+            else begin
+                IF_ok = 1'b0;
+            end
+        end
+        `ysyx_041461_IF_FINISH: begin
+            if(IF_ID_TYPE != `ysyx_041461_TYPE_NOP || IF_CD_trap == 1'b1) begin
+                IF_ok = 1'b1;
+            end
+            else begin
+                IF_ok = 1'b0;
+            end
+        end
+        default: begin
+            IF_ok = 1'b0;
+        end
+    endcase
 end
 
 

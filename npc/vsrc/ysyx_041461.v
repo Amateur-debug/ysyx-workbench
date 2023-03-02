@@ -138,6 +138,7 @@ wire [3:0]  IF_trap_out;
 wire [0:0]  IF_valid_out;
 wire [0:0]  IF_ready;
 wire [63:0] IF_AXI_rdata;
+wire [0:0]  IF_ok;
 wire [0:0]  IF_hit1;
 wire [0:0]  IF_hit2;
 wire [0:0]  IF_hit3;
@@ -215,6 +216,7 @@ wire [3:0]  EXEreg_WB_ctrl_out ;
 wire [63:0] EXE_out            ;
 wire [0:0]  EXE_valid_out      ;
 wire [0:0]  EXE_ready;
+wire [0:0]  EXE_ok;
 
 wire [0:0]  MEMreg_valid_out   ;
 wire [3:0]  MEMreg_trap_out    ;
@@ -233,6 +235,7 @@ wire [0:0]  MEM_valid_out;
 wire [0:0]  MEM_ready    ;
 wire [63:0] MEM_out      ;
 wire [3:0]  MEM_trap_out;
+wire [0:0]  MEM_ok    ;
 wire [0:0]  MEM_awvalid  ;
 wire [31:0] MEM_awaddr   ;
 wire [3:0]  MEM_awid     ;
@@ -381,6 +384,7 @@ ysyx_041461_IF IF(
     .IF_valid_out          (IF_valid_out),
     .IF_ready              (IF_ready),
     .IF_AXI_rdata          (IF_AXI_rdata),
+    .IF_ok                 (IF_ok       ),
 
     .IF_hit1               (IF_hit1      ),
     .IF_hit2               (IF_hit2      ),
@@ -522,9 +526,10 @@ ysyx_041461_ID ID(
     .ID_rs2_data           (WB_ID_rs2_data ),
     .ID_trap_in            (IDreg_trap_out),
     .ID_conflict           (CD_ID_conflict ),
-    .ID_IF_ready           (IF_ready),
+    .ID_IF_ok              (IF_ok    ),
     .ID_EXE_ready          (EXE_ready),
-    .ID_MEM_ready          (MEM_ready),
+    .ID_EXE_valid          (EXEreg_valid_out),
+    .ID_MEM_valid          (MEMreg_valid_out),
     .ID_CD_trap            (CD_ID_trap ),
 
     .ID_rd                 (ID_rd          ),
@@ -603,7 +608,8 @@ ysyx_041461_EXE EXE(
 
     .EXE_out       (EXE_out            ),
     .EXE_valid_out (EXE_valid_out      ),
-    .EXE_ready     (EXE_ready          )
+    .EXE_ready     (EXE_ready          ),
+    .EXE_ok        (EXE_ok             )
 );
 
 ysyx_041461_MEM_reg MEM_reg(
@@ -657,6 +663,7 @@ ysyx_041461_MEM MEM(
     .MEM_ready              (MEM_ready               ),
     .MEM_out                (MEM_out                 ),
     .MEM_trap_out           (MEM_trap_out            ),
+    .MEM_ok                 (MEM_ok                  ),
 
     .MEM_awready            (ARBITER_MEM_awready),
     .MEM_awvalid            (MEM_awvalid             ),
@@ -759,7 +766,9 @@ ysyx_041461_WB WB(
     .rst                   (rst_sync         ),
     .WB_valid              (WBreg_valid_out  ),
 
-    .WB_IF_ready           (IF_ready         ),
+    .WB_IF_ok              (IF_ok            ),
+    .WB_EXE_ok             (EXE_ok           ),
+    .WB_MEM_ok             (MEM_ok           ),
             
     .WB_ID_rs1             (ID_rs1           ),
     .WB_ID_rs2             (ID_rs2           ),

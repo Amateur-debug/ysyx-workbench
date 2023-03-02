@@ -6,33 +6,33 @@ module ysyx_041461_CLINT (
     output   reg    [0:0]    time_interrupt,
   
     output   reg             CLINT_awready ,
-    input    reg             CLINT_awvalid ,
-    input    reg    [3:0]    CLINT_awid    ,
-    input    reg    [31:0]   CLINT_awaddr  ,
-    input    reg    [7:0]    CLINT_awlen   ,
-    input    reg    [2:0]    CLINT_awsize  ,
-    input    reg    [1:0]    CLINT_awburst ,
+    input    wire            CLINT_awvalid ,
+    input    wire   [3:0]    CLINT_awid    ,
+    input    wire   [31:0]   CLINT_awaddr  ,
+    input    wire   [7:0]    CLINT_awlen   ,
+    input    wire   [2:0]    CLINT_awsize  ,
+    input    wire   [1:0]    CLINT_awburst ,
  
     output   reg             CLINT_wready  ,
-    input    reg             CLINT_wvalid  ,
-    input    reg    [63:0]   CLINT_wdata   ,
-    input    reg    [7:0]    CLINT_wstrb   ,
-    input    reg             CLINT_wlast   ,
+    input    wire            CLINT_wvalid  ,
+    input    wire   [63:0]   CLINT_wdata   ,
+    input    wire   [7:0]    CLINT_wstrb   ,
+    input    wire            CLINT_wlast   ,
  
-    input    reg             CLINT_bready  ,
+    input    wire            CLINT_bready  ,
     output   reg             CLINT_bvalid  ,
     output   reg    [3:0]    CLINT_bid     ,
     output   reg    [1:0]    CLINT_bresp   ,
   
     output   reg             CLINT_arready ,
-    input    reg             CLINT_arvalid ,
-    input    reg    [3:0]    CLINT_arid    ,
-    input    reg    [31:0]   CLINT_araddr  ,
-    input    reg    [7:0]    CLINT_arlen   ,
-    input    reg    [2:0]    CLINT_arsize  ,
-    input    reg    [1:0]    CLINT_arburst ,
+    input    wire            CLINT_arvalid ,
+    input    wire   [3:0]    CLINT_arid    ,
+    input    wire   [31:0]   CLINT_araddr  ,
+    input    wire   [7:0]    CLINT_arlen   ,
+    input    wire   [2:0]    CLINT_arsize  ,
+    input    wire   [1:0]    CLINT_arburst ,
 
-    input    reg             CLINT_rready  ,
+    input    wire            CLINT_rready  ,
     output   reg             CLINT_rvalid  ,
     output   reg    [3:0]    CLINT_rid     ,
     output   reg    [1:0]    CLINT_rresp   ,
@@ -84,8 +84,8 @@ reg  [2:0]   arsize_next ;
 reg  [1:0]   arburst     ;
 reg  [1:0]   arburst_next;
 
-assign  waddr_hit = (CLINT_awaddr >= 32'h0200_bff8 && CLINT_awaddr <= 32'h0200_bfff) || (CLINT_awaddr >= 32'h0200_4000 && CLINT_awaddr <= 32'h0200_4007);
-assign  raddr_hit = (CLINT_araddr >= 32'h0200_bff8 && CLINT_araddr <= 32'h0200_bfff) || (CLINT_araddr >= 32'h0200_4000 && CLINT_araddr <= 32'h0200_4007);
+assign  waddr_hit = (awaddr_next >= 32'h0200_bff8 && awaddr_next <= 32'h0200_bfff) || (awaddr_next >= 32'h0200_4000 && awaddr_next <= 32'h0200_4007);
+assign  raddr_hit = (araddr_next >= 32'h0200_bff8 && araddr_next <= 32'h0200_bfff) || (araddr_next >= 32'h0200_4000 && araddr_next <= 32'h0200_4007);
 
 always@(*) begin
     if(mtime >= mtimecmp) begin
@@ -193,90 +193,143 @@ always@(*) begin
 end
 
 always@(*) begin
-    case(state)
-        `ysyx_041461_CLINT_W: begin
-            mtime_next = mtime;
-            mtimecmp_next = mtimecmp;
-            if(CLINT_wvalid == 1'b1) begin
-                if(waddr_mtime_hit == 1'b1) begin
-                    if(CLINT_wstrb[0:0] == 1'b1) begin
-                        mtime_next[7:0] = CLINT_wdata[7:0];
-                    end
-                    if(CLINT_wstrb[1:1] == 1'b1) begin
-                        mtime_next[15:8] = CLINT_wdata[15:8];
-                    end
-                    if(CLINT_wstrb[2:2] == 1'b1) begin
-                        mtime_next[23:16] = CLINT_wdata[23:16];
-                    end
-                    if(CLINT_wstrb[3:3] == 1'b1) begin
-                        mtime_next[31:24] = CLINT_wdata[31:24];
-                    end
-                    if(CLINT_wstrb[4:4] == 1'b1) begin
-                        mtime_next[39:32] = CLINT_wdata[39:32];
-                    end
-                    if(CLINT_wstrb[5:5] == 1'b1) begin
-                        mtime_next[47:40] = CLINT_wdata[47:40];
-                    end
-                    if(CLINT_wstrb[6:6] == 1'b1) begin
-                        mtime_next[55:48] = CLINT_wdata[55:48];
-                    end
-                    if(CLINT_wstrb[7:7] == 1'b1) begin
-                        mtime_next[63:56] = CLINT_wdata[63:56];
-                    end
+    mtime_next = mtime + 1'b1;
+    mtimecmp_next = mtimecmp;
+    if(state == `ysyx_041461_CLINT_W && CLINT_wvalid == 1'b1) begin
+        if(waddr_mtime_hit == 1'b1) begin
+            case(awsize) 
+                3'b000:begin
+                    case(awaddr[2:0])
+                        3'b000:begin
+                            mtime_next[7:0] = CLINT_wdata[7:0];
+                        end
+                        3'b001:begin
+                            mtime_next[15:8] = CLINT_wdata[15:8];
+                        end
+                        3'b010:begin
+                            mtime_next[23:16] = CLINT_wdata[23:16];
+                        end
+                        3'b011:begin
+                            mtime_next[31:24] = CLINT_wdata[31:24];
+                        end
+                        3'b100:begin
+                            mtime_next[39:32] = CLINT_wdata[39:32];
+                        end
+                        3'b101:begin
+                            mtime_next[47:40] = CLINT_wdata[47:40];
+                        end
+                        3'b110:begin
+                            mtime_next[55:48] = CLINT_wdata[55:48];
+                        end
+                        3'b111:begin
+                            mtime_next[63:56] = CLINT_wdata[63:56];
+                        end
+                    endcase
                 end
-                else if(waddr_mtimecmp_hit == 1'b1) begin
-                    mtime_next = mtime + 1'b1;
-                    if(CLINT_wstrb[0:0] == 1'b1) begin
-                        mtimecmp_next[7:0] = CLINT_wdata[7:0];
-                    end
-                    if(CLINT_wstrb[1:1] == 1'b1) begin
-                        mtimecmp_next[15:8] = CLINT_wdata[15:8];
-                    end
-                    if(CLINT_wstrb[2:2] == 1'b1) begin
-                        mtimecmp_next[23:16] = CLINT_wdata[23:16];
-                    end
-                    if(CLINT_wstrb[3:3] == 1'b1) begin
-                        mtimecmp_next[31:24] = CLINT_wdata[31:24];
-                    end
-                    if(CLINT_wstrb[4:4] == 1'b1) begin
-                        mtimecmp_next[39:32] = CLINT_wdata[39:32];
-                    end
-                    if(CLINT_wstrb[5:5] == 1'b1) begin
-                        mtimecmp_next[47:40] = CLINT_wdata[47:40];
-                    end
-                    if(CLINT_wstrb[6:6] == 1'b1) begin
-                        mtimecmp_next[55:48] = CLINT_wdata[55:48];
-                    end
-                    if(CLINT_wstrb[7:7] == 1'b1) begin
-                        mtimecmp_next[63:56] = CLINT_wdata[63:56];
-                    end
+                3'b001:begin
+                    case(awaddr[2:1])
+                        2'b00:begin
+                            mtime_next[15:0] = CLINT_wdata[15:0];
+                        end
+                        2'b01:begin
+                            mtime_next[31:16] = CLINT_wdata[31:16];
+                        end
+                        2'b10:begin
+                            mtime_next[47:32] = CLINT_wdata[47:32];
+                        end
+                        2'b11:begin
+                            mtime_next[63:48] = CLINT_wdata[63:48];
+                        end
+                    endcase
                 end
-                else begin
-                    if(mtime == 64'hffff_ffff_ffff_ffff) begin
-                        mtime_next = 64'b0;
-                    end
-                    else begin
-                        mtime_next = mtime + 1'b1;
-                    end
-                    mtimecmp_next = mtimecmp;
+                3'b010:begin
+                    case(awaddr[2:2])
+                        1'b0:begin
+                            mtime_next[31:0] = CLINT_wdata[31:0];
+                        end
+                        1'b1:begin
+                            mtime_next[63:32] = CLINT_wdata[63:32];
+                        end
+                    endcase
                 end
-            end
+                3'b011:begin
+                    mtime_next = CLINT_wdata;
+                end
+                default:begin
+
+                end
+            endcase
         end
-        default: begin
-            if(mtime == 64'hffff_ffff_ffff_ffff) begin
-                mtime_next = 64'b0;
-            end
-            else begin
-                mtime_next = mtime + 1'b1;
-            end
-            mtimecmp_next = mtimecmp;
+        else if(waddr_mtimecmp_hit == 1'b1) begin
+            case(awsize) 
+                3'b000:begin
+                    case(awaddr[2:0])
+                        3'b000:begin
+                            mtimecmp_next[7:0] = CLINT_wdata[7:0];
+                        end
+                        3'b001:begin
+                            mtimecmp_next[15:8] = CLINT_wdata[15:8];
+                        end
+                        3'b010:begin
+                            mtimecmp_next[23:16] = CLINT_wdata[23:16];
+                        end
+                        3'b011:begin
+                            mtimecmp_next[31:24] = CLINT_wdata[31:24];
+                        end
+                        3'b100:begin
+                            mtimecmp_next[39:32] = CLINT_wdata[39:32];
+                        end
+                        3'b101:begin
+                            mtimecmp_next[47:40] = CLINT_wdata[47:40];
+                        end
+                        3'b110:begin
+                            mtimecmp_next[55:48] = CLINT_wdata[55:48];
+                        end
+                        3'b111:begin
+                            mtimecmp_next[63:56] = CLINT_wdata[63:56];
+                        end
+                    endcase
+                end
+                3'b001:begin
+                    case(awaddr[2:1])
+                        2'b00:begin
+                            mtimecmp_next[15:0] = CLINT_wdata[15:0];
+                        end
+                        2'b01:begin
+                            mtimecmp_next[31:16] = CLINT_wdata[31:16];
+                        end
+                        2'b10:begin
+                            mtimecmp_next[47:32] = CLINT_wdata[47:32];
+                        end
+                        2'b11:begin
+                            mtimecmp_next[63:48] = CLINT_wdata[63:48];
+                        end
+                    endcase
+                end
+                3'b010:begin
+                    case(awaddr[2:2])
+                        1'b0:begin
+                            mtimecmp_next[31:0] = CLINT_wdata[31:0];
+                        end
+                        1'b1:begin
+                            mtimecmp_next[63:32] = CLINT_wdata[63:32];
+                        end
+                    endcase
+                end
+                3'b011:begin
+                    mtimecmp_next = CLINT_wdata;
+                end
+                default:begin
+
+                end
+            endcase
         end
-    endcase
+    end
 end
 
 always@(*) begin
     case(state)
-        `ysyx_041461_CLINT_W: begin
+        `ysyx_041461_CLINT_W:  begin
             CLINT_wready = 1'b1;
         end
         default: begin

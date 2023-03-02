@@ -20,7 +20,8 @@ module ysyx_041461_EXE(
     
     output reg    [63:0] EXE_out      ,
     output reg    [0:0]  EXE_valid_out,
-    output reg    [0:0]  EXE_ready    
+    output reg    [0:0]  EXE_ready    ,
+    output reg    [0:0]  EXE_ok          
 );
 
 reg [1:0] state;
@@ -289,6 +290,28 @@ end
 
 always@(*) begin
     if(state == `ysyx_041461_EXE_START) begin
+        if(EXE_CD_trap == 1'b1) begin
+            EXE_ok = 1'b1;
+        end
+        else begin
+            EXE_ok = 1'b0;
+        end
+    end
+    else if(state == `ysyx_041461_EXE_FINISH) begin
+        if(EXE_CD_trap == 1'b1) begin
+            EXE_ok = 1'b1;
+        end
+        else begin
+            EXE_ok = 1'b0;
+        end
+    end
+    else begin
+        EXE_ok = 1'b0;
+    end
+end
+
+always@(*) begin
+    if(state == `ysyx_041461_EXE_START) begin
         if(EXE_valid_in == 1'b1 && EXE_trap_in == `ysyx_041461_TRAP_NOP && EXE_CD_trap == 1'b0 && EXE_conflict == 1'b0) begin
             if(multiplication == 1'b0 && division == 1'b0) begin
                 if(EXE_MEM_ready == 1'b1) begin
@@ -489,7 +512,7 @@ always@(posedge clk or posedge rst) begin
                 end
             end
             `ysyx_041461_EXE_FINISH: begin
-                if(EXE_MEM_ready == 1'b1) begin
+                if(EXE_MEM_ready == 1'b1 || EXE_CD_trap == 1'b1) begin
                     state <= `ysyx_041461_EXE_START;
                 end
                 else begin

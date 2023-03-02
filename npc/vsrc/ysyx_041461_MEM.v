@@ -17,14 +17,15 @@ module ysyx_041461_MEM(
     output  reg  [0:0]    MEM_ready       ,
     output  reg  [63:0]   MEM_out         ,
     output  reg  [3:0]    MEM_trap_out    ,
-      
+    output  reg  [0:0]    MEM_ok          ,
+
     input   wire [0:0]    MEM_awready     ,
     output  reg  [0:0]    MEM_awvalid     ,
     output  reg  [31:0]   MEM_awaddr      ,
-    output  reg  [3:0]    MEM_awid        ,
-    output  reg  [7:0]    MEM_awlen       ,
+    output  wire [3:0]    MEM_awid        ,
+    output  wire [7:0]    MEM_awlen       ,
     output  reg  [2:0]    MEM_awsize      ,
-    output  reg  [1:0]    MEM_awburst     ,
+    output  wire [1:0]    MEM_awburst     ,
              
     input   wire [0:0]    MEM_wready      ,
     output  reg  [0:0]    MEM_wvalid      ,
@@ -40,10 +41,10 @@ module ysyx_041461_MEM(
     input   wire [0:0]    MEM_arready     ,
     output  reg  [0:0]    MEM_arvalid     ,
     output  reg  [31:0]   MEM_araddr      ,
-    output  reg  [3:0]    MEM_arid        ,
-    output  reg  [7:0]    MEM_arlen       ,
+    output  wire [3:0]    MEM_arid        ,
+    output  wire [7:0]    MEM_arlen       ,
     output  reg  [2:0]    MEM_arsize      ,
-    output  reg  [1:0]    MEM_arburst     ,
+    output  wire [1:0]    MEM_arburst     ,
              
     output  reg  [0:0]    MEM_rready      ,
     input   wire [0:0]    MEM_rvalid      ,
@@ -52,28 +53,28 @@ module ysyx_041461_MEM(
     input   wire [0:0]    MEM_rlast       ,
     input   wire [3:0]    MEM_rid         ,
        
-    output  reg  [5:0]    MEM_sram4_addr  , 
+    output  wire [5:0]    MEM_sram4_addr  , 
     output  wire [0:0]    MEM_sram4_cen   , 
     output  reg  [0:0]    MEM_sram4_wen   , 
     output  reg  [127:0]  MEM_sram4_wmask , 
     output  reg  [127:0]  MEM_sram4_wdata , 
     input   wire [127:0]  MEM_sram4_rdata ,
        
-    output  reg  [5:0]    MEM_sram5_addr  , 
+    output  wire [5:0]    MEM_sram5_addr  , 
     output  wire [0:0]    MEM_sram5_cen   , 
     output  reg  [0:0]    MEM_sram5_wen   , 
     output  reg  [127:0]  MEM_sram5_wmask , 
     output  reg  [127:0]  MEM_sram5_wdata , 
     input   wire [127:0]  MEM_sram5_rdata ,
        
-    output  reg  [5:0]    MEM_sram6_addr  , 
+    output  wire [5:0]    MEM_sram6_addr  , 
     output  wire [0:0]    MEM_sram6_cen   , 
     output  reg  [0:0]    MEM_sram6_wen   , 
     output  reg  [127:0]  MEM_sram6_wmask , 
     output  reg  [127:0]  MEM_sram6_wdata , 
     input   wire [127:0]  MEM_sram6_rdata ,
        
-    output  reg  [5:0]    MEM_sram7_addr  , 
+    output  wire [5:0]    MEM_sram7_addr  , 
     output  wire [0:0]    MEM_sram7_cen   , 
     output  reg  [0:0]    MEM_sram7_wen   , 
     output  reg  [127:0]  MEM_sram7_wmask , 
@@ -156,6 +157,8 @@ reg  [2:0]   replace_line;
 
 reg [0:0]  align;
 
+wire [0:0] w_sdram;
+
 assign index = MEM_EXE_in[8:3];
 assign offset = MEM_EXE_in[2:0];
 assign tag = MEM_EXE_in[63:9];
@@ -164,6 +167,8 @@ assign hit = hit1 || hit2 || hit3 || hit4 || hit5 || hit6 || hit7 || hit8;
 
 assign load = MEM_ctrl == `ysyx_041461_MEM_LB || MEM_ctrl == `ysyx_041461_MEM_LH || MEM_ctrl == `ysyx_041461_MEM_LBU || MEM_ctrl == `ysyx_041461_MEM_LHU || MEM_ctrl == `ysyx_041461_MEM_LW || MEM_ctrl == `ysyx_041461_MEM_LWU || MEM_ctrl == `ysyx_041461_MEM_LD;
 assign store = MEM_ctrl == `ysyx_041461_MEM_SB || MEM_ctrl == `ysyx_041461_MEM_SH || MEM_ctrl == `ysyx_041461_MEM_SW || MEM_ctrl == `ysyx_041461_MEM_SD;
+
+assign w_sdram = MEM_EXE_in[31:26] == 6'b111111;
 
 //在运行pa程序时，需判断地址大小，运行soc程序时只需判断一位
 //SOC
@@ -460,7 +465,7 @@ always@(*) begin
 end
 
 always@(*) begin
-    if(uncached == 1'b1) begin
+    if(uncached == 1'b1 || w_sdram == 1'b1) begin
         MEM_awaddr = MEM_EXE_in[31:0];
     end
     else begin
@@ -503,7 +508,7 @@ always@(*) begin
 end
 
 always@(*) begin
-    if(uncached == 1'b1) begin
+    if(uncached == 1'b1 || w_sdram == 1'b1) begin
         case(MEM_ctrl)
             `ysyx_041461_MEM_SD: begin
                 MEM_awsize = 3'b011;
@@ -848,31 +853,31 @@ always@(*) begin
             end
             else begin
                 case(replace_line)
-                3'b000: begin
-                    tag1_next[index] = tag;
-                end
-                3'b001: begin
-                    tag2_next[index] = tag;
-                end
-                3'b010: begin
-                    tag3_next[index] = tag;
-                end
-                3'b011: begin
-                    tag4_next[index] = tag;
-                end
-                3'b100: begin
-                    tag5_next[index] = tag;
-                end
-                3'b101: begin
-                    tag6_next[index] = tag;
-                end
-                3'b110: begin
-                    tag7_next[index] = tag;
-                end
-                3'b111: begin
-                    tag8_next[index] = tag;
-                end
-            endcase
+                    3'b000: begin
+                        tag1_next[index] = tag;
+                    end
+                    3'b001: begin
+                        tag2_next[index] = tag;
+                    end
+                    3'b010: begin
+                        tag3_next[index] = tag;
+                    end
+                    3'b011: begin
+                        tag4_next[index] = tag;
+                    end
+                    3'b100: begin
+                        tag5_next[index] = tag;
+                    end
+                    3'b101: begin
+                        tag6_next[index] = tag;
+                    end
+                    3'b110: begin
+                        tag7_next[index] = tag;
+                    end
+                    3'b111: begin
+                        tag8_next[index] = tag;
+                    end
+                endcase
             end
         end
     end
@@ -1229,6 +1234,28 @@ always@(*) begin
                 MEM_sram7_wdata = {cache_wdata, 64'b0};
             end
         end
+    end
+end
+
+always@(*) begin
+    if(state == `ysyx_041461_MEM_START) begin
+        if(MEM_CD_trap == 1'b1) begin
+            MEM_ok = 1'b1;
+        end
+        else begin
+            MEM_ok = 1'b0;
+        end
+    end
+    else if(state == `ysyx_041461_MEM_FINISH) begin
+        if(MEM_CD_trap == 1'b1) begin
+            MEM_ok = 1'b1;
+        end
+        else begin
+            MEM_ok = 1'b0;
+        end
+    end
+    else begin
+        MEM_ok = 1'b0;
     end
 end
 

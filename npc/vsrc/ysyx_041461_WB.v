@@ -5,7 +5,9 @@ module ysyx_041461_WB(
     input   wire [0:0]   rst            ,
     input   wire [0:0]   WB_valid       ,
 
-    input   wire [0:0]   WB_IF_ready    ,
+    input   wire [0:0]   WB_IF_ok       ,
+    input   wire [0:0]   WB_EXE_ok      ,
+    input   wire [0:0]   WB_MEM_ok      ,
                 
     input   wire [4:0]   WB_ID_rs1      ,
     input   wire [4:0]   WB_ID_rs2      ,
@@ -100,7 +102,7 @@ assign WB_MEM_rs2_data = x[WB_MEM_rs2];
 
 always@(*) begin
     if(WB_valid == 1'b1) begin
-        if(WB_trap != `ysyx_041461_TRAP_NOP && WB_IF_ready == 1'b0) begin
+        if(WB_trap != `ysyx_041461_TRAP_NOP && (WB_IF_ok == 1'b0 || WB_EXE_ok == 1'b0 || WB_MEM_ok == 1'b0)) begin
             WB_ready = 1'b0;
         end
         else begin
@@ -299,7 +301,7 @@ always@(*) begin
                 d[WB_rd] = WB_imm;
             end        
             `ysyx_041461_WB_SNPC: begin
-                d[WB_rd] = WB_pc + 4;
+                d[WB_rd] = WB_pc + 64'd4;
             end
             `ysyx_041461_WB_CSR_RS1: begin
                 d[WB_rd] = t;
@@ -387,7 +389,7 @@ always@(*) begin
                     
                 end
             endcase
-            if(WB_IF_ready == 1'b1) begin
+            if(WB_IF_ok == 1'b1 && WB_EXE_ok == 1'b1 && WB_MEM_ok == 1'b1) begin
                 minstret_next = minstret + 1'b1;
             end
         end
@@ -445,7 +447,7 @@ always@(*) begin
     mstatus_next[12:11] = 2'b11;
 end
 
-always@(posedge clk or posedge rst) begin
+always@(posedge clk or posedge rst)  begin
     if(rst == 1'b1) begin
         for(j = 0; j < 32; j = j + 1) begin
             x[j] <= 64'd0;
