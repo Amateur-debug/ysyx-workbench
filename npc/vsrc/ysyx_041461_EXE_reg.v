@@ -18,6 +18,7 @@ module  ysyx_041461_EXE_reg(
     input   wire  [2:0]  EXEreg_EXE_src_in            ,
     input   wire  [3:0]  EXEreg_MEM_ctrl_in           ,
     input   wire  [3:0]  EXEreg_WB_ctrl_in            ,
+    input   wire  [31:0] EXEreg_inst_in               ,
           
     output  reg   [0:0]  EXEreg_valid_out             ,
     output  reg   [3:0]  EXEreg_trap_out              ,
@@ -31,7 +32,8 @@ module  ysyx_041461_EXE_reg(
     output  reg   [4:0]  EXEreg_EXE_ctrl_out          ,
     output  reg   [2:0]  EXEreg_EXE_src_out           ,
     output  reg   [3:0]  EXEreg_MEM_ctrl_out          ,
-    output  reg   [3:0]  EXEreg_WB_ctrl_out
+    output  reg   [3:0]  EXEreg_WB_ctrl_out           ,
+    output  reg   [31:0] EXEreg_inst_out              
 );
 
 
@@ -51,7 +53,8 @@ always@(posedge clk or posedge rst) begin
         EXEreg_EXE_ctrl_out <= `ysyx_041461_EXE_NOP;
         EXEreg_EXE_src_out <= `ysyx_041461_EXE_src_NOP;
         EXEreg_MEM_ctrl_out <= `ysyx_041461_MEM_NOP;
-        EXEreg_WB_ctrl_out <= `ysyx_041461_WB_NOP;                      
+        EXEreg_WB_ctrl_out <= `ysyx_041461_WB_NOP;    
+        EXEreg_inst_out <= 32'b0;                  
     end
     else if(EXEreg_enable == 1'b0) begin
         EXEreg_valid_out <= EXEreg_valid_out;
@@ -67,6 +70,7 @@ always@(posedge clk or posedge rst) begin
         EXEreg_EXE_src_out <= EXEreg_EXE_src_out;
         EXEreg_MEM_ctrl_out <= EXEreg_MEM_ctrl_out;
         EXEreg_WB_ctrl_out <= EXEreg_WB_ctrl_out;  
+        EXEreg_inst_out <= EXEreg_inst_out;
     end
     else begin 
         EXEreg_valid_out <= EXEreg_valid_in;
@@ -82,6 +86,7 @@ always@(posedge clk or posedge rst) begin
         EXEreg_EXE_src_out <= EXEreg_EXE_src_in;
         EXEreg_MEM_ctrl_out <= EXEreg_MEM_ctrl_in;
         EXEreg_WB_ctrl_out <= EXEreg_WB_ctrl_in;  
+        EXEreg_inst_out <= EXEreg_inst_in;
     end
 end
 

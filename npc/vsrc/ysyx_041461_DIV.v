@@ -15,6 +15,11 @@ module ysyx_041461_DIV(
     output reg    [63:0] DIV_remainder
 );
 
+reg  [0:0]  signed_buffer  ;   
+reg  [0:0]  divw_buffer    ;     
+reg  [63:0] dividend_buffer; 
+reg  [63:0] divisor_buffer ;  
+
 reg  [127:0] dividend;
 reg  [64:0] divisor;
 reg  [63:0] quotient;
@@ -33,31 +38,54 @@ reg  [0:0] remainder_positive;
 
 reg  [6:0] state;
 
-always@(*) begin
-    if(DIV_signed == 1'b1) begin
-        if(DIV_divisor[63:63] == 1'b1) begin
-            divisor = {1'b0, ~DIV_divisor + 1'b1};
-        end
-        else begin
-            divisor = {1'b0, DIV_divisor};
-        end
+always@(posedge clk or posedge rst) begin
+    if(rst == 1'b1) begin
+        signed_buffer   <= 1'b0; 
+        divw_buffer     <= 1'b0; 
+        dividend_buffer <= 64'b0; 
+        divisor_buffer  <= 64'b0; 
     end
     else begin
-        divisor = {1'b0, DIV_divisor};
+        if(state == 7'b0 && DIV_valid_in == 1'b1) begin
+            signed_buffer   <= DIV_signed  ; 
+            divw_buffer     <= DIV_divw    ; 
+            dividend_buffer <= DIV_dividend; 
+            divisor_buffer  <= DIV_divisor ; 
+        end
+        else begin
+            signed_buffer   <= signed_buffer  ;
+            divw_buffer     <= divw_buffer    ;
+            dividend_buffer <= dividend_buffer;
+            divisor_buffer  <= divisor_buffer ;
+        end
     end
 end
 
 always@(*) begin
-    if(DIV_signed == 1'b1) begin
-        if(DIV_divisor[31:31] == 1'b1) begin
-            divisor_w = {1'b0, ~DIV_divisor[31:0] + 1'b1};
+    if(signed_buffer == 1'b1) begin
+        if(divisor_buffer[63:63] == 1'b1) begin
+            divisor = {1'b0, ~divisor_buffer + 1'b1};
         end
         else begin
-            divisor_w = {1'b0, DIV_divisor[31:0]};
+            divisor = {1'b0, divisor_buffer};
         end
     end
     else begin
-        divisor_w = {1'b0, DIV_divisor[31:0]};
+        divisor = {1'b0, divisor_buffer};
+    end
+end
+
+always@(*) begin
+    if(signed_buffer == 1'b1) begin
+        if(divisor_buffer[31:31] == 1'b1) begin
+            divisor_w = {1'b0, ~divisor_buffer[31:0] + 1'b1};
+        end
+        else begin
+            divisor_w = {1'b0, divisor_buffer[31:0]};
+        end
+    end
+    else begin
+        divisor_w = {1'b0, divisor_buffer[31:0]};
     end
 end
 
@@ -69,17 +97,17 @@ always@(posedge clk or posedge rst) begin
         dividend <= 128'b0;
     end
     else begin
-        if(state == 7'b0) begin
-            if(DIV_signed == 1'b1) begin
-                if(DIV_dividend[63:63] == 1'b1) begin
-                    dividend <= {64'b0, ~DIV_dividend + 1'b1};
+        if(state == 7'b1) begin
+            if(signed_buffer == 1'b1) begin
+                if(dividend_buffer[63:63] == 1'b1) begin
+                    dividend <= {64'b0, ~dividend_buffer + 1'b1};
                 end
                 else begin
-                    dividend <= {64'b0, DIV_dividend};
+                    dividend <= {64'b0, dividend_buffer};
                 end
             end
             else begin
-                dividend <= {64'b0, DIV_dividend};
+                dividend <= {64'b0, dividend_buffer};
             end
         end
         else begin
@@ -98,7 +126,7 @@ always@(posedge clk or posedge rst) begin
         quotient <= 64'b0;
     end
     else begin
-        if(state == 7'b0) begin
+        if(state == 7'b1) begin
             quotient <= 64'b0;
         end
         else begin
@@ -118,17 +146,17 @@ always@(posedge clk or posedge rst) begin
         dividend_w <= 64'b0;
     end
     else begin
-        if(state == 7'b0) begin
-            if(DIV_signed == 1'b1) begin
-                if(DIV_dividend[31:31] == 1'b1) begin
-                    dividend_w <= {32'b0, ~DIV_dividend[31:0] + 1'b1};
+        if(state == 7'b1) begin
+            if(signed_buffer == 1'b1) begin
+                if(dividend_buffer[31:31] == 1'b1) begin
+                    dividend_w <= {32'b0, ~dividend_buffer[31:0] + 1'b1};
                 end
                 else begin
-                    dividend_w <= {32'b0, DIV_dividend[31:0]};
+                    dividend_w <= {32'b0, dividend_buffer[31:0]};
                 end
             end
             else begin
-                dividend_w <= {32'b0, DIV_dividend[31:0]};
+                dividend_w <= {32'b0, dividend_buffer[31:0]};
             end
         end
         else begin
@@ -147,7 +175,7 @@ always@(posedge clk or posedge rst) begin
         quotient_w <= 32'b0;
     end
     else begin
-        if(state == 7'b0) begin
+        if(state == 7'b1) begin
             quotient_w <= 32'b0;
         end
         else begin
@@ -162,7 +190,7 @@ always@(posedge clk or posedge rst) begin
 end
 
 always@(*) begin
-    if(DIV_divw == 1'b0) begin
+    if(divw_buffer == 1'b0) begin
         if(sub_out[64:64] == 1'b1) begin
             quotient_out = {quotient[63:1], 1'b0};
         end
@@ -181,7 +209,7 @@ always@(*) begin
 end
 
 always@(*) begin
-    if(DIV_divw == 1'b0) begin
+    if(divw_buffer == 1'b0) begin
         if(sub_out[64:64] == 1'b1) begin
             remainder_out = dividend[126:63];
         end
@@ -200,14 +228,14 @@ always@(*) begin
 end
 
 always@(*) begin
-    if(DIV_signed == 1'b1) begin
-        if(DIV_divw == 1'b0) begin
-            quotient_positive = ~DIV_dividend[63:63] ^ DIV_divisor[63:63];
-            remainder_positive = ~DIV_dividend[63:63];
+    if(signed_buffer == 1'b1) begin
+        if(divw_buffer == 1'b0) begin
+            quotient_positive = ~dividend_buffer[63:63] ^ divisor_buffer[63:63];
+            remainder_positive = ~dividend_buffer[63:63];
         end
         else begin
-            quotient_positive = ~DIV_dividend[31:31] ^ DIV_divisor[31:31];
-            remainder_positive = ~DIV_dividend[31:31];
+            quotient_positive = ~dividend_buffer[31:31] ^ divisor_buffer[31:31];
+            remainder_positive = ~dividend_buffer[31:31];
         end
     end
     else begin
@@ -235,10 +263,10 @@ always@(*) begin
 end
 
 always@(*) begin
-    if(state == 7'd32 && DIV_divw == 1'b1) begin
+    if(state == 7'd33 && divw_buffer == 1'b1) begin
         DIV_valid_out = 1'b1;
     end
-    else if(state == 7'd64) begin
+    else if(state == 7'd65) begin
         DIV_valid_out = 1'b1;
     end
     else begin
@@ -259,10 +287,10 @@ always@(posedge clk or posedge rst) begin
                 state <= state;
             end
         end
-        else if(state == 7'd32 && DIV_divw == 1'b1) begin
+        else if(state == 7'd33 && divw_buffer == 1'b1) begin
             state <= 7'b0;
         end
-        else if(state == 7'd64) begin
+        else if(state == 7'd65) begin
             state <= 7'b0;
         end
         else begin

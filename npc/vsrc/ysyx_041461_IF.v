@@ -84,42 +84,42 @@ reg  [63:0]  AXI_rdata;
 
 reg  [0:0]   V1        [63:0];
 reg  [0:0]   V1_next   [63:0];
-reg  [54:0]  tag1      [63:0];
-reg  [54:0]  tag1_next [63:0];
+reg  [22:0]  tag1      [63:0];
+reg  [22:0]  tag1_next [63:0];
 reg  [0:0]   V2        [63:0];
 reg  [0:0]   V2_next   [63:0];
-reg  [54:0]  tag2      [63:0];
-reg  [54:0]  tag2_next [63:0];
+reg  [22:0]  tag2      [63:0];
+reg  [22:0]  tag2_next [63:0];
 reg  [0:0]   V3        [63:0];
 reg  [0:0]   V3_next   [63:0];
-reg  [54:0]  tag3      [63:0];
-reg  [54:0]  tag3_next [63:0];
+reg  [22:0]  tag3      [63:0];
+reg  [22:0]  tag3_next [63:0];
 reg  [0:0]   V4        [63:0];
 reg  [0:0]   V4_next   [63:0];
-reg  [54:0]  tag4      [63:0];
-reg  [54:0]  tag4_next [63:0];
+reg  [22:0]  tag4      [63:0];
+reg  [22:0]  tag4_next [63:0];
 reg  [0:0]   V5        [63:0];
 reg  [0:0]   V5_next   [63:0];
-reg  [54:0]  tag5      [63:0];
-reg  [54:0]  tag5_next [63:0];
+reg  [22:0]  tag5      [63:0];
+reg  [22:0]  tag5_next [63:0];
 reg  [0:0]   V6        [63:0];
 reg  [0:0]   V6_next   [63:0];
-reg  [54:0]  tag6      [63:0];
-reg  [54:0]  tag6_next [63:0];
+reg  [22:0]  tag6      [63:0];
+reg  [22:0]  tag6_next [63:0];
 reg  [0:0]   V7        [63:0];
 reg  [0:0]   V7_next   [63:0];
-reg  [54:0]  tag7      [63:0];
-reg  [54:0]  tag7_next [63:0];
+reg  [22:0]  tag7      [63:0];
+reg  [22:0]  tag7_next [63:0];
 reg  [0:0]   V8        [63:0];
 reg  [0:0]   V8_next   [63:0];
-reg  [54:0]  tag8      [63:0];
-reg  [54:0]  tag8_next [63:0];
+reg  [22:0]  tag8      [63:0];
+reg  [22:0]  tag8_next [63:0];
 
 wire [0:0]   hit;
 
 wire [5:0]   index;
 wire [2:0]   offset;
-wire [54:0]  tag;
+wire [22:0]  tag;
 
 reg  [0:0]   uncached;
 
@@ -134,7 +134,7 @@ wire [0:0]   mstatus_MIE;
 
 assign index = IF_pc[8:3];
 assign offset = IF_pc[2:0];
-assign tag = IF_pc[63:9];
+assign tag = IF_pc[31:9];
 
 assign IF_sram0_addr = index;
 assign IF_sram1_addr = index;
@@ -646,14 +646,14 @@ always@(posedge clk or posedge rst) begin
             V6[k] <= 1'b0;
             V7[k] <= 1'b0;
             V8[k] <= 1'b0;
-            tag1[k] <= 55'b0;
-            tag2[k] <= 55'b0;
-            tag3[k] <= 55'b0;
-            tag4[k] <= 55'b0;
-            tag5[k] <= 55'b0;
-            tag6[k] <= 55'b0;
-            tag7[k] <= 55'b0;
-            tag8[k] <= 55'b0;
+            tag1[k] <= 23'b0;
+            tag2[k] <= 23'b0;
+            tag3[k] <= 23'b0;
+            tag4[k] <= 23'b0;
+            tag5[k] <= 23'b0;
+            tag6[k] <= 23'b0;
+            tag7[k] <= 23'b0;
+            tag8[k] <= 23'b0;
         end
     end
     else begin

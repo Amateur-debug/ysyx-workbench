@@ -17,6 +17,8 @@ module ysyx_041461_WB(
     input   wire [11:0]  WB_EXE_csr     ,
          
     input   wire [4:0]   WB_MEM_rs2     ,
+
+    input   wire [31:0]  WB_inst        ,
          
     input   wire [63:0]  WB_EXE_in      ,
     input   wire [63:0]  WB_MEM_in      ,
@@ -80,6 +82,8 @@ reg [63:0] mcycle;
 reg [63:0] mcycle_next;
 reg [63:0] minstret;
 reg [63:0] minstret_next;
+reg [63:0] mtval;
+reg [63:0] mtval_next;
 
 
 integer i;
@@ -157,6 +161,9 @@ always@(*) begin
         end
         `ysyx_041461_MINSTRET: begin
             WB_EXE_csr_data = minstret;
+        end
+        `ysyx_041461_MTVAL: begin
+            WB_EXE_csr_data = mtval;
         end
         default: begin
             WB_EXE_csr_data = 64'b0;
@@ -259,6 +266,9 @@ always@(*) begin
         `ysyx_041461_MINSTRET: begin
             t = minstret;
         end
+        `ysyx_041461_MTVAL: begin
+            t = mtval;
+        end
         default: begin
             t = 64'b0;
         end
@@ -335,6 +345,7 @@ always@(*) begin
     mip_next = mip; 
     mcycle_next = mcycle + 1'b1;
     minstret_next = minstret;
+    mtval_next = mtval;
     if(WB_valid == 1'b1) begin
         if(WB_trap != `ysyx_041461_TRAP_NOP) begin
             case(WB_trap)
@@ -343,6 +354,7 @@ always@(*) begin
                     mcause_next = 64'd0;
                     mstatus_next[3:3] = 1'b0;
                     mstatus_next[7:7] = mstatus[3:3];
+                    mtval_next = WB_pc;
                 end
                 `ysyx_041461_ID_ECALL: begin
                     mepc_next = WB_pc;
@@ -365,18 +377,21 @@ always@(*) begin
                     mcause_next = 64'd2;
                     mstatus_next[3:3] = 1'b0;
                     mstatus_next[7:7] = mstatus[3:3];
+                    mtval_next = {32'b0, WB_inst};
                 end
                 `ysyx_041461_MEM_LOAD_MISALIGN: begin
                     mepc_next = WB_pc;
                     mcause_next = 64'd4;
                     mstatus_next[3:3] = 1'b0;
                     mstatus_next[7:7] = mstatus[3:3];
+                    mtval_next = WB_EXE_in;
                 end
                 `ysyx_041461_MEM_STORE_MISALIGN: begin
                     mepc_next = WB_pc;
                     mcause_next = 64'd6;
                     mstatus_next[3:3] = 1'b0;
                     mstatus_next[7:7] = mstatus[3:3];
+                    mtval_next = WB_EXE_in;
                 end
                 `ysyx_041461_TIMER_INTERRUPT: begin
                     mepc_next = WB_pc;
@@ -426,6 +441,9 @@ always@(*) begin
                 `ysyx_041461_MINSTRET: begin
                     minstret_next = c;
                 end
+                `ysyx_041461_MTVAL: begin
+                    mtval_next = c;
+                end
                 default: begin
 
                 end
@@ -463,6 +481,7 @@ always@(posedge clk or posedge rst)  begin
         mip <= 64'b0;
         mcycle <= 64'b0;
         minstret <= 64'b0;
+        mtval <= 64'b0;
     end
     else begin
         for(j = 0; j < 32; j = j + 1) begin
@@ -479,6 +498,7 @@ always@(posedge clk or posedge rst)  begin
         mip <= mip_next;
         mcycle <= mcycle_next;
         minstret <= minstret_next;
+        mtval <= mtval_next;
     end
 end
 
