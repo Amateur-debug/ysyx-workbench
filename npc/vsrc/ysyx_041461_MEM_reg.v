@@ -17,6 +17,7 @@ module ysyx_041461_MEM_reg(
     input   wire [63:0]  MEMreg_pc_in        ,
     input   wire [3:0]   MEMreg_MEM_ctrl_in  ,
     input   wire [3:0]   MEMreg_WB_ctrl_in   ,
+    input   wire [31:0]  MEMreg_inst_in      ,
   
     output  reg  [0:0]   MEMreg_valid_out    ,    
     output  reg  [3:0]   MEMreg_trap_out     ,
@@ -29,7 +30,8 @@ module ysyx_041461_MEM_reg(
     output  reg  [63:0]  MEMreg_zimm_out     ,
     output  reg  [63:0]  MEMreg_pc_out       ,
     output  reg  [3:0]   MEMreg_MEM_ctrl_out ,
-    output  reg  [3:0]   MEMreg_WB_ctrl_out  
+    output  reg  [3:0]   MEMreg_WB_ctrl_out  ,
+    output  reg  [31:0]  MEMreg_inst_out
 );
 
 
@@ -48,7 +50,8 @@ always@(posedge clk or posedge rst) begin
         MEMreg_zimm_out <= 64'b0;   
         MEMreg_pc_out <= 64'h0000_0000_8000_0000;     
         MEMreg_MEM_ctrl_out <= `ysyx_041461_MEM_NOP;
-        MEMreg_WB_ctrl_out <= `ysyx_041461_WB_NOP;           
+        MEMreg_WB_ctrl_out <= `ysyx_041461_WB_NOP;   
+        MEMreg_inst_out <= 32'b0;        
     end
     else if(MEMreg_enable == 1'b0) begin
         MEMreg_valid_out <= MEMreg_valid_out;
@@ -63,6 +66,7 @@ always@(posedge clk or posedge rst) begin
         MEMreg_pc_out <= MEMreg_pc_out;     
         MEMreg_MEM_ctrl_out <= MEMreg_MEM_ctrl_out;
         MEMreg_WB_ctrl_out <= MEMreg_WB_ctrl_out;  
+        MEMreg_inst_out <= MEMreg_inst_out;
     end
     else begin 
         MEMreg_valid_out <= MEMreg_valid_in;
@@ -77,6 +81,7 @@ always@(posedge clk or posedge rst) begin
         MEMreg_pc_out <= MEMreg_pc_in;     
         MEMreg_MEM_ctrl_out <= MEMreg_MEM_ctrl_in;
         MEMreg_WB_ctrl_out <= MEMreg_WB_ctrl_in;  
+        MEMreg_inst_out <= MEMreg_inst_in;
     end
 end
 

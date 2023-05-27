@@ -10,8 +10,8 @@ module ysyx_041461_MUL(
     input  wire   [63:0] MUL_multiplier  ,
 
     output reg    [0:0]  MUL_valid_out   ,
-    output reg    [63:0] MUL_result_hi   ,
-    output reg    [63:0] MUL_result_lo
+    output wire   [63:0] MUL_result_hi   ,
+    output wire   [63:0] MUL_result_lo
 );
 
 reg [127:0] multiplicand;

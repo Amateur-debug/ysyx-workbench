@@ -8,9 +8,10 @@ module ysyx_041461_ID(
     input   wire [63:0] ID_rs2_data  ,
     input   wire [3:0]  ID_trap_in   ,
     input   wire [0:0]  ID_conflict  ,
-    input   wire [0:0]  ID_IF_ready  ,
+    input   wire [0:0]  ID_IF_ok     ,
     input   wire [0:0]  ID_EXE_ready ,
-    input   wire [0:0]  ID_MEM_ready ,
+    input   wire [0:0]  ID_EXE_valid ,
+    input   wire [0:0]  ID_MEM_valid ,
     input   wire [0:0]  ID_CD_trap   ,
 
     output  wire [4:0]  ID_rd        ,
@@ -72,6 +73,7 @@ wire  [5:0]  funct6;
 wire  [6:0]  funct7;
 wire  [5:0]  shamt;
 wire  [0:0]  MRO_csr;
+wire  [0:0]  valid_csr;
 
 assign ID_rd   = ID_inst[11:7] ;
 assign ID_rs1  = ID_inst[19:15];
@@ -84,6 +86,8 @@ assign funct3 = ID_inst[14:12];
 assign funct6 = ID_inst[31:26];
 assign funct7 = ID_inst[31:25];
 assign MRO_csr = ID_csr[11:10] == 2'b11;
+assign valid_csr = ID_csr == `ysyx_041461_MVENDORID || ID_csr == `ysyx_041461_MARCHID || ID_csr == `ysyx_041461_MIMPID || ID_csr == `ysyx_041461_MHARTID || ID_csr == `ysyx_041461_MSTATUS || ID_csr == `ysyx_041461_MISA || ID_csr == `ysyx_041461_MIE || ID_csr == `ysyx_041461_MTVEC || ID_csr == `ysyx_041461_MSCRATCH || ID_csr == `ysyx_041461_MEPC || ID_csr == `ysyx_041461_MCAUSE || ID_csr == `ysyx_041461_MTVAL || ID_csr == `ysyx_041461_MIP || ID_csr == `ysyx_041461_MCYCLE || ID_csr == `ysyx_041461_MINSTRET;
+
 
 //指令译码
 always@(*) begin  
@@ -415,7 +419,7 @@ always@(*) begin
                 ID_imm = immI(ID_inst);
                 case(funct3)
                     `ysyx_041461_JALR: begin
-                        ID_next_pc = (ID_rs1_data + ID_imm) & ~64'b1;
+                        ID_next_pc = (ID_rs1_data + ID_imm) & ~64'd1;
                         ID_IFreg_ctrl = `ysyx_041461_ID_IFreg_ctrl_IDpc;
                         ID_TYPE = `ysyx_041461_TYPE_JALR;
                         ID_WB_ctrl = `ysyx_041461_WB_SNPC;
@@ -450,11 +454,11 @@ always@(*) begin
                         case(funct3)
                             `ysyx_041461_CSRRW: begin
                                 ID_WB_ctrl = `ysyx_041461_WB_CSR_RS1;
-                                if(MRO_csr == 1'b1) begin
+                                if(MRO_csr == 1'b1 || valid_csr == 1'b0) begin
                                     ID_trap_out = `ysyx_041461_ID_ILLEGAL_INST;
                                 end
                             end
-                            `ysyx_041461_CSRRS: begin
+                            `ysyx_041461_CSRRS:  begin
                                 ID_EXE_ctrl = `ysyx_041461_EXE_OR;
                                 ID_EXE_src = `ysyx_041461_EXE_R_CSR;
                                 if(ID_rs1 == 5'b0) begin
@@ -463,12 +467,12 @@ always@(*) begin
                                 else begin
                                     ID_WB_ctrl = `ysyx_041461_WB_CSR_EXE;
                                 end
-                                if(MRO_csr == 1'b1 && ID_rs1 != 5'b0) begin
+                                if((MRO_csr == 1'b1 && ID_rs1 != 5'b0) || valid_csr == 1'b0) begin
                                     ID_trap_out = `ysyx_041461_ID_ILLEGAL_INST;
                                 end
                             end
                             `ysyx_041461_CSRRC: begin
-                                ID_EXE_ctrl = `ysyx_041461_EXE_ADD;
+                                ID_EXE_ctrl = `ysyx_041461_EXE_AND;
                                 ID_EXE_src = `ysyx_041461_EXE_NOTR_CSR;
                                 if(ID_rs1 == 5'b0) begin
                                     ID_WB_ctrl = `ysyx_041461_WB_CSR_RO;
@@ -476,13 +480,13 @@ always@(*) begin
                                 else begin
                                     ID_WB_ctrl = `ysyx_041461_WB_CSR_EXE;
                                 end
-                                if(MRO_csr == 1'b1 && ID_rs1 != 5'b0) begin
+                                if((MRO_csr == 1'b1 && ID_rs1 != 5'b0) || valid_csr == 1'b0) begin
                                     ID_trap_out = `ysyx_041461_ID_ILLEGAL_INST;
                                 end
                             end
                             `ysyx_041461_CSRRWI: begin
                                 ID_WB_ctrl = `ysyx_041461_WB_CSR_ZIMM;
-                                if(MRO_csr == 1'b1) begin
+                                if(MRO_csr == 1'b1 || valid_csr == 1'b0) begin
                                     ID_trap_out = `ysyx_041461_ID_ILLEGAL_INST;
                                 end
                             end
@@ -495,7 +499,7 @@ always@(*) begin
                                 else begin
                                     ID_WB_ctrl = `ysyx_041461_WB_CSR_EXE;
                                 end
-                                if(MRO_csr == 1'b1 && ID_zimm[4:0] != 5'b0) begin
+                                if((MRO_csr == 1'b1 && ID_zimm[4:0] != 5'b0) || valid_csr == 1'b0) begin
                                     ID_trap_out = `ysyx_041461_ID_ILLEGAL_INST;
                                 end
                             end
@@ -508,7 +512,7 @@ always@(*) begin
                                 else begin
                                     ID_WB_ctrl = `ysyx_041461_WB_CSR_EXE;
                                 end
-                                if(MRO_csr == 1'b1 && ID_zimm[4:0] != 5'b0) begin
+                                if((MRO_csr == 1'b1 && ID_zimm[4:0] != 5'b0) || valid_csr == 1'b0) begin
                                     ID_trap_out = `ysyx_041461_ID_ILLEGAL_INST;
                                 end
                             end
@@ -542,7 +546,7 @@ always@(*) begin
                 
             end
             `ysyx_041461_TYPE_JAL: begin
-                if(ID_IF_ready == 1'b1) begin
+                if(ID_IF_ok == 1'b1) begin
                     ID_valid_out = 1'b1;
                 end
                 else begin
@@ -550,7 +554,7 @@ always@(*) begin
                 end
             end
             `ysyx_041461_TYPE_JALR: begin
-                if(ID_IF_ready == 1'b1) begin
+                if(ID_IF_ok == 1'b1) begin
                     ID_valid_out = 1'b1;
                 end
                 else begin
@@ -558,7 +562,7 @@ always@(*) begin
                 end
             end
             `ysyx_041461_TYPE_BRANCHES: begin
-                if(ID_IF_ready == 1'b1) begin
+                if(ID_IF_ok == 1'b1) begin
                     ID_valid_out = 1'b1;
                 end
                 else begin
@@ -566,7 +570,7 @@ always@(*) begin
                 end
             end
             `ysyx_041461_TYPE_FENCE_I: begin
-                if(ID_IF_ready == 1'b1 && ID_EXE_ready == 1'b1 && ID_MEM_ready == 1'b1) begin
+                if(ID_IF_ok == 1'b1 && ID_EXE_valid == 1'b0 && ID_MEM_valid == 1'b0) begin
                     ID_valid_out = 1'b1;
                 end
                 else begin
@@ -602,7 +606,7 @@ always@(*) begin
                 end
             end
             `ysyx_041461_TYPE_JAL: begin
-                if(ID_EXE_ready == 1'b1 && ID_IF_ready == 1'b1) begin
+                if(ID_EXE_ready == 1'b1 && ID_IF_ok == 1'b1) begin
                     ID_ready = 1'b1;
                 end
                 else begin
@@ -610,7 +614,7 @@ always@(*) begin
                 end
             end
             `ysyx_041461_TYPE_JALR: begin
-                if(ID_EXE_ready == 1'b1 && ID_IF_ready == 1'b1) begin
+                if(ID_EXE_ready == 1'b1 && ID_IF_ok == 1'b1) begin
                     ID_ready = 1'b1;
                 end
                 else begin
@@ -618,7 +622,7 @@ always@(*) begin
                 end
             end
             `ysyx_041461_TYPE_BRANCHES: begin
-                if(ID_EXE_ready == 1'b1 && ID_IF_ready == 1'b1) begin
+                if(ID_EXE_ready == 1'b1 && ID_IF_ok == 1'b1) begin
                     ID_ready = 1'b1;
                 end
                 else begin
@@ -626,7 +630,7 @@ always@(*) begin
                 end
             end
             `ysyx_041461_TYPE_FENCE_I: begin
-                if(ID_IF_ready == 1'b1 && ID_EXE_ready == 1'b1 && ID_MEM_ready == 1'b1) begin
+                if(ID_IF_ok == 1'b1 && ID_EXE_ready == 1'b1 && ID_EXE_valid == 1'b0 && ID_MEM_valid == 1'b0) begin
                     ID_ready = 1'b1;
                 end
                 else begin

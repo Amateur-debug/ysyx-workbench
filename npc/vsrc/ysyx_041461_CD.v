@@ -50,7 +50,6 @@ reg [0:0] ID_rs1_read;
 reg [0:0] ID_rs2_read;
 
 reg [0:0] EXE_rd_write;
-reg [0:0] EXE_csr_write;
 reg [0:0] EXE_rs1_read;
 reg [0:0] EXE_rs2_read;
 reg [0:0] EXE_csr_read;
@@ -104,22 +103,6 @@ always@(*) begin
     end
     else begin
         EXE_rd_write = 1'b0;
-    end
-end
-
-
-always@(*) begin
-    if(CD_EXE_valid_in == 1'b1) begin
-        if(CD_EXE_WB_ctrl == `ysyx_041461_WB_CSR_RS1 || CD_EXE_WB_ctrl == `ysyx_041461_WB_CSR_EXE || 
-        CD_EXE_WB_ctrl == `ysyx_041461_WB_CSR_ZIMM) begin
-            EXE_csr_write = 1'b1;
-        end
-        else begin
-            EXE_csr_write = 1'b0;
-        end
-    end
-    else begin
-        EXE_csr_write = 1'b0;
     end
 end
 

@@ -13,19 +13,19 @@ extern "C" {
 
 
     // DPI IMPORTS
-    // DPI import at vsrc/ysyx_041461_WB.v:57:30
+    // DPI import at vsrc/ysyx_041461_WB.v:63:30
     extern void ebreak();
-    // DPI import at vsrc/ysyx_041461_WB.v:55:30
+    // DPI import at vsrc/ysyx_041461_WB.v:61:30
     extern void get_need_difftest(char a);
-    // DPI import at vsrc/ysyx_041461_WB.v:56:30
+    // DPI import at vsrc/ysyx_041461_WB.v:62:30
     extern void get_skip(char a);
     // DPI import at vsrc/ysyx_041461_AXI_CROSSBAR.v:43:30
     extern void paddr_read(long long raddr, long long* rdata);
     // DPI import at vsrc/ysyx_041461_AXI_CROSSBAR.v:44:30
     extern void paddr_write(long long waddr, long long wdata, char wmask);
-    // DPI import at vsrc/ysyx_041461_WB.v:53:30
+    // DPI import at vsrc/ysyx_041461_WB.v:59:30
     extern void set_gpr_ptr(const svOpenArrayHandle a);
-    // DPI import at vsrc/ysyx_041461_WB.v:54:30
+    // DPI import at vsrc/ysyx_041461_WB.v:60:30
     extern void set_pc_ptr(const svOpenArrayHandle a);
 
 #ifdef __cplusplus

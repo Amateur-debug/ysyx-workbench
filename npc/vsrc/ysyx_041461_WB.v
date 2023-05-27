@@ -5,7 +5,9 @@ module ysyx_041461_WB(
     input   wire [0:0]   rst            ,
     input   wire [0:0]   WB_valid       ,
 
-    input   wire [0:0]   WB_IF_ready    ,
+    input   wire [0:0]   WB_IF_ok       ,
+    input   wire [0:0]   WB_EXE_ok      ,
+    input   wire [0:0]   WB_MEM_ok      ,
                 
     input   wire [4:0]   WB_ID_rs1      ,
     input   wire [4:0]   WB_ID_rs2      ,
@@ -15,6 +17,8 @@ module ysyx_041461_WB(
     input   wire [11:0]  WB_EXE_csr     ,
          
     input   wire [4:0]   WB_MEM_rs2     ,
+
+    input   wire [31:0]  WB_inst        ,
          
     input   wire [63:0]  WB_EXE_in      ,
     input   wire [63:0]  WB_MEM_in      ,
@@ -32,6 +36,7 @@ module ysyx_041461_WB(
 
     output  wire [63:0]  WB_IFreg_mtvec ,
     output  wire [63:0]  WB_IFreg_mepc  ,
+    output  reg  [62:0]  WB_IFreg_CAUSE ,
     output  reg  [1:0]   WB_IFreg_ctrl  ,  
 
     output  wire [63:0]  WB_IF_mstatus  ,
@@ -48,6 +53,7 @@ module ysyx_041461_WB(
     output  wire [63:0]  WB_MEM_rs2_data,
 
     input   wire [0:0]   WB_skip_difftest
+
 );
 
 import "DPI-C" function void set_gpr_ptr(input logic [63:0] a []);
@@ -89,6 +95,8 @@ reg [63:0] mcycle;
 reg [63:0] mcycle_next;
 reg [63:0] minstret;
 reg [63:0] minstret_next;
+reg [63:0] mtval;
+reg [63:0] mtval_next;
 
 
 integer i;
@@ -111,7 +119,7 @@ assign WB_MEM_rs2_data = x[WB_MEM_rs2];
 
 always@(*) begin
     if(WB_valid == 1'b1) begin
-        if(WB_trap != `ysyx_041461_TRAP_NOP && WB_IF_ready == 1'b0) begin
+        if(WB_trap != `ysyx_041461_TRAP_NOP && (WB_IF_ok == 1'b0 || WB_EXE_ok == 1'b0 || WB_MEM_ok == 1'b0)) begin
             WB_ready = 1'b0;
         end
         else begin
@@ -167,6 +175,9 @@ always@(*) begin
         `ysyx_041461_MINSTRET: begin
             WB_EXE_csr_data = minstret;
         end
+        `ysyx_041461_MTVAL: begin
+            WB_EXE_csr_data = mtval;
+        end
         default: begin
             WB_EXE_csr_data = 64'b0;
         end
@@ -178,38 +189,49 @@ always@(*) begin
         case(WB_trap)
             `ysyx_041461_TRAP_NOP: begin
                 WB_IFreg_ctrl = `ysyx_041461_WB_IFreg_ctrl_NOP;
+                WB_IFreg_CAUSE = 63'b0;
             end
             `ysyx_041461_IF_MISALIGN: begin
                 WB_IFreg_ctrl = `ysyx_041461_WB_IFreg_ctrl_MTVEC;
+                WB_IFreg_CAUSE = 63'b0;
             end
             `ysyx_041461_ID_ECALL: begin
                 WB_IFreg_ctrl = `ysyx_041461_WB_IFreg_ctrl_MTVEC;
+                WB_IFreg_CAUSE = 63'b0;
             end
             `ysyx_041461_ID_MRET: begin
                 WB_IFreg_ctrl = `ysyx_041461_WB_IFreg_ctrl_MEPC;
+                WB_IFreg_CAUSE = 63'b0;
             end
             `ysyx_041461_ID_EBREAK: begin
                 WB_IFreg_ctrl = `ysyx_041461_WB_IFreg_ctrl_MTVEC;
+                WB_IFreg_CAUSE = 63'b0;
             end
             `ysyx_041461_ID_ILLEGAL_INST: begin
                 WB_IFreg_ctrl = `ysyx_041461_WB_IFreg_ctrl_MTVEC;
+                WB_IFreg_CAUSE = 63'b0;
             end
             `ysyx_041461_MEM_LOAD_MISALIGN: begin
                 WB_IFreg_ctrl = `ysyx_041461_WB_IFreg_ctrl_MTVEC;
+                WB_IFreg_CAUSE = 63'b0;
             end
             `ysyx_041461_MEM_STORE_MISALIGN: begin
                 WB_IFreg_ctrl = `ysyx_041461_WB_IFreg_ctrl_MTVEC;
+                WB_IFreg_CAUSE = 63'b0;
             end
             `ysyx_041461_TIMER_INTERRUPT: begin
                 WB_IFreg_ctrl = `ysyx_041461_WB_IFreg_ctrl_MTVEC;
+                WB_IFreg_CAUSE = 63'd7;
             end
             default: begin
                 WB_IFreg_ctrl = `ysyx_041461_WB_IFreg_ctrl_NOP;
+                WB_IFreg_CAUSE = 63'b0;
             end
         endcase
     end
     else begin
         WB_IFreg_ctrl = `ysyx_041461_WB_IFreg_ctrl_NOP;
+        WB_IFreg_CAUSE = 63'b0;
     end
 end
 
@@ -257,6 +279,9 @@ always@(*) begin
         `ysyx_041461_MINSTRET: begin
             t = minstret;
         end
+        `ysyx_041461_MTVAL: begin
+            t = mtval;
+        end
         default: begin
             t = 64'b0;
         end
@@ -299,7 +324,7 @@ always@(*) begin
                 d[WB_rd] = WB_imm;
             end        
             `ysyx_041461_WB_SNPC: begin
-                d[WB_rd] = WB_pc + 4;
+                d[WB_rd] = WB_pc + 64'd4;
             end
             `ysyx_041461_WB_CSR_RS1: begin
                 d[WB_rd] = t;
@@ -333,6 +358,7 @@ always@(*) begin
     mip_next = mip; 
     mcycle_next = mcycle + 1'b1;
     minstret_next = minstret;
+    mtval_next = mtval;
     if(WB_valid == 1'b1) begin
         if(WB_trap != `ysyx_041461_TRAP_NOP) begin
             case(WB_trap)
@@ -341,6 +367,7 @@ always@(*) begin
                     mcause_next = 64'd0;
                     mstatus_next[3:3] = 1'b0;
                     mstatus_next[7:7] = mstatus[3:3];
+                    mtval_next = WB_pc;
                 end
                 `ysyx_041461_ID_ECALL: begin
                     mepc_next = WB_pc;
@@ -364,18 +391,21 @@ always@(*) begin
                     mcause_next = 64'd2;
                     mstatus_next[3:3] = 1'b0;
                     mstatus_next[7:7] = mstatus[3:3];
+                    mtval_next = {32'b0, WB_inst};
                 end
                 `ysyx_041461_MEM_LOAD_MISALIGN: begin
                     mepc_next = WB_pc;
                     mcause_next = 64'd4;
                     mstatus_next[3:3] = 1'b0;
                     mstatus_next[7:7] = mstatus[3:3];
+                    mtval_next = WB_EXE_in;
                 end
                 `ysyx_041461_MEM_STORE_MISALIGN: begin
                     mepc_next = WB_pc;
                     mcause_next = 64'd6;
                     mstatus_next[3:3] = 1'b0;
                     mstatus_next[7:7] = mstatus[3:3];
+                    mtval_next = WB_EXE_in;
                 end
                 `ysyx_041461_TIMER_INTERRUPT: begin
                     mepc_next = WB_pc;
@@ -388,7 +418,7 @@ always@(*) begin
                     
                 end
             endcase
-            if(WB_IF_ready == 1'b1) begin
+            if(WB_IF_ok == 1'b1 && WB_EXE_ok == 1'b1 && WB_MEM_ok == 1'b1) begin
                 minstret_next = minstret + 1'b1;
             end
         end
@@ -425,6 +455,9 @@ always@(*) begin
                 `ysyx_041461_MINSTRET: begin
                     minstret_next = c;
                 end
+                `ysyx_041461_MTVAL: begin
+                    mtval_next = c;
+                end
                 default: begin
 
                 end
@@ -442,15 +475,17 @@ always@(*) begin
     end
     {mip_next[63:8], mip_next[6:0]} = 63'b0;
     {mie_next[63:8], mie_next[6:0]} = 63'b0;
+    {mstatus_next[63:13], mstatus_next[10:8], mstatus_next[6:4], mstatus_next[2:0]} = 60'b0;
+    mstatus_next[12:11] = 2'b11;
 end
 
-always@(posedge clk or posedge rst) begin
+always@(posedge clk or posedge rst)  begin
     if(rst == 1'b1) begin
         for(j = 0; j < 32; j = j + 1) begin
             x[j] <= 64'd0;
         end
         mhartid <= 64'b0;
-        mstatus <= 64'd0;
+        mstatus <= {51'b0, 2'b11, 11'b0};
         misa <= {2'b10, 36'b0, 26'b00000_00000_00010_00100_00000_0};
         mie <= 64'b0;
         mtvec <= 64'd0;
@@ -460,6 +495,7 @@ always@(posedge clk or posedge rst) begin
         mip <= 64'b0;
         mcycle <= 64'b0;
         minstret <= 64'b0;
+        mtval <= 64'b0;
     end
     else begin
         for(j = 0; j < 32; j = j + 1) begin
@@ -476,6 +512,7 @@ always@(posedge clk or posedge rst) begin
         mip <= mip_next;
         mcycle <= mcycle_next;
         minstret <= minstret_next;
+        mtval <= mtval_next;
     end
 end
 
@@ -490,7 +527,7 @@ end
 reg [0:0] need_difftest;
 always@(*) begin
     if(WB_valid == 1'b1) begin
-        if(WB_trap != `ysyx_041461_TRAP_NOP && WB_IF_ready == 1'b0) begin
+        if(WB_trap != `ysyx_041461_TRAP_NOP && WB_IF_ok == 1'b0) begin
             need_difftest = 1'b0;
         end
         else begin
@@ -501,5 +538,6 @@ always@(*) begin
         need_difftest = 1'b0;
     end
 end
+
 
 endmodule

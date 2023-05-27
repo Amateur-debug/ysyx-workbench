@@ -34,7 +34,6 @@ VM_CLASSES_FAST += \
 	Vysyx_041461_TOP___024root__5 \
 	Vysyx_041461_TOP___024root__6 \
 	Vysyx_041461_TOP___024root__7 \
-	Vysyx_041461_TOP___024root__8 \
 	Vysyx_041461_TOP_ysyx_041461_Walloc_33bits \
 	Vysyx_041461_TOP_ysyx_041461_Walloc_33bits__1 \
 	Vysyx_041461_TOP_ysyx_041461_Walloc_33bits__2 \
@@ -53,6 +52,7 @@ VM_CLASSES_SLOW += \
 	Vysyx_041461_TOP__ConstPool_0 \
 	Vysyx_041461_TOP___024root__Slow \
 	Vysyx_041461_TOP___024root__1__Slow \
+	Vysyx_041461_TOP___024root__2__Slow \
 	Vysyx_041461_TOP_ysyx_041461_Walloc_33bits__Slow \
 	Vysyx_041461_TOP_ysyx_041461_Walloc_33bits__1__Slow \
 	Vysyx_041461_TOP_ysyx_041461_Walloc_33bits__2__Slow \

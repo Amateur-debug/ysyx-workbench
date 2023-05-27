@@ -7,11 +7,67 @@
 
 #include "verilated_dpi.h"
 
-VL_INLINE_OPT void Vysyx_041461_TOP___024root___sequent__TOP__8(Vysyx_041461_TOP___024root* vlSelf) {
+VL_INLINE_OPT void Vysyx_041461_TOP___024root___sequent__TOP__9(Vysyx_041461_TOP___024root* vlSelf) {
     if (false && vlSelf) {}  // Prevent unused
     Vysyx_041461_TOP__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
-    VL_DEBUG_IF(VL_DBG_MSGF("+    Vysyx_041461_TOP___024root___sequent__TOP__8\n"); );
+    VL_DEBUG_IF(VL_DBG_MSGF("+    Vysyx_041461_TOP___024root___sequent__TOP__9\n"); );
     // Body
+    vlSelf->__Vdlyvlsb__ysyx_041461_TOP__DOT__core__DOT__EXE__DOT__MUL__DOT__switch_out__v799 = 7U;
+    vlSelf->__Vdlyvval__ysyx_041461_TOP__DOT__core__DOT__EXE__DOT__MUL__DOT__switch_out__v800 
+        = (1U & ((~ (IData)(vlSelf->ysyx_041461_TOP__DOT__core__DOT__rst_r2)) 
+                 & (vlSelf->ysyx_041461_TOP__DOT__core__DOT__EXE__DOT__MUL__DOT__Booth_core_p
+                    [8U][0U] >> 0x18U)));
+    vlSelf->__Vdlyvlsb__ysyx_041461_TOP__DOT__core__DOT__EXE__DOT__MUL__DOT__switch_out__v800 = 8U;
+    vlSelf->__Vdlyvval__ysyx_041461_TOP__DOT__core__DOT__EXE__DOT__MUL__DOT__switch_out__v801 
+        = (1U & ((~ (IData)(vlSelf->ysyx_041461_TOP__DOT__core__DOT__rst_r2)) 
+                 & (vlSelf->ysyx_041461_TOP__DOT__core__DOT__EXE__DOT__MUL__DOT__Booth_core_p
+                    [9U][0U] >> 0x18U)));
+    vlSelf->__Vdlyvlsb__ysyx_041461_TOP__DOT__core__DOT__EXE__DOT__MUL__DOT__switch_out__v801 = 9U;
+    vlSelf->__Vdlyvval__ysyx_041461_TOP__DOT__core__DOT__EXE__DOT__MUL__DOT__switch_out__v802 
+        = (1U & ((~ (IData)(vlSelf->ysyx_041461_TOP__DOT__core__DOT__rst_r2)) 
+                 & (vlSelf->ysyx_041461_TOP__DOT__core__DOT__EXE__DOT__MUL__DOT__Booth_core_p
+                    [0xaU][0U] >> 0x18U)));
+    vlSelf->__Vdlyvlsb__ysyx_041461_TOP__DOT__core__DOT__EXE__DOT__MUL__DOT__switch_out__v802 = 0xaU;
+    vlSelf->__Vdlyvval__ysyx_041461_TOP__DOT__core__DOT__EXE__DOT__MUL__DOT__switch_out__v803 
+        = (1U & ((~ (IData)(vlSelf->ysyx_041461_TOP__DOT__core__DOT__rst_r2)) 
+                 & (vlSelf->ysyx_041461_TOP__DOT__core__DOT__EXE__DOT__MUL__DOT__Booth_core_p
+                    [0xbU][0U] >> 0x18U)));
+    vlSelf->__Vdlyvlsb__ysyx_041461_TOP__DOT__core__DOT__EXE__DOT__MUL__DOT__switch_out__v803 = 0xbU;
+    vlSelf->__Vdlyvval__ysyx_041461_TOP__DOT__core__DOT__EXE__DOT__MUL__DOT__switch_out__v804 
+        = (1U & ((~ (IData)(vlSelf->ysyx_041461_TOP__DOT__core__DOT__rst_r2)) 
+                 & (vlSelf->ysyx_041461_TOP__DOT__core__DOT__EXE__DOT__MUL__DOT__Booth_core_p
+                    [0xcU][0U] >> 0x18U)));
+    vlSelf->__Vdlyvlsb__ysyx_041461_TOP__DOT__core__DOT__EXE__DOT__MUL__DOT__switch_out__v804 = 0xcU;
+    vlSelf->__Vdlyvval__ysyx_041461_TOP__DOT__core__DOT__EXE__DOT__MUL__DOT__switch_out__v805 
+        = (1U & ((~ (IData)(vlSelf->ysyx_041461_TOP__DOT__core__DOT__rst_r2)) 
+                 & (vlSelf->ysyx_041461_TOP__DOT__core__DOT__EXE__DOT__MUL__DOT__Booth_core_p
+                    [0xdU][0U] >> 0x18U)));
+    vlSelf->__Vdlyvlsb__ysyx_041461_TOP__DOT__core__DOT__EXE__DOT__MUL__DOT__switch_out__v805 = 0xdU;
+    vlSelf->__Vdlyvval__ysyx_041461_TOP__DOT__core__DOT__EXE__DOT__MUL__DOT__switch_out__v806 
+        = (1U & ((~ (IData)(vlSelf->ysyx_041461_TOP__DOT__core__DOT__rst_r2)) 
+                 & (vlSelf->ysyx_041461_TOP__DOT__core__DOT__EXE__DOT__MUL__DOT__Booth_core_p
+                    [0xeU][0U] >> 0x18U)));
+    vlSelf->__Vdlyvlsb__ysyx_041461_TOP__DOT__core__DOT__EXE__DOT__MUL__DOT__switch_out__v806 = 0xeU;
+    vlSelf->__Vdlyvval__ysyx_041461_TOP__DOT__core__DOT__EXE__DOT__MUL__DOT__switch_out__v807 
+        = (1U & ((~ (IData)(vlSelf->ysyx_041461_TOP__DOT__core__DOT__rst_r2)) 
+                 & (vlSelf->ysyx_041461_TOP__DOT__core__DOT__EXE__DOT__MUL__DOT__Booth_core_p
+                    [0xfU][0U] >> 0x18U)));
+    vlSelf->__Vdlyvlsb__ysyx_041461_TOP__DOT__core__DOT__EXE__DOT__MUL__DOT__switch_out__v807 = 0xfU;
+    vlSelf->__Vdlyvval__ysyx_041461_TOP__DOT__core__DOT__EXE__DOT__MUL__DOT__switch_out__v808 
+        = (1U & ((~ (IData)(vlSelf->ysyx_041461_TOP__DOT__core__DOT__rst_r2)) 
+                 & (vlSelf->ysyx_041461_TOP__DOT__core__DOT__EXE__DOT__MUL__DOT__Booth_core_p
+                    [0x10U][0U] >> 0x18U)));
+    vlSelf->__Vdlyvlsb__ysyx_041461_TOP__DOT__core__DOT__EXE__DOT__MUL__DOT__switch_out__v808 = 0x10U;
+    vlSelf->__Vdlyvval__ysyx_041461_TOP__DOT__core__DOT__EXE__DOT__MUL__DOT__switch_out__v809 
+        = (1U & ((~ (IData)(vlSelf->ysyx_041461_TOP__DOT__core__DOT__rst_r2)) 
+                 & (vlSelf->ysyx_041461_TOP__DOT__core__DOT__EXE__DOT__MUL__DOT__Booth_core_p
+                    [0x11U][0U] >> 0x18U)));
+    vlSelf->__Vdlyvlsb__ysyx_041461_TOP__DOT__core__DOT__EXE__DOT__MUL__DOT__switch_out__v809 = 0x11U;
+    vlSelf->__Vdlyvval__ysyx_041461_TOP__DOT__core__DOT__EXE__DOT__MUL__DOT__switch_out__v810 
+        = (1U & ((~ (IData)(vlSelf->ysyx_041461_TOP__DOT__core__DOT__rst_r2)) 
+                 & (vlSelf->ysyx_041461_TOP__DOT__core__DOT__EXE__DOT__MUL__DOT__Booth_core_p
+                    [0x12U][0U] >> 0x18U)));
+    vlSelf->__Vdlyvlsb__ysyx_041461_TOP__DOT__core__DOT__EXE__DOT__MUL__DOT__switch_out__v810 = 0x12U;
     vlSelf->__Vdlyvval__ysyx_041461_TOP__DOT__core__DOT__EXE__DOT__MUL__DOT__switch_out__v811 
         = (1U & ((~ (IData)(vlSelf->ysyx_041461_TOP__DOT__core__DOT__rst_r2)) 
                  & (vlSelf->ysyx_041461_TOP__DOT__core__DOT__EXE__DOT__MUL__DOT__Booth_core_p
@@ -5841,59 +5897,4 @@ VL_INLINE_OPT void Vysyx_041461_TOP___024root___sequent__TOP__8(Vysyx_041461_TOP
         = (1U & ((~ (IData)(vlSelf->ysyx_041461_TOP__DOT__core__DOT__rst_r2)) 
                  & (vlSelf->ysyx_041461_TOP__DOT__core__DOT__EXE__DOT__MUL__DOT__Booth_core_p
                     [0x1dU][1U] >> 0x1bU)));
-    vlSelf->__Vdlyvlsb__ysyx_041461_TOP__DOT__core__DOT__EXE__DOT__MUL__DOT__switch_out__v1976 = 0x1dU;
-    vlSelf->__Vdlyvval__ysyx_041461_TOP__DOT__core__DOT__EXE__DOT__MUL__DOT__switch_out__v1977 
-        = (1U & ((~ (IData)(vlSelf->ysyx_041461_TOP__DOT__core__DOT__rst_r2)) 
-                 & (vlSelf->ysyx_041461_TOP__DOT__core__DOT__EXE__DOT__MUL__DOT__Booth_core_p
-                    [0x1eU][1U] >> 0x1bU)));
-    vlSelf->__Vdlyvlsb__ysyx_041461_TOP__DOT__core__DOT__EXE__DOT__MUL__DOT__switch_out__v1977 = 0x1eU;
-    vlSelf->__Vdlyvval__ysyx_041461_TOP__DOT__core__DOT__EXE__DOT__MUL__DOT__switch_out__v1978 
-        = (1U & ((~ (IData)(vlSelf->ysyx_041461_TOP__DOT__core__DOT__rst_r2)) 
-                 & (vlSelf->ysyx_041461_TOP__DOT__core__DOT__EXE__DOT__MUL__DOT__Booth_core_p
-                    [0x1fU][1U] >> 0x1bU)));
-    vlSelf->__Vdlyvlsb__ysyx_041461_TOP__DOT__core__DOT__EXE__DOT__MUL__DOT__switch_out__v1978 = 0x1fU;
-    vlSelf->__Vdlyvval__ysyx_041461_TOP__DOT__core__DOT__EXE__DOT__MUL__DOT__switch_out__v1979 
-        = (1U & ((~ (IData)(vlSelf->ysyx_041461_TOP__DOT__core__DOT__rst_r2)) 
-                 & (vlSelf->ysyx_041461_TOP__DOT__core__DOT__EXE__DOT__MUL__DOT__Booth_core_p
-                    [0x20U][1U] >> 0x1bU)));
-    vlSelf->__Vdlyvlsb__ysyx_041461_TOP__DOT__core__DOT__EXE__DOT__MUL__DOT__switch_out__v1979 = 0x20U;
-    vlSelf->__Vdlyvval__ysyx_041461_TOP__DOT__core__DOT__EXE__DOT__MUL__DOT__switch_out__v1980 
-        = (1U & ((~ (IData)(vlSelf->ysyx_041461_TOP__DOT__core__DOT__rst_r2)) 
-                 & (vlSelf->ysyx_041461_TOP__DOT__core__DOT__EXE__DOT__MUL__DOT__Booth_core_p
-                    [0U][1U] >> 0x1cU)));
-    vlSelf->__Vdlyvlsb__ysyx_041461_TOP__DOT__core__DOT__EXE__DOT__MUL__DOT__switch_out__v1980 = 0U;
-    vlSelf->__Vdlyvval__ysyx_041461_TOP__DOT__core__DOT__EXE__DOT__MUL__DOT__switch_out__v1981 
-        = (1U & ((~ (IData)(vlSelf->ysyx_041461_TOP__DOT__core__DOT__rst_r2)) 
-                 & (vlSelf->ysyx_041461_TOP__DOT__core__DOT__EXE__DOT__MUL__DOT__Booth_core_p
-                    [1U][1U] >> 0x1cU)));
-    vlSelf->__Vdlyvlsb__ysyx_041461_TOP__DOT__core__DOT__EXE__DOT__MUL__DOT__switch_out__v1981 = 1U;
-    vlSelf->__Vdlyvval__ysyx_041461_TOP__DOT__core__DOT__EXE__DOT__MUL__DOT__switch_out__v1982 
-        = (1U & ((~ (IData)(vlSelf->ysyx_041461_TOP__DOT__core__DOT__rst_r2)) 
-                 & (vlSelf->ysyx_041461_TOP__DOT__core__DOT__EXE__DOT__MUL__DOT__Booth_core_p
-                    [2U][1U] >> 0x1cU)));
-    vlSelf->__Vdlyvlsb__ysyx_041461_TOP__DOT__core__DOT__EXE__DOT__MUL__DOT__switch_out__v1982 = 2U;
-    vlSelf->__Vdlyvval__ysyx_041461_TOP__DOT__core__DOT__EXE__DOT__MUL__DOT__switch_out__v1983 
-        = (1U & ((~ (IData)(vlSelf->ysyx_041461_TOP__DOT__core__DOT__rst_r2)) 
-                 & (vlSelf->ysyx_041461_TOP__DOT__core__DOT__EXE__DOT__MUL__DOT__Booth_core_p
-                    [3U][1U] >> 0x1cU)));
-    vlSelf->__Vdlyvlsb__ysyx_041461_TOP__DOT__core__DOT__EXE__DOT__MUL__DOT__switch_out__v1983 = 3U;
-    vlSelf->__Vdlyvval__ysyx_041461_TOP__DOT__core__DOT__EXE__DOT__MUL__DOT__switch_out__v1984 
-        = (1U & ((~ (IData)(vlSelf->ysyx_041461_TOP__DOT__core__DOT__rst_r2)) 
-                 & (vlSelf->ysyx_041461_TOP__DOT__core__DOT__EXE__DOT__MUL__DOT__Booth_core_p
-                    [4U][1U] >> 0x1cU)));
-    vlSelf->__Vdlyvlsb__ysyx_041461_TOP__DOT__core__DOT__EXE__DOT__MUL__DOT__switch_out__v1984 = 4U;
-    vlSelf->__Vdlyvval__ysyx_041461_TOP__DOT__core__DOT__EXE__DOT__MUL__DOT__switch_out__v1985 
-        = (1U & ((~ (IData)(vlSelf->ysyx_041461_TOP__DOT__core__DOT__rst_r2)) 
-                 & (vlSelf->ysyx_041461_TOP__DOT__core__DOT__EXE__DOT__MUL__DOT__Booth_core_p
-                    [5U][1U] >> 0x1cU)));
-    vlSelf->__Vdlyvlsb__ysyx_041461_TOP__DOT__core__DOT__EXE__DOT__MUL__DOT__switch_out__v1985 = 5U;
-    vlSelf->__Vdlyvval__ysyx_041461_TOP__DOT__core__DOT__EXE__DOT__MUL__DOT__switch_out__v1986 
-        = (1U & ((~ (IData)(vlSelf->ysyx_041461_TOP__DOT__core__DOT__rst_r2)) 
-                 & (vlSelf->ysyx_041461_TOP__DOT__core__DOT__EXE__DOT__MUL__DOT__Booth_core_p
-                    [6U][1U] >> 0x1cU)));
-    vlSelf->__Vdlyvlsb__ysyx_041461_TOP__DOT__core__DOT__EXE__DOT__MUL__DOT__switch_out__v1986 = 6U;
-    vlSelf->__Vdlyvval__ysyx_041461_TOP__DOT__core__DOT__EXE__DOT__MUL__DOT__switch_out__v1987 
-        = (1U & ((~ (IData)(vlSelf->ysyx_041461_TOP__DOT__core__DOT__rst_r2)) 
-                 & (vlSelf->ysyx_041461_TOP__DOT__core__DOT__EXE__DOT__MUL__DOT__Booth_core_p
-                    [7U][1U] >> 0x1cU)));
 }

@@ -36,7 +36,7 @@ module ysyx_041461_IF2_reg(
 
 always@(posedge clk or posedge rst) begin
     if(rst == 1'b1) begin  
-        IF2reg_pc_out <= 64'h0000_0000_3000_0000; 
+        IF2reg_pc_out <= 64'h0000_0000_8000_0000; 
         IF2reg_AXI_rdata_out <= 64'b0;
         IF2reg_hit1_out <= 1'b0;
         IF2reg_hit2_out <= 1'b0;

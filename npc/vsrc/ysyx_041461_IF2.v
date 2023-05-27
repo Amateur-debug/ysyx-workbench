@@ -188,7 +188,7 @@ always@(posedge clk or posedge rst) begin
                 end
             end
             `ysyx_041461_IF2_FINISH: begin
-                if(IF2_ID_ready == 1'b1 || IF2_CD_trap == 1'b1) begin
+                if(IF2_ID_ready == 1'b1 || IF2_CD_trap == 1'b1 || IF2_ID_TYPE != `ysyx_041461_TYPE_NOP) begin
                     state <= `ysyx_041461_IF2_START;
                 end
                 else begin

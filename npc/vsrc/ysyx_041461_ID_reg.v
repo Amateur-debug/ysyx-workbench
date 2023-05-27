@@ -24,7 +24,7 @@ always@(posedge clk or posedge rst) begin
         IDreg_valid_out <= 1'b0;
         IDreg_trap_out <= `ysyx_041461_TRAP_NOP;
         IDreg_inst_out <= 32'b0;
-        IDreg_pc_out <= 64'h0000_0000_3000_0000;
+        IDreg_pc_out <= 64'h0000_0000_8000_0000;
     end
     else if(IDreg_enable == 1'b0) begin
         IDreg_valid_out <= IDreg_valid_out;

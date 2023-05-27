@@ -18,6 +18,5 @@ void Vysyx_041461_TOP___024root__traceCleanup(void* voidSelf, VerilatedVcd* /*un
         vlSymsp->TOP.__Vm_traceActivity[5U] = 0U;
         vlSymsp->TOP.__Vm_traceActivity[6U] = 0U;
         vlSymsp->TOP.__Vm_traceActivity[7U] = 0U;
-        vlSymsp->TOP.__Vm_traceActivity[8U] = 0U;
     }
 }
