@@ -15,6 +15,8 @@
 
 #include <isa.h>
 #include <memory/paddr.h>
+#include <elf.h>
+#include <trace.h>
 
 void init_rand();
 void init_log(const char *log_file);
@@ -23,6 +25,8 @@ void init_difftest(char *ref_so_file, long img_size, int port);
 void init_device();
 void init_sdb();
 void init_disasm(const char *triple);
+void init_mtrace(const char *mtrace_file);
+void init_ftrace(const char *ftrace_file);
 
 static void welcome() {
   Log("Trace: %s", MUXDEF(CONFIG_TRACE, ANSI_FMT("ON", ANSI_FG_GREEN), ANSI_FMT("OFF", ANSI_FG_RED)));
@@ -43,6 +47,10 @@ static char *log_file = NULL;
 static char *diff_so_file = NULL;
 static char *img_file = NULL;
 static int difftest_port = 1234;
+static char *elf_file = NULL;
+char *mtrace_file = NULL;
+char *ftrace_file = NULL;
+
 
 static long load_img() {
   if (img_file == NULL) {
@@ -73,15 +81,21 @@ static int parse_args(int argc, char *argv[]) {
     {"diff"     , required_argument, NULL, 'd'},
     {"port"     , required_argument, NULL, 'p'},
     {"help"     , no_argument      , NULL, 'h'},
+    {"mtrace"   , required_argument, NULL, 'm'},
+    {"ftrace"   , required_argument, NULL, 'f'},
+    {"elf"      , required_argument, NULL,  2},
     {0          , 0                , NULL,  0 },
   };
   int o;
-  while ( (o = getopt_long(argc, argv, "-bhl:d:p:", table, NULL)) != -1) {
+  while ( (o = getopt_long(argc, argv, "-bhf:m:l:d:p:", table, NULL)) != -1) {
     switch (o) {
       case 'b': sdb_set_batch_mode(); break;
       case 'p': sscanf(optarg, "%d", &difftest_port); break;
       case 'l': log_file = optarg; break;
       case 'd': diff_so_file = optarg; break;
+      case 'm': mtrace_file = optarg; break;
+      case 'f': ftrace_file = optarg; break;
+      case 2: elf_file = optarg; break;
       case 1: img_file = optarg; return 0;
       default:
         printf("Usage: %s [OPTION...] IMAGE [args]\n\n", argv[0]);
@@ -107,6 +121,12 @@ void init_monitor(int argc, char *argv[]) {
 
   /* Open the log file. */
   init_log(log_file);
+
+  /* Open the mtrace file. */
+  init_mtrace(mtrace_file);
+
+  /* Open the ftrace file. */
+  init_ftrace(ftrace_file);
 
   /* Initialize memory. */
   init_mem();
@@ -154,3 +174,56 @@ void am_init_monitor() {
   welcome();
 }
 #endif
+
+void init_mtrace(const char *mtrace_file){
+  FILE *p = fopen(mtrace_file, "w");
+  fclose(p);
+}
+
+_ELF_function ELF_function[MAX_FUC_NUM];
+int ELF_function_num;
+
+void init_ftrace(const char *ftrace_file){
+  FILE *ft = fopen(ftrace_file, "w");
+  fclose(ft);
+  FILE *fp = fopen(elf_file, "r");
+  Elf64_Ehdr ehdr;
+  assert(fread(&ehdr, sizeof(Elf64_Ehdr), 1, fp) == 1);
+  Elf64_Shdr shdr[ehdr.e_shnum];
+  fseek(fp, ehdr.e_shoff, SEEK_SET);
+  assert(fread(&shdr, ehdr.e_shentsize * ehdr.e_shnum, 1, fp) == 1);
+  Elf64_Shdr symtab_h = shdr[0];
+  Elf64_Shdr strtab_h = shdr[0]; 
+  int i;
+  for(i = 0; i < ehdr.e_shnum; i++){
+    if(shdr[i].sh_type == SHT_SYMTAB){
+      symtab_h = shdr[i];
+    }
+    else if(shdr[i].sh_type == SHT_STRTAB && i != ehdr.e_shstrndx){
+      strtab_h = shdr[i];
+    }
+  }
+  int symtab_num = symtab_h.sh_size / sizeof(Elf64_Sym);
+  Elf64_Sym symtab[symtab_num];
+  fseek(fp, symtab_h.sh_offset, SEEK_SET);
+  assert(fread(&symtab, symtab_h.sh_size, 1, fp) == 1);
+  char strtab[strtab_h.sh_size];
+  fseek(fp, strtab_h.sh_offset, SEEK_SET);
+  assert(fread(strtab, strtab_h.sh_size, 1, fp) == 1);
+  int n = 0;
+  for(i = 0; i < symtab_num; i++){
+    if((symtab[i].st_info & 0x0fu) == STT_FUNC){
+      ELF_function[n].addr = symtab[i].st_value;
+      ELF_function[n].size = symtab[i].st_size;
+      int j = 0;
+      while(strtab[symtab[i].st_name + j] != '\0'){
+        ELF_function[n].name[j] = strtab[symtab[i].st_name + j];
+        j++;
+      }
+      ELF_function[n].name[j] = strtab[symtab[i].st_name + j];
+      n++;
+    }
+  }
+  ELF_function_num = n;
+  fclose(fp);
+}

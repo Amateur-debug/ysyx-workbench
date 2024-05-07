@@ -4,8 +4,8 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <assert.h>
-#include "/home/cxy/ysyx-workbench/npc/include/regs.h"
-#include "/home/cxy/ysyx-workbench/npc/include/pmem.h"
+#include "regs.h"
+#include "memory.h"
 
 #define ARRLEN(arr) (int)(sizeof(arr) / sizeof(arr[0]))
 
@@ -190,7 +190,7 @@ uint64_t eval(int p, int q) {
   else {
     struct OP op = search_main_operator(p, q);
     if(op.type == TK_POINT){
-      return direct_pmem_read(eval(op.po + 1, q), 1);
+      return pmem_read(eval(op.po + 1, q), 1);
     }
     else{
       uint64_t val1 = eval(p, op.po - 1);

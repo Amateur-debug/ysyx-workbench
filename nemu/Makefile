@@ -61,7 +61,7 @@ include $(NEMU_HOME)/scripts/native.mk
 endif
 
 count:
-	find /home/cxy/ysyx-workbench/nemu/ -name *.c -or -name *.h | xargs cat | wc -l
+	find $(NEMU_HOME)/ -name *.c -or -name *.h | xargs cat | wc -l
 
 count-excblankline:
-	find /home/cxy/ysyx-workbench/nemu/ -name *.c -or -name *.h | xargs cat | grep -v ^$$ | wc -l
+	find $(NEMU_HOME)/ -name *.c -or -name *.h | xargs cat | grep -v ^$$ | wc -l

@@ -1,6 +1,6 @@
 #include <am.h>
 #include <klib-macros.h>
-#include "/home/cxy/ysyx-workbench/abstract-machine/am/src/riscv/riscv.h"
+#include "riscv.h"
 
 #define SERIAL_PORT 0xa00003f8
 

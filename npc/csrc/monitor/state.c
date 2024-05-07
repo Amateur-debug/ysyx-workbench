@@ -1,6 +1,6 @@
-#include "/home/cxy/ysyx-workbench/npc/include/state.h"
+#include "state.h"
 #include <stdint.h>
-#include "/home/cxy/ysyx-workbench/npc/include/state.h"
+
 
 NPCState npc_state;
 
