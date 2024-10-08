@@ -1,5 +1,5 @@
 STUID = ysyx_22041461
-STUNAME = 陈星宇
+STUNAME = Xingyu CHEN
 
 # DO NOT modify the following code!!!
 
